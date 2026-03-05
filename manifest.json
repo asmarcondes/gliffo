@@ -1,0 +1,42 @@
+{
+  "name": "glif.foo — Decodifique a Palavra",
+  "short_name": "glif.foo",
+  "description": "Jogo diário de palavras em português. As letras se empilham formando um glifo geométrico — estude as formas sobrepostas e decodifique a palavra escondida.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#141210",
+  "theme_color": "#141210",
+  "lang": "pt-BR",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "glif.foo no celular"
+    }
+  ]
+}
