@@ -512,9 +512,9 @@
       }
       .lbox {
         flex: 1;
-        max-width: 76px;
+        max-width: var(--lbox-max, 76px);
         aspect-ratio: 1;
-        border-radius: 11px;
+        border-radius: var(--lbox-rad, 11px);
         border: 1.5px solid var(--border2);
         background: var(--surface2);
         display: flex;
@@ -747,22 +747,40 @@
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: 20px 20px 0 0;
-        padding: 20px 20px 32px;
+        padding: 20px 16px 24px;
         width: 100%;
-        max-width: 480px;
+        max-width: 100%;
+        max-height: 90dvh;
         position: relative;
         box-shadow: 0 -8px 40px var(--shadow);
         animation: slideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+        overflow: clip;
+        display: flex;
+        flex-direction: column;
       }
-      @media (min-height: 600px) {
+      @media (min-width: 480px) {
+        .modal {
+          padding: 24px 22px 30px;
+          max-width: 540px;
+        }
+      }
+      @media (min-height: 600px) and (min-width: 480px) {
         .moverlay {
           align-items: center;
         }
         .modal {
           border-radius: 20px;
-          padding: 24px;
-          max-width: 400px;
+          max-height: 86dvh;
           animation: popIn 0.25s ease;
+        }
+        #stats-scroll-body {
+          max-height: calc(86dvh - 80px);
+        }
+      }
+      /* Em telas largas mas baixas (landscape mobile) — centraliza na horizontal */
+      @media (min-width: 480px) and (max-height: 599px) {
+        .modal {
+          max-width: 460px;
         }
       }
       @keyframes slideUp {
@@ -1551,6 +1569,394 @@
           font-size: 1.3rem;
         }
       }
+
+      /* ══════════════════════════════════════════
+   CONQUISTAS — popup toast
+══════════════════════════════════════════ */
+      #ach-popup {
+        position: fixed;
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        background: var(--surface);
+        border: 1px solid var(--border2);
+        border-radius: 14px;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        box-shadow: 0 8px 32px var(--shadow);
+        z-index: 300;
+        min-width: 260px;
+        max-width: 340px;
+        opacity: 0;
+        transition:
+          opacity 0.3s,
+          transform 0.3s;
+        pointer-events: none;
+      }
+      #ach-popup.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      .ach-popup-icon {
+        font-size: 1.6rem;
+        line-height: 1;
+        flex-shrink: 0;
+      }
+      .ach-popup-text {
+        flex: 1;
+        min-width: 0;
+      }
+      .ach-popup-label {
+        font-size: 0.58rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--amber-400);
+        margin-bottom: 2px;
+      }
+      .ach-popup-name {
+        font-family: "DM Serif Display", serif;
+        font-size: 0.95rem;
+        line-height: 1.2;
+        color: var(--text);
+      }
+      .ach-popup-desc {
+        font-size: 0.68rem;
+        color: var(--text2);
+        margin-top: 1px;
+      }
+
+      /* ── Conquistas no modal de stats ── */
+      /* ── HEADER FIXO DO STATS MODAL ── */
+      .stats-modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+        flex-shrink: 0;
+      }
+      .stats-modal-header .modal-title {
+        margin: 0;
+      }
+      .stats-modal-header .mclose {
+        position: static;
+        flex-shrink: 0;
+      }
+
+      /* Subtítulo no passaporte (glif.foo) */
+      .passport-subtitle {
+        font-family: "DM Serif Display", serif;
+        font-size: 1rem;
+        color: var(--text2);
+        letter-spacing: 0.06em;
+      }
+
+      .ach-tabs {
+        display: none;
+      } /* removido — view única */
+      .stats-tab-panel {
+        display: block;
+      } /* sempre visível */
+      .stats-tab-panel.active {
+        display: block;
+      }
+
+      /* ── SCROLL BODY ÚNICO ── */
+      #stats-scroll-body {
+        flex: 1;
+        min-height: 0;
+        max-height: calc(90dvh - 80px); /* 90dvh - header */
+        overflow-y: auto;
+        overflow-x: hidden;
+        overflow-anchor: none; /* evita pular automático ao renderizar conquistas */
+        margin: 0 -4px;
+        padding: 0 4px 8px;
+        scrollbar-width: thin;
+        scrollbar-color: #e8940a transparent;
+      }
+      #stats-scroll-body::-webkit-scrollbar {
+        width: 4px;
+      }
+      #stats-scroll-body::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      #stats-scroll-body::-webkit-scrollbar-thumb {
+        background: var(--amber-500);
+        border-radius: 99px;
+      }
+
+      /* ── PASSAPORTE ── */
+      .passport-card {
+        flex-shrink: 0;
+        background: linear-gradient(
+          135deg,
+          var(--surface2) 0%,
+          var(--surface3) 100%
+        );
+        border: 1px solid var(--border2);
+        border-radius: 14px;
+        padding: 14px 16px 16px;
+        margin-bottom: 18px;
+        position: relative;
+        overflow: hidden;
+      }
+      .passport-card::before {
+        content: "";
+        position: absolute;
+        top: -30px;
+        right: -30px;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(245, 166, 35, 0.08) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      .passport-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+      }
+      .passport-title {
+        font-family: "DM Serif Display", serif;
+        font-size: 1.15rem;
+        color: var(--text);
+        letter-spacing: 0.04em;
+      }
+      .passport-glyph {
+        width: 42px;
+        height: 42px;
+        opacity: 0.18;
+        position: relative;
+      }
+      .passport-glyph svg {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+      .passport-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 7px;
+        margin-bottom: 14px;
+      }
+      .passport-grid .stat-card {
+        background: rgba(0, 0, 0, 0.15);
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        padding: 8px 4px;
+      }
+      [data-theme="light"] .passport-grid .stat-card {
+        background: rgba(255, 255, 255, 0.6);
+      }
+      .passport-grid .stat-val {
+        font-size: 1.35rem;
+      }
+      .passport-divider {
+        height: 1px;
+        background: var(--border);
+        margin: 0 0 12px;
+      }
+
+      /* ── CABEÇALHO DAS CONQUISTAS (inline) ── */
+      .conquistas-inline-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        padding: 0 2px;
+      }
+      .conquistas-inline-title {
+        font-family: "DM Serif Display", serif;
+        font-size: 1.05rem;
+        color: var(--text);
+      }
+      .conquistas-inline-count {
+        font-size: 0.68rem;
+        font-weight: 600;
+        color: var(--amber-400);
+        background: rgba(245, 166, 35, 0.1);
+        border-radius: 20px;
+        padding: 2px 8px;
+      }
+
+      /* Painel de conquistas — agora sem scroll próprio (herda do body) */
+      #panel-conquistas {
+        flex: unset;
+        min-height: unset;
+        max-height: unset;
+        overflow: visible;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* Seção de conquistas */
+      .ach-section {
+        margin-bottom: 22px;
+      }
+      .ach-section-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+      .ach-section-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .ach-section-label {
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text2);
+      }
+      .ach-section-line {
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+      }
+      .ach-count-badge {
+        font-size: 0.58rem;
+        font-weight: 700;
+        color: var(--text3);
+      }
+
+      /* Grid de medalhas */
+      .ach-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+      .ach-badge {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        border-radius: 12px;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+        min-width: 0;
+        position: relative;
+        overflow: hidden;
+      }
+      .ach-badge::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: var(--ach-color, var(--border2));
+        border-radius: 3px 0 0 3px;
+        transition: background 0.2s;
+      }
+      .ach-badge:not(.locked):hover {
+        border-color: var(--border2);
+        background: var(--surface3);
+      }
+      .ach-badge.locked {
+        background: var(--bg2);
+        border-color: var(--border);
+        opacity: 0.55;
+      }
+      .ach-coin {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        overflow: hidden;
+        flex-shrink: 0;
+        transition:
+          transform 0.15s,
+          filter 0.15s;
+      }
+      .ach-badge:not(.locked):hover .ach-coin {
+        transform: scale(1.06);
+      }
+      .ach-coin.locked {
+        filter: grayscale(1);
+      }
+      .ach-badge-text {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        min-width: 0;
+        flex: 1;
+      }
+      .ach-ribbon-wrap {
+        width: 90%;
+        max-width: 90px;
+      }
+      .ach-ribbon-wrap svg {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+      .ach-desc {
+        font-size: 0.7rem;
+        color: var(--text2);
+        line-height: 1.4;
+        max-width: 100%;
+      }
+      [data-theme="dark"] .ach-desc {
+        color: #9a9080;
+      }
+      [data-theme="light"] .ach-desc {
+        color: #7a7060;
+      }
+      .ach-badge.locked .ach-desc {
+        color: var(--text3);
+      }
+      .ach-desc.hidden-desc {
+        filter: blur(3px);
+        user-select: none;
+      }
+
+      /* Ribbon = nome do badge */
+      .ach-ribbon {
+        width: 100%;
+      }
+      .ach-ribbon-text {
+        font-family: "DM Sans", sans-serif;
+        font-weight: 700;
+        font-size: 0.82rem;
+        letter-spacing: 0em;
+        text-transform: none;
+        line-height: 1.25;
+        word-break: break-word;
+        white-space: normal;
+        display: block;
+        width: 100%;
+      }
+      .ach-badge.locked .ach-ribbon-text {
+        opacity: 0.5;
+      }
+      /* Contagem total */
+      .ach-total {
+        font-size: 0.68rem;
+        color: var(--text2);
+        text-align: center;
+        padding: 8px 0 4px;
+        border-top: 1px solid var(--border);
+        margin-top: 4px;
+      }
+      .ach-total strong {
+        color: var(--amber-400);
+      }
     </style>
   </head>
   <body>
@@ -1647,6 +2053,16 @@
         © 2026 glif.foo — Todos os direitos reservados
       </div>
     </footer>
+
+    <!-- ══ ACHIEVEMENT POPUP ══ -->
+    <div id="ach-popup" role="status" aria-live="polite">
+      <div class="ach-popup-icon" id="ach-popup-icon">🏅</div>
+      <div class="ach-popup-text">
+        <div class="ach-popup-label">Conquista desbloqueada!</div>
+        <div class="ach-popup-name" id="ach-popup-name"></div>
+        <div class="ach-popup-desc" id="ach-popup-desc"></div>
+      </div>
+    </div>
 
     <!-- ══ KEY MODAL ══ -->
     <div
@@ -1747,18 +2163,38 @@
         aria-modal="true"
         aria-labelledby="stats-modal-title"
       >
-        <button
-          class="mclose"
-          onclick="closeM('stats-modal')"
-          aria-label="Fechar"
-        >
-          ✕
-        </button>
-        <div class="modal-title" id="stats-modal-title">Estatísticas</div>
-        <div class="stats-grid" id="stats-grid-main"></div>
-        <div class="mdivider"></div>
-        <div class="distrib-title">Distribuição de tentativas</div>
-        <div id="stats-distrib"></div>
+        <!-- Header fixo (não scrollável) -->
+        <div class="stats-modal-header">
+          <div class="modal-title" id="stats-modal-title">Estatísticas</div>
+          <button
+            class="mclose"
+            onclick="closeM('stats-modal')"
+            aria-label="Fechar"
+          >
+            ✕
+          </button>
+        </div>
+        <!-- View única com scroll -->
+        <div id="stats-scroll-body">
+          <!-- Passaporte -->
+          <div class="passport-card" id="passport-card">
+            <div class="passport-header">
+              <div class="passport-subtitle">glif.foo</div>
+              <div class="passport-glyph" id="passport-glyph"></div>
+            </div>
+            <div class="passport-grid" id="stats-grid-main"></div>
+            <div class="passport-divider"></div>
+            <div class="distrib-title">Distribuição de tentativas</div>
+            <div id="stats-distrib"></div>
+          </div>
+          <!-- Conquistas inline -->
+          <div class="conquistas-inline-header">
+            <span class="conquistas-inline-title">Conquistas</span>
+            <span id="ach-count-tab" class="conquistas-inline-count"></span>
+          </div>
+          <div id="conquistas-list"></div>
+          <div class="ach-total" id="ach-total-line"></div>
+        </div>
       </div>
     </div>
 
@@ -3240,90 +3676,1298 @@
       ]);
       // ═══════════════════════════════════════════════
       // BANCO DE PALAVRAS PT-BR — rotação diária
-      // Ordenadas por dificuldade (ciclo semanal):
-      //   Seg/Ter → Fácil | Qua/Qui → Médio | Sex/Sáb → Difícil | Dom → Muito Difícil
+      // Tamanho define dificuldade:
+      //   Dom → 4 letras (Fácil)
+      //   Seg/Ter → 5 letras (Médio)
+      //   Qua/Qui → 6 letras (Difícil)
+      //   Sex/Sáb → 7 letras (Muito Difícil)
       // ═══════════════════════════════════════════════
       const PALAVRAS = {
         facil: [
+          "AGIR",
+          "ALGO",
+          "ALMA",
+          "ALTO",
+          "ANDA",
+          "ANJO",
+          "ANTE",
+          "ARCA",
+          "AREA",
+          "ARMA",
+          "ARTE",
+          "ASAS",
+          "ATOR",
+          "AZAR",
+          "AZUL",
+          "BALA",
+          "BALO",
+          "BECO",
+          "BELA",
+          "BELO",
+          "BICO",
+          "BOLA",
+          "BOLO",
+          "BOTA",
+          "BULE",
+          "CABO",
+          "CACO",
+          "CAMA",
+          "CANA",
+          "CANO",
+          "CARA",
+          "CARO",
+          "CASA",
+          "CASO",
+          "CEDO",
+          "CHEF",
+          "CIOS",
+          "COLA",
+          "COLO",
+          "COMO",
+          "COPO",
+          "CORA",
+          "CUCO",
+          "CUME",
+          "DADO",
+          "DEDO",
+          "DELE",
+          "DEUS",
+          "DICA",
+          "DONO",
+          "DOSE",
+          "DOTE",
+          "DOZE",
+          "DUAS",
+          "DURO",
+          "DUVA",
+          "EIRA",
+          "EIXO",
+          "ELES",
+          "ENTE",
+          "ERRO",
+          "ESSE",
+          "FACA",
+          "FADA",
+          "FALA",
+          "FAMA",
+          "FARO",
+          "FASE",
+          "FATO",
+          "FEIA",
+          "FELO",
+          "FERA",
+          "FETO",
+          "FIAR",
+          "FIGO",
+          "FILA",
+          "FINO",
+          "FITA",
+          "FIXO",
+          "FOCO",
+          "FOGO",
+          "FOTO",
+          "FUGA",
+          "FUMO",
+          "FURO",
+          "FUSO",
+          "GADO",
+          "GAGO",
+          "GALA",
+          "GALO",
+          "GAMA",
+          "GATO",
+          "GELO",
+          "GEMA",
+          "GIRO",
+          "GOZO",
+          "GUIA",
+          "GURU",
+          "HORA",
+          "HINO",
+          "ILHA",
+          "INHO",
+          "ISSO",
+          "JAPO",
+          "JATO",
+          "JAZZ",
+          "JOGO",
+          "JOIA",
+          "JURO",
+          "LADO",
+          "LAJE",
+          "LAMA",
+          "LANA",
+          "LATA",
+          "LAVA",
+          "LEME",
+          "LEVE",
+          "LIGA",
+          "LIMA",
+          "LIMO",
+          "LINO",
+          "LISA",
+          "LISO",
+          "LOBA",
+          "LOCA",
+          "LODO",
+          "LOGO",
+          "LOJA",
+          "LONA",
+          "LOTE",
+          "LUDO",
+          "LULA",
+          "LUME",
+          "LUNA",
+          "LUVA",
+          "LUZO",
+          "MACO",
+          "MAGO",
+          "MALA",
+          "MALO",
+          "MAPA",
+          "MARE",
+          "MAIS",
+          "MATO",
+          "MEDO",
+          "MEGA",
+          "MEIA",
+          "MEIO",
+          "MELA",
+          "MELO",
+          "MESA",
+          "META",
+          "MICO",
+          "MILA",
+          "MINA",
+          "MITO",
+          "MODO",
+          "MOFO",
+          "MOLA",
+          "MOLE",
+          "MOLO",
+          "MORA",
+          "MORO",
+          "MOTA",
+          "MOTO",
+          "MUCA",
+          "MUDO",
+          "MULA",
+          "MULO",
+          "MURO",
+          "NADA",
+          "NATO",
+          "NETO",
+          "NEVE",
+          "NIXO",
+          "NOCA",
+          "NODO",
+          "NOME",
+          "NOTA",
+          "NOVO",
+          "NUCA",
+          "NULO",
+          "NUMA",
+          "OBRA",
+          "OLHO",
+          "ONDE",
+          "ONZE",
+          "OURO",
+          "OVOS",
+          "PACA",
+          "PACO",
+          "PAGA",
+          "PAGO",
+          "PALA",
+          "PANO",
+          "PAPA",
+          "PARA",
+          "PARO",
+          "PASO",
+          "PATO",
+          "PAVO",
+          "PECA",
+          "PELO",
+          "PENA",
+          "PERA",
+          "PESO",
+          "PICO",
+          "PILA",
+          "PILO",
+          "PIPA",
+          "PISO",
+          "PITA",
+          "PIXO",
+          "PLOP",
+          "PODA",
+          "POLO",
+          "POMO",
+          "PONA",
+          "POPA",
+          "PORO",
+          "POTE",
+          "POVO",
+          "PULA",
+          "PULO",
+          "PUMA",
+          "PURO",
+          "RAIO",
+          "RALO",
+          "RAMA",
+          "RANO",
+          "RATO",
+          "RECO",
+          "REDE",
+          "REMO",
+          "RENA",
+          "RICO",
+          "RIMA",
+          "RISO",
+          "RITO",
+          "ROER",
+          "ROLA",
+          "ROLO",
+          "ROMA",
+          "ROMO",
+          "ROTA",
+          "RUBI",
+          "RUGA",
+          "RUMO",
+          "RUNA",
+          "SACO",
+          "SAGA",
+          "SAIO",
+          "SALA",
+          "SALO",
+          "SANA",
+          "SAPO",
+          "SEIO",
+          "SELA",
+          "SELO",
+          "SEMA",
+          "SEMI",
+          "SETA",
+          "SEXO",
+          "SILO",
+          "SINA",
+          "SINO",
+          "SOJA",
+          "SOLA",
+          "SOLO",
+          "SOMA",
+          "SONO",
+          "SOPA",
+          "SORO",
+          "SOTA",
+          "SUMO",
+          "SURA",
+          "TACO",
+          "TALA",
+          "TALO",
+          "TAPA",
+          "TATO",
+          "TAXA",
+          "TELA",
+          "TEMA",
+          "TEMO",
+          "TETO",
+          "TIPO",
+          "TOCO",
+          "TOLA",
+          "TOLO",
+          "TONA",
+          "TOPO",
+          "TORA",
+          "TORO",
+          "TOXA",
+          "TREM",
+          "TRIO",
+          "TRIZ",
+          "TUBA",
+          "TUDO",
+          "TULE",
+          "TUNA",
+          "TUPI",
+          "UIVO",
+          "URNA",
+          "URSO",
+          "USAR",
+          "UVAS",
+          "VACA",
+          "VAGA",
+          "VAGO",
+          "VALE",
+          "VELA",
+          "VELO",
+          "VENA",
+          "VERA",
+          "VEZO",
+          "VIDA",
+          "VIGA",
+          "VILA",
+          "VINO",
+          "VIRA",
+          "VISA",
+          "VISO",
+          "VOGA",
+          "VOTO",
+          "VUCO",
+          "VUDU",
+          "XALE",
+          "XAXO",
+          "XILO",
+          "ZERO",
+          "ZONA",
+          "ZUMO",
+        ],
+        medio: [
+          "ABRIR",
+          "ACASO",
+          "ACENO",
+          "ACESO",
+          "ACIMA",
+          "ADEUS",
+          "ADOBE",
+          "ADORO",
+          "AFOGO",
+          "AGORA",
+          "AGUDO",
+          "AJUDA",
+          "ALADO",
+          "ALEGA",
+          "ALOCA",
+          "ALTAR",
+          "AMIGA",
+          "AMIGO",
+          "AMORA",
+          "AMPLO",
+          "ANDAR",
+          "ANIME",
+          "ANTES",
+          "ARARA",
+          "ARDOR",
+          "AREIA",
+          "ARMAS",
+          "AROMA",
+          "ARROZ",
+          "ARTES",
+          "ASTRO",
+          "ATRIZ",
+          "AUDIO",
+          "AVEIA",
+          "AVISO",
+          "BANCO",
           "BARCO",
-          "BROTO",
-          "CALDO",
+          "BARBA",
+          "BARRA",
+          "BATER",
+          "BEIJO",
+          "BEIRA",
+          "BICHO",
+          "BINGO",
+          "BLOCO",
+          "BOLSA",
+          "BOMBA",
+          "BRASA",
+          "BRAVA",
+          "BRAVO",
+          "BREVE",
+          "BRISA",
+          "BROCA",
+          "BRUTO",
+          "BURRO",
+          "CALMA",
+          "CALOR",
           "CAMPO",
+          "CANTO",
           "CAPIM",
+          "CARNE",
+          "CARRO",
+          "CARTA",
+          "CASCA",
+          "CAUSA",
+          "CEDER",
+          "CENSO",
           "CERTO",
+          "CERVO",
+          "CHAVE",
+          "CHEFE",
+          "CHEIO",
+          "CHINA",
+          "CHORO",
+          "CHUVA",
+          "CINCO",
           "CIRCO",
+          "CISCO",
+          "CITAR",
+          "CLARO",
+          "CLIMA",
+          "CLUBE",
           "COBRA",
           "COISA",
           "COLAR",
-          "COLMO",
-          "CONTO",
-          "CORVO",
+          "COMER",
+          "COMUM",
+          "CORAL",
+          "CORNO",
+          "COROA",
+          "CORTE",
+          "COSTA",
           "COURO",
+          "COUVE",
+          "CRAVO",
+          "CRIME",
+          "CRISE",
+          "CRUEL",
           "CULPA",
+          "CUNHA",
+          "CURAR",
           "CURVA",
-          "DENTE",
+          "DARDO",
+          "DEDAL",
+          "DELTA",
+          "DIABO",
+          "DIETA",
+          "DIGNO",
+          "DISCO",
           "DOBRA",
+          "DOCES",
           "DRAMA",
+          "DROGA",
+          "DUPLO",
+          "DUQUE",
+          "EBANO",
+          "ENTRE",
+          "ERGUE",
+          "ERRAR",
+          "ESPIA",
+          "FAIXA",
           "FALHA",
-          "FARPA",
-          "FELIZ",
+          "FARSA",
+          "FAUNA",
+          "FAVOR",
+          "FEBRE",
+          "FEITO",
+          "FERRO",
+          "FESTA",
           "FILHA",
           "FILHO",
           "FILME",
-          "FLOCO",
           "FONTE",
-          "FORNO",
           "FORTE",
           "FRUTA",
           "FUNDO",
+          "FUGIR",
+          "FUNIL",
+          "FUZIL",
           "GALHO",
           "GANSO",
           "GARFO",
-          "GARCA",
+          "GAROA",
+          "GEADA",
+          "GERAL",
           "GLOBO",
           "GOLFO",
+          "GOLPE",
+          "GORDO",
+          "GRADE",
           "GRAMA",
+          "GRAVE",
+          "GRAXA",
+          "GREVE",
+          "GRIFE",
+          "GRILO",
+          "GRIPE",
+          "GRUPO",
           "GRUTA",
+          "GUETO",
+          "GUIAR",
+          "HARPA",
+          "HEROI",
           "HOTEL",
-          "LENHA",
-          "LIVRO",
-          "MANGA",
-          "MUNDO",
-          "PALCO",
-          "PEDRA",
-          "PERTO",
-          "PIANO",
-          "PLANO",
-          "PORTA",
-          "PRATA",
-        ],
-        medio: [
-          "DEDAL",
-          "FOSSO",
-          "GEADA",
+          "IDEAL",
+          "IDEIA",
+          "IGUAL",
+          "IMUNE",
+          "INDIA",
+          "JOGAR",
+          "JUNTO",
+          "JURAR",
+          "LACRE",
+          "LADRA",
+          "LAGOA",
           "LANCA",
+          "LARGO",
+          "LARVA",
+          "LASER",
+          "LAUDO",
+          "LAZER",
+          "LEITE",
+          "LENCO",
+          "LENHA",
+          "LENTO",
+          "LEVAR",
+          "LIVRO",
+          "LIXAR",
+          "LOGRO",
+          "LOMBO",
+          "LONGE",
+          "LUCRO",
+          "LUGAR",
+          "LUTAR",
+          "MACHO",
+          "MAGIA",
+          "MAGOA",
+          "MAGRO",
+          "MALES",
+          "MALHA",
+          "MANGA",
+          "MANIA",
+          "MANSO",
+          "MATAR",
+          "MEDIR",
+          "MENOR",
+          "METAL",
+          "METRO",
+          "MEXER",
+          "MIGRA",
+          "MILHA",
           "MOLDE",
-          "NOCAO",
+          "MONTE",
+          "MORAR",
+          "MORTE",
+          "MORTO",
+          "MOTOR",
+          "MOURA",
+          "MUITO",
+          "MULTA",
+          "MUNDO",
+          "MUSGO",
+          "NADAR",
+          "NAIPE",
+          "NARIZ",
+          "NEGRO",
+          "NERVO",
           "NEVOA",
-          "OGIVA",
-          "POUSO",
+          "NIVEL",
+          "NOITE",
+          "NOMEA",
+          "NORMA",
+          "NORTE",
+          "NOTAR",
+          "OBRAS",
+          "OBTER",
+          "OCASO",
+          "ODIAR",
+          "OPACO",
+          "OPALA",
+          "OPTAR",
+          "ORDEM",
+          "ORGAO",
+          "OUTRO",
+          "OUVIR",
+          "PADRE",
+          "PAGAR",
+          "PALCO",
+          "PAPEL",
+          "PARTE",
+          "PAUSA",
+          "PEDRA",
+          "PEGAR",
+          "PERDA",
+          "PERTO",
+          "PESAR",
+          "PESCA",
+          "PIANO",
+          "PILAR",
+          "PILHA",
+          "PISTA",
+          "PLANO",
+          "PLENO",
+          "PODER",
+          "POLVO",
+          "POMBO",
+          "PONTA",
+          "PORTO",
+          "POSTA",
+          "PRADO",
           "PRAIA",
-          "POLEN",
+          "PRATA",
+          "PRATO",
+          "PRAZO",
+          "PREGO",
+          "PRESA",
+          "PRESO",
+          "PRETA",
+          "PRETO",
+          "PRIMA",
+          "PRIMO",
+          "PROVA",
+          "PULAR",
+          "PURGA",
+          "RACHA",
+          "RADAR",
           "RAIVA",
+          "RASGA",
+          "RAZAO",
+          "RECUO",
+          "REINA",
+          "RENDA",
+          "RIVAL",
+          "ROCHA",
+          "ROLHA",
+          "ROMBO",
+          "RONCO",
+          "ROSCA",
+          "ROUBA",
+          "ROUPA",
+          "RUGIR",
+          "RUIDO",
+          "RUIVO",
+          "SABOR",
+          "SAFRA",
+          "SALSA",
+          "SALTO",
+          "SALVO",
+          "SAMBA",
+          "SANTO",
+          "SAQUE",
+          "SECAR",
+          "SEGAR",
+          "SENSO",
+          "SERVE",
+          "SERVO",
+          "SIDRA",
+          "SIGNO",
+          "SILVO",
+          "SINAL",
+          "SOBRE",
+          "SOLAR",
+          "SOLDO",
+          "SOMAR",
+          "SORTE",
+          "SUAVE",
+          "SULCO",
+          "SUMIR",
+          "SURDO",
+          "SURRA",
+          "TALCO",
+          "TALHA",
+          "TARDE",
+          "TEDIO",
+          "TEIMA",
+          "TELHA",
+          "TENDA",
+          "TENSO",
+          "TENUE",
+          "TERRA",
+          "TESTA",
+          "TIGRE",
+          "TINTA",
+          "TIRAR",
+          "TOCHA",
+          "TOLDO",
+          "TOMBO",
+          "TOQUE",
+          "TORPE",
+          "TORRE",
+          "TORTA",
+          "TOSCO",
+          "TOUCA",
+          "TOURO",
+          "TRACO",
+          "TRAGO",
+          "TRAIR",
+          "TRAMA",
+          "TREVO",
+          "TRIBO",
+          "TROCO",
+          "TRONO",
+          "TROVA",
+          "TUMBA",
+          "TUMOR",
+          "TURBO",
+          "TURMA",
+          "TURNO",
+          "VAGAO",
+          "VAGAR",
+          "VALSA",
+          "VAPOR",
+          "VARIA",
+          "VAZAR",
+          "VEDAR",
+          "VELAR",
+          "VELHA",
+          "VELHO",
+          "VENDA",
+          "VENTO",
+          "VERDE",
+          "VERGA",
+          "VERSO",
+          "VIBRA",
+          "VIDRO",
+          "VIGOR",
+          "VIOLA",
+          "VIRAL",
+          "VIRAR",
+          "VISTA",
+          "VIVER",
+          "VOLTA",
+          "VORAZ",
+          "VOTAR",
         ],
-        dificil: ["GOLPE", "GENIO", "REFEM", "TENUE", "AMBAR", "IGNEO"],
-        muito_dificil: ["ARFAR"],
+        dificil: [
+          "ABERTO",
+          "ABRACO",
+          "ABRIGA",
+          "ACENAR",
+          "ACOLHE",
+          "ACORDE",
+          "ADORAR",
+          "ADUBAR",
+          "AFIADO",
+          "AGITAR",
+          "AGRUPA",
+          "AJUSTE",
+          "ALARME",
+          "ALBINO",
+          "ALCOOL",
+          "ALDEAO",
+          "ALERTA",
+          "ALGUMA",
+          "ALINHA",
+          "ALMEJA",
+          "ALONGA",
+          "ALTERA",
+          "AMARGA",
+          "AMBITO",
+          "AMPLIA",
+          "ANCORA",
+          "ANFORA",
+          "ANTIGO",
+          "ANULAR",
+          "APAGAR",
+          "APARAR",
+          "APENAS",
+          "APERTO",
+          "APOSTA",
+          "ARBORE",
+          "ARDIDO",
+          "ARDORE",
+          "ARESMA",
+          "ARMADO",
+          "ARPOAR",
+          "ARREDO",
+          "ARVORE",
+          "ASSOAR",
+          "ASTUTO",
+          "ATLETA",
+          "ATRAIO",
+          "ATRASO",
+          "AUDACE",
+          "AUROLA",
+          "AVARIA",
+          "AVESSO",
+          "AVULSO",
+          "BACELO",
+          "BAGACO",
+          "BAIANA",
+          "BALEAR",
+          "BARRIL",
+          "BASICO",
+          "BATIDA",
+          "BELEZA",
+          "BENDIZ",
+          "BESOAR",
+          "BETUME",
+          "BINOCO",
+          "BIROME",
+          "BISAVO",
+          "BOLSAO",
+          "BORDAR",
+          "BORRAO",
+          "BOTECO",
+          "BRACAR",
+          "BRANDO",
+          "BRAQUE",
+          "BRIGAR",
+          "BRILHA",
+          "BRINCA",
+          "BROKER",
+          "BRONZE",
+          "BRUMAL",
+          "BRUTAL",
+          "BUCETA",
+          "BUFALO",
+          "BURACO",
+          "BUSCAR",
+          "CABECA",
+          "CABIDE",
+          "CACETE",
+          "CALCAO",
+          "CALEJO",
+          "CALOTE",
+          "CAMBIO",
+          "CAMELO",
+          "CAMISA",
+          "CANECO",
+          "CANELA",
+          "CANETA",
+          "CANINO",
+          "CANTAR",
+          "CAPOTE",
+          "CARACT",
+          "CARECA",
+          "CARETA",
+          "CARINH",
+          "CAVALO",
+          "CENTRO",
+          "CERCAR",
+          "CIDADE",
+          "CINZAS",
+          "CIRURG",
+          "COBRAR",
+          "COELHO",
+          "COLEGA",
+          "COLHER",
+          "COLUNA",
+          "COMPRA",
+          "CONCHA",
+          "CONFIA",
+          "CONJUG",
+          "CONSOL",
+          "CONTAM",
+          "CORRER",
+          "CORTEZ",
+          "COSTAS",
+          "CRENCA",
+          "CRIADO",
+          "CRISIS",
+          "CUIDAR",
+          "CUPIDO",
+          "DEBATE",
+          "DECIDE",
+          "DEFESA",
+          "DEGELO",
+          "DELITO",
+          "DENOTA",
+          "DENTRE",
+          "DEPOIS",
+          "DERIVA",
+          "DESEJO",
+          "DESCER",
+          "DEVOTA",
+          "DIRETO",
+          "DISCUR",
+          "DISTAN",
+          "DIVERT",
+          "DOBRAR",
+          "DOTADO",
+          "DRAGAO",
+          "EFEITO",
+          "EMBORA",
+          "EMPATE",
+          "EMPENH",
+          "ENCANT",
+          "ENCHER",
+          "ENFIAR",
+          "ENORME",
+          "ENREDO",
+          "ENSAIO",
+          "ENTRAR",
+          "ENVIAR",
+          "ESPACO",
+          "ESPADA",
+          "ESPERA",
+          "ESTACA",
+          "ESTADO",
+          "ESTILO",
+          "EUROPA",
+          "EXCETO",
+          "EXIBIR",
+          "EXIMIR",
+          "EXPIRA",
+          "FABULA",
+          "FALTAR",
+          "FAMOSO",
+          "FATIAR",
+          "FATIGA",
+          "FEIJAO",
+          "FERIAS",
+          "FIGURA",
+          "FILTRO",
+          "FLAUTA",
+          "FLUIDO",
+          "FLUXOS",
+          "FOLGAR",
+          "FORCAR",
+          "FORMAL",
+          "FRACAS",
+          "FRANCO",
+          "FRASCO",
+          "FRESCO",
+          "FRIEZA",
+          "FRONTE",
+          "FUGIDA",
+          "FUTURO",
+          "GALOPE",
+          "GANHAR",
+          "GAROTO",
+          "GARUPA",
+          "GELADO",
+          "GENERO",
+          "GENTIL",
+          "GIRINO",
+          "GLORIA",
+          "GORILA",
+          "GOTEJO",
+          "GRANDE",
+          "GRAVAR",
+          "GRITAO",
+          "HABITO",
+          "HAMBRE",
+          "HISTOR",
+          "HONRAR",
+          "HUMANO",
+          "HUMILD",
+          "IGNORA",
+          "IMITAR",
+          "IMORAL",
+          "IMUNDA",
+          "INCHAR",
+          "INERTE",
+          "INFLAR",
+          "INGENU",
+          "INICIO",
+          "INOVAR",
+          "INSETO",
+          "IRREAL",
+          "ISENTO",
+          "JARDIM",
+          "JASMIN",
+          "JEJUAR",
+          "JIBOIA",
+          "JORNAL",
+          "JOVIAL",
+          "JUNTAR",
+          "LANCAR",
+          "LATEJO",
+          "LAVRAR",
+          "LEOPAR",
+          "LETRAS",
+          "LEVEZA",
+          "LIBELO",
+          "LIMITE",
+          "LINEAR",
+          "LINGUA",
+          "LOBATO",
+          "LOTEAR",
+          "LOUVAR",
+          "LUMIAR",
+          "LUSTRE",
+          "MADURO",
+          "MAGOAR",
+          "MANCHA",
+          "MARCAR",
+          "MARIDO",
+          "MATURE",
+          "MELHOR",
+          "MENSAL",
+          "MENTIR",
+          "METADE",
+          "MIMICA",
+          "MINUTO",
+          "MIOPIA",
+          "MOINHO",
+          "MOLHAR",
+          "MONACO",
+          "MONTAR",
+          "MOTIVO",
+          "MULHER",
+          "NARRAR",
+          "NASCER",
+          "NITIDO",
+          "NOMEAR",
+          "NUMERO",
+          "OCUPAR",
+          "OFERTA",
+          "OFICIO",
+          "OPERAR",
+          "OPTIMO",
+          "ORNATO",
+          "PADRAO",
+          "PAREDE",
+          "PARQUE",
+          "PARTIR",
+          "PEDIDO",
+          "PENSAR",
+          "PERDER",
+          "PERFIL",
+          "PERITO",
+          "PESSOA",
+          "PIRATA",
+          "PISCAR",
+          "PLASMA",
+          "POESIA",
+          "POUPAR",
+          "PREMIO",
+          "PRIVAR",
+          "PROEZA",
+          "PRONTO",
+          "PROPOR",
+          "PROVAR",
+          "PUBICO",
+          "PULSAR",
+          "PUNHAL",
+          "QUADRO",
+          "QUARTO",
+          "QUEIJO",
+          "QUENTE",
+          "QUIETO",
+          "QUINTO",
+          "QUORUM",
+          "RAPIDO",
+          "RASTRO",
+          "RECADO",
+          "RECIFE",
+          "RECUAR",
+          "REFACO",
+          "REGALO",
+          "REGIME",
+          "RELATO",
+          "REMADA",
+          "REMOTO",
+          "RENDER",
+          "REPARO",
+          "RESUMO",
+          "RETIRO",
+          "REUNIR",
+          "REVELA",
+          "RIGIDO",
+          "RITUAL",
+          "RODEAR",
+          "RONDAR",
+          "ROSTRO",
+          "ROTINA",
+          "RUINAS",
+          "SABIDO",
+          "SANGUE",
+          "SAPATO",
+          "SEMPRE",
+          "SOBRAR",
+          "SOLTAR",
+          "SOMBRA",
+          "SONHAR",
+          "SORRIR",
+          "SPERAR",
+          "TABACO",
+          "TAMPAO",
+          "TAPETE",
+          "TAREFA",
+          "TATEAR",
+          "TEATRO",
+          "TECIDO",
+          "TENDER",
+          "TIRANO",
+          "TORCER",
+          "TOSTAR",
+          "TRACAR",
+          "TRECHO",
+          "TREINO",
+          "TRUQUE",
+          "TULIPA",
+          "UMBIGO",
+          "URTIGA",
+          "USINAR",
+          "VIAGEM",
+          "VOADOR",
+          "XADREZ",
+          "XAROPE",
+          "ZARPAR",
+          "ZUMBIR",
+        ],
+        muito_dificil: [
+          "ABALADO",
+          "ABATIDO",
+          "ABOLIDO",
+          "ABROCHO",
+          "ABSOLTO",
+          "ABSTRAI",
+          "ACABADO",
+          "ACALMAR",
+          "ACAMPOU",
+          "ACENDER",
+          "ACERTAR",
+          "ACIONAR",
+          "ACOLHER",
+          "ACOSSAR",
+          "ADAPTAR",
+          "ADEPTOS",
+          "ADORNAR",
+          "AFASTAR",
+          "AFIRMAR",
+          "AGRADAR",
+          "AGREDIR",
+          "AJUDADO",
+          "ALARGAR",
+          "ALCANCA",
+          "ALERTAR",
+          "ALIVIAR",
+          "ALONGAR",
+          "ALTERAR",
+          "AMALGAM",
+          "AMARGOR",
+          "AMBIGUE",
+          "AMPLIAR",
+          "ANALISE",
+          "ANCORAR",
+          "ANDANDO",
+          "ANIMADO",
+          "ANSIOSO",
+          "ANTEVER",
+          "APANHAR",
+          "APARECE",
+          "APOSTAR",
+          "APROVAR",
+          "APROXAR",
+          "ARREPIO",
+          "ARRANJO",
+          "ARRISCA",
+          "ARVORES",
+          "ASSEDIO",
+          "ASSOPRA",
+          "ATINGIR",
+          "ATRASAR",
+          "ATRELAR",
+          "AVANCAM",
+          "AVISTAR",
+          "AZEDUME",
+          "BADALAR",
+          "BALANCA",
+          "BARBEAR",
+          "BATALHA",
+          "BELDADE",
+          "BENIGNO",
+          "BERMUDA",
+          "BIFURCA",
+          "BILHETE",
+          "BOICOTE",
+          "BORBULH",
+          "BORDADO",
+          "BRINCAR",
+          "BRILHAR",
+          "BROMETO",
+          "BRUSQUE",
+          "BUFARIA",
+          "BULHOSO",
+          "CAMINHO",
+          "CANCION",
+          "CAVALHO",
+          "CENARIO",
+          "CERTEZA",
+          "COBICAR",
+          "COLOCAR",
+          "COMOVER",
+          "CONFIAR",
+          "CONFUSO",
+          "CORONEL",
+          "DEBATER",
+          "DECORAR",
+          "DENOTAR",
+          "DESABAF",
+          "DESCIDA",
+          "DESTINO",
+          "DETALHE",
+          "DEVAGAR",
+          "DOBRADO",
+          "DOMINAR",
+          "DUVIDAR",
+          "ELEICAO",
+          "EMBAIXO",
+          "ENGANAR",
+          "ENGOLIR",
+          "ENSINAR",
+          "EPOPEIA",
+          "ERGUIDO",
+          "ESFORCO",
+          "ESTAVEL",
+          "ESTUDAR",
+          "EVOLUIR",
+          "EXCEDER",
+          "FAMINTO",
+          "FECHADO",
+          "FIDALGO",
+          "FILHOTE",
+          "FOMENTO",
+          "FORTUNA",
+          "FUTEBOL",
+          "GALHOFA",
+          "GARIMPO",
+          "GEMIDOS",
+          "GORILAO",
+          "GUARDAR",
+          "GUIOMAR",
+          "IMPACTO",
+          "IMPOSTO",
+          "INCERTO",
+          "INDUZIR",
+          "INFERNO",
+          "INIBIDO",
+          "INJETAR",
+          "INVADIR",
+          "INVOCAR",
+          "JANELAO",
+          "JANGADA",
+          "JOGADOR",
+          "JORNADA",
+          "JUSTEZA",
+          "LAMPADA",
+          "LARGURA",
+          "LAVAGEM",
+          "LAVOURA",
+          "LEGENDA",
+          "LEMBRAR",
+          "LIMITAR",
+          "LITORAL",
+          "LUXUOSO",
+          "MOLHADO",
+          "MUDANCA",
+          "NAVEGAR",
+          "NOTURNO",
+          "OBSCURO",
+          "PERDOAR",
+          "RAPIDEZ",
+          "RELACAR",
+          "REVELAR",
+          "ROBUSTO",
+          "ROTEIRO",
+          "RUMORAR",
+          "SEDUZIR",
+          "SOBERBA",
+          "SOLIDAO",
+          "SOMENTE",
+          "SUCESSO",
+          "SUPERAR",
+          "TAMANHA",
+          "TEIMOSO",
+          "TEMPERO",
+          "TIMIDEZ",
+          "UMIDADE",
+          "UNANIME",
+          "UNIDADE",
+          "VAIDADE",
+        ],
       };
 
       // Ciclo semanal de dificuldade (0=Dom, 1=Seg, ..., 6=Sáb)
+      // Dom=4L | Seg/Ter=5L | Qua/Qui=6L | Sex/Sáb=7L
       const CICLO_DIF = [
+        "facil",
+        "medio",
+        "medio",
+        "dificil",
+        "dificil",
         "muito_dificil",
-        "facil",
-        "facil",
-        "medio",
-        "medio",
-        "dificil",
-        "dificil",
+        "muito_dificil",
       ];
 
       function palavraDoDia() {
@@ -3345,6 +4989,23 @@
         return lista[idx];
       }
 
+      // Validação multi-tamanho: aceita palavras do banco atual + dicionário 5L
+      function dicionarioValido(word) {
+        const tam = word.length;
+        // Sempre aceitar palavras do banco de cada tamanho
+        const todos = [
+          ...PALAVRAS.facil,
+          ...PALAVRAS.medio,
+          ...PALAVRAS.dificil,
+          ...PALAVRAS.muito_dificil,
+        ];
+        if (todos.includes(word)) return true;
+        // Para 5 letras: também aceitar o dicionário estendido
+        if (tam === 5 && DICIONARIO.has(word)) return true;
+        // Para outros tamanhos: aceitar qualquer sequência válida de letras
+        // (não temos dicionário completo para 4/6/7 letras ainda)
+        return /^[A-Z]+$/.test(word);
+      }
       const WORD = palavraDoDia();
       const WL = WORD.split(""),
         WN = WL.length;
@@ -3354,6 +5015,8 @@
         "#e87a6b",
         "#5bbfa0",
         "#6baee8",
+        "#e8b45b",
+        "#a0c878",
       ];
       const colorOf = {};
       WL.forEach((l, i) => {
@@ -3440,6 +5103,11 @@
       function buildBoxes() {
         const c = document.getElementById("lboxes");
         c.innerHTML = "";
+        // Ajusta tamanho dos slots conforme número de letras
+        const maxW = WN <= 4 ? 82 : WN === 5 ? 76 : WN === 6 ? 64 : 54;
+        const rad = WN <= 5 ? 11 : WN === 6 ? 9 : 7;
+        document.documentElement.style.setProperty("--lbox-max", maxW + "px");
+        document.documentElement.style.setProperty("--lbox-rad", rad + "px");
         const s = glyphStroke();
         for (let i = 0; i < WN; i++) {
           const b = document.createElement("div");
@@ -3603,7 +5271,7 @@
           );
           if (full.every((x) => x)) {
             const guess = full.join("");
-            if (!DICIONARIO.has(guess)) {
+            if (!dicionarioValido(guess)) {
               setFb("Palavra não encontrada no dicionário.", "err");
             } else {
               setFb("", ""); // limpa feedback anterior se palavra válida
@@ -3631,7 +5299,7 @@
         }
         const guess = full.join("");
         // Validação de dicionário
-        if (!DICIONARIO.has(guess)) {
+        if (!dicionarioValido(guess)) {
           setFb("Palavra não encontrada no dicionário.", "err");
           document.getElementById("lboxes").classList.add("shake");
           setTimeout(
@@ -3911,6 +5579,20 @@
 
         localStorage.setItem("gliffoo_stats", JSON.stringify(s));
         localStorage.setItem("gliffoo_stats_date", hoje);
+
+        // Verifica conquistas após salvar stats atualizadas
+        const firstAtt = G.attempts[0];
+        checkAchievements({
+          won,
+          attempts: tentativas,
+          stats: s,
+          shared: false,
+          guess: G.attempts.length
+            ? G.attempts[G.attempts.length - 1].word
+            : null,
+          firstDec: firstAtt ? firstAtt.decoded.length : 0,
+          firstFnd: firstAtt ? firstAtt.found.length : 0,
+        });
       }
 
       function salvarEstado() {
@@ -4071,6 +5753,8 @@
           const el = document.getElementById("copied");
           el.style.display = "block";
           setTimeout(() => (el.style.display = "none"), 2500);
+          // Conquista: compartilhou resultado
+          queueAch("spread_the_word");
         });
       }
 
@@ -4109,18 +5793,36 @@
         const pct =
           s.jogados > 0 ? Math.round((s.vitorias / s.jogados) * 100) : 0;
 
-        // Cards principais
+        // Cards no passaporte (4 colunas)
         document.getElementById("stats-grid-main").innerHTML = `
     <div class="stat-card"><div class="stat-val">${s.jogados}</div><div class="stat-lbl">Jogados</div></div>
     <div class="stat-card"><div class="stat-val">${pct}%</div><div class="stat-lbl">Vitórias</div></div>
-    <div class="stat-card"><div class="stat-val">${s.streakAtual} 🔥</div><div class="stat-lbl">Sequência</div></div>
+    <div class="stat-card"><div class="stat-val">${s.streakAtual}🔥</div><div class="stat-lbl">Sequência</div></div>
     <div class="stat-card"><div class="stat-val">${s.streakMax}</div><div class="stat-lbl">Recorde</div></div>`;
+
+        // Glifo decorativo no passaporte
+        const pg = document.getElementById("passport-glyph");
+        if (pg) {
+          pg.innerHTML = "";
+          const stroke = glyphStroke();
+          for (let i = WN - 1; i >= 0; i--) {
+            const svg = makeSVG(
+              WL[i],
+              stroke,
+              "position:absolute;top:0;left:0;width:100%;height:100%;",
+            );
+            if (svg) pg.appendChild(svg);
+          }
+        }
 
         // Distribuição
         const distrib = document.getElementById("stats-distrib");
         distrib.innerHTML = "";
         const chaves = ["1", "2", "3", "4", "X"];
-        const max = Math.max(1, ...chaves.map((k) => s.distribuicao[k] || 0));
+        const maxVal = Math.max(
+          1,
+          ...chaves.map((k) => s.distribuicao[k] || 0),
+        );
         const tentativaAtual =
           G.done && G.won
             ? String(G.attempts.length)
@@ -4130,14 +5832,14 @@
 
         chaves.forEach((k) => {
           const val = s.distribuicao[k] || 0;
-          const pct = Math.round((val / max) * 100);
+          const pct2 = Math.round((val / maxVal) * 100);
           const isCur = k === tentativaAtual;
           const row = document.createElement("div");
           row.className = "distrib-row";
           row.innerHTML = `
       <div class="distrib-key">${k}</div>
       <div class="distrib-bar-wrap">
-        <div class="distrib-bar${isCur ? " cur" : ""}" style="width:${Math.max(pct, 8)}%">
+        <div class="distrib-bar${isCur ? " cur" : ""}" style="width:${Math.max(pct2, 8)}%">
           <span>${val}</span>
         </div>
       </div>`;
@@ -4148,8 +5850,663 @@
         document
           .getElementById("stats-modal")
           .setAttribute("aria-hidden", "false");
+
+        // Conquistas inline (renderiza DEPOIS de mostrar o modal)
+        requestAnimationFrame(() => {
+          renderConquistas();
+          const earned = loadAch();
+          const cnt = Object.keys(earned).length;
+          const countEl = document.getElementById("ach-count-tab");
+          if (countEl)
+            countEl.textContent =
+              cnt > 0 ? cnt + " / " + Object.keys(ACH_MAP).length : "";
+          // Garante scroll no topo APÓS renderizar tudo
+          const body = document.getElementById("stats-scroll-body");
+          if (body) body.scrollTop = 0;
+        });
+      }
+      // ═══════════════════════════════════════════════
+
+      // Paletas por seção
+      const ACH_PALETTES = {
+        violet: {
+          dark: "#1e1550",
+          mid: "#2d1f6e",
+          rim: "#7c5cff",
+          ribbon: "#6d44ff",
+          rdark: "#3d1fa8",
+          ray: "#c4b5fd",
+          dot: "#a78bfa",
+        },
+        orange: {
+          dark: "#431407",
+          mid: "#7c2d12",
+          rim: "#f97316",
+          ribbon: "#ea580c",
+          rdark: "#7c2d12",
+          ray: "#fed7aa",
+          dot: "#fb923c",
+        },
+        gold: {
+          dark: "#3a1f00",
+          mid: "#713f12",
+          rim: "#eab308",
+          ribbon: "#ca8a04",
+          rdark: "#713f12",
+          ray: "#fef08a",
+          dot: "#facc15",
+        },
+        blue: {
+          dark: "#0c1e4a",
+          mid: "#1e3a8a",
+          rim: "#3b82f6",
+          ribbon: "#2563eb",
+          rdark: "#1e3a8a",
+          ray: "#bfdbfe",
+          dot: "#60a5fa",
+        },
+        amber: {
+          dark: "#451a03",
+          mid: "#78350f",
+          rim: "#f59e0b",
+          ribbon: "#d97706",
+          rdark: "#92400e",
+          ray: "#fde68a",
+          dot: "#fbbf24",
+        },
+        pink: {
+          dark: "#2d0019",
+          mid: "#831843",
+          rim: "#ec4899",
+          ribbon: "#be185d",
+          rdark: "#500724",
+          ray: "#fbcfe8",
+          dot: "#f472b6",
+        },
+      };
+
+      // Ícones SVG inline (Lucide-style, 24×24)
+      const ACH_ICONS = {
+        key: '<path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>',
+        flame:
+          '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+        share:
+          '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>',
+        trophy:
+          '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>',
+        zap: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+        skull:
+          '<path d="M12 2C6.5 2 2 6.5 2 12v5h4v3h12v-3h4v-5c0-5.5-4.5-10-10-10z"/><line x1="8" y1="19" x2="8" y2="22"/><line x1="16" y1="19" x2="16" y2="22"/><circle cx="9" cy="10" r="1.5" fill="currentColor"/><circle cx="15" cy="10" r="1.5" fill="currentColor"/>',
+        sparkles:
+          '<path d="m12 3-1.9 5.8a2 2 0 0 1-1.287 1.288L3 12l5.8 1.9a2 2 0 0 1 1.288 1.287L12 21l1.9-5.8a2 2 0 0 1 1.287-1.288L21 12l-5.8-1.9a2 2 0 0 1-1.288-1.287L12 3z"/><path d="M5 3v4"/><path d="M3 5h4"/><path d="M19 17v4"/><path d="M17 19h4"/>',
+        crown: '<path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/>',
+        compass:
+          '<circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>',
+        calendar:
+          '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+        book: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
+        landmark:
+          '<line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/>',
+        coffee:
+          '<path d="M17 8h1a4 4 0 0 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/>',
+        rocket:
+          '<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>',
+        hourglass:
+          '<path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/>',
+        shuffle:
+          '<path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l6.1-8.6c.7-1.1 2-1.7 3.3-1.7H22"/><path d="m18 2 4 4-4 4"/><path d="M2 6h1.9c1.5 0 2.9.9 3.5 2.2"/><path d="M22 18h-5.9c-1.3 0-2.5-.7-3.2-1.8l-.8-1.3"/><path d="m18 14 4 4-4 4"/>',
+        beach:
+          '<path d="M14 13V8.5C14 7 15 7 15 5a3 3 0 0 0-6 0c0 2 1 2 1 3.5V13"/><path d="M20 15.5a2.5 2.5 0 0 0-2.5-2.5h-11A2.5 2.5 0 0 0 4 15.5V17a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1z"/><path d="M5 22h14"/>',
+        clover:
+          '<path d="M16.17 7.83 2 22"/><path d="M4.02 12a2.827 2.827 0 1 1 3.81-4.17A2.827 2.827 0 1 1 12 4.02a2.827 2.827 0 1 1 4.17 3.81A2.827 2.827 0 1 1 19.98 12a2.827 2.827 0 1 1-3.81 4.17A2.827 2.827 0 1 1 12 19.98a2.827 2.827 0 1 1-4.17-3.81A1 1 0 1 1 4 12"/><path d="m7.83 7.83 8.34 8.34"/>',
+        moon: '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>',
+        sun: '<circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="7.05" y2="7.05"/><line x1="16.95" y1="16.95" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="7.05" y2="16.95"/><line x1="16.95" y1="7.05" x2="19.78" y2="4.22"/>',
+        swords:
+          '<polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" y1="19" x2="19" y2="13"/><line x1="16" y1="16" x2="20" y2="20"/><line x1="19" y1="21" x2="21" y2="19"/>',
+        zzz: '<path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/>',
+        sandwich:
+          '<path d="M12 16H4a2 2 0 1 1 0-4h16a2 2 0 1 1 0 4h-4.25"/><path d="M5 12a2 2 0 0 1-2-2 9 7 0 0 1 18 0 2 2 0 0 1-2 2"/><path d="M5 16a2 2 0 0 0-2 2 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 2 2 0 0 0-2-2"/><path d="m6.67 12 6.13 4.6a2 2 0 0 0 2.8-.4l3.15-4.2"/>',
+        mirror:
+          '<circle cx="12" cy="10" r="8"/><path d="M12 18v4"/><path d="M7 22h10"/>',
+        check2: '<path d="M18 6 7 17l-5-5"/><path d="m22 10-7.5 7.5L13 16"/>',
+      };
+
+      // Definição das conquistas
+      const ACHIEVEMENTS = [
+        {
+          section: "Primeiros Passos",
+          palette: "violet",
+          items: [
+            {
+              id: "first_decode",
+              name: "Primeira Decodificação",
+              icon: "key",
+              desc: "Decodifique seu primeiro Glifo",
+            },
+            {
+              id: "on_a_roll",
+              name: "Embalo",
+              icon: "flame",
+              desc: "3 vitórias consecutivas",
+            },
+            {
+              id: "spread_the_word",
+              name: "Espalhe a Palavra",
+              icon: "share",
+              desc: "Compartilhe seu resultado",
+            },
+          ],
+        },
+        {
+          section: "Sequências",
+          palette: "orange",
+          items: [
+            {
+              id: "streak_7",
+              name: "Guerreiro Semanal",
+              icon: "trophy",
+              desc: "7 vitórias consecutivas",
+            },
+            {
+              id: "streak_30",
+              name: "Devoto do Mês",
+              icon: "flame",
+              desc: "30 vitórias consecutivas",
+            },
+            {
+              id: "streak_100",
+              name: "Centenário",
+              icon: "zap",
+              desc: "100 vitórias consecutivas",
+            },
+            {
+              id: "streak_365",
+              name: "Imortal",
+              icon: "skull",
+              desc: "365 vitórias consecutivas",
+            },
+          ],
+        },
+        {
+          section: "Glifos Dourados",
+          palette: "gold",
+          items: [
+            {
+              id: "golden_touch",
+              name: "Toque de Midas",
+              icon: "sparkles",
+              desc: "Vença sem usar a Chave Decodificadora",
+            },
+            {
+              id: "golden_5",
+              name: "Midas",
+              icon: "sparkles",
+              desc: "5 Glifos Dourados decodificados",
+            },
+            {
+              id: "golden_week",
+              name: "Hat Trick",
+              icon: "trophy",
+              desc: "3 Glifos Dourados consecutivos",
+            },
+            {
+              id: "golden_30",
+              name: "Dourado",
+              icon: "crown",
+              desc: "30 Glifos Dourados decodificados",
+            },
+          ],
+        },
+        {
+          section: "Dedicação",
+          palette: "blue",
+          items: [
+            {
+              id: "games_10",
+              name: "Começando Bem",
+              icon: "compass",
+              desc: "10 Glifos decodificados",
+            },
+            {
+              id: "games_50",
+              name: "Frequentador",
+              icon: "calendar",
+              desc: "50 Glifos decodificados",
+            },
+            {
+              id: "games_100",
+              name: "Devoto",
+              icon: "book",
+              desc: "100 Glifos decodificados",
+            },
+            {
+              id: "games_365",
+              name: "Obcecado",
+              icon: "landmark",
+              desc: "365 Glifos decodificados",
+            },
+            {
+              id: "coffee_break",
+              name: "Café da Manhã",
+              icon: "coffee",
+              desc: "Decodifique antes das 10h — 10 vezes",
+            },
+            {
+              id: "fast_break",
+              name: "Pontualidade",
+              icon: "rocket",
+              desc: "Jogue na 1ª hora após a virada — 10 vezes",
+            },
+          ],
+        },
+        {
+          section: "Momentos Especiais",
+          palette: "amber",
+          hideDesc: true,
+          items: [
+            {
+              id: "comeback_kid",
+              name: "Virada",
+              icon: "hourglass",
+              desc: "Decodifique na última tentativa",
+            },
+            {
+              id: "echo",
+              name: "Eco",
+              icon: "shuffle",
+              desc: "Tente um anagrama da resposta",
+            },
+            {
+              id: "weekend_warrior",
+              name: "Fim de Semana",
+              icon: "beach",
+              desc: "Decodifique sábado E domingo na mesma semana",
+            },
+            {
+              id: "lucky_7",
+              name: "Lucky 7",
+              icon: "clover",
+              desc: "Decodifique uma palavra de 7 letras",
+            },
+          ],
+        },
+        {
+          section: "Peculiaridades",
+          palette: "pink",
+          hideDesc: true,
+          items: [
+            {
+              id: "night_owl",
+              name: "Coruja",
+              icon: "moon",
+              desc: "Decodifique após meia-noite",
+            },
+            {
+              id: "early_bird",
+              name: "Madrugador",
+              icon: "sun",
+              desc: "Decodifique antes das 7h",
+            },
+            {
+              id: "insomniac",
+              name: "Insone",
+              icon: "zzz",
+              desc: "Decodifique entre 2h e 4h da manhã",
+            },
+            {
+              id: "persistent",
+              name: "Persistente",
+              icon: "swords",
+              desc: "Vença após 1ª tentativa sem nenhuma letra",
+            },
+            {
+              id: "sandwich",
+              name: "Sanduíche",
+              icon: "sandwich",
+              desc: "Acerte só a 1ª e a última letra na 1ª tentativa",
+            },
+            {
+              id: "palindrome",
+              name: "Espelho",
+              icon: "mirror",
+              desc: "Tente um palíndromo",
+            },
+            {
+              id: "double_trouble",
+              name: "Duplo Trouble",
+              icon: "check2",
+              desc: "Decodifique uma palavra com letras duplas",
+            },
+          ],
+        },
+      ];
+
+      const ACH_MAP = {};
+      ACHIEVEMENTS.forEach((s) =>
+        s.items.forEach((a) => {
+          ACH_MAP[a.id] = {
+            ...a,
+            section: s.section,
+            palette: s.palette,
+            hideDesc: s.hideDesc,
+          };
+        }),
+      );
+      const ACH_TOTAL = Object.keys(ACH_MAP).length;
+      const ACH_KEY = "gliffoo_ach_v1";
+
+      function loadAch() {
+        try {
+          return JSON.parse(localStorage.getItem(ACH_KEY)) || {};
+        } catch {
+          return {};
+        }
+      }
+      function saveAch(earned) {
+        localStorage.setItem(ACH_KEY, JSON.stringify(earned));
       }
 
+      // ── Popup toast ──
+      let _achPopTimer = null;
+      let _achQueue = [];
+      let _achShowing = false;
+
+      function showAchPopup(ach) {
+        document.getElementById("ach-popup-icon").textContent =
+          ach.emoji || "🏅";
+        document.getElementById("ach-popup-name").textContent = ach.name;
+        document.getElementById("ach-popup-desc").textContent = ach.desc;
+        const popup = document.getElementById("ach-popup");
+        // Confetti
+        const colors = ["#f5a623", "#9b8fe8", "#5bbfa0", "#e87a6b", "#6baee8"];
+        for (let i = 0; i < 22; i++) {
+          const p = document.createElement("div");
+          const sz = 5 + Math.random() * 7;
+          p.style.cssText = `position:fixed;width:${sz}px;height:${sz}px;background:${colors[i % 5]};border-radius:${Math.random() > 0.5 ? "50%" : "2px"};bottom:${100 + Math.random() * 80}px;left:${30 + Math.random() * 40}%;pointer-events:none;z-index:400;animation:confPop 0.9s ease-out forwards;--tx:${(Math.random() - 0.5) * 140}px;--ty:${-50 - Math.random() * 80}px;animation-delay:${Math.random() * 0.25}s;`;
+          document.body.appendChild(p);
+          setTimeout(() => p.remove(), 1300);
+        }
+        if (_achPopTimer) clearTimeout(_achPopTimer);
+        popup.classList.add("show");
+        _achPopTimer = setTimeout(() => popup.classList.remove("show"), 3800);
+      }
+
+      function queueAch(id) {
+        const earned = loadAch();
+        if (earned[id]) return;
+        earned[id] = Date.now();
+        saveAch(earned);
+        // Emoji para popup
+        const emojiMap = {
+          first_decode: "🔑",
+          on_a_roll: "🔥",
+          spread_the_word: "📤",
+          streak_7: "🏅",
+          streak_30: "🪵",
+          streak_100: "⚡",
+          streak_365: "💀",
+          golden_touch: "✨",
+          golden_5: "🥇",
+          golden_week: "🎩",
+          golden_30: "👑",
+          games_10: "🧭",
+          games_50: "📅",
+          games_100: "📖",
+          games_365: "🏛️",
+          coffee_break: "☕",
+          fast_break: "👟",
+          comeback_kid: "⏳",
+          echo: "🔀",
+          weekend_warrior: "🏖️",
+          lucky_7: "🍀",
+          night_owl: "🌙",
+          early_bird: "🌅",
+          insomniac: "😴",
+          persistent: "⚔️",
+          sandwich: "🥪",
+          palindrome: "🪞",
+          double_trouble: "✌️",
+        };
+        const ach = { ...ACH_MAP[id], emoji: emojiMap[id] || "🏅" };
+        _achQueue.push(ach);
+        processAchQueue();
+      }
+
+      function processAchQueue() {
+        if (_achShowing || !_achQueue.length) return;
+        _achShowing = true;
+        const ach = _achQueue.shift();
+        setTimeout(() => {
+          showAchPopup(ach);
+          setTimeout(() => {
+            _achShowing = false;
+            processAchQueue();
+          }, 4300);
+        }, 700);
+      }
+
+      // ── Verificação de conquistas ──
+      function checkAchievements({
+        won,
+        attempts,
+        stats,
+        shared,
+        guess,
+        firstDec,
+        firstFnd,
+      }) {
+        const hour = new Date().getHours();
+
+        // ── Primeiros Passos ──
+        if (won && stats.vitorias === 1) queueAch("first_decode");
+        if (won && stats.streakAtual >= 3) queueAch("on_a_roll");
+        if (shared) queueAch("spread_the_word");
+
+        // ── Sequências ──
+        if (won && stats.streakAtual >= 7) queueAch("streak_7");
+        if (won && stats.streakAtual >= 30) queueAch("streak_30");
+        if (won && stats.streakAtual >= 100) queueAch("streak_100");
+        if (won && stats.streakAtual >= 365) queueAch("streak_365");
+
+        // ── Glifos Dourados (sem usar a chave) ──
+        if (won && !G.keyPos.size) {
+          queueAch("golden_touch");
+          const gs = loadGoldenStats();
+          gs.total++;
+          gs.consec++;
+          saveGoldenStats(gs);
+          if (gs.total >= 5) queueAch("golden_5");
+          if (gs.total >= 30) queueAch("golden_30");
+          if (gs.consec >= 3) queueAch("golden_week");
+        } else if (won && G.keyPos.size) {
+          const gs = loadGoldenStats();
+          gs.consec = 0;
+          saveGoldenStats(gs);
+        }
+
+        // ── Dedicação ──
+        if (won && stats.jogados >= 10) queueAch("games_10");
+        if (won && stats.jogados >= 50) queueAch("games_50");
+        if (won && stats.jogados >= 100) queueAch("games_100");
+        if (won && stats.jogados >= 365) queueAch("games_365");
+        if (won && hour < 10) bumpTimedAch("coffee_break", 10);
+        if (won && hour === 0) bumpTimedAch("fast_break", 10);
+
+        // ── Momentos Especiais ──
+        if (won && attempts === 4) queueAch("comeback_kid");
+        if (won && WN === 7) queueAch("lucky_7");
+        if (guess && achIsAnagram(guess, WORD)) queueAch("echo");
+        if (won && achCheckWeekend()) queueAch("weekend_warrior");
+
+        // ── Peculiaridades ──
+        if (won && (hour >= 23 || hour < 1)) queueAch("night_owl");
+        if (won && hour >= 2 && hour < 4) queueAch("insomniac");
+        if (won && hour < 7) queueAch("early_bird");
+        if (won && firstDec === 0 && firstFnd === 0 && attempts > 1)
+          queueAch("persistent");
+        if (guess && achIsSandwich(guess)) queueAch("sandwich");
+        if (guess && achIsPalindrome(guess)) queueAch("palindrome");
+        if (won && achHasDouble(WORD)) queueAch("double_trouble");
+      }
+
+      // ── Helpers de conquistas ──
+      const GOLDEN_KEY = "gliffoo_gold_v1";
+      function loadGoldenStats() {
+        try {
+          return (
+            JSON.parse(localStorage.getItem(GOLDEN_KEY)) || {
+              total: 0,
+              consec: 0,
+            }
+          );
+        } catch {
+          return { total: 0, consec: 0 };
+        }
+      }
+      function saveGoldenStats(g) {
+        localStorage.setItem(GOLDEN_KEY, JSON.stringify(g));
+      }
+
+      function bumpTimedAch(id, threshold) {
+        const k = "gliffoo_timed_" + id;
+        const n = parseInt(localStorage.getItem(k) || "0") + 1;
+        localStorage.setItem(k, n);
+        if (n >= threshold) queueAch(id);
+      }
+
+      function achIsAnagram(a, b) {
+        return (
+          a !== b &&
+          a.length === b.length &&
+          a.split("").sort().join("") === b.split("").sort().join("")
+        );
+      }
+      function achIsPalindrome(w) {
+        return w.length > 2 && w === w.split("").reverse().join("");
+      }
+      function achIsSandwich(g) {
+        if (g.length < 3) return false;
+        return (
+          g[0] === WORD[0] &&
+          g[g.length - 1] === WORD[g.length - 1] &&
+          g
+            .slice(1, -1)
+            .split("")
+            .every((l, i) => l !== WORD[i + 1])
+        );
+      }
+      function achHasDouble(w) {
+        for (let i = 0; i < w.length - 1; i++)
+          if (w[i] === w[i + 1]) return true;
+        return false;
+      }
+      function achCheckWeekend() {
+        const k = "gliffoo_wknd_v1";
+        const now = new Date(),
+          dow = now.getDay();
+        const wk = achWeekNum(now);
+        try {
+          const d = JSON.parse(localStorage.getItem(k)) || {};
+          if (dow === 6) d[wk + "_s"] = true;
+          if (dow === 0) d[wk + "_u"] = true;
+          localStorage.setItem(k, JSON.stringify(d));
+          return !!(d[wk + "_s"] && d[wk + "_u"]);
+        } catch {
+          return false;
+        }
+      }
+      function achWeekNum(d) {
+        const dt = new Date(
+          Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()),
+        );
+        dt.setUTCDate(dt.getUTCDate() + 4 - (dt.getUTCDay() || 7));
+        const ys = new Date(Date.UTC(dt.getUTCFullYear(), 0, 1));
+        return Math.ceil(((dt - ys) / 86400000 + 1) / 7);
+      }
+
+      // ── Render das medalhas no modal ──
+      function makeCoinSVG(iconKey, p) {
+        const paths = ACH_ICONS[iconKey] || ACH_ICONS.trophy;
+        const rays = [
+          0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 202.5, 225, 247.5, 270,
+          292.5, 315, 337.5,
+        ]
+          .map((a) => {
+            const r = (a * Math.PI) / 180,
+              x1 = 36 + 28.2 * Math.cos(r),
+              y1 = 36 + 28.2 * Math.sin(r),
+              x2 = 36 + 34 * Math.cos(r),
+              y2 = 36 + 34 * Math.sin(r);
+            return `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${p.ray}" stroke-width="1.2" stroke-linecap="round"/>`;
+          })
+          .join("");
+        return `<svg viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="36" cy="36" r="34" fill="${p.dark}" stroke="${p.rim}" stroke-width="3.5"/>
+    <g opacity="0.4">${rays}</g>
+    <circle cx="36" cy="36" r="28.22" fill="none" stroke="${p.rim}" stroke-width="0.8" stroke-dasharray="3.5 2.5" opacity="0.45"/>
+    <circle cx="36" cy="36" r="26.18" fill="${p.mid}"/>
+    <circle cx="36" cy="36" r="26.18" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1.2"/>
+    <g transform="translate(22,22)"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="rgba(255,255,255,0.95)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${paths}</svg></g>
+  </svg>`;
+      }
+
+      function makeRibbonHTML(name, p) {
+        return `<div class="ach-ribbon">
+    <span class="ach-ribbon-text" style="color:${p.ribbon}">${name}</span>
+  </div>`;
+      }
+
+      function renderConquistas() {
+        const earned = loadAch();
+        const earnedCount = Object.keys(earned).length;
+        const list = document.getElementById("conquistas-list");
+        const total = document.getElementById("ach-total-line");
+        const tab = document.getElementById("ach-count-tab");
+        if (tab) tab.textContent = earnedCount > 0 ? `${earnedCount}` : "";
+        if (!list) return;
+        list.innerHTML = "";
+
+        ACHIEVEMENTS.forEach((sec) => {
+          const p = ACH_PALETTES[sec.palette];
+          const div = document.createElement("div");
+          div.className = "ach-section";
+          const hdr = document.createElement("div");
+          hdr.className = "ach-section-header";
+          const secEarned = sec.items.filter((a) => earned[a.id]).length;
+          hdr.innerHTML = `<div class="ach-section-dot" style="background:${p.dot}"></div>
+      <div class="ach-section-label">${sec.section}</div>
+      <div class="ach-section-line"></div>
+      <div class="ach-count-badge" style="color:${p.dot}">${secEarned}/${sec.items.length}</div>`;
+          div.appendChild(hdr);
+          const grid = document.createElement("div");
+          grid.className = "ach-grid";
+          sec.items.forEach((a) => {
+            const isEarned = !!earned[a.id];
+            const badge = document.createElement("div");
+            badge.className = "ach-badge" + (isEarned ? "" : " locked");
+            const desc = !isEarned && sec.hideDesc ? "???" : a.desc;
+            const descClass =
+              !isEarned && sec.hideDesc ? "ach-desc hidden-desc" : "ach-desc";
+            badge.style.setProperty("--ach-color", p.ribbon);
+            badge.innerHTML = `
+        <div class="ach-coin${isEarned ? "" : " locked"}">${makeCoinSVG(a.icon, p)}</div>
+        <div class="ach-badge-text">
+          ${makeRibbonHTML(a.name, p)}
+          <div class="${descClass}">${desc}</div>
+        </div>`;
+            grid.appendChild(badge);
+          });
+          div.appendChild(grid);
+          list.appendChild(div);
+        });
+
+        if (total)
+          total.innerHTML = `<strong>${earnedCount}</strong> de <strong>${ACH_TOTAL}</strong> conquistas desbloqueadas`;
+      }
+
+      // switchStatsTab: removido — view única
+
+      // ═══════════════════════════════════════════════
       // INIT
       carregarEstado();
       buildAtts();
@@ -4169,10 +6526,10 @@
           .toUpperCase(); // "4 MAR"
         const diaSemana = hoje.getDay();
         const CICLO_LABELS = {
-          facil: "Fácil",
-          medio: "Médio",
-          dificil: "Difícil",
-          muito_dificil: "Muito Difícil",
+          facil: "Fácil · 4 letras",
+          medio: "Médio · 5 letras",
+          dificil: "Difícil · 6 letras",
+          muito_dificil: "Muito Difícil · 7 letras",
         };
         const nivel = CICLO_DIF[diaSemana];
         const label = CICLO_LABELS[nivel];
