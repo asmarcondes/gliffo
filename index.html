@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
     <title>glif.foo — Decodifique a Palavra</title>
 
@@ -79,10 +79,6 @@
       html {
         overscroll-behavior: none;
       }
-      body {
-        overscroll-behavior: none;
-      }
-
       /* ── SCROLLBAR ── */
       ::-webkit-scrollbar {
         width: 6px;
@@ -183,6 +179,7 @@
           background 0.25s,
           color 0.25s;
         -webkit-font-smoothing: antialiased;
+        overscroll-behavior: none;
       }
 
       /* ══════════════════════════════════════════
@@ -192,7 +189,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0 1.25rem;
+        padding: 0 2rem;
         height: 58px;
         border-bottom: 1px solid var(--border);
         background: var(--surface);
@@ -203,7 +200,7 @@
 
       @media (min-width: 768px) {
         header {
-          padding: 0 calc((100% - 1060px) / 2 + 1.25rem);
+          padding: 0 max(2rem, calc((100% - 1060px) / 2 + 2rem));
         }
       }
 
@@ -245,7 +242,8 @@
         align-items: center;
         gap: 7px;
         flex: 1;
-        padding-left: 10px;
+        justify-content: center;
+        padding: 0 8px;
       }
       .header-date {
         font-size: 0.65rem;
@@ -265,24 +263,44 @@
         border: 1px solid;
       }
       .dif-badge.facil {
-        color: #5bbfa0;
-        background: rgba(91, 191, 160, 0.1);
-        border-color: rgba(91, 191, 160, 0.3);
+        color: #1f7a5e;
+        background: #e6f4ef;
+        border-color: #b2ddd1;
       }
       .dif-badge.medio {
-        color: var(--amber-400);
-        background: rgba(245, 166, 35, 0.1);
-        border-color: rgba(245, 166, 35, 0.3);
+        color: #92600a;
+        background: #fef3d8;
+        border-color: #f5d27a;
       }
       .dif-badge.dificil {
-        color: #e87a6b;
-        background: rgba(232, 122, 107, 0.1);
-        border-color: rgba(232, 122, 107, 0.3);
+        color: #c0392b;
+        background: #fdecea;
+        border-color: #f5b7b1;
       }
       .dif-badge.muito_dificil {
-        color: #9b8fe8;
-        background: rgba(155, 143, 232, 0.1);
-        border-color: rgba(155, 143, 232, 0.3);
+        color: #7d3c98;
+        background: #f3eefb;
+        border-color: #d4b8ea;
+      }
+      [data-theme="dark"] .dif-badge.facil {
+        color: #5bbfa0;
+        background: #0d2e26;
+        border-color: #1a4d3e;
+      }
+      [data-theme="dark"] .dif-badge.medio {
+        color: var(--amber-400);
+        background: #2e2008;
+        border-color: #5a3f10;
+      }
+      [data-theme="dark"] .dif-badge.dificil {
+        color: #e87a6b;
+        background: #2e100d;
+        border-color: #5a2018;
+      }
+      [data-theme="dark"] .dif-badge.muito_dificil {
+        color: #b07fd8;
+        background: #1e1030;
+        border-color: #42246a;
       }
 
       .hbtns {
@@ -509,11 +527,14 @@
         display: flex;
         gap: 7px;
         justify-content: center;
+        align-items: center;
       }
       .lbox {
         flex: 1;
         max-width: var(--lbox-max, 76px);
-        aspect-ratio: 1;
+        width: var(--lbox-max, 76px);
+        height: 76px;
+        flex-shrink: 0;
         border-radius: var(--lbox-rad, 11px);
         border: 1.5px solid var(--border2);
         background: var(--surface2);
@@ -536,12 +557,10 @@
         border-color: var(--amber-400);
         box-shadow: 0 0 0 2.5px rgba(245, 166, 35, 0.18);
       }
-      .lbox.swap-sel {
-        border-color: var(--amber-400);
-        background: rgba(245, 166, 35, 0.13);
-        box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.3);
-        transform: scale(1.07);
-        z-index: 2;
+      .lboxes.invalid .lbox.active {
+        border-color: rgba(245, 166, 35, 0.9);
+        background: rgba(245, 166, 35, 0.08);
+        box-shadow: 0 0 0 2.5px rgba(245, 166, 35, 0.35);
       }
       .lbox.decoded {
         border-color: transparent;
@@ -552,6 +571,14 @@
         bottom: 3px;
         right: 4px;
         font-size: 0.42rem;
+      }
+      .lboxes.invalid .lbox:not(.decoded) {
+        border-color: #e87a6b;
+        background: rgba(232, 122, 107, 0.07);
+      }
+      [data-theme="light"] .lboxes.invalid .lbox:not(.decoded) {
+        border-color: #c0392b;
+        background: rgba(192, 57, 43, 0.06);
       }
 
       /* Feedback */
@@ -580,17 +607,34 @@
         border-color: rgba(232, 148, 10, 0.25);
       }
       .fbmsg.err {
-        background: rgba(192, 57, 43, 0.08);
-        color: #c0392b;
-        border: 1px solid rgba(192, 57, 43, 0.15);
-      }
-      [data-theme="light"] .fbmsg.err {
         background: #fdecea;
+        color: #c0392b;
+        border: 1px solid #f5b7b1;
+      }
+      [data-theme="dark"] .fbmsg.err {
+        background: #2e100d;
+        border-color: #5a2018;
+        color: #e87a6b;
       }
       .fbmsg.key {
-        background: rgba(155, 143, 232, 0.1);
-        color: #9b8fe8;
-        border: 1px solid rgba(155, 143, 232, 0.2);
+        background: #f3eefb;
+        color: #7d3c98;
+        border: 1px solid #d4b8ea;
+      }
+      [data-theme="dark"] .fbmsg.key {
+        background: #1e1030;
+        border-color: #42246a;
+        color: #b07fd8;
+      }
+      .fbmsg.warn {
+        background: rgba(245, 166, 35, 0.08);
+        color: var(--amber-600, #e8940a);
+        border: 1px solid rgba(245, 166, 35, 0.25);
+      }
+      [data-theme="dark"] .fbmsg.warn {
+        background: rgba(245, 166, 35, 0.06);
+        color: var(--amber-400, #f5c842);
+        border-color: rgba(245, 166, 35, 0.2);
       }
 
       /* Decode button */
@@ -1563,6 +1607,8 @@
         }
         .lbox {
           border-radius: 9px;
+          width: auto;
+          flex-shrink: 1;
         }
         .logo-text,
         .logo-dot {
@@ -1957,6 +2003,113 @@
       .ach-total strong {
         color: var(--amber-400);
       }
+
+      /* ══ DEBUG PANEL ══ */
+      #debug-panel {
+        position: fixed;
+        bottom: 64px;
+        right: 16px;
+        z-index: 9999;
+        background: var(--bg2);
+        border: 1.5px solid var(--amber-400);
+        border-radius: 14px;
+        padding: 14px 16px;
+        min-width: 230px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.82rem;
+        color: var(--text1);
+        display: none;
+      }
+      #debug-panel.open {
+        display: block;
+      }
+      #debug-panel h4 {
+        margin: 0 0 10px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--amber-400);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      #debug-panel .dbg-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 6px;
+      }
+      #debug-panel .dbg-row label {
+        color: var(--text3);
+        font-size: 0.75rem;
+        min-width: 52px;
+      }
+      .dbg-word {
+        font-family: "DM Mono", monospace;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--amber-400);
+        letter-spacing: 0.15em;
+        background: rgba(245, 166, 35, 0.1);
+        padding: 2px 8px;
+        border-radius: 6px;
+      }
+      .dbg-btns {
+        display: flex;
+        gap: 6px;
+        margin-top: 8px;
+      }
+      #debug-panel button {
+        flex: 1;
+        padding: 6px 0;
+        border: 1px solid var(--amber-400);
+        border-radius: 7px;
+        background: transparent;
+        color: var(--amber-400);
+        font-size: 0.78rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+      #debug-panel button:hover {
+        background: rgba(245, 166, 35, 0.12);
+      }
+      #debug-panel button.dbg-close {
+        border-color: var(--text3);
+        color: var(--text3);
+        flex: 0;
+        padding: 6px 10px;
+      }
+      .dbg-meta {
+        font-size: 0.7rem;
+        color: var(--text3);
+        margin-top: 6px;
+        text-align: center;
+      }
+      #debug-toggle {
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+        z-index: 10000;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--bg2);
+        border: 1.5px solid var(--amber-400);
+        color: var(--amber-400);
+        font-size: 1rem;
+        cursor: pointer;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        transition: transform 0.15s;
+      }
+      #debug-toggle:hover {
+        transform: scale(1.1);
+      }
+      body.debug-mode #debug-toggle {
+        display: flex;
+      }
     </style>
   </head>
   <body>
@@ -1992,6 +2145,19 @@
             <circle cx="12" cy="12" r="9" />
             <path d="M9.5 9a2.5 2.5 0 015 0c0 2-2.5 2.5-2.5 4" />
             <circle cx="12" cy="17" r=".5" fill="currentColor" />
+          </svg>
+        </button>
+        <button
+          class="hbtn"
+          id="hbtn-debug"
+          onclick="window._toggleDebug && window._toggleDebug()"
+          title="Modo Debug"
+          style="display: none"
+        >
+          <svg viewBox="0 0 24 24" stroke-width="1.8">
+            <polygon points="12,2 22,20 2,20" />
+            <line x1="12" y1="9" x2="12" y2="14" />
+            <circle cx="12" cy="17.5" r="0.8" fill="currentColor" />
           </svg>
         </button>
         <button class="hbtn" onclick="toggleTheme()" title="Alternar tema">
@@ -2055,14 +2221,14 @@
     </footer>
 
     <!-- ══ ACHIEVEMENT POPUP ══ -->
-    <div id="ach-popup" role="status" aria-live="polite">
+    <output id="ach-popup" aria-live="polite">
       <div class="ach-popup-icon" id="ach-popup-icon">🏅</div>
       <div class="ach-popup-text">
         <div class="ach-popup-label">Conquista desbloqueada!</div>
         <div class="ach-popup-name" id="ach-popup-name"></div>
         <div class="ach-popup-desc" id="ach-popup-desc"></div>
       </div>
-    </div>
+    </output>
 
     <!-- ══ KEY MODAL ══ -->
     <div
@@ -2098,13 +2264,25 @@
     </div>
 
     <!-- ══ WIN MODAL ══ -->
-    <div class="moverlay" id="win-modal" aria-hidden="true">
+    <div
+      class="moverlay"
+      id="win-modal"
+      aria-hidden="true"
+      onclick="handleOverlayClick(event, 'win-modal')"
+    >
       <div
         class="modal"
         role="dialog"
         aria-modal="true"
         aria-labelledby="win-modal-title"
       >
+        <button
+          class="mclose"
+          onclick="closeM('win-modal')"
+          aria-label="Fechar"
+        >
+          ✕
+        </button>
         <div class="modal-title" id="win-modal-title">🎉 Decodificado!</div>
         <div class="stats-grid" id="win-stats"></div>
         <div class="mdivider"></div>
@@ -2120,13 +2298,25 @@
     </div>
 
     <!-- ══ LOSE MODAL ══ -->
-    <div class="moverlay" id="lose-modal" aria-hidden="true">
+    <div
+      class="moverlay"
+      id="lose-modal"
+      aria-hidden="true"
+      onclick="handleOverlayClick(event, 'lose-modal')"
+    >
       <div
         class="modal"
         role="dialog"
         aria-modal="true"
         aria-labelledby="lose-modal-title"
       >
+        <button
+          class="mclose"
+          onclick="closeM('lose-modal')"
+          aria-label="Fechar"
+        >
+          ✕
+        </button>
         <div class="modal-title" id="lose-modal-title">Não foi dessa vez</div>
         <p class="modal-sub">A palavra era:</p>
         <div
@@ -4959,16 +5149,93 @@
       };
 
       // Ciclo semanal de dificuldade (0=Dom, 1=Seg, ..., 6=Sáb)
-      // Dom=4L | Seg/Ter=5L | Qua/Qui=6L | Sex/Sáb=7L
+      // Inspirado no glyph.today: dificuldade baseada em sobreposição visual dos shapes
+      // Dom = único dia de 7 letras (mais difícil); Seg = mais fácil
+      // Score visual: ~40 (fácil) → ~75 (muito difícil)
       const CICLO_DIF = [
-        "facil",
-        "medio",
-        "medio",
-        "dificil",
-        "dificil",
-        "muito_dificil",
-        "muito_dificil",
+        "muito_dificil", // Dom — 7 letras, score alto
+        "facil", // Seg — score baixo, começo de semana leve
+        "medio", // Ter
+        "medio", // Qua
+        "dificil", // Qui
+        "dificil", // Sex
+        "dificil", // Sáb
       ];
+
+      // Faixas de score visual por nível (calibradas no modelo do glyph.today)
+      const SCORE_RANGE = {
+        facil: { min: 40, max: 56, letras: [4, 5] },
+        medio: { min: 54, max: 62, letras: [5, 6] },
+        dificil: { min: 60, max: 68, letras: [5, 6] },
+        muito_dificil: { min: 62, max: 80, letras: [7] },
+      };
+
+      // ═══════════════════════════════════════════════
+      // SCORE DE DIFICULDADE VISUAL
+      // Baseado na sobreposição dos shapes SVG entre letras únicas da palavra
+      // Letras repetidas reduzem o score (glifo mais simples de ler)
+      // Escala aproximada: 40 (fácil) → 75 (muito difícil)
+      // ═══════════════════════════════════════════════
+      const LETTER_SEGS = {
+        A: new Set(["diag_L", "diag_R", "h_mid"]),
+        B: new Set(["v_L", "h_T", "h_M", "h_B", "arc_TR", "arc_BR"]),
+        C: new Set(["h_T", "v_L", "h_B"]),
+        D: new Set(["v_L", "h_T", "h_B", "arc_R"]),
+        E: new Set(["v_L", "h_T", "h_M", "h_B"]),
+        F: new Set(["v_L", "h_T", "h_M"]),
+        G: new Set(["v_L", "h_T", "h_B", "arc_R", "h_M_R"]),
+        H: new Set(["v_L", "v_R", "h_M"]),
+        I: new Set(["h_T", "v_C", "h_B"]),
+        J: new Set(["v_R", "h_B", "v_L_low"]),
+        K: new Set(["v_L", "h_M", "diag_TR", "diag_BR"]),
+        L: new Set(["v_L", "h_B"]),
+        M: new Set(["v_L", "v_R", "diag_CL", "diag_CR"]),
+        N: new Set(["v_L", "v_R", "diag_C"]),
+        O: new Set(["arc_all"]),
+        P: new Set(["v_L", "h_T", "h_M", "arc_TR"]),
+        Q: new Set(["arc_all", "diag_BR"]),
+        R: new Set(["v_L", "h_T", "h_M", "arc_TR", "diag_BR"]),
+        S: new Set(["h_T", "v_L_up", "h_M", "v_R_dn", "h_B"]),
+        T: new Set(["h_T", "v_C"]),
+        U: new Set(["v_L", "v_R", "h_B"]),
+        V: new Set(["diag_L", "diag_R"]),
+        W: new Set(["v_L", "v_R", "diag_CL", "diag_CR"]),
+        X: new Set(["diag_L", "diag_R_inv"]),
+        Y: new Set(["diag_L_up", "diag_R_up", "v_C_dn"]),
+        Z: new Set(["h_T", "diag_C", "h_B"]),
+      };
+
+      function scoreVisual(word) {
+        const all = word
+          .toUpperCase()
+          .split("")
+          .filter((l) => LETTER_SEGS[l]);
+        // Letras únicas (preservando a primeira ocorrência)
+        const unicas = [...new Set(all)];
+        const n = unicas.length;
+        if (n < 2) return 50;
+
+        // Jaccard entre cada par de letras únicas
+        let somaOverlap = 0,
+          pares = 0;
+        for (let i = 0; i < n; i++) {
+          for (let j = i + 1; j < n; j++) {
+            const a = LETTER_SEGS[unicas[i]],
+              b = LETTER_SEGS[unicas[j]];
+            const inter = [...a].filter((x) => b.has(x)).length;
+            const union = new Set([...a, ...b]).size;
+            somaOverlap += inter / union;
+            pares++;
+          }
+        }
+        const avgOverlap = somaOverlap / pares;
+
+        // Repetições tornam o glifo mais simples (menos elementos únicos)
+        const repeticoes = all.length - n;
+
+        // Fórmula calibrada para escala ~40-75
+        return 45 + avgOverlap * 35 + n * 2 - repeticoes * 5;
+      }
 
       function palavraDoDia() {
         // Época: 2025-01-01 como dia 0
@@ -4982,7 +5249,18 @@
         // Dificuldade pelo dia da semana
         const diaSemana = hoje.getDay(); // 0=Dom
         const nivelDif = CICLO_DIF[diaSemana];
-        const lista = PALAVRAS[nivelDif];
+        const range = SCORE_RANGE[nivelDif];
+
+        // Filtrar palavras pelo score visual E comprimento do nível
+        const candidatos = PALAVRAS[nivelDif].filter(
+          (w) =>
+            range.letras.includes(w.length) &&
+            scoreVisual(w) >= range.min &&
+            scoreVisual(w) <= range.max,
+        );
+
+        // Fallback: usar lista completa se filtro ficar muito restrito
+        const lista = candidatos.length >= 10 ? candidatos : PALAVRAS[nivelDif];
 
         // Hash determinístico do dia → índice na lista
         const idx = ((diasDesdeEpoca * 2654435761) >>> 0) % lista.length;
@@ -4992,7 +5270,7 @@
       // Validação multi-tamanho: aceita palavras do banco atual + dicionário 5L
       function dicionarioValido(word) {
         const tam = word.length;
-        // Sempre aceitar palavras do banco de cada tamanho
+        // Sempre aceitar palavras do banco (candidatas a palavra do dia)
         const todos = [
           ...PALAVRAS.facil,
           ...PALAVRAS.medio,
@@ -5002,12 +5280,12 @@
         if (todos.includes(word)) return true;
         // Para 5 letras: também aceitar o dicionário estendido
         if (tam === 5 && DICIONARIO.has(word)) return true;
-        // Para outros tamanhos: aceitar qualquer sequência válida de letras
-        // (não temos dicionário completo para 4/6/7 letras ainda)
-        return /^[A-Z]+$/.test(word);
+        // Para outros tamanhos: dicionário ainda limitado ao banco
+        // (não aceitar sequências arbitrárias)
+        return false;
       }
-      const WORD = palavraDoDia();
-      const WL = WORD.split(""),
+      let WORD = palavraDoDia();
+      let WL = WORD.split(""),
         WN = WL.length;
       const GLYPH_COLORS = [
         "#f5a623",
@@ -5018,13 +5296,14 @@
         "#e8b45b",
         "#a0c878",
       ];
-      const colorOf = {};
+      const colorOf = {}; // mutado pelo debug via Object.keys delete
       WL.forEach((l, i) => {
         if (!colorOf[l]) colorOf[l] = GLYPH_COLORS[i % GLYPH_COLORS.length];
       });
 
       let G = {
         typed: [],
+        cursor: 0,
         attempts: [],
         decoded: new Set(),
         found: new Set(),
@@ -5034,7 +5313,6 @@
         done: false,
         won: false,
         selKey: null,
-        swapSel: null,
       };
 
       function glyphStroke() {
@@ -5048,34 +5326,71 @@
       // ═══════════════════════════════════════════════
       // RENDER
       // ═══════════════════════════════════════════════
-      function renderDaily() {
+      function renderDaily(revealedIndices) {
         const c = document.getElementById("daily-stack");
-        c.innerHTML = "";
         const s = glyphStroke();
-        for (let i = WN - 1; i >= 0; i--) {
-          if (G.decoded.has(i)) continue;
-          const l = WL[i];
-          const color = G.found.has(l) ? colorOf[l] : s;
-          const svg = makeSVG(
-            l,
-            color,
-            "position:absolute;top:0;left:0;width:100%;height:100%;",
-          );
-          if (svg) c.appendChild(svg);
+
+        if (revealedIndices && revealedIndices.length > 0) {
+          // Anima fade out apenas nas letras reveladas (identificadas por data-idx)
+          revealedIndices.forEach((idx) => {
+            const svg = c.querySelector(`[data-idx="${idx}"]`);
+            if (svg) {
+              svg.style.transition = "opacity 0.6s ease, filter 0.6s ease";
+              svg.style.opacity = "0";
+              svg.style.filter = "blur(6px)";
+            }
+          });
+          setTimeout(() => {
+            c.innerHTML = "";
+            for (let i = WN - 1; i >= 0; i--) {
+              if (G.decoded.has(i) || G.keyPos.has(i)) continue;
+              const l = WL[i];
+              const color = G.found.has(l) ? colorOf[l] : s;
+              const svg = makeSVG(
+                l,
+                color,
+                "position:absolute;top:0;left:0;width:100%;height:100%;",
+              );
+              if (svg) {
+                svg.setAttribute("data-idx", i);
+                c.appendChild(svg);
+              }
+            }
+          }, 620);
+        } else {
+          c.innerHTML = "";
+          for (let i = WN - 1; i >= 0; i--) {
+            if (G.decoded.has(i) || G.keyPos.has(i)) continue;
+            const l = WL[i];
+            const color = G.found.has(l) ? colorOf[l] : s;
+            const svg = makeSVG(
+              l,
+              color,
+              "position:absolute;top:0;left:0;width:100%;height:100%;",
+            );
+            if (svg) {
+              svg.setAttribute("data-idx", i);
+              c.appendChild(svg);
+            }
+          }
         }
       }
 
       function renderYours() {
         const c = document.getElementById("your-stack");
         c.innerHTML = "";
-        if (!G.typed.length) return;
         const s = glyphStroke();
+
+        // Só renderiza letras que o usuário digitou nesta tentativa
+        // (ignora posições auto-preenchidas por decoded/keyPos)
         for (let i = G.typed.length - 1; i >= 0; i--) {
+          if (G.decoded.has(i) || G.keyPos.has(i)) continue;
           const l = G.typed[i];
           if (!l) continue;
+          const color = G.found.has(l) ? colorOf[l] : s;
           const svg = makeSVG(
             l,
-            s,
+            color,
             "position:absolute;top:0;left:0;width:100%;height:100%;",
           );
           if (svg) c.appendChild(svg);
@@ -5128,47 +5443,38 @@
               svg.style.cssText = "width:65%;height:65%;";
               b.appendChild(svg);
             }
-            // swap selection highlight
-            if (G.swapSel === i) b.classList.add("swap-sel");
-            // click to swap
+            if (i === G.cursor && !G.done) b.classList.add("active");
             b.style.cursor = "pointer";
             b.onclick = (() => {
               const idx = i;
-              return () => handleSwapClick(idx);
+              return () => {
+                if (!G.done) moveCursor(idx);
+              };
             })();
           } else {
             if (
               !G.decoded.has(i) &&
               !G.keyPos.has(i) &&
-              i === G.typed.length &&
+              i === G.cursor &&
               !G.done
             )
               b.classList.add("active");
+            if (!G.decoded.has(i) && !G.keyPos.has(i) && !G.done) {
+              b.style.cursor = "text";
+              b.onclick = (() => {
+                const idx = i;
+                return () => moveCursor(idx);
+              })();
+            }
           }
           c.appendChild(b);
         }
       }
 
-      function handleSwapClick(i) {
+      function moveCursor(idx) {
         if (G.done) return;
-        if (!G.typed[i]) return; // empty slot — ignore
-        if (G.swapSel === null) {
-          // first tap — select
-          G.swapSel = i;
-          buildBoxes();
-        } else if (G.swapSel === i) {
-          // tap same — deselect
-          G.swapSel = null;
-          buildBoxes();
-        } else {
-          // second tap on different slot — swap
-          const tmp = G.typed[G.swapSel];
-          G.typed[G.swapSel] = G.typed[i];
-          G.typed[i] = tmp;
-          G.swapSel = null;
-          refresh();
-          renderYours();
-        }
+        G.cursor = idx;
+        refresh();
       }
 
       function buildKB() {
@@ -5199,7 +5505,7 @@
         document.getElementById("history").style.display = "block";
         const rows = document.getElementById("hrows");
         rows.innerHTML = "";
-        G.attempts.forEach((a) => {
+        [...G.attempts].reverse().forEach((a) => {
           const row = document.createElement("div");
           row.className = "hrow fadein";
           const wc = document.createElement("div");
@@ -5237,47 +5543,144 @@
       // ═══════════════════════════════════════════════
       // INPUT
       // ═══════════════════════════════════════════════
+      function nextCursor(from) {
+        // Procura próximo slot vazio a partir de `from` (sem wrap)
+        for (let i = from; i < WN; i++) {
+          if (!G.decoded.has(i) && !G.keyPos.has(i) && !G.typed[i]) return i;
+        }
+        // Wrap: volta do início procurando vazio
+        for (let i = 0; i < from; i++) {
+          if (!G.decoded.has(i) && !G.keyPos.has(i) && !G.typed[i]) return i;
+        }
+        // Todos preenchidos — fica no slot atual (from - 1, ou seja, o que acabou de ser digitado)
+        const last = from - 1;
+        if (last >= 0 && !G.decoded.has(last) && !G.keyPos.has(last))
+          return last;
+        // fallback: primeiro editável
+        for (let i = 0; i < WN; i++) {
+          if (!G.decoded.has(i) && !G.keyPos.has(i)) return i;
+        }
+        return WN;
+      }
+      function prevCursor(from) {
+        // Recua cursor para posição editável anterior
+        let c = from - 1;
+        while (c >= 0 && (G.decoded.has(c) || G.keyPos.has(c))) c--;
+        return c;
+      }
+
       function handleKey(k) {
         if (G.done) return;
-        G.swapSel = null; // any key press cancels swap selection
+
         if (k === "⌫") {
-          for (let i = G.typed.length - 1; i >= 0; i--) {
-            if (!G.decoded.has(i) && !G.keyPos.has(i)) {
-              G.typed.length = i;
-              break;
+          let apagou = false;
+          let c = G.cursor;
+          if (
+            c >= 0 &&
+            c < WN &&
+            G.typed[c] &&
+            !G.decoded.has(c) &&
+            !G.keyPos.has(c)
+          ) {
+            // Slot preenchido → só apaga, cursor fica aqui
+            G.typed[c] = undefined;
+            apagou = true;
+          } else {
+            // Slot vazio → vai para o anterior (apagando se tiver letra)
+            const prev = prevCursor(c);
+            if (prev >= 0) {
+              if (G.typed[prev]) {
+                G.typed[prev] = undefined;
+                apagou = true;
+              }
+              G.cursor = prev;
             }
           }
-          setFb("", ""); // limpa aviso de dicionário ao editar
+          document.getElementById("lboxes").classList.remove("invalid");
+          if (apagou) recalcWarns();
+          else setFb("", "");
           refresh();
           return;
         }
+
         if (k === "↵") {
           decode();
           return;
         }
-        if (G.typed.length >= WN) return;
-        const pos = G.typed.length;
-        if (G.decoded.has(pos) || G.keyPos.has(pos)) {
-          G.typed.push(WL[pos]);
-          handleKey(k);
-          return;
-        }
-        G.typed.push(k);
+
+        // Letra: escreve na posição do cursor e avança
+        let c = G.cursor;
+        // Se cursor inválido (swap cancelado por tecla), vai pro próximo vazio
+        if (c < 0 || c >= WN) c = nextCursor(0);
+        // Pula apenas posições auto-preenchidas (decoded/keyPos), não slots com letra do usuário
+        while (c < WN && (G.decoded.has(c) || G.keyPos.has(c))) c++;
+        if (c >= WN) return; // sem espaço
+
+        G.typed[c] = k;
+        G.cursor = nextCursor(c + 1);
         refresh();
-        // Validação em tempo real ao preencher a última letra
-        if (G.typed.length === WN) {
-          const full = Array.from({ length: WN }, (_, i) =>
-            G.decoded.has(i) || G.keyPos.has(i) ? WL[i] : G.typed[i] || null,
-          );
-          if (full.every((x) => x)) {
-            const guess = full.join("");
-            if (!dicionarioValido(guess)) {
-              setFb("Palavra não encontrada no dicionário.", "err");
-            } else {
-              setFb("", ""); // limpa feedback anterior se palavra válida
-            }
-          }
+        calcWarns();
+      }
+
+      function calcWarns() {
+        const elimUsadas = [
+          ...new Set(
+            Array.from({ length: WN }, (_, i) => G.typed[i]).filter(
+              (l, i) =>
+                l && G.elim.has(l) && !G.decoded.has(i) && !G.keyPos.has(i),
+            ),
+          ),
+        ];
+        const posErrada = [];
+        for (let i = 0; i < WN; i++) {
+          const l = G.typed[i];
+          if (!l || G.decoded.has(i) || G.keyPos.has(i) || G.elim.has(l))
+            continue;
+          if (G.attempts.some((a) => a.word[i] === l && !a.decoded.includes(i)))
+            posErrada.push({ l, i });
         }
+        const partes = [];
+        if (elimUsadas.length > 0) {
+          const pl = elimUsadas.length > 1;
+          partes.push(
+            `${elimUsadas.join(", ")} já ${pl ? "foram eliminadas" : "foi eliminada"}`,
+          );
+        }
+        if (posErrada.length > 0) {
+          const letras = [...new Set(posErrada.map(({ l }) => l))].join(", ");
+          partes.push(`já tentaste ${letras} aqui sem sucesso`);
+        }
+        if (partes.length > 0) {
+          setFb(`⚠ ${partes.join(" — ")}`, "warn");
+        }
+
+        // Validação quando todos os campos preenchidos
+        const full = Array.from({ length: WN }, (_, i) =>
+          G.decoded.has(i) || G.keyPos.has(i) ? WL[i] : G.typed[i] || null,
+        );
+        if (full.every((x) => x)) {
+          const guess = full.join("");
+          if (!dicionarioValido(guess)) {
+            const msg =
+              WN === 5
+                ? "Palavra não encontrada no dicionário."
+                : "Não reconhecida — dicionário limitado para " +
+                  WN +
+                  " letras.";
+            setFb(msg, "err");
+            document.getElementById("lboxes").classList.add("invalid");
+          } else {
+            document.getElementById("lboxes").classList.remove("invalid");
+            if (partes.length === 0) setFb("", "");
+          }
+        } else {
+          document.getElementById("lboxes").classList.remove("invalid");
+          if (partes.length === 0) setFb("", "");
+        }
+      }
+
+      function recalcWarns() {
+        calcWarns();
       }
 
       // ═══════════════════════════════════════════════
@@ -5300,21 +5703,40 @@
         const guess = full.join("");
         // Validação de dicionário
         if (!dicionarioValido(guess)) {
-          setFb("Palavra não encontrada no dicionário.", "err");
-          document.getElementById("lboxes").classList.add("shake");
-          setTimeout(
-            () => document.getElementById("lboxes").classList.remove("shake"),
-            320,
-          );
+          const msg =
+            WN === 5
+              ? "Palavra não encontrada no dicionário."
+              : "Não reconhecida — dicionário limitado para " + WN + " letras.";
+          setFb(msg, "err");
+          const lb = document.getElementById("lboxes");
+          lb.classList.add("invalid", "shake");
+          setTimeout(() => lb.classList.remove("shake"), 320);
           return;
         }
+        document.getElementById("lboxes").classList.remove("invalid");
         const dec = [],
           fnd = [],
           eli = [];
+
+        // Two-pass para tratar duplicatas corretamente (igual ao Wordle)
+        // 1ª passagem: posições exatas
+        const estoque = [...WL]; // cópia mutável para controlar consumo
         full.forEach((l, i) => {
-          if (l === WL[i]) dec.push(i);
-          else if (WL.includes(l)) fnd.push(l);
-          else eli.push(l);
+          if (l === WL[i]) {
+            dec.push(i);
+            estoque[i] = null; // consumido
+          }
+        });
+        // 2ª passagem: letras existentes mas fora do lugar
+        full.forEach((l, i) => {
+          if (dec.includes(i)) return; // já acertou posição
+          const idx = estoque.indexOf(l);
+          if (idx !== -1) {
+            fnd.push(l);
+            estoque[idx] = null; // consumido — não pode ser usado de novo
+          } else {
+            eli.push(l); // excedente ou letra inexistente
+          }
         });
         dec.forEach((p) => G.decoded.add(p));
         fnd.forEach((l) => G.found.add(l));
@@ -5324,7 +5746,9 @@
         if (G.decoded.size === WN) {
           G.done = G.won = true;
           G.typed = WL.slice();
-          refresh();
+          buildBoxes();
+          renderDaily(dec);
+          renderYours();
           buildHistory();
           buildAtts();
           buildKB();
@@ -5335,7 +5759,10 @@
         if (G.attempts.length >= 4) {
           G.done = true;
           G.typed = [];
-          refresh();
+          G.cursor = nextCursor(0);
+          buildBoxes();
+          renderDaily(dec);
+          renderYours();
           buildHistory();
           buildAtts();
           salvarEstado();
@@ -5344,33 +5771,21 @@
         }
 
         salvarEstado();
-        if (dec.length && fnd.length)
-          setFb(
-            `${dec.length} certa(s) e ${fnd.length} encontrada(s) — use o glifo!`,
-            "found",
-          );
-        else if (dec.length)
-          setFb(
-            `${dec.length} letra(s) na posição certa! Continue...`,
-            "found",
-          );
-        else if (fnd.length)
-          setFb(
-            `${fnd.length} letra(s) na palavra — veja o glifo para descobrir qual`,
-            "found",
-          );
-        else setFb("Nenhuma letra encontrada. Tente outra palavra.", "err");
-
         G.typed = [];
+        G.cursor = nextCursor(0);
         G.keyUsed = false;
+        setFb("", "");
         G.selKey = null;
         document.getElementById("key-dot").classList.add("show");
+        document.getElementById("lboxes").classList.remove("invalid");
         let i = 0;
         while (i < WN && (G.decoded.has(i) || G.keyPos.has(i))) {
           G.typed.push(WL[i]);
           i++;
         }
-        refresh();
+        buildBoxes();
+        renderDaily(dec);
+        renderYours();
         buildHistory();
         buildAtts();
         buildKB();
@@ -5433,6 +5848,7 @@
         G.keyUsed = true;
         document.getElementById("key-dot").classList.remove("show");
         G.typed = [];
+        G.cursor = nextCursor(0);
         let i = 0;
         while (i < WN && (G.decoded.has(i) || G.keyPos.has(i))) {
           G.typed.push(WL[i]);
@@ -5440,7 +5856,9 @@
         }
         closeM("key-modal");
         setFb(`🔑 "${letter}" revelado na posição ${pos + 1}`, "key");
-        refresh();
+        buildBoxes();
+        renderDaily([pos]);
+        renderYours();
       }
 
       function handleOverlayClick(e, id) {
@@ -5530,6 +5948,7 @@
                 distribuicao: { 1: 0, 2: 0, 3: 0, 4: 0, X: 0 },
               };
         } catch (e) {
+          console.warn("[glif] loadStats erro:", e);
           return {
             jogados: 0,
             vitorias: 0,
@@ -5630,6 +6049,7 @@
           G.keyUsed = data.keyUsed || false;
           return true;
         } catch (e) {
+          console.warn("[glif] carregarEstado erro:", e);
           return false;
         }
       }
@@ -5763,8 +6183,8 @@
       // ═══════════════════════════════════════════════
       function toggleTheme() {
         const html = document.documentElement;
-        const isDark = html.getAttribute("data-theme") === "dark";
-        html.setAttribute("data-theme", isDark ? "light" : "dark");
+        const isDark = html.dataset.theme === "dark";
+        html.dataset.theme = isDark ? "light" : "dark";
         document.getElementById("icon-dark").style.display = isDark
           ? "none"
           : "block";
@@ -5782,7 +6202,16 @@
         const k = e.key.toUpperCase();
         if (e.key === "Backspace") handleKey("⌫");
         else if (e.key === "Enter") handleKey("↵");
-        else if (/^[A-Z]$/.test(k)) handleKey(k);
+        else if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+          if (G.done) return;
+          e.preventDefault();
+          const dir = e.key === "ArrowLeft" ? -1 : 1;
+          let c = G.cursor + dir;
+          // Pula decoded/keyPos na direção escolhida
+          while (c >= 0 && c < WN && (G.decoded.has(c) || G.keyPos.has(c)))
+            c += dir;
+          if (c >= 0 && c < WN) moveCursor(c);
+        } else if (/^[A-Z]$/.test(k)) handleKey(k);
       });
 
       // ═══════════════════════════════════════════════
@@ -6369,7 +6798,7 @@
 
       function bumpTimedAch(id, threshold) {
         const k = "gliffoo_timed_" + id;
-        const n = parseInt(localStorage.getItem(k) || "0") + 1;
+        const n = Number.parseInt(localStorage.getItem(k) || "0") + 1;
         localStorage.setItem(k, n);
         if (n >= threshold) queueAch(id);
       }
@@ -6516,15 +6945,19 @@
       renderYours();
 
       // Badge de data + dificuldade no header
-      (function buildHeaderMeta() {
-        const hoje = new Date(
-          new Date().toLocaleString("en-US", { timeZone: "America/Sao_Paulo" }),
-        );
-        const dataFmt = hoje
+      function buildHeaderMeta(refDate) {
+        const base =
+          refDate ||
+          new Date(
+            new Date().toLocaleString("en-US", {
+              timeZone: "America/Sao_Paulo",
+            }),
+          );
+        const dataFmt = base
           .toLocaleDateString("pt-BR", { day: "numeric", month: "short" })
           .replace(".", "")
-          .toUpperCase(); // "4 MAR"
-        const diaSemana = hoje.getDay();
+          .toUpperCase();
+        const diaSemana = base.getDay();
         const CICLO_LABELS = {
           facil: "Fácil · 4 letras",
           medio: "Médio · 5 letras",
@@ -6537,7 +6970,8 @@
         meta.innerHTML = `
     <span class="header-date">${dataFmt}</span>
     <span class="dif-badge ${nivel}">${label}</span>`;
-      })();
+      }
+      buildHeaderMeta();
       if (G.done) {
         buildHistory();
         // Pequeno delay para a página renderizar antes do modal
@@ -6759,7 +7193,7 @@
       function startTyping(word, slotsId, yoursId, interval, onDone, token) {
         stopTyping();
         const typed = [];
-        tSlots(slotsId, Array(TWL.length).fill(""), null);
+        tSlots(slotsId, new Array(TWL.length).fill(""), null);
         if (yoursId) tStack(yoursId, [], null);
         let i = 0;
         function next() {
@@ -6769,7 +7203,7 @@
             // render slots with typed so far, rest empty
             const disp = [
               ...typed,
-              ...Array(TWL.length - typed.length).fill(""),
+              ...new Array(TWL.length - typed.length).fill(""),
             ];
             tSlots(slotsId, disp, null);
             if (yoursId) tStack(yoursId, typed, () => tStroke());
@@ -6954,7 +7388,7 @@
 
           case 2: // Digita VALE — V⬜ A🟡 L🟡 E⬜
             tStack("ts2-daily", TWL, () => tStroke());
-            tSlots("ts2-slots", Array(4).fill(""), null);
+            tSlots("ts2-slots", new Array(4).fill(""), null);
             tStack("ts2-yours", [], null);
             startTyping(
               ["V", "A", "L", "E"],
@@ -7101,6 +7535,7 @@
 
         // 3. Reset limpo do estado do jogo (evita estado sujo após tutorial)
         G.typed = [];
+        G.cursor = nextCursor(0);
         G.attempts = [];
         G.decoded = new Set();
         G.found = new Set();
@@ -7110,7 +7545,6 @@
         G.done = false;
         G.won = false;
         G.selKey = null;
-        G.swapSel = null;
 
         // 4. Reconstrói UI do jogo do zero
         buildAtts();
@@ -7139,6 +7573,220 @@
       });
       document.querySelector('.hbtn[title="Ajuda"]').onclick = () =>
         openTutorial();
+
+      // ═══════════════════════════════════════════════
+      // MODO DEBUG — navegação entre dias
+      // Ativar: Ctrl+Shift+D  ou  clique 5x no título
+      // ═══════════════════════════════════════════════
+      (function initDebugMode() {
+        let _dbgOffset = 0; // dias em relação a hoje (0=hoje, -1=ontem, +1=amanhã)
+        let _dbgActive = false;
+        const ATIVA_KEY = "gliffoo_debug";
+
+        function palavraPorOffset(offset) {
+          const EPOCA = new Date("2025-01-01T00:00:00-03:00");
+          const base = new Date(
+            new Date().toLocaleString("en-US", {
+              timeZone: "America/Sao_Paulo",
+            }),
+          );
+          base.setHours(0, 0, 0, 0);
+          const alvo = new Date(base.getTime() + offset * 86400000);
+          const diasDesdeEpoca = Math.floor((alvo - EPOCA) / 86400000);
+          const diaSemana = alvo.getDay();
+          const nivelDif = CICLO_DIF[diaSemana];
+          const range = SCORE_RANGE[nivelDif];
+          const candidatos = PALAVRAS[nivelDif].filter(
+            (w) =>
+              range.letras.includes(w.length) &&
+              scoreVisual(w) >= range.min &&
+              scoreVisual(w) <= range.max,
+          );
+          const lista =
+            candidatos.length >= 10 ? candidatos : PALAVRAS[nivelDif];
+          const idx = ((diasDesdeEpoca * 2654435761) >>> 0) % lista.length;
+          return {
+            word: lista[idx],
+            dia: diasDesdeEpoca + 1,
+            data: alvo,
+            nivel: nivelDif,
+          };
+        }
+
+        function resetParaDebug(offset) {
+          const info = palavraPorOffset(offset);
+          // Atualizar variáveis globais do jogo
+          WORD = info.word;
+          WL = WORD.split("");
+          WN = WL.length;
+          // Reconstruir colorOf
+          Object.keys(colorOf).forEach((k) => delete colorOf[k]);
+          WL.forEach((l, i) => {
+            if (!colorOf[l]) colorOf[l] = GLYPH_COLORS[i % GLYPH_COLORS.length];
+          });
+          // Zerar estado
+          G.typed = [];
+          G.cursor = nextCursor(0);
+          G.attempts = [];
+          G.decoded = new Set();
+          G.found = new Set();
+          G.elim = new Set();
+          G.keyUsed = false;
+          G.keyPos = new Set();
+          G.done = false;
+          G.won = false;
+          G.selKey = null;
+          // Fechar modais se abertos
+          ["win-modal", "lose-modal", "key-modal", "stats-modal"].forEach(
+            (id) => {
+              const el = document.getElementById(id);
+              if (el) {
+                el.classList.remove("show");
+                el.setAttribute("aria-hidden", "true");
+              }
+            },
+          );
+          // Re-renderizar
+          buildAtts();
+          buildBoxes();
+          buildKB();
+          renderDaily();
+          renderYours();
+          buildHeaderMeta(info.data); // atualiza data + badge de dificuldade
+          atualizarPainel();
+        }
+
+        function atualizarPainel() {
+          const el = (id) => document.getElementById(id);
+          if (!el("dbg-word-display")) return; // DOM ainda não pronto
+          const info = palavraPorOffset(_dbgOffset);
+          el("dbg-word-display").textContent = info.word;
+          el("dbg-day-num").textContent = "#" + info.dia;
+          const offsetLabel =
+            _dbgOffset === 0
+              ? "hoje"
+              : _dbgOffset > 0
+                ? "+" + _dbgOffset + " dia(s)"
+                : _dbgOffset + " dia(s)";
+          el("dbg-offset-display").textContent = offsetLabel;
+          const d = info.data;
+          const dataStr = d.toLocaleDateString("pt-BR", {
+            weekday: "short",
+            day: "numeric",
+            month: "short",
+          });
+          el("dbg-date-display").textContent =
+            dataStr + " · " + info.nivel.replace("_", " ");
+        }
+
+        function ativarDebug() {
+          if (_dbgActive) return;
+          _dbgActive = true;
+          document.body.classList.add("debug-mode");
+          localStorage.setItem(ATIVA_KEY, "1");
+          console.log(
+            "[glif] Modo debug ativado. Ctrl+Shift+D para desativar.",
+          );
+          atualizarPainel();
+        }
+
+        function desativarDebug() {
+          _dbgActive = false;
+          document.body.classList.remove("debug-mode");
+          localStorage.removeItem(ATIVA_KEY);
+          const panel = document.getElementById("debug-panel");
+          if (panel) panel.classList.remove("open");
+          // Restaurar palavra do dia real
+          if (_dbgOffset !== 0) {
+            _dbgOffset = 0;
+            resetParaDebug(0);
+          }
+        }
+
+        // Expor eventos para ativar/desativar externamente
+        document.body.addEventListener("_dbgAtivar", ativarDebug);
+        document.body.addEventListener("_dbgDesativar", desativarDebug);
+
+        // Mostrar botão header em localhost/file
+        window.addEventListener("load", () => {
+          const isLocal =
+            location.hostname === "localhost" ||
+            location.hostname === "127.0.0.1" ||
+            location.protocol === "file:";
+          const btn = document.getElementById("hbtn-debug");
+          if (btn && isLocal) btn.style.display = "";
+        });
+
+        // Restaurar estado debug persistido (após load para DOM estar pronto)
+        if (localStorage.getItem(ATIVA_KEY)) {
+          _dbgActive = true;
+          document.body.classList.add("debug-mode");
+          window.addEventListener("load", () => atualizarPainel(), {
+            once: true,
+          });
+        }
+
+        // Atalho: Ctrl+Shift+D
+        document.addEventListener("keydown", (e) => {
+          if (e.ctrlKey && e.shiftKey && e.key === "D") {
+            e.preventDefault();
+            if (_dbgActive) desativarDebug();
+            else ativarDebug();
+          }
+        });
+
+        // Ativar por 5 cliques no título (easter egg)
+        let _titClicks = 0,
+          _titTimer = null;
+        const titulo =
+          document.querySelector(".logo-text") || document.querySelector("h1");
+        if (titulo) {
+          titulo.addEventListener("click", () => {
+            _titClicks++;
+            clearTimeout(_titTimer);
+            if (_titClicks >= 5) {
+              _titClicks = 0;
+              if (_dbgActive) desativarDebug();
+              else ativarDebug();
+            } else {
+              _titTimer = setTimeout(() => {
+                _titClicks = 0;
+              }, 1500);
+            }
+          });
+        }
+
+        // Botão toggle e controles — aguardar DOM completo pois HTML está após este script
+        window.addEventListener("load", () => {
+          const toggle = document.getElementById("debug-toggle");
+          if (toggle)
+            toggle.addEventListener("click", () => {
+              const panel = document.getElementById("debug-panel");
+              panel.classList.toggle("open");
+              if (panel.classList.contains("open")) atualizarPainel();
+            });
+
+          const safe = (id, fn) => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener("click", fn);
+          };
+          safe("dbg-prev", () => {
+            _dbgOffset--;
+            resetParaDebug(_dbgOffset);
+          });
+          safe("dbg-next", () => {
+            _dbgOffset++;
+            resetParaDebug(_dbgOffset);
+          });
+          safe("dbg-today", () => {
+            _dbgOffset = 0;
+            resetParaDebug(0);
+          });
+          safe("dbg-close", () => {
+            document.getElementById("debug-panel").classList.remove("open");
+          });
+        });
+      })();
     </script>
 
     <style>
@@ -7204,6 +7852,13 @@
     <!-- ══ TUTORIAL ══ -->
     <div class="tutorial-overlay hidden" id="tutorial-overlay">
       <div class="tut-panel">
+        <button
+          class="mclose"
+          onclick="closeTutorial()"
+          aria-label="Fechar tutorial"
+        >
+          ✕
+        </button>
         <div class="tut-handle"></div>
         <div class="tut-progress">
           <div class="tpip cur"></div>
@@ -7440,5 +8095,40 @@
       <!-- /.tut-panel -->
     </div>
     <!-- /.tutorial-overlay -->
+
+    <!-- ══ DEBUG PANEL ══ -->
+    <button id="debug-toggle" title="Debug" aria-label="Painel debug">
+      🛠
+    </button>
+    <div id="debug-panel" role="region" aria-label="Painel de debug">
+      <h4>🛠 Modo Debug</h4>
+      <div class="dbg-row">
+        <label>Palavra</label>
+        <span class="dbg-word" id="dbg-word-display">-----</span>
+      </div>
+      <div class="dbg-row">
+        <label>Dia #</label>
+        <span id="dbg-day-num" style="font-weight: 600; color: var(--text2)"
+          >0</span
+        >
+      </div>
+      <div class="dbg-row">
+        <label>Offset</label>
+        <span
+          id="dbg-offset-display"
+          style="color: var(--text3); font-size: 0.78rem"
+          >hoje (0)</span
+        >
+      </div>
+      <div class="dbg-btns">
+        <button id="dbg-prev">← Dia anterior</button>
+        <button id="dbg-next">Próximo dia →</button>
+      </div>
+      <div class="dbg-btns" style="margin-top: 6px">
+        <button id="dbg-today">Hoje</button>
+        <button class="dbg-close" id="dbg-close">✕</button>
+      </div>
+      <div class="dbg-offset" id="dbg-date-display"></div>
+    </div>
   </body>
 </html>
