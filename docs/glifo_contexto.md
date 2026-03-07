@@ -104,15 +104,15 @@ O input foi completamente refeito para suportar **cursor não-linear**:
 
 Palavra de demonstração: **BOLA** (B=âmbar, O=lavanda, L=mint, A=coral)
 
-| Passo | Conteúdo                                                                 |
-| ----- | ------------------------------------------------------------------------ |
-| 1/7   | Glifo pulsando — "o que é isso?"                                         |
-| 2/7   | Animação ISO em loop — A→L→O→B chegando em perspectiva                   |
-| 3/7   | Digita **BICO** ao vivo, Seu Gliffo se forma                             |
-| 4/7   | Feedback de **BICO**: letras eliminadas, posição errada e acerto         |
-| 5/7   | Cor única por letra + início da 2ª tentativa com **B** já confirmado     |
-| 6/7   | Chave Decodificadora em loop — revela **L** e mostra aviso com atraso    |
-| 7/7   | Interação obrigatória com cursor não-linear para completar **BOLA**       |
+| Passo | Conteúdo                                                              |
+| ----- | --------------------------------------------------------------------- |
+| 1/7   | Glifo pulsando — "o que é isso?"                                      |
+| 2/7   | Animação ISO em loop — A→L→O→B chegando em perspectiva                |
+| 3/7   | Digita **BICO** ao vivo, Seu Gliffo se forma                          |
+| 4/7   | Feedback de **BICO**: letras eliminadas, posição errada e acerto      |
+| 5/7   | Cor única por letra + início da 2ª tentativa com **B** já confirmado  |
+| 6/7   | Chave Decodificadora em loop — revela **L** e mostra aviso com atraso |
+| 7/7   | Interação obrigatória com cursor não-linear para completar **BOLA**   |
 
 - Passo final começa com **B** e **L** já confirmados; só os slots vazios são editáveis
 - `Seu Gliffo` no passo final mostra apenas as letras digitadas pelo jogador nessa etapa
@@ -206,10 +206,10 @@ gliffo/
 4. ✅ Cache em memória do schedule entre invocações quentes (timeout 3s)
 5. ✅ Verificado: hoje=EFLUVIO/muito_dificil/431 (Storage ✓) + data fora do range=fallback ✓
 
-### Chat C — Tutorial
+### ✅ Chat C — Tutorial (CONCLUÍDO)
 
-6. Atualizar passo 6/7 do tutorial (swap foi removido — agora é cursor não-linear)
-7. Demonstrar o novo sistema de input no tutorial
+6. ✅ Passo final redesenhado para o cursor não-linear
+7. ✅ Tutorial atualizado para demonstrar o novo sistema de input
 
 ### Chat D — Streak & Estatísticas
 
@@ -264,23 +264,20 @@ Código: JS vanilla, sem frameworks. CSS com variáveis do :root.
 
 ---
 
-### Chat C — Tutorial
+### ~~Chat C — Tutorial~~ — ✅ Concluído
 
 ```
-Frente: atualizar o tutorial (7 passos, palavra BOLA).
+Frente concluída: tutorial atualizado para o novo input não-linear.
 
-O que mudou:
-- SWAP DE LETRAS foi REMOVIDO
-- Implementado INPUT NÃO-LINEAR com G.cursor:
-  * Clicar em qualquer slot move o cursor (sem apagar)
-  * Slot vazio: cursor text | Slot preenchido: cursor pointer
-  * Setas ← → navegam entre slots
-  * ⌫ em preenchido: apaga, cursor fica no slot
-  * ⌫ em vazio: move para anterior (apagando se tiver letra)
-  * Digitar: escreve no cursor, avança para próximo vazio
+Resumo do que foi aplicado:
+- palavra demo mantida em BOLA
+- passo de swap removido e substituído por interação com cursor não-linear
+- fluxo intermediário atualizado para BICO → feedback → B confirmado → chave revela L
+- passo final começa com B e L confirmados; só os slots vazios são editáveis
+- título final vira BOLA!, com confetes, cards-resumo e botão Jogar agora!
+- botão da esquerda vira Ver de novo quando a etapa final é destravada
 
-O passo 6/7 ainda ensina swap (obsoleto) — redesenhar para demonstrar o input não-linear.
-Tutorial: TW='BOLA', TWL=['B','O','L','A'], TC=['#f5a623','#9b8fe8','#5bbfa0','#e87a6b']
+Referência: TW='BOLA', TWL=['B','O','L','A'], TC=['#f5a623','#9b8fe8','#5bbfa0','#e87a6b']
 ```
 
 ---
