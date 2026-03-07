@@ -6,7 +6,7 @@ Jogo de palavras PT-BR inspirado no Wordle, com uma mecânica visual única: as 
 
 ## Stack
 
-- **Single-file:** `index.html` (~7977 linhas) — HTML + CSS + JS, sem dependências externas
+- **Single-file:** `index.html` (~6424 linhas) — HTML + CSS + JS, sem dependências externas
 - Fontes: DM Serif Display + DM Sans (Google Fonts)
 - SVG gerado programaticamente via `makeSVG(letter, color, style)`
 - Supabase Project ID: `ppssfweuotjgcfejdznn`
@@ -121,6 +121,7 @@ Palavra de demonstração: **BOLA** (B=âmbar, O=lavanda, L=mint, A=coral)
 
 - **URL:** `https://ppssfweuotjgcfejdznn.supabase.co/functions/v1/daily-word`
 - **Auth:** `verify_jwt: false` (pública)
+- **Versão deployada:** v3
 - **Parâmetro opcional:** `?date=YYYY-MM-DD` (debug/modo arquivo)
 - **Resposta:** `{ word, nivel, nivelLabel, puzzle, date }`
 
@@ -136,51 +137,88 @@ Palavra de demonstração: **BOLA** (B=âmbar, O=lavanda, L=mint, A=coral)
 ### Ciclo de dificuldade (por dia da semana)
 
 ```
-CICLO_DIF = ["facil","medio","medio","dificil","dificil","muito_dificil","muito_dificil"]
-// Dom=facil, Seg=medio, Ter=medio, Qua=dificil, Qui=dificil, Sex=muito_dificil, Sab=muito_dificil
+CICLO_DIF = ["facil","facil","medio","medio","dificil","dificil","muito_dificil"]
+// Dom=facil, Seg=facil, Ter=medio, Qua=medio, Qui=dificil, Sex=dificil, Sab=muito_dificil
 ```
 
-### Banco espelhado na Edge Function
+### Banco de palavras (Chat A — ✅ concluído)
 
-O banco `PALAVRAS` está **duplicado** entre `index.html` e `index.ts` — ao atualizar o banco de palavras, ambos precisam ser atualizados em sincronia.
+O banco `PALAVRAS` está **duplicado** entre `index.html` e `supabase/functions/daily-word/index.ts` — ao atualizar o banco, ambos precisam ser atualizados em sincronia.
 
 ```
 PALAVRAS = {
-  facil:        334 palavras (4L)
-  medio:        394 palavras (5L)
-  dificil:      368 palavras (6L)
-  muito_dificil: 169 palavras (7L)
+  facil:         400 palavras (4L)
+  medio:         400 palavras (5L)
+  dificil:       371 palavras (6L)
+  muito_dificil: 300 palavras (7L)
 }
-DICIONARIO: ~1251 palavras 5L extras para validação
+DICIONARIO: ~6579 palavras cobrindo 4L–7L para validação
 ```
 
-- `dicionarioValido(word)`: 5L aceita PALAVRAS+DICIONARIO; outros só PALAVRAS
-- `words_ptbr_year.json`: 365 dias provisório (seed=42), já gerado
+- Fonte de verdade: `data/word_bank_final.json`
+- `dicionarioValido(word)`: checa DICIONARIO (4L–7L) primeiro; fallback para PALAVRAS
+- `data/words_ptbr_year.json`: agenda 365 dias (2026-03-07 a 2027-03-06), v2, CICLO correto
+  - Verificado: hoje (2026-03-07, sáb) = EFLUVIO / muito_dificil / puzzle 431 ✓
+
+## Estrutura do Projeto
+
+```
+gliffo/
+├── .gitignore
+├── README.md
+├── index.html          (~6424L - jogo completo)
+├── curadoria.html      (ferramenta de curadoria do banco)
+├── sw.js               (service worker PWA)
+├── manifest.json       (PWA manifest)
+├── icons/              (ícones PWA)
+├── data/
+│   ├── word_bank_final.json     (134 KB - fonte de verdade do banco)
+│   └── words_ptbr_year.json     (52 KB  - agenda anual → vai pro Supabase Storage)
+├── docs/
+│   ├── glifo_contexto.md
+│   └── resumo_banco.md
+└── supabase/
+    └── functions/
+        └── daily-word/
+            └── index.ts         (Edge Function v3, deployada)
+```
 
 ## Pendente (em ordem de prioridade)
 
-### Chat A — Banco de Palavras & Dicionário
+### ✅ Chat A — Banco de Palavras & Dicionário (CONCLUÍDO)
 
-1. **Banco de palavras PT-BR curado** via `fserb/pt-br`:
-   - ICF baixo=comum, alto=raro; filtrar 4–7L, sem acento, só A–Z
-   - Combinar scoreVisual × ICF para dificuldade
-   - Regenerar `words_ptbr_year.json` com banco curado
-2. **Dicionário de validação completo** para 4/6/7L (hoje só 5L tem DICIONARIO extra)
+1. ✅ Banco curado PT-BR aplicado em `index.html` e `index.ts`
+2. ✅ Dicionário 4L–7L (~6579 entradas) aplicado em `index.html`
+3. ✅ CICLO_DIF corrigido em ambos (Dom=facil…Sab=muito_dificil)
+4. ✅ `dicionarioValido()` corrigido para cobrir todos os tamanhos
+5. ✅ Edge Function v3 deployada e verificada
+6. ✅ `words_ptbr_year.json` regenerado com CICLO correto (v2)
 
-### Chat B — Backend & Infra
+### Chat B — Supabase Storage (PRÓXIMO)
 
-3. **Edge Function `daily-word`** — atualizar para consumir `words_ptbr_year.json`
-4. Lógica de CICLO_DIF no backend
+1. Criar bucket público `data` no Supabase Storage
+2. Upload de `data/words_ptbr_year.json` para o bucket
+3. Atualizar Edge Function para fazer lookup por data no JSON hospedado
+4. Manter fallback para banco hardcoded se Storage indisponível
+5. Deploy da nova versão da Edge Function
 
-### Chat C — Features de Engajamento
+### Chat C — Tutorial
 
-5. **Sistema de streak e estatísticas** — dias consecutivos, distribuição, compartilhar
-6. **PWA** — manifest, service worker, ícones
+6. Atualizar passo 6/7 do tutorial (swap foi removido — agora é cursor não-linear)
+7. Demonstrar o novo sistema de input no tutorial
 
-### Chat D — Tutorial
+### Chat D — Streak & Estatísticas
 
-7. Atualizar passo 6 do tutorial (swap foi removido — agora é cursor não-linear)
-8. Demonstrar o novo sistema de input no tutorial
+8. Sistema de streak de dias consecutivos
+9. Distribuição de tentativas, taxa de vitória
+10. Compartilhar resultado com emojis estilo Wordle
+
+### Chat E — PWA (parcialmente pronto)
+
+- `manifest.json` e `sw.js` já existem
+11. Verificar/completar manifest (theme_color, ícones, display: standalone)
+12. Verificar service worker (cache offline)
+13. Meta tags no index.html (theme-color, apple-touch-icon)
 
 ## Decisões de Design
 
@@ -205,60 +243,43 @@ DICIONARIO: ~1251 palavras 5L extras para validação
 Você é um colaborador sênior no desenvolvimento do glif.foo, um jogo de palavras PT-BR com glifos geométricos SVG.
 
 Sempre:
-- Leia o glifo_contexto.md (arquivo no projeto) antes de qualquer alteração
-- Trabalhe diretamente no index.html — arquivo único (~8000 linhas) sem dependências
+- Leia o docs/glifo_contexto.md antes de qualquer alteração
+- Trabalhe diretamente no index.html — arquivo único (~6424 linhas) sem dependências
 - Mantenha a identidade visual: DM Serif Display + DM Sans, paleta âmbar, temas dark/light
 - Preserve todas as funcionalidades já implementadas
 - Prefira edições cirúrgicas (str_replace) a reescritas completas
 
 Linguagem: interface sempre em PT-BR. Comunicação pode ser em português.
 Código: JS vanilla, sem frameworks. CSS com variáveis do :root.
-Arquivos finais sempre em /mnt/user-data/outputs/
 ```
 
 ---
 
-### Chat A — Banco de Palavras & Dicionário
+### Chat B — Supabase Storage & Edge Function
 
 ```
-Frente: curar o banco de palavras usando o repositório fserb/pt-br (github.com/fserb/pt-br).
-
-Objetivo:
-1. Processar `icf` (419k palavras, ICF baixo=comum) e `lexico` (145k) e `listas/negativas`
-2. Filtrar: 4–7 letras, sem acento, só A–Z, sem palavras ofensivas
-3. Classificar por dificuldade: scoreVisual × ICF
-   scoreVisual = 45 + avgOverlap*35 + n_unicas*2 - repeticoes*5
-   SCORE_RANGE: facil(40-56/4L), medio(54-62/5L), dificil(60-68/6L), muito_dificil(56-80/7L)
-4. ~300–400 palavras por nível: facil(4L), medio(5L), dificil(6L), muito_dificil(7L)
-5. Dicionário de validação completo para todos os tamanhos (hoje só 5L tem lista extra)
-6. Regenerar words_ptbr_year.json (365 dias, seed=42)
-
-Atenção: banco PALAVRAS está duplicado entre index.html e a Edge Function (index.ts).
-Ambos precisam ser atualizados em sincronia.
-```
-
----
-
-### Chat B — Edge Function & Backend
-
-```
-Frente: atualizar a Edge Function `daily-word` no Supabase.
+Frente: hospedar words_ptbr_year.json no Supabase Storage e fazer a Edge Function consumi-lo.
 
 Supabase project ID: ppssfweuotjgcfejdznn
-URL: https://ppssfweuotjgcfejdznn.supabase.co/functions/v1/daily-word
+URL Edge Function: https://ppssfweuotjgcfejdznn.supabase.co/functions/v1/daily-word
+Edge Function local: supabase/functions/daily-word/index.ts (v3, deployada)
 
-Lógica atual:
-- Época: 2025-01-01T00:00:00Z
-- nivel = CICLO_DIF[hoje.getUTCDay()]
-  ["facil","medio","medio","dificil","dificil","muito_dificil","muito_dificil"]
-- idx = ((diasDesdeEpoca * 2654435761) >>> 0) % lista.length
-- Resposta: { word, nivel, nivelLabel, puzzle, date }
-- Param opcional: ?date=YYYY-MM-DD
+Estado atual da Edge Function:
+- Calcula a palavra on-the-fly com hash determinístico (diasDesdeEpoca × 2654435761)
+- CICLO_DIF: ["facil","facil","medio","medio","dificil","dificil","muito_dificil"]
+- Banco PALAVRAS hardcoded (duplicado com index.html)
 
 Objetivo:
-1. Atualizar para consumir words_ptbr_year.json (lookup direto por data)
-2. Manter fallback para banco hardcoded
-3. Avaliar centralizar banco (hoje duplicado entre index.html e index.ts)
+1. Criar bucket público "data" no Supabase Storage
+2. Upload de data/words_ptbr_year.json para o bucket
+3. Atualizar index.ts para fazer lookup por data no JSON hospedado
+4. Manter fallback para o cálculo on-the-fly atual se Storage indisponível
+5. Deploy da nova Edge Function
+
+words_ptbr_year.json:
+- 365 dias: 2026-03-07 a 2027-03-06
+- Formato: { metadata: {...}, days: [{ date, word, nivel, nivelLabel, puzzle }, ...] }
+- Hoje (2026-03-07): EFLUVIO / muito_dificil / puzzle 431 (verificado ✓)
 ```
 
 ---
@@ -307,13 +328,11 @@ Objetivos:
 ### Chat E — PWA
 
 ```
-Frente: transformar em PWA.
+Frente: completar a PWA.
 
-Arquivos necessários:
-1. manifest.json — nome "glif.foo", display: standalone, theme_color: #f5a623
-2. service-worker.js — cache do index.html para offline
-3. Ícones — glifo G+L+I+F sobrepostos, fundo dark (#1a1510) ou âmbar
-4. Meta tags no index.html — theme-color, apple-touch-icon
-
-O index.html é único — o SW deve fazer cache dele e dos recursos do Google Fonts.
+Já existem: manifest.json, sw.js, icons/
+Verificar e completar:
+1. manifest.json — nome "glif.foo", display: standalone, theme_color: #f5a623, ícones corretos
+2. sw.js — cache do index.html para offline, estratégia network-first para HTML
+3. Meta tags no index.html — theme-color, apple-touch-icon, viewport
 ```
