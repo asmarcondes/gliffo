@@ -216,6 +216,7 @@ gliffo/
 ### Chat E — PWA (parcialmente pronto)
 
 - `manifest.json` e `sw.js` já existem
+
 11. Verificar/completar manifest (theme_color, ícones, display: standalone)
 12. Verificar service worker (cache offline)
 13. Meta tags no index.html (theme-color, apple-touch-icon)

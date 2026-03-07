@@ -199,6 +199,27 @@ function palavraDoDia(dateStr?: string): {
   };
 }
 
+// URL pública do JSON hospedado no Supabase Storage
+const SCHEDULE_URL =
+  "https://ppssfweuotjgcfejdznn.supabase.co/storage/v1/object/public/data/words_ptbr_year.json";
+
+// Cache em memória do schedule (reaproveitado entre invocações quentes)
+let scheduleCache: { days: Array<{ date: string; word: string; nivel: string; nivelLabel: string; puzzle: number }> } | null = null;
+
+async function palavraDoDiaSchedule(dateStr: string): Promise<ReturnType<typeof palavraDoDia> | null> {
+  try {
+    if (!scheduleCache) {
+      const resp = await fetch(SCHEDULE_URL, { signal: AbortSignal.timeout(3000) });
+      if (!resp.ok) return null;
+      scheduleCache = await resp.json();
+    }
+    const entry = scheduleCache!.days.find((d) => d.date === dateStr);
+    return entry ?? null;
+  } catch {
+    return null;
+  }
+}
+
 Deno.serve(async (req: Request) => {
   // CORS
   const corsHeaders = {
@@ -230,14 +251,23 @@ Deno.serve(async (req: Request) => {
     });
   }
 
-  const result = palavraDoDia(dateParam);
+  // Data alvo (UTC)
+  const targetDate = dateParam ??
+    new Date().toISOString().slice(0, 10);
+
+  // 1. Tenta lookup no schedule hospedado no Storage
+  let result = await palavraDoDiaSchedule(targetDate);
+
+  // 2. Fallback: cálculo on-the-fly com banco hardcoded
+  if (!result) {
+    result = palavraDoDia(targetDate);
+  }
 
   return new Response(JSON.stringify(result), {
     status: 200,
     headers: {
       ...corsHeaders,
       "Content-Type": "application/json",
-      // Cache até fim do dia UTC (não expõe a palavra no header)
       "Cache-Control": "public, max-age=3600, s-maxage=3600",
     },
   });
