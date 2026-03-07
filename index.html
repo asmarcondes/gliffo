@@ -5550,94 +5550,105 @@
         }, 500);
       }
 
-      // ── INTERACT (step 5) ──
-      let iWord = ["L", "O", "B", "A"],
-        iSel = null;
+      // ── INTERACT (step 5) — cursor não-linear ──
+      let iTyped = ["", "", "", ""],
+        iCursor = 0,
+        tutKeyHandler = null;
+
+      function removeTutKeyHandler() {
+        if (tutKeyHandler) {
+          document.removeEventListener("keydown", tutKeyHandler);
+          tutKeyHandler = null;
+        }
+      }
+      function installTutKeyHandler() {
+        removeTutKeyHandler();
+        tutKeyHandler = (e) => {
+          if (iTyped.join("") === "BOLA") return;
+          const k = e.key.toUpperCase();
+          if (k === "BACKSPACE") {
+            e.preventDefault();
+            if (iTyped[iCursor]) {
+              iTyped[iCursor] = "";
+            } else if (iCursor > 0) {
+              iCursor--;
+              iTyped[iCursor] = "";
+            }
+            buildInteract();
+          } else if (k === "ARROWLEFT") {
+            if (iCursor > 0) { iCursor--; buildInteract(); }
+          } else if (k === "ARROWRIGHT") {
+            if (iCursor < 3) { iCursor++; buildInteract(); }
+          } else if (/^[A-Z]$/.test(k)) {
+            iTyped[iCursor] = k;
+            // Avança para o próximo slot vazio, ou o seguinte
+            let next = -1;
+            for (let i = iCursor + 1; i < 4; i++) { if (!iTyped[i]) { next = i; break; } }
+            if (next === -1) for (let i = 0; i < 4; i++) { if (!iTyped[i]) { next = i; break; } }
+            if (next !== -1) iCursor = next;
+            buildInteract();
+          }
+        };
+        document.addEventListener("keydown", tutKeyHandler);
+      }
+
       function buildInteract() {
         const c = document.getElementById("ts5-interact");
         if (!c) return;
         c.innerHTML = "";
         const s = tStroke();
-        iWord.forEach((l, i) => {
+        iTyped.forEach((l, i) => {
           const el = document.createElement("div");
           el.className = "tut-slot";
-          el.style.cursor = "pointer";
-          el.style.transition = "transform 0.12s,box-shadow 0.12s";
-          if (iSel === i) {
-            el.style.transform = "scale(1.1)";
-            el.style.boxShadow = `0 0 0 3px ${tcOf[l] || "var(--amber-400)"}`;
-            el.style.background = "rgba(245,166,35,0.12)";
+          el.style.cursor = l ? "pointer" : "text";
+          el.style.transition = "box-shadow 0.12s";
+          if (i === iCursor) {
+            el.style.boxShadow = "0 0 0 2px var(--amber-400)";
+            el.style.background = "rgba(245,166,35,0.08)";
           }
-          const svg = makeSVG(l, s);
-          if (svg) {
-            svg.style.cssText = "width:65%;height:65%;";
-            el.appendChild(svg);
+          if (l) {
+            const svg = makeSVG(l, s);
+            if (svg) { svg.style.cssText = "width:65%;height:65%;"; el.appendChild(svg); }
           }
-          el.onclick = () => handleIClick(i);
+          el.onclick = () => { iCursor = i; buildInteract(); };
           c.appendChild(el);
         });
-        tStack("ts5-yours", iWord, () => tStroke());
+        tStack("ts5-yours", iTyped.filter(Boolean), () => tStroke());
 
         const hint = document.getElementById("ts5-hint");
         const btn = document.getElementById("tut-next-btn");
-        const solved = iWord.join("") === "BOLA";
+        const solved = iTyped.join("") === "BOLA";
         if (solved) {
-          if (hint) {
-            hint.innerHTML = "🎉 <strong>BOLA!</strong>";
-            hint.style.color = "var(--amber-400)";
-          }
+          if (hint) { hint.innerHTML = "🎉 <strong>BOLA!</strong>"; hint.style.color = "var(--amber-400)"; }
           const slots = c.querySelectorAll(".tut-slot");
           TWL.forEach((l, i) => {
             slots[i].style.background = tcOf[l];
             slots[i].style.borderColor = "transparent";
+            slots[i].style.boxShadow = "";
             const sv = slots[i].querySelector("svg");
-            if (sv)
-              sv.querySelectorAll("path").forEach((p) =>
-                p.setAttribute("stroke", "#fff"),
-              );
+            if (sv) sv.querySelectorAll("path").forEach((p) => p.setAttribute("stroke", "#fff"));
           });
           tStack("ts5-yours", TWL, (l) => tcOf[l], true);
           confetti(c);
-          if (btn) {
-            btn.disabled = false;
-            btn.style.opacity = "1";
-          }
+          if (btn) { btn.disabled = false; btn.style.opacity = "1"; }
+          removeTutKeyHandler();
         } else {
-          const moves = countMoves(iWord, "BOLA");
+          const filled = iTyped.filter(Boolean).length;
           if (hint) {
-            hint.textContent =
-              iSel !== null
-                ? `Toque em outra letra para trocar`
-                : `${moves} troca${moves !== 1 ? "s" : ""} para formar BOLA`;
+            hint.textContent = filled === 0
+              ? "Clique num slot e comece a digitar"
+              : `${filled}/4 letras — forme BOLA`;
             hint.style.color = "var(--text3)";
           }
-          if (btn) {
-            btn.disabled = true;
-            btn.style.opacity = "0.35";
-          }
+          if (btn) { btn.disabled = true; btn.style.opacity = "0.35"; }
         }
-      }
-      function countMoves(arr, target) {
-        let n = 0;
-        const a = [...arr];
-        for (let i = 0; i < a.length; i++) if (a[i] !== target[i]) n++;
-        return Math.ceil(n / 2);
-      }
-      function handleIClick(i) {
-        if (iWord.join() === "BOLA") return;
-        if (iSel === null) {
-          iSel = i;
-        } else {
-          if (iSel !== i) [iWord[iSel], iWord[i]] = [iWord[i], iWord[iSel]];
-          iSel = null;
-        }
-        buildInteract();
       }
 
       // ── STEP RENDERER ──
       function renderStep(step) {
         tClear();
         stopTyping();
+        removeTutKeyHandler();
         if (step !== 1) stopIso();
         const token = newToken();
         document
@@ -5770,13 +5781,13 @@
             tSlots("ts4-slots", ["V", "A", "L", "E"], null);
             break;
 
-          case 5: // Interação — monta BOLA (L já decodificado, A como pista colorida)
+          case 5: // Interação — digita BOLA com cursor não-linear
             tStack("ts5-daily", ["B", "O", "A"], (l) =>
               l === "A" ? tcOf["A"] : tStroke(),
             );
-            iWord = ["L", "O", "B", "A"];
-            iSel = null;
-            tDelay(() => buildInteract(), 100);
+            iTyped = ["", "", "", ""];
+            iCursor = 0;
+            tDelay(() => { buildInteract(); installTutKeyHandler(); }, 100);
             break;
 
           case 6: // Vitória — ambos BOLA colorido completo, B some do daily primeiro
@@ -5799,6 +5810,7 @@
         tClear();
         stopTyping();
         stopIso();
+        removeTutKeyHandler();
         if (currentActionToken) currentActionToken.cancelled = true;
         if (tutStep < 6) {
           tutStep++;
@@ -5810,6 +5822,7 @@
         tClear();
         stopTyping();
         stopIso();
+        removeTutKeyHandler();
         if (currentActionToken) {
           currentActionToken.cancelled = true;
           currentActionToken = null;
@@ -6310,10 +6323,10 @@
                 font-size: 0.76rem;
               "
             >
-              Toque em duas letras para trocar
+              Clique em um slot e comece a digitar
             </p>
             <p class="tut-body" style="text-align: center">
-              A <strong>ordem muda tudo</strong>.<br />Forme
+              Você pode digitar em <strong>qualquer ordem</strong>.<br />Forme
               <strong style="color: var(--amber-400)">BOLA</strong> para
               continuar!
             </p>
