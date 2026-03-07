@@ -121,7 +121,7 @@ Palavra de demonstração: **BOLA** (B=âmbar, O=lavanda, L=mint, A=coral)
 
 - **URL:** `https://ppssfweuotjgcfejdznn.supabase.co/functions/v1/daily-word`
 - **Auth:** `verify_jwt: false` (pública)
-- **Versão deployada:** v3
+- **Versão deployada:** v4
 - **Parâmetro opcional:** `?date=YYYY-MM-DD` (debug/modo arquivo)
 - **Resposta:** `{ word, nivel, nivelLabel, puzzle, date }`
 
@@ -194,13 +194,13 @@ gliffo/
 5. ✅ Edge Function v3 deployada e verificada
 6. ✅ `words_ptbr_year.json` regenerado com CICLO correto (v2)
 
-### Chat B — Supabase Storage (PRÓXIMO)
+### ✅ Chat B — Supabase Storage (CONCLUÍDO)
 
-1. Criar bucket público `data` no Supabase Storage
-2. Upload de `data/words_ptbr_year.json` para o bucket
-3. Atualizar Edge Function para fazer lookup por data no JSON hospedado
-4. Manter fallback para banco hardcoded se Storage indisponível
-5. Deploy da nova versão da Edge Function
+1. ✅ Bucket público `data` criado no Supabase Storage
+2. ✅ `words_ptbr_year.json` hospedado em `storage/v1/object/public/data/words_ptbr_year.json`
+3. ✅ Edge Function v4: lookup por data no schedule → fallback on-the-fly
+4. ✅ Cache em memória do schedule entre invocações quentes (timeout 3s)
+5. ✅ Verificado: hoje=EFLUVIO/muito_dificil/431 (Storage ✓) + data fora do range=fallback ✓
 
 ### Chat C — Tutorial
 
@@ -256,32 +256,7 @@ Código: JS vanilla, sem frameworks. CSS com variáveis do :root.
 
 ---
 
-### Chat B — Supabase Storage & Edge Function
-
-```
-Frente: hospedar words_ptbr_year.json no Supabase Storage e fazer a Edge Function consumi-lo.
-
-Supabase project ID: ppssfweuotjgcfejdznn
-URL Edge Function: https://ppssfweuotjgcfejdznn.supabase.co/functions/v1/daily-word
-Edge Function local: supabase/functions/daily-word/index.ts (v3, deployada)
-
-Estado atual da Edge Function:
-- Calcula a palavra on-the-fly com hash determinístico (diasDesdeEpoca × 2654435761)
-- CICLO_DIF: ["facil","facil","medio","medio","dificil","dificil","muito_dificil"]
-- Banco PALAVRAS hardcoded (duplicado com index.html)
-
-Objetivo:
-1. Criar bucket público "data" no Supabase Storage
-2. Upload de data/words_ptbr_year.json para o bucket
-3. Atualizar index.ts para fazer lookup por data no JSON hospedado
-4. Manter fallback para o cálculo on-the-fly atual se Storage indisponível
-5. Deploy da nova Edge Function
-
-words_ptbr_year.json:
-- 365 dias: 2026-03-07 a 2027-03-06
-- Formato: { metadata: {...}, days: [{ date, word, nivel, nivelLabel, puzzle }, ...] }
-- Hoje (2026-03-07): EFLUVIO / muito_dificil / puzzle 431 (verificado ✓)
-```
+### ~~Chat B~~ — ✅ Concluído (bucket `data` criado, v4 deployada)
 
 ---
 
