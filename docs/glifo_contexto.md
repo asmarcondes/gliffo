@@ -104,17 +104,21 @@ O input foi completamente refeito para suportar **cursor não-linear**:
 
 Palavra de demonstração: **BOLA** (B=âmbar, O=lavanda, L=mint, A=coral)
 
-| Passo | Conteúdo                                                                    |
-| ----- | --------------------------------------------------------------------------- |
-| 1/7   | Glifo pulsando — "o que é isso?"                                            |
-| 2/7   | Animação ISO em loop — A→L→O→B chegando em perspectiva                      |
-| 3/7   | Digita VALE ao vivo, Seu Glifo se forma                                     |
-| 4/7   | Feedback VALE vs BOLA                                                       |
-| 5/7   | Cor única por letra                                                         |
-| 6/7   | Interação obrigatória: reorganiza letras para BOLA (bloqueado até resolver) |
-| 7/7   | Vitória: cards resumo + "Jogar agora! 🎮"                                   |
+| Passo | Conteúdo                                                                 |
+| ----- | ------------------------------------------------------------------------ |
+| 1/7   | Glifo pulsando — "o que é isso?"                                         |
+| 2/7   | Animação ISO em loop — A→L→O→B chegando em perspectiva                   |
+| 3/7   | Digita **BICO** ao vivo, Seu Gliffo se forma                             |
+| 4/7   | Feedback de **BICO**: letras eliminadas, posição errada e acerto         |
+| 5/7   | Cor única por letra + início da 2ª tentativa com **B** já confirmado     |
+| 6/7   | Chave Decodificadora em loop — revela **L** e mostra aviso com atraso    |
+| 7/7   | Interação obrigatória com cursor não-linear para completar **BOLA**       |
 
-- Tem botão **Pular** + botão **✕** (mclose) para fechar
+- Passo final começa com **B** e **L** já confirmados; só os slots vazios são editáveis
+- `Seu Gliffo` no passo final mostra apenas as letras digitadas pelo jogador nessa etapa
+- Ao completar **BOLA**, o título vira **"BOLA!"**, aparecem confetes e cards-resumo
+- Se o botão final for liberado, o botão da esquerda vira **Ver de novo**
+- Tem botão **Pular** / **Ver de novo** + botão **✕** (mclose) para fechar
 - Auto-show na primeira visita (`localStorage: gliffoo_tutdone`)
 
 ## Edge Function — `daily-word`
