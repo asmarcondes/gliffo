@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>glif.foo — curadoria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   DESIGN TOKENS — espelho fiel do index.html
+══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --amber-50:  #fff8ed;
+  --amber-100: #ffefd4;
+  --amber-400: #f5a623;
+  --amber-500: #e8940a;
+  --amber-600: #c97d08;
+  --found:   #e8940a;
+  --correct: #4a9d6f;
+  --wrong:   #c0392b;
+  --gc0: #f5a623; --gc1: #9b8fe8; --gc2: #e87a6b;
+  --gc3: #5bbfa0; --gc4: #6baee8; --gc5: #e8b45b;
+}
+[data-theme="dark"] {
+  --bg: #141210; --bg2: #1a1714;
+  --surface: #1e1b18; --surface2: #252118; --surface3: #2c271f;
+  --border: #302b22; --border2: #3a342a;
+  --text: #f0ebe4; --text2: #9a9080; --text3: #5a5248;
+  --glyph: #f0ebe4;
+  --key-bg: #2a2520; --key-text: #e8e0d4;
+  --shadow: rgba(0,0,0,0.5);
+  --logo-dot: var(--amber-400);
+}
+[data-theme="light"] {
+  --bg: #faf8f4; --bg2: #f5f1eb;
+  --surface: #ffffff; --surface2: #f5f1ea; --surface3: #edeae2;
+  --border: #e0d8cc; --border2: #ebe4d8;
+  --text: #1c1814; --text2: #7a7060; --text3: #aaa090;
+  --glyph: #1c1814;
+  --key-bg: #e8e2d8; --key-text: #1c1814;
+  --shadow: rgba(0,0,0,0.1);
+  --logo-dot: var(--amber-500);
+}
+
+/* scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--amber-500); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--amber-400); }
+* { scrollbar-width: thin; scrollbar-color: #e8940a transparent; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "DM Sans", system-ui, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  transition: background .25s, color .25s;
+}
+
+/* ── HEADER ──────────────────────────────────────── */
+header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 1.5rem; height: 58px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  position: sticky; top: 0; z-index: 20;
+  gap: 12px;
+}
+.logo { display: flex; align-items: baseline; gap: 2px; text-decoration: none; color: inherit; }
+.logo-text { font-family: "DM Serif Display", serif; font-size: 1.4rem; line-height: 1; letter-spacing: -.01em; color: var(--text); }
+.logo-dot  { font-family: "DM Serif Display", serif; font-size: 1.4rem; color: var(--logo-dot); line-height: 1; }
+.logo-foo  { font-family: "DM Sans", sans-serif; font-size: .7rem; font-weight: 300; color: var(--text3); margin-left: 1px; }
+.logo-sub  { font-size: .68rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); padding-left: 10px; border-left: 1px solid var(--border2); }
+
+.hbtns { display: flex; gap: 2px; }
+.hbtn {
+  width: 36px; height: 36px; border-radius: 8px; border: none;
+  background: transparent; color: var(--text3); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s, color .15s;
+}
+.hbtn:hover { background: var(--surface2); color: var(--text2); }
+.hbtn svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+.hbtn.accent { color: var(--amber-400); }
+.hbtn.accent:hover { background: rgba(245,166,35,.1); color: var(--amber-500); }
+
+/* ── NIVEL TABS ──────────────────────────────────── */
+#nivel-tabs {
+  display: flex; border-bottom: 1px solid var(--border);
+  background: var(--bg2); overflow-x: auto; flex-shrink: 0;
+}
+.nivel-tab {
+  padding: 10px 18px; border: none; background: transparent;
+  border-bottom: 2px solid transparent;
+  color: var(--text3); cursor: pointer;
+  font-size: .78rem; font-weight: 600; white-space: nowrap;
+  font-family: "DM Sans", sans-serif;
+  transition: color .15s; display: flex; align-items: center; gap: 6px;
+}
+.nivel-tab:hover { color: var(--text2); }
+.nivel-tab.active { color: var(--amber-400); border-bottom-color: var(--amber-400); }
+.tab-badge {
+  font-size: .6rem; font-weight: 700; color: var(--text3);
+  background: var(--surface2); border-radius: 99px;
+  padding: 1px 6px; letter-spacing: .02em;
+}
+.nivel-tab.active .tab-badge { color: var(--amber-500); background: rgba(245,166,35,.12); }
+
+/* ── VIEW TABS ───────────────────────────────────── */
+.view-tabs {
+  display: flex; gap: 2px;
+  background: var(--surface2); border-radius: 8px; padding: 2px;
+}
+.view-tab {
+  padding: 5px 12px; border-radius: 6px; border: none; background: transparent;
+  color: var(--text3); cursor: pointer; font-size: .75rem; font-weight: 500;
+  font-family: "DM Sans", sans-serif; transition: background .15s, color .15s;
+}
+.view-tab:hover { color: var(--text2); }
+.view-tab.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px var(--shadow); }
+
+/* ── MAIN ────────────────────────────────────────── */
+main { flex: 1; overflow: auto; }
+
+/* ── FILTER ROW ──────────────────────────────────── */
+.filter-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.filter-pill {
+  padding: 4px 11px; border-radius: 999px; border: 1px solid var(--border);
+  background: transparent; color: var(--text3); cursor: pointer;
+  font-size: .72rem; font-weight: 500; font-family: "DM Sans", sans-serif;
+  transition: all .15s;
+}
+.filter-pill:hover { border-color: var(--border2); color: var(--text2); }
+.filter-pill.active { border-color: var(--amber-400); background: rgba(245,166,35,.08); color: var(--amber-400); }
+
+/* ── VIEW: CURAR ─────────────────────────────────── */
+#view-curar {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 24px 16px 32px; gap: 18px;
+}
+
+/* progress */
+.progress-wrap { width: 100%; max-width: 420px; }
+.progress-meta { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: .7rem; color: var(--text3); }
+.progress-bar { width: 100%; height: 3px; background: var(--border); border-radius: 99px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 99px; background: var(--amber-400); transition: width .25s; }
+
+/* card */
+.card {
+  width: 100%; max-width: 420px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px; padding: 28px 22px 22px;
+  display: flex; flex-direction: column; align-items: center; gap: 20px;
+  transition: border-color .2s, box-shadow .2s;
+}
+.card.dec-aceitar { border-color: rgba(74,157,111,.5); box-shadow: 0 0 24px rgba(74,157,111,.08); }
+.card.dec-recusar { border-color: rgba(192,57,43,.4);  box-shadow: 0 0 24px rgba(192,57,43,.07); }
+
+/* glifo */
+#glifo-wrap {
+  width: 140px; height: 140px; border-radius: 14px;
+  background: var(--surface2); border: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+
+/* palavra */
+.word-main { text-align: center; }
+.word-text {
+  font-family: "DM Serif Display", serif;
+  font-size: 2.4rem; letter-spacing: .1em;
+  color: var(--text); line-height: 1;
+}
+.word-meta { display: flex; gap: 8px; justify-content: center; align-items: center; margin-top: 9px; flex-wrap: wrap; }
+
+/* dif-badge — idêntico ao index.html */
+.dif-badge {
+  font-size: .55rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 999px; white-space: nowrap; border: 1px solid;
+}
+.dif-badge.facil          { color: #1f7a5e; background: #e6f4ef; border-color: #b2ddd1; }
+.dif-badge.medio          { color: #92600a; background: #fef3d8; border-color: #f5d27a; }
+.dif-badge.dificil        { color: #c0392b; background: #fdecea; border-color: #f5b7b1; }
+.dif-badge.muito_dificil  { color: #7d3c98; background: #f3eefb; border-color: #d4b8ea; }
+[data-theme="dark"] .dif-badge.facil         { color: #5bbfa0; background: #0d2e26; border-color: #1a4d3e; }
+[data-theme="dark"] .dif-badge.medio         { color: var(--amber-400); background: #2e2008; border-color: #5a3f10; }
+[data-theme="dark"] .dif-badge.dificil       { color: #e87a6b; background: #2e100d; border-color: #5a2018; }
+[data-theme="dark"] .dif-badge.muito_dificil { color: #b07fd8; background: #1e1030; border-color: #42246a; }
+
+.badge-sv { font-size: .65rem; font-weight: 600; }
+.badge-len { font-size: .6rem; color: var(--text3); }
+
+/* confiança */
+.conf-wrap { width: 100%; }
+.conf-header { display: flex; justify-content: space-between; font-size: .68rem; color: var(--text3); margin-bottom: 5px; }
+.conf-header strong { font-weight: 600; }
+.conf-track { width: 100%; height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+.conf-fill  { height: 100%; border-radius: 99px; transition: width .3s, background .3s; }
+.conf-flags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 7px; }
+.conf-flag {
+  font-size: .62rem; padding: 1px 6px; border-radius: 4px;
+  background: var(--surface2); color: var(--text3); font-family: monospace;
+  border: 1px solid var(--border);
+}
+.conf-flag.pos { color: var(--correct); background: rgba(74,157,111,.08); border-color: rgba(74,157,111,.2); }
+.conf-flag.neg { color: #e87a6b; background: rgba(232,122,107,.08); border-color: rgba(232,122,107,.2); }
+
+/* botões decisão */
+.decision-row { display: flex; gap: 10px; width: 100%; }
+.btn-dec {
+  flex: 1; padding: 13px 0; border-radius: 10px;
+  border: 1px solid var(--border); background: var(--bg2);
+  color: var(--text3); cursor: pointer;
+  font-size: .88rem; font-weight: 600; font-family: "DM Sans", sans-serif;
+  transition: all .15s; line-height: 1.3; text-align: center;
+}
+.btn-dec:hover { border-color: var(--border2); color: var(--text2); }
+.btn-dec .hint { font-size: .6rem; opacity: .45; display: block; margin-top: 2px; }
+.btn-dec.recusar.active { border-color: rgba(192,57,43,.6); background: rgba(192,57,43,.1); color: #e87a6b; }
+.btn-dec.aceitar.active { border-color: rgba(74,157,111,.6); background: rgba(74,157,111,.1); color: var(--correct); }
+[data-theme="light"] .btn-dec.recusar.active { border-color: #f5b7b1; background: #fdecea; color: #c0392b; }
+[data-theme="light"] .btn-dec.aceitar.active { border-color: #b2ddd1; background: #e6f4ef; color: #1f7a5e; }
+
+.nav-row { display: flex; gap: 8px; }
+.btn-nav {
+  padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border);
+  background: transparent; color: var(--text3); cursor: pointer;
+  font-size: .75rem; font-family: "DM Sans", sans-serif;
+  transition: all .15s;
+}
+.btn-nav:hover { border-color: var(--border2); color: var(--text2); }
+
+.empty { text-align: center; color: var(--text3); padding: 64px 20px; }
+.empty-icon { font-size: 32px; margin-bottom: 10px; }
+.empty p { font-size: .9rem; }
+
+/* ── VIEW: REVISAR ───────────────────────────────── */
+#view-revisar { padding: 20px 20px 32px; }
+.revisar-top { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+.search-input {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 6px 12px; color: var(--text);
+  font-size: .8rem; outline: none; width: 160px; font-family: "DM Sans", sans-serif;
+  transition: border-color .15s;
+}
+.search-input:focus { border-color: var(--amber-500); }
+.search-input::placeholder { color: var(--text3); }
+
+.word-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+.word-chip {
+  padding: 5px 10px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text); cursor: pointer;
+  font-size: .8rem; font-weight: 600; letter-spacing: .05em;
+  font-family: "DM Serif Display", serif;
+  transition: all .12s; display: inline-flex; align-items: center; gap: 5px;
+}
+.word-chip:hover { border-color: var(--border2); background: var(--surface2); }
+.word-chip.aceitar { border-color: rgba(74,157,111,.45); background: rgba(74,157,111,.07); color: var(--correct); }
+.word-chip.recusar { border-color: rgba(192,57,43,.3); background: rgba(192,57,43,.05); color: #e87a6b; opacity: .55; text-decoration: line-through; }
+[data-theme="light"] .word-chip.aceitar { border-color: #b2ddd1; background: #e6f4ef; color: #1f7a5e; }
+[data-theme="light"] .word-chip.recusar { border-color: #f5b7b1; background: #fdecea; color: #c0392b; }
+.chip-conf { font-size: .6rem; font-family: "DM Sans", sans-serif; font-weight: 400; opacity: .55; }
+
+/* ── VIEW: EXPORTAR ──────────────────────────────── */
+#view-exportar { padding: 28px 20px 40px; max-width: 600px; }
+#view-exportar h2 { font-family: "DM Serif Display", serif; font-size: 1.4rem; color: var(--amber-400); margin-bottom: 20px; }
+
+.stat-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px 16px; margin-bottom: 10px;
+}
+.stat-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.stat-name { font-size: .78rem; font-weight: 600; }
+.stat-total { font-size: .68rem; color: var(--text3); }
+.stat-nums { display: flex; gap: 14px; font-size: .75rem; margin-bottom: 8px; }
+.stat-bar { height: 3px; background: var(--border); border-radius: 99px; display: flex; overflow: hidden; }
+
+.dbtn {
+  margin-top: 22px;
+  width: 100%; padding: 13px;
+  background: var(--amber-400); color: #1a1410;
+  border: none; border-radius: 11px;
+  font-family: "DM Sans", sans-serif; font-size: .9rem; font-weight: 600; letter-spacing: .03em;
+  cursor: pointer; transition: background .15s, transform .1s;
+}
+.dbtn:hover { background: var(--amber-500); }
+.dbtn:active { transform: scale(.98); }
+
+.export-notes { margin-top: 16px; font-size: .75rem; color: var(--text3); line-height: 1.7; }
+.export-notes strong { color: var(--text2); }
+code { font-family: monospace; font-size: .72rem; background: var(--surface2); padding: 1px 5px; border-radius: 3px; color: var(--text2); }
+
+/* ── VIEW: METODOLOGIA ───────────────────────────── */
+#view-metodo { padding: 28px 20px 40px; max-width: 640px; }
+#view-metodo h2 { font-family: "DM Serif Display", serif; font-size: 1.4rem; color: var(--amber-400); margin-bottom: 18px; }
+#view-metodo h3 { font-size: .8rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text2); margin: 20px 0 10px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+#view-metodo p, #view-metodo li { font-size: .82rem; line-height: 1.65; color: var(--text2); }
+#view-metodo ul { padding-left: 16px; display: flex; flex-direction: column; gap: 4px; }
+.formula {
+  font-family: monospace; font-size: .8rem;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 14px; margin: 10px 0;
+  color: var(--text); letter-spacing: .02em;
+}
+.factor-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: .76rem; }
+.factor-table th { text-align: left; padding: 5px 10px; border-bottom: 1px solid var(--border); color: var(--text3); font-weight: 600; font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; }
+.factor-table td { padding: 5px 10px; border-bottom: 1px solid var(--border); color: var(--text2); }
+.factor-table td:first-child { font-family: monospace; font-size: .72rem; color: var(--text); }
+.pos { color: var(--correct); font-weight: 600; }
+.neg { color: #e87a6b; font-weight: 600; }
+
+/* ── FOOTER ──────────────────────────────────────── */
+footer {
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  padding: 8px 20px;
+  display: flex; gap: 16px; font-size: .68rem; color: var(--text3);
+  flex-wrap: wrap;
+}
+footer span b { font-weight: 600; }
+
+/* ── UTIL ────────────────────────────────────────── */
+.hidden { display: none !important; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+.fadein { animation: fadeIn .18s ease forwards; }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ─────────────────────────────────────── -->
+<header>
+  <a class="logo" href="#">
+    <span class="logo-text">glif</span><span class="logo-dot">.</span><span class="logo-foo">foo</span>
+    <span class="logo-sub" style="margin-left:10px">curadoria</span>
+  </a>
+
+  <div class="view-tabs" id="view-tabs">
+    <button class="view-tab active" data-view="curar">⚡ Curar</button>
+    <button class="view-tab" data-view="revisar">☰ Revisar</button>
+    <button class="view-tab" data-view="exportar">⬇ Exportar</button>
+    <button class="view-tab" data-view="metodo">📐 Método</button>
+  </div>
+
+  <div class="hbtns">
+    <button class="hbtn" title="Alternar tema" onclick="toggleTheme()">
+      <svg id="icon-dark" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      <svg id="icon-light" viewBox="0 0 24 24" class="hidden"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- ── NIVEL TABS ─────────────────────────────────── -->
+<div id="nivel-tabs">
+  <button class="nivel-tab active" data-nivel="facil">Fácil <span class="tab-badge" id="badge-facil">…</span></button>
+  <button class="nivel-tab" data-nivel="medio">Médio <span class="tab-badge" id="badge-medio">…</span></button>
+  <button class="nivel-tab" data-nivel="dificil">Difícil <span class="tab-badge" id="badge-dificil">…</span></button>
+  <button class="nivel-tab" data-nivel="muito_dificil">Muito Difícil <span class="tab-badge" id="badge-muito_dificil">…</span></button>
+</div>
+
+<!-- ── MAIN ───────────────────────────────────────── -->
+<main>
+
+  <!-- VIEW: CURAR -->
+  <div id="view-curar">
+    <div class="filter-row">
+      <button class="filter-pill active" data-f="all">Todas</button>
+      <button class="filter-pill" data-f="pendente">Pendentes</button>
+      <button class="filter-pill" data-f="aceitar">Aceitas</button>
+      <button class="filter-pill" data-f="recusar">Recusadas</button>
+      <button class="filter-pill" data-f="baixa">Conf &lt; 50</button>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span id="prog-pos">— / —</span>
+        <span id="prog-pct" style="color:var(--amber-400)"></span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+
+    <div class="card" id="main-card">
+      <div id="glifo-wrap"></div>
+
+      <div class="word-main">
+        <div class="word-text" id="word-text">—</div>
+        <div class="word-meta">
+          <span class="dif-badge" id="badge-nivel"></span>
+          <span class="badge-sv" id="badge-sv"></span>
+          <span class="badge-len" id="badge-len"></span>
+        </div>
+      </div>
+
+      <div class="conf-wrap">
+        <div class="conf-header">
+          <span>confiança do algoritmo</span>
+          <strong id="conf-val" style="color:var(--text2)">—</strong>
+        </div>
+        <div class="conf-track"><div class="conf-fill" id="conf-fill" style="width:0%"></div></div>
+        <div class="conf-flags" id="conf-flags"></div>
+      </div>
+
+      <div class="decision-row">
+        <button class="btn-dec recusar" id="btn-recusar" onclick="decidir('recusar')">
+          ✕ Recusar<span class="hint">← ou R</span>
+        </button>
+        <button class="btn-dec aceitar" id="btn-aceitar" onclick="decidir('aceitar')">
+          ✓ Aceitar<span class="hint">→ ou A</span>
+        </button>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-nav" onclick="navDelta(-1)">← Anterior</button>
+        <button class="btn-nav" onclick="navDelta(1)">Próxima →</button>
+      </div>
+    </div>
+
+    <div class="empty hidden" id="empty-curar">
+      <div class="empty-icon">◆</div>
+      <p>Nenhuma palavra neste filtro</p>
+    </div>
+  </div>
+
+  <!-- VIEW: REVISAR -->
+  <div id="view-revisar" class="hidden">
+    <div class="revisar-top">
+      <input class="search-input" id="search-inp" type="text" placeholder="Buscar…" oninput="renderRevisar()">
+      <div class="filter-row" style="gap:4px">
+        <button class="filter-pill active" data-rf="all">Todas</button>
+        <button class="filter-pill" data-rf="pendente">Pendentes</button>
+        <button class="filter-pill" data-rf="aceitar">✓ Aceitas</button>
+        <button class="filter-pill" data-rf="recusar">✕ Recusadas</button>
+        <button class="filter-pill" data-rf="baixa">Conf &lt;50</button>
+      </div>
+    </div>
+    <div class="word-grid" id="word-grid"></div>
+  </div>
+
+  <!-- VIEW: EXPORTAR -->
+  <div id="view-exportar" class="hidden">
+    <h2>Resumo da Curadoria</h2>
+    <div id="export-stats"></div>
+    <button class="dbtn" onclick="exportar()">⬇ Baixar banco_curado.json</button>
+    <div class="export-notes">
+      <strong>banco_curado.json</strong> inclui:<br>
+      • <code>banco_curado</code> — aceitas + pendentes (exclui recusadas)<br>
+      • <code>banco_so_aceitos</code> — apenas as explicitamente aceitas<br>
+      • <code>decisoes</code> — mapa completo de todas as decisões<br>
+      • <code>stats</code> — contagens por nível
+    </div>
+  </div>
+
+  <!-- VIEW: METODOLOGIA -->
+  <div id="view-metodo" class="hidden">
+    <h2>Metodologia do Banco</h2>
+
+    <h3>Fontes de dados</h3>
+    <ul>
+      <li><strong>ICF (fserb/pt-br)</strong> — ~74k entradas com índice de complexidade fonológica. ICF baixo = palavra mais comum e familiar.</li>
+      <li><strong>Léxico (fserb/pt-br)</strong> — ~35k entradas complementares sem pontuação ICF, usadas para 6L e 7L.</li>
+      <li><strong>Seeds xlsx</strong> — 263 palavras curadas manualmente nas sessões anteriores.</li>
+      <li><strong>term.ooo</strong> — ~1.400 palavras de 5L de lista de referência curada, usadas como seeds de alta confiança.</li>
+    </ul>
+
+    <h3>Score Visual (SV)</h3>
+    <p>Mede a riqueza visual do glifo. Baseado na similaridade de Jaccard entre os shapes SVG das letras únicas.</p>
+    <div class="formula">SV = 45 + avgOverlap × 35 + n_únicas × 2 − repetições × 5</div>
+    <p>Escala: ~34 (muito simples) → ~75 (muito complexo/diverso)</p>
+
+    <h3>Score de Confiança (0–100)</h3>
+    <p>Referência para priorizar a curadoria — não é barreira de exclusão.</p>
+    <table class="factor-table">
+      <tr><th>Fator</th><th>Valor</th><th>Motivo</th></tr>
+      <tr><td>seed_xlsx</td><td class="pos">+40</td><td>Curadoria manual prévia</td></tr>
+      <tr><td>seed_termooo</td><td class="pos">+35</td><td>Lista de referência de qualidade</td></tr>
+      <tr><td>icf_muito_comum (≤8)</td><td class="pos">+18</td><td>Palavra muito frequente</td></tr>
+      <tr><td>icf_comum (≤9.5)</td><td class="pos">+14</td><td></td></tr>
+      <tr><td>icf_moderado (≤11)</td><td class="pos">+8</td><td></td></tr>
+      <tr><td>icf_pouco_comum (≤12.5)</td><td class="pos">+2</td><td></td></tr>
+      <tr><td>icf_raro (&gt;12.5)</td><td class="neg">−8</td><td>Palavra obscura</td></tr>
+      <tr><td>sem_icf (só léxico)</td><td class="neg">−5</td><td>Sem dado de frequência</td></tr>
+      <tr><td>sv_alto (≥65)</td><td class="pos">+8</td><td>Glifo visualmente rico</td></tr>
+      <tr><td>sv_medio (≥58)</td><td class="pos">+4</td><td></td></tr>
+      <tr><td>sv_baixo (&lt;45)</td><td class="neg">−5</td><td>Glifo simples/repetitivo</td></tr>
+      <tr><td>suspeita_preterito_perf</td><td class="neg">−20</td><td>Termina em EI/EU/OU</td></tr>
+      <tr><td>suspeita_gerundio</td><td class="neg">−25</td><td>Termina em NDO</td></tr>
+      <tr><td>suspeita_futuro_subj</td><td class="neg">−8</td><td>Termina em ARA/ERA/IRA</td></tr>
+    </table>
+
+    <h3>Exclusões absolutas</h3>
+    <p>Apenas funcionais gramaticais (preposições, conjunções, pronomes) e anglicismos sem uso em PT-BR. Substantivos incorporados ao português como BUDA, JURI, MENU, PILATES, PLACEBO são mantidos. Verbos no infinitivo são aceitos. Palavras ambíguas verbo/substantivo (SEDE, TEOR, TESE, CRER, AMÉM) são mantidas — decisão final pela curadoria.</p>
+  </div>
+
+</main>
+
+<!-- ── FOOTER ─────────────────────────────────────── -->
+<footer id="footer"></footer>
+
+<script>
+// ── Banco ────────────────────────────────────────────
+const BANCO = {"facil":[{"w":"MESA","sv":61.6,"conf":100,"flags":["seed_xlsx","icf_comum","sv_medio"]},{"w":"PELE","sv":61.2,"conf":100,"flags":["seed_xlsx","icf_comum","sv_medio"]},{"w":"GELO","sv":61.2,"conf":100,"flags":["seed_xlsx","icf_moderado","sv_medio"]},{"w":"TELA","sv":60.2,"conf":100,"flags":["seed_xlsx","icf_comum","sv_medio"]},{"w":"FOME","sv":59.2,"conf":100,"flags":["seed_xlsx","icf_moderado","sv_medio"]},{"w":"FACA","sv":58.4,"conf":100,"flags":["seed_xlsx","icf_comum","sv_medio"]},{"w":"CABO","sv":58.4,"conf":100,"flags":["seed_xlsx","icf_comum","sv_medio"]},{"w":"BOCA","sv":58.4,"conf":100,"flags":["seed_xlsx","icf_comum","sv_medio"]},{"w":"MEDO","sv":58.2,"conf":100,"flags":["seed_xlsx","icf_comum","sv_medio"]},{"w":"VALE","sv":57.9,"conf":100,"flags":["seed_xlsx","icf_comum"]},{"w":"CASA","sv":57.7,"conf":100,"flags":["seed_xlsx","icf_muito_comum"]},{"w":"HORA","sv":57.6,"conf":100,"flags":["seed_xlsx","icf_comum"]},{"w":"AMOR","sv":55.4,"conf":100,"flags":["seed_xlsx","icf_muito_comum"]},{"w":"MAPA","sv":51.6,"conf":100,"flags":["seed_xlsx","icf_comum"]},{"w":"CAMA","sv":49.9,"conf":100,"flags":["seed_xlsx","icf_comum"]},{"w":"FOGO","sv":49.9,"conf":100,"flags":["seed_xlsx","icf_comum"]},{"w":"JOGO","sv":49.3,"conf":100,"flags":["seed_xlsx","icf_muito_comum"]},{"w":"DADO","sv":47.7,"conf":100,"flags":["seed_xlsx","icf_comum"]},{"w":"VELA","sv":57.9,"conf":98,"flags":["seed_xlsx","icf_moderado"]},{"w":"ARCO","sv":57.6,"conf":98,"flags":["seed_xlsx","icf_moderado"]},{"w":"RODA","sv":57.2,"conf":98,"flags":["seed_xlsx","icf_moderado"]},{"w":"LAGO","sv":56.1,"conf":98,"flags":["seed_xlsx","icf_moderado"]},{"w":"GATO","sv":55.9,"conf":98,"flags":["seed_xlsx","icf_moderado"]},{"w":"BOLO","sv":49.9,"conf":98,"flags":["seed_xlsx","icf_moderado"]},{"w":"LOBO","sv":49.9,"conf":98,"flags":["seed_xlsx","icf_moderado"]},{"w":"NEVE","sv":47.9,"conf":98,"flags":["seed_xlsx","icf_moderado"]},{"w":"CUBO","sv":60.5,"conf":96,"flags":["seed_xlsx","icf_pouco_comum","sv_medio"]},{"w":"ERVA","sv":59.5,"conf":96,"flags":["seed_xlsx","icf_pouco_comum","sv_medio"]},{"w":"FUMO","sv":57.5,"conf":92,"flags":["seed_xlsx","icf_pouco_comum"]},{"w":"PATO","sv":57.3,"conf":92,"flags":["seed_xlsx","icf_pouco_comum"]},{"w":"MURO","sv":56.9,"conf":92,"flags":["seed_xlsx","icf_pouco_comum"]},{"w":"LONA","sv":54.5,"conf":92,"flags":["seed_xlsx","icf_pouco_comum"]},{"w":"ISCA","sv":64.7,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"LUPA","sv":61.0,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"PIVO","sv":54.0,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"OCIO","sv":51.8,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"BUDA","sv":61.8,"conf":81,"flags":["icf_pouco_comum","sv_medio","reintegrada_manualmente"]},{"w":"JURI","sv":61.2,"conf":81,"flags":["icf_pouco_comum","sv_medio","reintegrada_manualmente"]},{"w":"AMEM","sv":51.6,"conf":77,"flags":["icf_pouco_comum","reintegrada_manualmente"]},{"w":"SERA","sv":66.8,"conf":76,"flags":["icf_muito_comum","sv_alto"]},{"w":"DEUS","sv":66.6,"conf":76,"flags":["icf_muito_comum","sv_alto"]},{"w":"SEJA","sv":65.2,"conf":76,"flags":["icf_muito_comum","sv_alto"]},{"w":"CAFE","sv":69.9,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"FASE","sv":69.4,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"SABE","sv":68.3,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"BASE","sv":68.3,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"ABRE","sv":68.2,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"PECA","sv":68.1,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"DICA","sv":65.4,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"FICA","sv":64.3,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"DIAS","sv":63.7,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"PAIS","sv":63.4,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"TRES","sv":63.4,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"LEIA","sv":62.6,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"PODE","sv":61.9,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"DUAS","sv":61.6,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"QUER","sv":60.1,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"AREA","sv":59.1,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"TIPO","sv":59.0,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"DOIS","sv":58.9,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"MAIS","sv":58.8,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"CASO","sv":58.8,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"QUEM","sv":58.5,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"ONDE","sv":58.4,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"CADA","sv":58.4,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"HOJE","sv":58.2,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"TAIS","sv":64.9,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"LHES","sv":64.4,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"GRID","sv":64.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"CRUZ","sv":63.6,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"REAL","sv":63.4,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ARTE","sv":62.8,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"TERA","sv":62.8,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"SAIR","sv":62.8,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"PENA","sv":62.3,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"MEUS","sv":62.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"REDE","sv":62.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"SEDE","sv":62.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"BELO","sv":61.8,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"TIME","sv":61.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ERAM","sv":61.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"PESO","sv":61.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"USAR","sv":60.7,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"NUMA","sv":60.6,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"FORA","sv":60.5,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"AZUL","sv":60.5,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"LIGA","sv":60.4,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"TIVE","sv":60.4,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"SEIS","sv":60.4,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"TRAZ","sv":60.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"FICO","sv":60.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ISTO","sv":59.8,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"GUIA","sv":59.8,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"BOAS","sv":59.6,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"PIOR","sv":59.5,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"OBRA","sv":59.5,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"FACO","sv":59.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"MEIA","sv":59.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ROSA","sv":59.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"SIDO","sv":58.9,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"CIMA","sv":58.8,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"HOME","sv":58.5,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"FRIO","sv":58.5,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"COPA","sv":58.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"TEMA","sv":58.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"LUTA","sv":58.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"VIDA","sv":57.1,"conf":68,"flags":["icf_muito_comum"]},{"w":"NOME","sv":57.1,"conf":68,"flags":["icf_muito_comum"]},{"w":"QUAL","sv":56.9,"conf":68,"flags":["icf_muito_comum"]},{"w":"LADO","sv":56.8,"conf":68,"flags":["icf_muito_comum"]},{"w":"MEIO","sv":56.2,"conf":68,"flags":["icf_muito_comum"]},{"w":"TODA","sv":56.2,"conf":68,"flags":["icf_muito_comum"]},{"w":"ANOS","sv":55.9,"conf":68,"flags":["icf_muito_comum"]},{"w":"AQUI","sv":55.1,"conf":68,"flags":["icf_muito_comum"]},{"w":"NOVA","sv":53.0,"conf":68,"flags":["icf_muito_comum"]},{"w":"DEVE","sv":53.0,"conf":68,"flags":["icf_muito_comum"]},{"w":"AGUA","sv":51.4,"conf":68,"flags":["icf_muito_comum"]},{"w":"TODO","sv":48.3,"conf":68,"flags":["icf_muito_comum"]},{"w":"COMO","sv":47.9,"conf":68,"flags":["icf_muito_comum"]},{"w":"NOVO","sv":46.0,"conf":68,"flags":["icf_muito_comum"]},{"w":"FACE","sv":69.9,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CABE","sv":68.6,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CRIE","sv":68.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CEUS","sv":68.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CAES","sv":68.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"SECA","sv":68.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CASE","sv":68.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PUDE","sv":67.6,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PEDI","sv":67.6,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"FIEL","sv":66.7,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"LIFE","sv":66.7,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"FAZE","sv":66.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"FALE","sv":66.0,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PEGA","sv":65.7,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"LEIS","sv":65.5,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PROF","sv":65.5,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"REIS","sv":65.4,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"DOCE","sv":65.2,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"JUIZ","sv":65.2,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CEDO","sv":65.2,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"BELA","sv":65.2,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"TIRE","sv":65.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"FATO","sv":58.0,"conf":64,"flags":["icf_comum"]},{"w":"LEVA","sv":57.9,"conf":64,"flags":["icf_comum"]},{"w":"ILHA","sv":57.9,"conf":64,"flags":["icf_comum"]},{"w":"VEJA","sv":57.7,"conf":64,"flags":["icf_comum"]},{"w":"LIMA","sv":56.6,"conf":64,"flags":["icf_comum"]},{"w":"CAPA","sv":56.5,"conf":64,"flags":["icf_comum"]},{"w":"BOLA","sv":56.4,"conf":64,"flags":["icf_comum"]},{"w":"ACHO","sv":56.1,"conf":64,"flags":["icf_comum"]},{"w":"SETE","sv":56.1,"conf":64,"flags":["icf_comum"]},{"w":"MAOS","sv":55.9,"conf":64,"flags":["icf_comum"]},{"w":"BONS","sv":55.9,"conf":64,"flags":["icf_comum"]},{"w":"VILA","sv":55.4,"conf":64,"flags":["icf_comum"]},{"w":"OLHA","sv":55.4,"conf":64,"flags":["icf_comum"]},{"w":"VEIO","sv":55.3,"conf":64,"flags":["icf_comum"]},{"w":"CARA","sv":55.2,"conf":64,"flags":["icf_comum"]},{"w":"ZONA","sv":55.1,"conf":64,"flags":["icf_comum"]},{"w":"LOJA","sv":55.0,"conf":64,"flags":["icf_comum"]},{"w":"VEJO","sv":54.9,"conf":64,"flags":["icf_comum"]},{"w":"MODA","sv":54.7,"conf":64,"flags":["icf_comum"]},{"w":"ALTO","sv":54.2,"conf":64,"flags":["icf_comum"]},{"w":"NOTA","sv":54.2,"conf":64,"flags":["icf_comum"]},{"w":"AUTO","sv":54.2,"conf":64,"flags":["icf_comum"]},{"w":"MAIO","sv":54.0,"conf":64,"flags":["icf_comum"]},{"w":"SALA","sv":53.8,"conf":64,"flags":["icf_comum"]},{"w":"AULA","sv":53.8,"conf":64,"flags":["icf_comum"]},{"w":"LULA","sv":53.8,"conf":64,"flags":["icf_comum"]},{"w":"FALA","sv":53.6,"conf":64,"flags":["icf_comum"]},{"w":"DATA","sv":52.3,"conf":64,"flags":["icf_comum"]},{"w":"LEVE","sv":51.8,"conf":64,"flags":["icf_comum"]},{"w":"ERRO","sv":51.8,"conf":64,"flags":["icf_comum"]},{"w":"LOGO","sv":50.7,"conf":64,"flags":["icf_comum"]},{"w":"FOTO","sv":48.9,"conf":64,"flags":["icf_comum"]},{"w":"TEVE","sv":48.3,"conf":64,"flags":["icf_comum"]},{"w":"ALTA","sv":48.3,"conf":64,"flags":["icf_comum"]},{"w":"ALMA","sv":48.3,"conf":64,"flags":["icf_comum"]},{"w":"TAXA","sv":48.3,"conf":64,"flags":["icf_comum"]},{"w":"ACAO","sv":47.9,"conf":64,"flags":["icf_comum"]},{"w":"MODO","sv":47.7,"conf":64,"flags":["icf_comum"]},{"w":"OURO","sv":47.7,"conf":64,"flags":["icf_comum"]},{"w":"POVO","sv":46.0,"conf":64,"flags":["icf_comum"]},{"w":"VIVO","sv":46.0,"conf":64,"flags":["icf_comum"]},{"w":"MENU","sv":64.7,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"GERA","sv":64.6,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"CRER","sv":64.5,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"SIGA","sv":64.0,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"FIAT","sv":64.0,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"FITA","sv":64.0,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"PEDE","sv":63.9,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"BENS","sv":63.7,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"FRIA","sv":63.5,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"BATE","sv":63.5,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"UTIL","sv":63.4,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"PECO","sv":63.2,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"PURA","sv":63.1,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"DUAL","sv":63.0,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"CUBA","sv":62.9,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"RETA","sv":62.8,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"SURF","sv":62.7,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"DIGA","sv":62.7,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"VICE","sv":62.6,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"TIRA","sv":62.5,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"RITA","sv":62.5,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"CENA","sv":62.4,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"BEBE","sv":62.3,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"CAIR","sv":62.3,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"CRIA","sv":62.3,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"RICA","sv":62.3,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"SECO","sv":62.2,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"TRAS","sv":62.1,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"LINE","sv":62.1,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"CAIU","sv":61.9,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"FLEX","sv":61.8,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"SAEM","sv":61.6,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"HEIN","sv":61.6,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"CURA","sv":61.3,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"ITEM","sv":61.2,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"TEUS","sv":61.2,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"RAIZ","sv":61.2,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"DOZE","sv":61.2,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"FUGA","sv":61.1,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"DOSE","sv":61.1,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"SEMI","sv":61.0,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"FARA","sv":61.0,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"PAUL","sv":61.0,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"FEIO","sv":60.9,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"SAIU","sv":60.8,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"AGIR","sv":60.6,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"BICO","sv":60.5,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"DITO","sv":60.4,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"TIDO","sv":60.4,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"FILA","sv":60.4,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"DURA","sv":60.3,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"ANEL","sv":60.3,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"DIGO","sv":60.2,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"SOFA","sv":60.2,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"SELO","sv":59.8,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"LIDO","sv":59.7,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"OLHE","sv":59.7,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"JEAN","sv":59.7,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"GRAU","sv":59.6,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"TREM","sv":59.6,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"SOPA","sv":59.5,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"SAPO","sv":59.5,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"VERA","sv":59.5,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"FONE","sv":59.5,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"PURO","sv":59.5,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"MUDA","sv":59.3,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"FINS","sv":59.2,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"COME","sv":59.2,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"ZERO","sv":59.1,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"USAM","sv":59.1,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"MAUS","sv":59.1,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"EURO","sv":59.1,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"ANTI","sv":59.0,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"TENS","sv":59.0,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"FLOR","sv":58.9,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"ABRA","sv":58.9,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"RUIM","sv":58.9,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"TUAS","sv":58.9,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"VISA","sv":58.8,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"SACO","sv":58.8,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"VIAS","sv":58.8,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"CAOS","sv":58.8,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"RICO","sv":58.7,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"TIRO","sv":58.7,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"SUCO","sv":58.7,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"TRIO","sv":58.7,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"FINA","sv":58.6,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"OPEN","sv":58.4,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"SOJA","sv":58.4,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"SAGA","sv":58.3,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"META","sv":58.1,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"FIOS","sv":58.1,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"TEOR","sv":58.1,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"MELO","sv":57.9,"conf":58,"flags":["icf_moderado"]},{"w":"LEAO","sv":57.9,"conf":58,"flags":["icf_moderado"]},{"w":"COLA","sv":57.9,"conf":58,"flags":["icf_moderado"]},{"w":"CAIO","sv":57.9,"conf":58,"flags":["icf_moderado"]},{"w":"DURO","sv":57.8,"conf":58,"flags":["icf_moderado"]},{"w":"SAIA","sv":57.7,"conf":58,"flags":["icf_moderado"]},{"w":"CARO","sv":57.6,"conf":58,"flags":["icf_moderado"]},{"w":"PISO","sv":57.6,"conf":58,"flags":["icf_moderado"]},{"w":"MORE","sv":57.5,"conf":58,"flags":["icf_moderado"]},{"w":"FIXA","sv":57.5,"conf":58,"flags":["icf_moderado"]},{"w":"PAGO","sv":57.3,"conf":58,"flags":["icf_moderado"]},{"w":"APTO","sv":57.3,"conf":58,"flags":["icf_moderado"]},{"w":"RIOS","sv":57.2,"conf":58,"flags":["icf_moderado"]},{"w":"IRMA","sv":57.2,"conf":58,"flags":["icf_moderado"]},{"w":"ROAD","sv":57.2,"conf":58,"flags":["icf_moderado"]},{"w":"LOTE","sv":57.1,"conf":58,"flags":["icf_moderado"]},{"w":"QUIS","sv":56.9,"conf":58,"flags":["icf_moderado"]},{"w":"RUMO","sv":56.9,"conf":58,"flags":["icf_moderado"]},{"w":"LUXO","sv":56.9,"conf":58,"flags":["icf_moderado"]},{"w":"MITO","sv":56.9,"conf":58,"flags":["icf_moderado"]},{"w":"ATOR","sv":56.8,"conf":58,"flags":["icf_moderado"]},{"w":"ROTA","sv":56.8,"conf":58,"flags":["icf_moderado"]},{"w":"FALO","sv":56.8,"conf":58,"flags":["icf_moderado"]},{"w":"TOCA","sv":56.6,"conf":58,"flags":["icf_moderado"]},{"w":"DEVO","sv":56.5,"conf":58,"flags":["icf_moderado"]},{"w":"IRAO","sv":56.5,"conf":58,"flags":["icf_moderado"]},{"w":"VIRA","sv":56.5,"conf":58,"flags":["icf_moderado"]},{"w":"RAIO","sv":56.5,"conf":58,"flags":["icf_moderado"]},{"w":"BOTA","sv":56.5,"conf":58,"flags":["icf_moderado"]},{"w":"JOGA","sv":56.2,"conf":58,"flags":["icf_moderado"]},{"w":"JATO","sv":56.2,"conf":58,"flags":["icf_moderado"]},{"w":"CHAO","sv":56.1,"conf":58,"flags":["icf_moderado"]},{"w":"TESE","sv":56.1,"conf":58,"flags":["icf_moderado"]},{"w":"PANO","sv":55.9,"conf":58,"flags":["icf_moderado"]},{"w":"SOMA","sv":55.9,"conf":58,"flags":["icf_moderado"]},{"w":"ORAL","sv":55.6,"conf":58,"flags":["icf_moderado"]},{"w":"ALHO","sv":55.4,"conf":58,"flags":["icf_moderado"]},{"w":"MORA","sv":55.4,"conf":58,"flags":["icf_moderado"]},{"w":"RAMO","sv":55.4,"conf":58,"flags":["icf_moderado"]},{"w":"EIXO","sv":55.3,"conf":58,"flags":["icf_moderado"]},{"w":"OUVE","sv":55.3,"conf":58,"flags":["icf_moderado"]},{"w":"MANO","sv":55.3,"conf":58,"flags":["icf_moderado"]},{"w":"FINO","sv":55.3,"conf":58,"flags":["icf_moderado"]},{"w":"RACA","sv":55.2,"conf":58,"flags":["icf_moderado"]},{"w":"NETO","sv":55.1,"conf":58,"flags":["icf_moderado"]},{"w":"NOTE","sv":55.1,"conf":58,"flags":["icf_moderado"]},{"w":"TOME","sv":55.0,"conf":58,"flags":["icf_moderado"]},{"w":"MOCA","sv":54.9,"conf":58,"flags":["icf_moderado"]},{"w":"DONA","sv":54.8,"conf":58,"flags":["icf_moderado"]},{"w":"ANJO","sv":54.8,"conf":58,"flags":["icf_moderado"]},{"w":"ONDA","sv":54.8,"conf":58,"flags":["icf_moderado"]},{"w":"DANO","sv":54.8,"conf":58,"flags":["icf_moderado"]},{"w":"PAGA","sv":54.7,"conf":58,"flags":["icf_moderado"]},{"w":"VOAR","sv":54.7,"conf":58,"flags":["icf_moderado"]},{"w":"LIXO","sv":54.5,"conf":58,"flags":["icf_moderado"]},{"w":"DARA","sv":54.3,"conf":58,"flags":["icf_moderado"]},{"w":"MATO","sv":54.2,"conf":58,"flags":["icf_moderado"]},{"w":"OUVI","sv":54.2,"conf":58,"flags":["icf_moderado"]},{"w":"TOMA","sv":54.2,"conf":58,"flags":["icf_moderado"]},{"w":"FIXO","sv":54.2,"conf":58,"flags":["icf_moderado"]},{"w":"NOVE","sv":54.0,"conf":58,"flags":["icf_moderado"]},{"w":"OITO","sv":53.8,"conf":58,"flags":["icf_moderado"]},{"w":"COLO","sv":53.8,"conf":58,"flags":["icf_moderado"]},{"w":"TACA","sv":53.2,"conf":58,"flags":["icf_moderado"]},{"w":"ALVO","sv":53.0,"conf":58,"flags":["icf_moderado"]},{"w":"DEDO","sv":53.0,"conf":58,"flags":["icf_moderado"]},{"w":"INOX","sv":53.0,"conf":58,"flags":["icf_moderado"]},{"w":"IRIA","sv":52.9,"conf":58,"flags":["icf_moderado"]},{"w":"FAMA","sv":52.6,"conf":58,"flags":["icf_moderado"]},{"w":"ACHA","sv":52.2,"conf":58,"flags":["icf_moderado"]},{"w":"OLEO","sv":51.8,"conf":58,"flags":["icf_moderado"]},{"w":"FOCO","sv":51.8,"conf":58,"flags":["icf_moderado"]},{"w":"GATA","sv":51.7,"conf":58,"flags":["icf_moderado"]},{"w":"HAJA","sv":51.6,"conf":58,"flags":["icf_moderado"]},{"w":"HALL","sv":50.9,"conf":58,"flags":["icf_moderado"]},{"w":"AMAR","sv":50.8,"conf":58,"flags":["icf_moderado"]},{"w":"ARMA","sv":50.8,"conf":58,"flags":["icf_moderado"]},{"w":"VIVE","sv":50.7,"conf":58,"flags":["icf_moderado"]},{"w":"MINI","sv":50.7,"conf":58,"flags":["icf_moderado"]},{"w":"PAPA","sv":50.7,"conf":58,"flags":["icf_moderado"]},{"w":"COPO","sv":50.7,"conf":58,"flags":["icf_moderado"]},{"w":"ODIO","sv":50.7,"conf":58,"flags":["icf_moderado"]},{"w":"PAPO","sv":49.9,"conf":58,"flags":["icf_moderado"]},{"w":"ANDA","sv":49.6,"conf":58,"flags":["icf_moderado"]},{"w":"VARA","sv":49.3,"conf":58,"flags":["icf_moderado"]},{"w":"RARO","sv":49.3,"conf":58,"flags":["icf_moderado"]},{"w":"OLHO","sv":48.9,"conf":58,"flags":["icf_moderado"]},{"w":"GAMA","sv":48.9,"conf":58,"flags":["icf_moderado"]},{"w":"MATA","sv":48.3,"conf":58,"flags":["icf_moderado"]},{"w":"TOPO","sv":48.3,"conf":58,"flags":["icf_moderado"]},{"w":"TAVA","sv":48.3,"conf":58,"flags":["icf_moderado"]},{"w":"ATUA","sv":48.3,"conf":58,"flags":["icf_moderado"]},{"w":"TETO","sv":48.3,"conf":58,"flags":["icf_moderado"]},{"w":"POLO","sv":48.3,"conf":58,"flags":["icf_moderado"]},{"w":"MALA","sv":48.3,"conf":58,"flags":["icf_moderado"]},{"w":"LATA","sv":48.3,"conf":58,"flags":["icf_moderado"]},{"w":"SOLO","sv":47.9,"conf":58,"flags":["icf_moderado"]},{"w":"VIVA","sv":47.9,"conf":58,"flags":["icf_moderado"]},{"w":"DONO","sv":47.9,"conf":58,"flags":["icf_moderado"]},{"w":"MAIA","sv":47.9,"conf":58,"flags":["icf_moderado"]},{"w":"DAVA","sv":47.7,"conf":58,"flags":["icf_moderado"]},{"w":"JAVA","sv":47.7,"conf":58,"flags":["icf_moderado"]},{"w":"VAGA","sv":47.5,"conf":58,"flags":["icf_moderado"]},{"w":"MORO","sv":47.5,"conf":58,"flags":["icf_moderado"]},{"w":"VOTO","sv":46.0,"conf":58,"flags":["icf_moderado"]},{"w":"MOTO","sv":46.0,"conf":58,"flags":["icf_moderado"]},{"w":"SONO","sv":46.0,"conf":58,"flags":["icf_moderado"]},{"w":"OVOS","sv":46.0,"conf":58,"flags":["icf_moderado"]},{"w":"LAVA","sv":46.0,"conf":58,"flags":["icf_moderado"]},{"w":"SONS","sv":46.0,"conf":58,"flags":["icf_moderado"]},{"w":"ZOOM","sv":46.0,"conf":58,"flags":["icf_moderado"]},{"w":"CACA","sv":44.8,"conf":53,"flags":["icf_moderado","sv_baixo"]},{"w":"DADA","sv":44.0,"conf":53,"flags":["icf_moderado","sv_baixo"]},{"w":"FOFO","sv":39.0,"conf":53,"flags":["icf_moderado","sv_baixo"]},{"w":"USEI","sv":64.5,"conf":42,"flags":["icf_moderado","sv_medio","suspeita_preterito_perf"]},{"w":"AMEI","sv":59.1,"conf":42,"flags":["icf_moderado","sv_medio","suspeita_preterito_perf"]},{"w":"IREI","sv":58.2,"conf":42,"flags":["icf_moderado","sv_medio","suspeita_preterito_perf"]},{"w":"USOU","sv":47.7,"conf":38,"flags":["icf_moderado","suspeita_preterito_perf"]},{"w":"INDO","sv":56.3,"conf":33,"flags":["icf_moderado","suspeita_gerundio"]},{"w":"ANDO","sv":54.8,"conf":33,"flags":["icf_moderado","suspeita_gerundio"]}],"medio":[{"w":"CLUBE","sv":73.4,"conf":100,"flags":["seed_termooo","icf_comum","sv_alto"]},{"w":"FRASE","sv":70.6,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"CLIPE","sv":70.5,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"PRESA","sv":70.4,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"SABER","sv":69.8,"conf":100,"flags":["seed_termooo","icf_muito_comum","sv_alto"]},{"w":"PEDIR","sv":69.8,"conf":100,"flags":["seed_termooo","icf_comum","sv_alto"]},{"w":"PEDRA","sv":69.8,"conf":100,"flags":["seed_xlsx","icf_moderado","sv_alto"]},{"w":"PERDA","sv":69.8,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"PADRE","sv":69.8,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"PESCA","sv":69.7,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"CRISE","sv":69.2,"conf":100,"flags":["seed_termooo","icf_comum","sv_alto"]},{"w":"PEGAR","sv":69.0,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"FEBRE","sv":68.9,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"PIRES","sv":68.9,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"POBRE","sv":68.3,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"SUPER","sv":68.3,"conf":100,"flags":["seed_termooo","icf_comum","sv_alto"]},{"w":"FAZER","sv":68.2,"conf":100,"flags":["seed_termooo","icf_muito_comum","sv_alto"]},{"w":"FEIRA","sv":68.2,"conf":100,"flags":["seed_termooo","icf_muito_comum","sv_alto","suspeita_futuro_subj"]},{"w":"DIZER","sv":68.2,"conf":100,"flags":["seed_termooo","icf_muito_comum","sv_alto"]},{"w":"LIDER","sv":68.1,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"FELIZ","sv":68.0,"conf":100,"flags":["seed_xlsx","icf_comum","sv_alto"]},{"w":"FESTA","sv":67.7,"conf":100,"flags":["seed_termooo","icf_comum","sv_alto"]},{"w":"ETICA","sv":67.7,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"BELAS","sv":67.7,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"PARTE","sv":67.7,"conf":100,"flags":["seed_termooo","icf_muito_comum","sv_alto"]},{"w":"PRETA","sv":67.7,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"DICAS","sv":67.5,"conf":100,"flags":["seed_termooo","icf_comum","sv_alto"]},{"w":"FEITA","sv":67.5,"conf":100,"flags":["seed_termooo","icf_comum","sv_alto"]},{"w":"LUZES","sv":67.5,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"GRADE","sv":67.3,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"REAIS","sv":66.9,"conf":100,"flags":["seed_termooo","icf_comum","sv_alto"]},{"w":"FIBRA","sv":66.9,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"PRECO","sv":66.8,"conf":100,"flags":["seed_termooo","icf_comum","sv_alto"]},{"w":"PERNA","sv":66.7,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"COBRE","sv":66.6,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"BATER","sv":66.6,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"DIETA","sv":66.6,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"SAUDE","sv":66.6,"conf":100,"flags":["seed_termooo","icf_muito_comum","sv_alto"]},{"w":"ADEUS","sv":66.6,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"FICAR","sv":66.5,"conf":100,"flags":["seed_termooo","icf_comum","sv_alto"]},{"w":"IDEAL","sv":66.5,"conf":100,"flags":["seed_termooo","icf_comum","sv_alto"]},{"w":"DOCES","sv":66.3,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"TERCA","sv":66.2,"conf":100,"flags":["seed_termooo","icf_comum","sv_alto"]},{"w":"CERTA","sv":66.2,"conf":100,"flags":["seed_termooo","icf_comum","sv_alto"]},{"w":"CHEFE","sv":66.1,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"PODER","sv":65.9,"conf":100,"flags":["seed_termooo","icf_muito_comum","sv_alto"]},{"w":"ARTES","sv":65.9,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"CULPA","sv":65.8,"conf":100,"flags":["seed_xlsx","icf_moderado","sv_alto"]},{"w":"FACIL","sv":65.8,"conf":100,"flags":["seed_termooo","icf_comum","sv_alto"]},{"w":"CHEIA","sv":65.8,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"GERAL","sv":65.7,"conf":100,"flags":["seed_termooo","icf_muito_comum","sv_alto"]},{"w":"CRIME","sv":65.7,"conf":100,"flags":["seed_termooo","icf_comum","sv_alto"]},{"w":"LANCE","sv":65.6,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"PISTA","sv":65.6,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"UTEIS","sv":65.5,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"SUITE","sv":65.5,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"TARDE","sv":65.2,"conf":100,"flags":["seed_termooo","icf_comum","sv_alto"]},{"w":"CARNE","sv":65.1,"conf":100,"flags":["seed_termooo","icf_comum","sv_alto"]},{"w":"CITAR","sv":65.1,"conf":100,"flags":["seed_termooo","icf_moderado","sv_alto"]},{"w":"FILME","sv":65.0,"conf":100,"flags":["seed_xlsx","icf_comum","sv_alto"]},{"w":"RENDA","sv":64.2,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"EPOCA","sv":64.0,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"ACOES","sv":64.0,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"GOLPE","sv":63.7,"conf":100,"flags":["seed_xlsx","icf_moderado","sv_medio"]},{"w":"IGUAL","sv":63.7,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"PERTO","sv":63.6,"conf":100,"flags":["seed_xlsx","icf_comum","sv_medio"]},{"w":"FORTE","sv":63.6,"conf":100,"flags":["seed_xlsx","icf_comum","sv_medio"]},{"w":"PRETO","sv":63.6,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"LUGAR","sv":63.3,"conf":100,"flags":["seed_termooo","icf_muito_comum","sv_medio"]},{"w":"MEDIA","sv":63.1,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"FORCA","sv":63.0,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"PELOS","sv":62.9,"conf":100,"flags":["seed_termooo","icf_muito_comum","sv_medio"]},{"w":"OBTER","sv":62.9,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"FRUTA","sv":62.9,"conf":100,"flags":["seed_xlsx","icf_moderado","sv_medio"]},{"w":"ALBUM","sv":62.9,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"UNICA","sv":62.8,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"OBRAS","sv":62.8,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"CERTO","sv":62.7,"conf":100,"flags":["seed_xlsx","icf_comum","sv_medio"]},{"w":"JEITO","sv":62.7,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"FILHA","sv":62.6,"conf":100,"flags":["seed_xlsx","icf_comum","sv_medio"]},{"w":"BARCO","sv":62.4,"conf":100,"flags":["seed_xlsx","icf_moderado","sv_medio"]},{"w":"COBRA","sv":62.4,"conf":100,"flags":["seed_xlsx","icf_moderado","sv_medio"]},{"w":"VISTA","sv":62.1,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"REDES","sv":62.1,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"COMER","sv":62.1,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"CHAVE","sv":62.1,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"COISA","sv":62.0,"conf":100,"flags":["seed_xlsx","icf_muito_comum","sv_medio"]},{"w":"PORTA","sv":62.0,"conf":100,"flags":["seed_xlsx","icf_comum","sv_medio"]},{"w":"GRUPO","sv":61.9,"conf":100,"flags":["seed_termooo","icf_muito_comum","sv_medio"]},{"w":"LIVRE","sv":61.9,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"LONGE","sv":61.9,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"CERCA","sv":61.8,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"AREAS","sv":61.8,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"MUDAR","sv":61.7,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"SEXTA","sv":61.6,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"UNICO","sv":61.6,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"PRAZO","sv":61.6,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"RISCO","sv":61.6,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"QUASE","sv":61.6,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"LINDA","sv":61.6,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"TIPOS","sv":61.4,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"ORDEM","sv":61.3,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"LEVAR","sv":61.2,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"SETOR","sv":61.2,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"SORTE","sv":61.2,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"PALCO","sv":61.2,"conf":100,"flags":["seed_xlsx","icf_moderado","sv_medio"]},{"w":"CARGO","sv":61.2,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"ROUPA","sv":61.0,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"FINAL","sv":61.0,"conf":100,"flags":["seed_termooo","icf_muito_comum","sv_medio"]},{"w":"CURSO","sv":61.0,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"MEDIO","sv":60.9,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"HORAS","sv":60.9,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"SINAL","sv":60.8,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"MINHA","sv":60.7,"conf":100,"flags":["seed_termooo","icf_muito_comum","sv_medio"]},{"w":"FORUM","sv":60.7,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"BOLSA","sv":60.7,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"COLAR","sv":60.7,"conf":100,"flags":["seed_xlsx","icf_moderado","sv_medio"]},{"w":"CLARO","sv":60.7,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"COSTA","sv":60.7,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"VOCES","sv":60.5,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"LINHA","sv":60.5,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"FORMA","sv":60.5,"conf":100,"flags":["seed_termooo","icf_muito_comum","sv_medio"]},{"w":"FONTE","sv":60.5,"conf":100,"flags":["seed_xlsx","icf_comum","sv_medio"]},{"w":"NIVEL","sv":60.5,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"SERIE","sv":60.4,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"CHUVA","sv":60.4,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"MENOR","sv":60.2,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"PAGAR","sv":60.1,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"FILHO","sv":60.1,"conf":100,"flags":["seed_xlsx","icf_comum","sv_medio"]},{"w":"NOITE","sv":60.0,"conf":100,"flags":["seed_termooo","icf_muito_comum","sv_medio"]},{"w":"RADIO","sv":60.0,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"PROVA","sv":60.0,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"VENDA","sv":59.9,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"IDADE","sv":59.9,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"IDEIA","sv":59.9,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"TROCA","sv":59.9,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"VIDEO","sv":59.9,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"CUSTO","sv":59.9,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"LEITE","sv":59.8,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"HOTEL","sv":59.7,"conf":100,"flags":["seed_xlsx","icf_muito_comum","sv_medio"]},{"w":"QUAIS","sv":59.7,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"PRATA","sv":59.6,"conf":100,"flags":["seed_xlsx","icf_moderado","sv_medio"]},{"w":"TEMPO","sv":59.5,"conf":100,"flags":["seed_termooo","icf_muito_comum","sv_medio"]},{"w":"FAVOR","sv":59.5,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"PAPEL","sv":59.5,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"JUNTO","sv":59.4,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"BANCO","sv":59.4,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"CAMPO","sv":59.2,"conf":100,"flags":["seed_xlsx","icf_comum","sv_medio"]},{"w":"MENOS","sv":59.2,"conf":100,"flags":["seed_termooo","icf_muito_comum","sv_medio"]},{"w":"NORTE","sv":59.1,"conf":100,"flags":["seed_termooo","icf_comum","sv_medio"]},{"w":"PRAIA","sv":59.1,"conf":100,"flags":["seed_xlsx","icf_comum","sv_medio"]},{"w":"PLANO","sv":58.3,"conf":100,"flags":["seed_xlsx","icf_comum","sv_medio"]},{"w":"LIVRO","sv":57.0,"conf":100,"flags":["seed_xlsx","icf_muito_comum"]},{"w":"GLOBO","sv":54.5,"conf":100,"flags":["seed_xlsx","icf_comum"]},{"w":"FALHA","sv":57.1,"conf":98,"flags":["seed_xlsx","icf_moderado"]},{"w":"LANCA","sv":55.5,"conf":98,"flags":["seed_xlsx","icf_moderado"]},{"w":"DRAMA","sv":53.7,"conf":98,"flags":["seed_xlsx","icf_moderado"]},{"w":"COURO","sv":53.7,"conf":98,"flags":["seed_xlsx","icf_moderado"]},{"w":"FORNO","sv":53.5,"conf":98,"flags":["seed_xlsx","icf_moderado"]},{"w":"MANGA","sv":52.6,"conf":98,"flags":["seed_xlsx","icf_moderado"]},{"w":"RAIVA","sv":51.5,"conf":98,"flags":["seed_xlsx","icf_moderado"]},{"w":"CONTO","sv":50.6,"conf":98,"flags":["seed_xlsx","icf_moderado"]},{"w":"NOCAO","sv":50.1,"conf":98,"flags":["seed_xlsx","icf_moderado"]},{"w":"FICHA","sv":64.8,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"BRIGA","sv":64.8,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"LAZER","sv":64.6,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"DUPLA","sv":64.6,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"FUGIR","sv":64.6,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"SUBIR","sv":64.5,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"BLUSA","sv":64.5,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"SENHA","sv":64.5,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"FASES","sv":64.4,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"ATRIZ","sv":64.4,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"LENDA","sv":64.3,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"SECAO","sv":64.0,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"PENAL","sv":63.9,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"PLENA","sv":63.9,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"LUCRO","sv":63.7,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"GRAUS","sv":63.6,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"UNHAS","sv":63.6,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"NEGAR","sv":63.6,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"TENIS","sv":63.5,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"DORES","sv":63.5,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"LAPIS","sv":63.4,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"CINZA","sv":63.4,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"LETRA","sv":63.2,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"LIDAR","sv":63.2,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"BEIJO","sv":63.2,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"FRACO","sv":63.0,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"DUPLO","sv":62.9,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"CHEIO","sv":62.9,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"SABOR","sv":62.8,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"NOBRE","sv":62.6,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"INFRA","sv":62.5,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"SERIO","sv":62.4,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"ACIDO","sv":62.4,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"CABOS","sv":62.4,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"LIGAR","sv":62.4,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"CLIMA","sv":62.4,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"BISPO","sv":62.4,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"BRACO","sv":62.4,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"JUIZO","sv":62.4,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"CULTO","sv":62.3,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"JUSTA","sv":62.1,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"HAVER","sv":62.1,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"NUVEM","sv":62.0,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"LOUCA","sv":62.0,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"LESAO","sv":62.0,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"PRATO","sv":62.0,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"PARTO","sv":62.0,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"OPTAR","sv":62.0,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"APELO","sv":61.9,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"FATOR","sv":61.7,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"HUMOR","sv":61.6,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"PLENO","sv":61.6,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"QUEDA","sv":61.6,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"SUAVE","sv":61.6,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"PRACA","sv":61.5,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"POETA","sv":61.5,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"FATOS","sv":61.5,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"VIDAS","sv":61.4,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"BEBER","sv":61.3,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"RESTO","sv":61.2,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"HEROI","sv":61.2,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"COPIA","sv":61.1,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"NEGRO","sv":61.0,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"EXTRA","sv":60.9,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"VELHA","sv":60.8,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"CALOR","sv":60.7,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"METAL","sv":60.5,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"FOLHA","sv":60.5,"conf":97,"flags":["seed_termooo","icf_moderado","sv_medio"]},{"w":"LENHA","sv":64.0,"conf":96,"flags":["seed_xlsx","icf_pouco_comum","sv_medio"]},{"w":"CALDO","sv":62.8,"conf":96,"flags":["seed_xlsx","icf_pouco_comum","sv_medio"]},{"w":"MOLDE","sv":62.3,"conf":96,"flags":["seed_xlsx","icf_pouco_comum","sv_medio"]},{"w":"CAPIM","sv":62.1,"conf":96,"flags":["seed_xlsx","icf_pouco_comum","sv_medio"]},{"w":"GARFO","sv":62.0,"conf":96,"flags":["seed_xlsx","icf_pouco_comum","sv_medio"]},{"w":"DOBRA","sv":61.9,"conf":96,"flags":["seed_xlsx","icf_pouco_comum","sv_medio"]},{"w":"REFEM","sv":61.3,"conf":96,"flags":["seed_xlsx","icf_pouco_comum","sv_medio"]},{"w":"GENIO","sv":60.4,"conf":96,"flags":["seed_xlsx","icf_pouco_comum","sv_medio"]},{"w":"CURVA","sv":60.0,"conf":96,"flags":["seed_xlsx","icf_pouco_comum","sv_medio"]},{"w":"GANSO","sv":59.2,"conf":96,"flags":["seed_xlsx","icf_pouco_comum","sv_medio"]},{"w":"GALHO","sv":58.8,"conf":96,"flags":["seed_xlsx","icf_pouco_comum","sv_medio"]},{"w":"BEIRA","sv":67.6,"conf":93,"flags":["seed_termooo","icf_moderado","sv_alto","suspeita_futuro_subj"]},{"w":"PIANO","sv":57.9,"conf":92,"flags":["seed_xlsx","icf_pouco_comum"]},{"w":"DENTE","sv":55.8,"conf":92,"flags":["seed_xlsx","icf_pouco_comum"]},{"w":"GOLFO","sv":53.7,"conf":92,"flags":["seed_xlsx","icf_pouco_comum"]},{"w":"CIRCO","sv":53.7,"conf":92,"flags":["seed_xlsx","icf_pouco_comum"]},{"w":"GRAMA","sv":53.3,"conf":92,"flags":["seed_xlsx","icf_pouco_comum"]},{"w":"POUSO","sv":51.5,"conf":92,"flags":["seed_xlsx","icf_pouco_comum"]},{"w":"FARPA","sv":66.5,"conf":90,"flags":["seed_xlsx","icf_raro","sv_alto"]},{"w":"MUNDO","sv":62.0,"conf":87,"flags":["seed_xlsx","icf_muito_comum","sv_medio","suspeita_gerundio"]},{"w":"POLEN","sv":61.6,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"GRUTA","sv":60.9,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"GEADA","sv":60.8,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"IGNEO","sv":60.4,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"DEDAL","sv":60.1,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"GARCA","sv":58.3,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"FUNDO","sv":61.5,"conf":83,"flags":["seed_xlsx","icf_comum","sv_medio","suspeita_gerundio"]},{"w":"OGIVA","sv":57.2,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"NEVOA","sv":56.8,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"FLOCO","sv":56.3,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"ARFAR","sv":56.0,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"AMBAR","sv":55.8,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"TENUE","sv":55.4,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"COLMO","sv":54.0,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"BROTO","sv":53.1,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"CORVO","sv":49.9,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"LINDO","sv":60.5,"conf":78,"flags":["seed_termooo","icf_comum","sv_medio","suspeita_gerundio"]},{"w":"FOSSO","sv":44.9,"conf":77,"flags":["seed_xlsx","icf_raro","sv_baixo"]},{"w":"ESTAR","sv":65.9,"conf":76,"flags":["icf_muito_comum","sv_alto"]},{"w":"PECAS","sv":69.7,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"PELAS","sv":67.0,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"SERIA","sv":66.9,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"CHEGA","sv":66.8,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"TERIA","sv":65.7,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"BUSCA","sv":65.7,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"DIZEM","sv":65.5,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"DISSE","sv":62.7,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"PODEM","sv":61.9,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"ESTAO","sv":61.6,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"TINHA","sv":61.0,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"FORAM","sv":60.5,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"TODAS","sv":60.2,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"MUITO","sv":59.4,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"TENHO","sv":59.4,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"CORES","sv":64.3,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"DISCO","sv":64.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"FAZEM","sv":64.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"FEITO","sv":63.6,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ABRIL","sv":63.6,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"LISTA","sv":63.6,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"SEJAM","sv":63.3,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"SERAO","sv":63.3,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"FICAM","sv":62.9,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"JOGUE","sv":62.9,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"JUNHO","sv":62.8,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"CORTE","sv":62.7,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"JULHO","sv":62.6,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"FIQUE","sv":62.5,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"FRETE","sv":62.4,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"TIVER","sv":62.3,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"NESTA","sv":62.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"DEIXA","sv":62.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"TEMAS","sv":62.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"TENHA","sv":61.9,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"SERRA","sv":61.8,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"SEGUE","sv":61.4,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"SITES","sv":61.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"QUERO","sv":61.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"GOSTA","sv":60.5,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"USADO","sv":60.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"JESUS","sv":60.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"SILVA","sv":60.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"MINAS","sv":59.9,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"REINO","sv":59.7,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"BANHO","sv":59.6,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"TURMA","sv":59.6,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"HOUVE","sv":59.5,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"JOGAR","sv":59.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"NOMES","sv":59.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"OLHAR","sv":59.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"SAIBA","sv":59.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"SABIA","sv":59.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ESTAS","sv":59.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"VISTO","sv":59.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"SINTO","sv":59.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"VELHO","sv":59.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"MORTE","sv":59.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"TERMO","sv":59.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"VERAO","sv":58.9,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"LEGAL","sv":58.8,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"MARCO","sv":58.8,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"CASAL","sv":58.7,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"SAIDA","sv":58.7,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"TEMOS","sv":58.5,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"VISAO","sv":58.5,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"GRACA","sv":58.3,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ONTEM","sv":58.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"BREVE","sv":58.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"CAPAZ","sv":58.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"SANTO","sv":58.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"UNIAO","sv":58.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"CONTA","sv":57.9,"conf":68,"flags":["icf_muito_comum"]},{"w":"MAIOR","sv":57.5,"conf":68,"flags":["icf_muito_comum"]},{"w":"VEZES","sv":55.2,"conf":68,"flags":["icf_muito_comum"]},{"w":"GENTE","sv":54.9,"conf":68,"flags":["icf_muito_comum"]},{"w":"POUCO","sv":54.2,"conf":68,"flags":["icf_muito_comum"]},{"w":"HOMEM","sv":53.5,"conf":68,"flags":["icf_muito_comum"]},{"w":"AGORA","sv":51.9,"conf":68,"flags":["icf_muito_comum"]},{"w":"TODOS","sv":51.8,"conf":68,"flags":["icf_muito_comum"]},{"w":"MESMO","sv":51.8,"conf":68,"flags":["icf_muito_comum"]},{"w":"PERCA","sv":70.8,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PARES","sv":70.4,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PUDER","sv":69.8,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PERDI","sv":69.8,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"FECHA","sv":69.6,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"LIGUE","sv":68.9,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CESAR","sv":68.8,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CHILE","sv":68.7,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"FIZER","sv":68.4,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PEDIU","sv":67.8,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"REDUZ","sv":67.2,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"SURGE","sv":67.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PARIS","sv":66.4,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"LASER","sv":66.2,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PERDE","sv":66.2,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"LUCIA","sv":65.9,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"RESTA","sv":65.9,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"AJUDE","sv":65.8,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PAGUE","sv":65.8,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"FIRME","sv":65.6,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"NASCE","sv":65.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PRESO","sv":65.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"SOFRE","sv":65.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PENSA","sv":65.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"SABEM","sv":65.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"FALAR","sv":57.9,"conf":64,"flags":["icf_comum"]},{"w":"ABRIR","sv":57.9,"conf":64,"flags":["icf_comum"]},{"w":"TERRA","sv":57.8,"conf":64,"flags":["icf_comum"]},{"w":"AUTOR","sv":57.8,"conf":64,"flags":["icf_comum"]},{"w":"TORNA","sv":57.8,"conf":64,"flags":["icf_comum"]},{"w":"TOMAR","sv":57.7,"conf":64,"flags":["icf_comum"]},{"w":"AMIGO","sv":57.6,"conf":64,"flags":["icf_comum"]},{"w":"CAUSA","sv":57.6,"conf":64,"flags":["icf_comum"]},{"w":"BASTA","sv":57.5,"conf":64,"flags":["icf_comum"]},{"w":"IRMAO","sv":57.5,"conf":64,"flags":["icf_comum"]},{"w":"TIRAR","sv":57.5,"conf":64,"flags":["icf_comum"]},{"w":"BAIXO","sv":57.5,"conf":64,"flags":["icf_comum"]},{"w":"CRIAR","sv":57.3,"conf":64,"flags":["icf_comum"]},{"w":"FOSSE","sv":57.2,"conf":64,"flags":["icf_comum"]},{"w":"JOVEM","sv":57.2,"conf":64,"flags":["icf_comum"]},{"w":"ATRAS","sv":57.1,"conf":64,"flags":["icf_comum"]},{"w":"CORPO","sv":56.9,"conf":64,"flags":["icf_comum"]},{"w":"SEREM","sv":56.9,"conf":64,"flags":["icf_comum"]},{"w":"VAMOS","sv":56.8,"conf":64,"flags":["icf_comum"]},{"w":"NOVAS","sv":56.8,"conf":64,"flags":["icf_comum"]},{"w":"OUVIR","sv":56.7,"conf":64,"flags":["icf_comum"]},{"w":"MESMA","sv":56.6,"conf":64,"flags":["icf_comum"]},{"w":"VALOR","sv":56.6,"conf":64,"flags":["icf_comum"]},{"w":"ESSAS","sv":56.6,"conf":64,"flags":["icf_comum"]},{"w":"MANHA","sv":56.6,"conf":64,"flags":["icf_comum"]},{"w":"AJUDA","sv":56.3,"conf":64,"flags":["icf_comum"]},{"w":"CIVIL","sv":56.3,"conf":64,"flags":["icf_comum"]},{"w":"CARTA","sv":56.2,"conf":64,"flags":["icf_comum"]},{"w":"DEIXE","sv":56.2,"conf":64,"flags":["icf_comum"]},{"w":"VERDE","sv":56.1,"conf":64,"flags":["icf_comum"]},{"w":"VOLTA","sv":55.7,"conf":64,"flags":["icf_comum"]},{"w":"CANAL","sv":55.5,"conf":64,"flags":["icf_comum"]},{"w":"PORTO","sv":54.8,"conf":64,"flags":["icf_comum"]},{"w":"PASSO","sv":54.5,"conf":64,"flags":["icf_comum"]},{"w":"POSSA","sv":54.5,"conf":64,"flags":["icf_comum"]},{"w":"BANDA","sv":54.5,"conf":64,"flags":["icf_comum"]},{"w":"FALTA","sv":54.4,"conf":64,"flags":["icf_comum"]},{"w":"MARCA","sv":54.3,"conf":64,"flags":["icf_comum"]},{"w":"COMUM","sv":54.2,"conf":64,"flags":["icf_comum"]},{"w":"VAGAS","sv":54.1,"conf":64,"flags":["icf_comum"]},{"w":"VIVER","sv":54.1,"conf":64,"flags":["icf_comum"]},{"w":"PASSA","sv":54.1,"conf":64,"flags":["icf_comum"]},{"w":"ANDAR","sv":54.0,"conf":64,"flags":["icf_comum"]},{"w":"JOGOS","sv":53.8,"conf":64,"flags":["icf_comum"]},{"w":"ACIMA","sv":53.8,"conf":64,"flags":["icf_comum"]},{"w":"CASOS","sv":53.8,"conf":64,"flags":["icf_comum"]},{"w":"DADOS","sv":53.4,"conf":64,"flags":["icf_comum"]},{"w":"MENTE","sv":53.3,"conf":64,"flags":["icf_comum"]},{"w":"OPCAO","sv":53.2,"conf":64,"flags":["icf_comum"]},{"w":"DEVEM","sv":53.2,"conf":64,"flags":["icf_comum"]},{"w":"SANTA","sv":53.1,"conf":64,"flags":["icf_comum"]},{"w":"ATUAL","sv":53.1,"conf":64,"flags":["icf_comum"]},{"w":"LOCAL","sv":52.9,"conf":64,"flags":["icf_comum"]},{"w":"CAIXA","sv":52.9,"conf":64,"flags":["icf_comum"]},{"w":"CASAS","sv":52.7,"conf":64,"flags":["icf_comum"]},{"w":"LONGO","sv":52.6,"conf":64,"flags":["icf_comum"]},{"w":"CARRO","sv":52.6,"conf":64,"flags":["icf_comum"]},{"w":"FAIXA","sv":52.5,"conf":64,"flags":["icf_comum"]},{"w":"GOSTO","sv":52.4,"conf":64,"flags":["icf_comum"]},{"w":"AMIGA","sv":52.4,"conf":64,"flags":["icf_comum"]},{"w":"MARIA","sv":52.2,"conf":64,"flags":["icf_comum"]},{"w":"ADORO","sv":52.2,"conf":64,"flags":["icf_comum"]},{"w":"BAIXA","sv":52.1,"conf":64,"flags":["icf_comum"]},{"w":"CINCO","sv":52.1,"conf":64,"flags":["icf_comum"]},{"w":"APOIO","sv":51.9,"conf":64,"flags":["icf_comum"]},{"w":"OTIMO","sv":51.9,"conf":64,"flags":["icf_comum"]},{"w":"SONHO","sv":51.8,"conf":64,"flags":["icf_comum"]},{"w":"ACABA","sv":51.7,"conf":64,"flags":["icf_comum"]},{"w":"ESSES","sv":51.5,"conf":64,"flags":["icf_comum"]},{"w":"RAZAO","sv":51.5,"conf":64,"flags":["icf_comum"]},{"w":"OLHOS","sv":51.3,"conf":64,"flags":["icf_comum"]},{"w":"ESTES","sv":51.1,"conf":64,"flags":["icf_comum"]},{"w":"TESTE","sv":51.1,"conf":64,"flags":["icf_comum"]},{"w":"NATAL","sv":50.6,"conf":64,"flags":["icf_comum"]}],"dificil":[{"w":"FLECHA","sv":70.6,"conf":100,"flags":["seed_xlsx","icf_pouco_comum","sv_alto"]},{"w":"FERIDA","sv":70.1,"conf":100,"flags":["seed_xlsx","icf_pouco_comum","sv_alto"]},{"w":"BRINDE","sv":68.4,"conf":100,"flags":["seed_xlsx","icf_pouco_comum","sv_alto"]},{"w":"ESCUDO","sv":67.9,"conf":100,"flags":["seed_xlsx","icf_pouco_comum","sv_alto"]},{"w":"COLEGA","sv":66.4,"conf":100,"flags":["seed_xlsx","icf_moderado","sv_alto"]},{"w":"ESPUMA","sv":66.2,"conf":100,"flags":["seed_xlsx","icf_pouco_comum","sv_alto"]},{"w":"DILEMA","sv":65.8,"conf":100,"flags":["seed_xlsx","icf_pouco_comum","sv_alto"]},{"w":"PEROLA","sv":65.7,"conf":100,"flags":["seed_xlsx","icf_pouco_comum","sv_alto"]},{"w":"FRASCO","sv":65.6,"conf":100,"flags":["seed_xlsx","icf_pouco_comum","sv_alto"]},{"w":"PRESSA","sv":65.4,"conf":100,"flags":["seed_xlsx","icf_pouco_comum","sv_alto"]},{"w":"PRISMA","sv":65.2,"conf":100,"flags":["seed_xlsx","icf_pouco_comum","sv_alto"]},{"w":"PAREDE","sv":64.8,"conf":100,"flags":["seed_xlsx","icf_moderado","sv_medio"]},{"w":"CIDADE","sv":64.7,"conf":100,"flags":["seed_xlsx","icf_muito_comum","sv_medio"]},{"w":"ESTILO","sv":64.4,"conf":100,"flags":["seed_xlsx","icf_comum","sv_medio"]},{"w":"COLUNA","sv":63.9,"conf":100,"flags":["seed_xlsx","icf_moderado","sv_medio"]},{"w":"COMPRA","sv":63.4,"conf":100,"flags":["seed_xlsx","icf_comum","sv_medio"]},{"w":"BRANCO","sv":63.0,"conf":100,"flags":["seed_xlsx","icf_comum","sv_medio"]},{"w":"ACERVO","sv":62.5,"conf":100,"flags":["seed_xlsx","icf_moderado","sv_medio"]},{"w":"PORTAL","sv":62.5,"conf":100,"flags":["seed_xlsx","icf_comum","sv_medio"]},{"w":"CAMBIO","sv":62.0,"conf":100,"flags":["seed_xlsx","icf_moderado","sv_medio"]},{"w":"ANTIGO","sv":61.2,"conf":100,"flags":["seed_xlsx","icf_comum","sv_medio"]},{"w":"DEBATE","sv":61.1,"conf":100,"flags":["seed_xlsx","icf_moderado","sv_medio"]},{"w":"FRENTE","sv":60.4,"conf":100,"flags":["seed_xlsx","icf_comum","sv_medio"]},{"w":"DANCAR","sv":58.7,"conf":100,"flags":["seed_xlsx","icf_moderado","sv_medio"]},{"w":"CARTAZ","sv":58.6,"conf":100,"flags":["seed_xlsx","icf_moderado","sv_medio"]},{"w":"DESEJO","sv":58.2,"conf":100,"flags":["seed_xlsx","icf_comum","sv_medio"]},{"w":"ABRACO","sv":57.4,"conf":100,"flags":["seed_xlsx","icf_comum"]},{"w":"ACORDO","sv":56.9,"conf":100,"flags":["seed_xlsx","icf_comum"]},{"w":"PILOTO","sv":55.2,"conf":98,"flags":["seed_xlsx","icf_moderado"]},{"w":"ARVORE","sv":53.9,"conf":98,"flags":["seed_xlsx","icf_moderado"]},{"w":"CAVALO","sv":52.9,"conf":98,"flags":["seed_xlsx","icf_moderado"]},{"w":"OFICIO","sv":50.0,"conf":98,"flags":["seed_xlsx","icf_moderado"]},{"w":"CHUMBO","sv":64.8,"conf":96,"flags":["seed_xlsx","icf_pouco_comum","sv_medio"]},{"w":"ESPADA","sv":63.7,"conf":96,"flags":["seed_xlsx","icf_pouco_comum","sv_medio"]},{"w":"ENIGMA","sv":63.6,"conf":96,"flags":["seed_xlsx","icf_pouco_comum","sv_medio"]},{"w":"CORUJA","sv":62.8,"conf":96,"flags":["seed_xlsx","icf_pouco_comum","sv_medio"]},{"w":"POMBAL","sv":62.2,"conf":96,"flags":["seed_xlsx","icf_pouco_comum","sv_medio"]},{"w":"ABISMO","sv":61.7,"conf":96,"flags":["seed_xlsx","icf_pouco_comum","sv_medio"]},{"w":"ENFASE","sv":61.1,"conf":96,"flags":["seed_xlsx","icf_pouco_comum","sv_medio"]},{"w":"CANELA","sv":60.6,"conf":96,"flags":["seed_xlsx","icf_pouco_comum","sv_medio"]},{"w":"BOTECO","sv":58.8,"conf":96,"flags":["seed_xlsx","icf_pouco_comum","sv_medio"]},{"w":"GALERA","sv":60.7,"conf":94,"flags":["seed_xlsx","icf_moderado","sv_medio","suspeita_futuro_subj"]},{"w":"CANETA","sv":57.9,"conf":92,"flags":["seed_xlsx","icf_pouco_comum"]},{"w":"CALADO","sv":57.8,"conf":92,"flags":["seed_xlsx","icf_pouco_comum"]},{"w":"ARGILA","sv":57.4,"conf":92,"flags":["seed_xlsx","icf_pouco_comum"]},{"w":"OCULTO","sv":57.3,"conf":92,"flags":["seed_xlsx","icf_pouco_comum"]},{"w":"FALCAO","sv":56.9,"conf":92,"flags":["seed_xlsx","icf_pouco_comum"]},{"w":"EXTASE","sv":56.6,"conf":92,"flags":["seed_xlsx","icf_pouco_comum"]},{"w":"ESTOJO","sv":55.9,"conf":92,"flags":["seed_xlsx","icf_pouco_comum"]},{"w":"SOLENE","sv":55.5,"conf":92,"flags":["seed_xlsx","icf_pouco_comum"]},{"w":"CONCHA","sv":54.3,"conf":92,"flags":["seed_xlsx","icf_pouco_comum"]},{"w":"MORADA","sv":53.4,"conf":92,"flags":["seed_xlsx","icf_pouco_comum"]},{"w":"ARIDEZ","sv":68.4,"conf":90,"flags":["seed_xlsx","icf_raro","sv_alto"]},{"w":"RESTIA","sv":68.2,"conf":90,"flags":["seed_xlsx","icf_raro","sv_alto"]},{"w":"PUNHAL","sv":66.6,"conf":90,"flags":["seed_xlsx","icf_raro","sv_alto"]},{"w":"FULCRO","sv":66.4,"conf":90,"flags":["seed_xlsx","icf_raro","sv_alto"]},{"w":"PROEZA","sv":65.7,"conf":90,"flags":["seed_xlsx","icf_raro","sv_alto"]},{"w":"NUBLAR","sv":65.7,"conf":90,"flags":["seed_xlsx","icf_raro","sv_alto"]},{"w":"UMBRAL","sv":65.3,"conf":90,"flags":["seed_xlsx","icf_raro","sv_alto"]},{"w":"PISTAO","sv":64.0,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"MINGUA","sv":63.4,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"RUNICO","sv":63.2,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"PALIDO","sv":62.8,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"PRANTO","sv":62.4,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"QUILHA","sv":62.1,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"EXIGUO","sv":62.1,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"CLAMOR","sv":61.9,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"NOMADE","sv":61.9,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"LACUNA","sv":60.3,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"FABULA","sv":60.1,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"ZENITE","sv":59.7,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"MACULA","sv":59.7,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"DEDALO","sv":57.3,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"PENEDO","sv":57.1,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"SOBRIO","sv":56.9,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"TACITO","sv":56.8,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"INOCUO","sv":56.6,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"COBAIA","sv":56.5,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"COBICA","sv":56.5,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"DUENDE","sv":56.0,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"ANFORA","sv":55.7,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"CLARAO","sv":55.7,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"TONICO","sv":55.7,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"CHARCO","sv":55.2,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"ASTUTO","sv":53.5,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"FREIRA","sv":63.2,"conf":78,"flags":["seed_xlsx","icf_raro","sv_medio","suspeita_futuro_subj"]},{"w":"GRANDE","sv":66.7,"conf":76,"flags":["icf_muito_comum","sv_alto"]},{"w":"ALGUNS","sv":65.5,"conf":76,"flags":["icf_muito_comum","sv_alto"]},{"w":"GAZELA","sv":60.5,"conf":76,"flags":["seed_xlsx","icf_raro","sv_medio","possivel_nome_proprio"]},{"w":"PERFIL","sv":71.6,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"FERIAS","sv":70.3,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"FEITAS","sv":69.6,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"PARTES","sv":69.4,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"MULHER","sv":69.0,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"CHEGAR","sv":68.9,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"GERAIS","sv":68.8,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"PENSAR","sv":68.3,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"SEGUIR","sv":68.3,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"CLIQUE","sv":68.3,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"DESIGN","sv":68.1,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"BUSCAR","sv":67.8,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"SECULO","sv":67.8,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"INGLES","sv":67.2,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"IGREJA","sv":67.1,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"EDICAO","sv":66.8,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"ESPACO","sv":66.8,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"FILMES","sv":66.8,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"GRATIS","sv":66.8,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"CABELO","sv":66.7,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"SANGUE","sv":66.5,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"FLORES","sv":66.4,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"DEMAIS","sv":66.2,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"LETRAS","sv":66.2,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"ESCOLA","sv":66.1,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"MEDICO","sv":66.0,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"BEIJOS","sv":65.9,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"PARECE","sv":65.8,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"PARQUE","sv":65.7,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"FIGURA","sv":65.7,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"OFERTA","sv":65.6,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"DIANTE","sv":65.5,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"SENTIR","sv":65.5,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"APESAR","sv":65.4,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"SEGURO","sv":65.0,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"ESTADO","sv":64.3,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"SOCIAL","sv":64.2,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"MELHOR","sv":64.0,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"MUITAS","sv":63.5,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"CENTRO","sv":63.3,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"MUITOS","sv":61.5,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"PARTIR","sv":61.0,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"QUANTO","sv":59.8,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"PESSOA","sv":58.9,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"MAZELA","sv":57.0,"conf":72,"flags":["seed_xlsx","icf_raro","possivel_nome_proprio"]},{"w":"PROTON","sv":55.2,"conf":72,"flags":["seed_xlsx","icf_raro","possivel_nome_proprio"]},{"w":"MUSICA","sv":65.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"CINEMA","sv":64.9,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"DEFESA","sv":64.9,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"LINGUA","sv":64.9,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ABERTO","sv":64.7,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"DOENCA","sv":64.6,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"DEIXAR","sv":64.6,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"QUISER","sv":64.4,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"CRISTO","sv":64.3,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"GESTAO","sv":64.3,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"GRUPOS","sv":64.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"LOCAIS","sv":64.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"EVITAR","sv":64.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"RAPIDO","sv":64.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"REGIAO","sv":64.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"SENHOR","sv":63.9,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"NUMERO","sv":63.8,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"TENHAM","sv":63.8,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ROUPAS","sv":63.8,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ESTUDO","sv":63.8,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"CLASSE","sv":63.7,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"HUMANO","sv":63.7,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"JARDIM","sv":63.6,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"HOTEIS","sv":63.6,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ULTIMA","sv":63.4,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"QUERIA","sv":63.4,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"VENDAS","sv":63.3,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"FUNCAO","sv":63.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"MANTER","sv":63.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"FORMAS","sv":63.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"HOMENS","sv":63.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"MINHAS","sv":63.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"PRAZER","sv":63.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ORIGEM","sv":62.9,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"VIDEOS","sv":62.9,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"REGRAS","sv":62.9,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ARTIGO","sv":62.8,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"TINHAM","sv":62.8,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"PAISES","sv":62.7,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"UNIDOS","sv":62.7,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"FILHOS","sv":62.7,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ULTIMO","sv":62.6,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"VERSAO","sv":62.5,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"TALVEZ","sv":62.4,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ONIBUS","sv":62.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"FISICA","sv":62.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ENVIAR","sv":62.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"VIAGEM","sv":62.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"TERMOS","sv":61.8,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"AMIGOS","sv":61.7,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"QUADRO","sv":61.5,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"CONTAS","sv":61.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"PERDER","sv":61.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"AQUILO","sv":61.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"BELEZA","sv":61.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"CONTAR","sv":61.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"QUINTA","sv":61.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"MOSTRA","sv":61.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"MARIDO","sv":61.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"VARIOS","sv":60.9,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"CODIGO","sv":60.8,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ALEGRE","sv":60.7,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"NORMAL","sv":60.7,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"JORNAL","sv":60.5,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"QUARTO","sv":60.4,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"QUATRO","sv":60.4,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"JOVENS","sv":60.4,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ESPERO","sv":60.3,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"LIVROS","sv":60.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"GUERRA","sv":60.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"OPCOES","sv":60.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ESTEJA","sv":60.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ACESSO","sv":59.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"VOLTAR","sv":58.9,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"PEDIDO","sv":58.8,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"EFEITO","sv":58.6,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"GUARDA","sv":58.6,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"CABECA","sv":58.6,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"MANUAL","sv":58.5,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"MEDIDA","sv":58.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"SEMANA","sv":57.1,"conf":68,"flags":["icf_muito_comum"]},{"w":"COISAS","sv":57.0,"conf":68,"flags":["icf_muito_comum"]},{"w":"ESTAVA","sv":56.6,"conf":68,"flags":["icf_muito_comum"]},{"w":"FECHAR","sv":71.5,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PEDRAS","sv":71.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PERDAS","sv":71.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"EFICAZ","sv":70.8,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"POBRES","sv":69.2,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"ISABEL","sv":68.8,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"RAIZES","sv":68.6,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"LEGAIS","sv":68.5,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"MIGUEL","sv":68.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"FISCAL","sv":68.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"TECIDO","sv":68.0,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"SEGURA","sv":68.0,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"EDITAR","sv":67.9,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"DIRETA","sv":67.9,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"MEDICA","sv":67.9,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"NUCLEO","sv":67.7,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"EDITAL","sv":67.6,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CRISTA","sv":67.4,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"NASCER","sv":67.4,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CHINES","sv":67.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CUIDAR","sv":67.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PECADO","sv":67.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PEDACO","sv":67.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CHARME","sv":67.0,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"SURGEM","sv":66.9,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PREDIO","sv":66.9,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CHEGAM","sv":66.8,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PERDAO","sv":66.8,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"LEMBRA","sv":66.8,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CEBOLA","sv":66.7,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"COLHER","sv":66.6,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PERIGO","sv":66.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"RECEBI","sv":66.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PIORES","sv":66.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"COMPRE","sv":66.2,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"MANUEL","sv":66.2,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PESADO","sv":66.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"DISPOE","sv":66.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"DANIEL","sv":66.0,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"ESCURO","sv":66.0,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"AJUSTE","sv":65.9,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"FEITOS","sv":65.9,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"BUSCAM","sv":65.7,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PREVIA","sv":65.7,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"FORCAS","sv":65.6,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"SERIAM","sv":65.6,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"SENTIU","sv":65.6,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"GRAVES","sv":65.6,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"FRUTAS","sv":65.5,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"ACEITO","sv":65.5,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"SENTIA","sv":65.5,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"FICADO","sv":65.5,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"POESIA","sv":65.4,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"ESTIMA","sv":65.4,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"QUEBRA","sv":65.4,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"ALBUNS","sv":65.4,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PENSAM","sv":65.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"BRACOS","sv":65.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"DIRETO","sv":65.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CHEIRO","sv":65.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"EDITOR","sv":65.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CAMPUS","sv":65.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"RECEBA","sv":65.2,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PAINEL","sv":65.2,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"JULGAR","sv":65.2,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CHAVES","sv":65.2,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"REGINA","sv":65.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CORTES","sv":65.0,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CITADO","sv":65.0,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PINTAR","sv":65.0,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PACOTE","sv":65.0,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PODERA","sv":66.8,"conf":64,"flags":["icf_comum","sv_alto","suspeita_futuro_subj"]},{"w":"ESPERA","sv":65.4,"conf":64,"flags":["icf_comum","sv_alto","suspeita_futuro_subj"]},{"w":"EXISTE","sv":57.9,"conf":64,"flags":["icf_comum"]},{"w":"AJUDAR","sv":57.9,"conf":64,"flags":["icf_comum"]},{"w":"PADRAO","sv":57.6,"conf":64,"flags":["icf_comum"]},{"w":"IMAGEM","sv":57.4,"conf":64,"flags":["icf_comum"]},{"w":"PASSAR","sv":57.3,"conf":64,"flags":["icf_comum"]},{"w":"GANHAR","sv":57.3,"conf":64,"flags":["icf_comum"]},{"w":"MODELO","sv":57.3,"conf":64,"flags":["icf_comum"]},{"w":"AFIRMA","sv":57.3,"conf":64,"flags":["icf_comum"]},{"w":"VISITA","sv":57.1,"conf":64,"flags":["icf_comum"]},{"w":"ENTRAR","sv":57.0,"conf":64,"flags":["icf_comum"]},{"w":"TENTAR","sv":57.0,"conf":64,"flags":["icf_comum"]},{"w":"SABADO","sv":56.9,"conf":64,"flags":["icf_comum"]},{"w":"DESSAS","sv":56.8,"conf":64,"flags":["icf_comum"]},{"w":"EQUIPE","sv":56.8,"conf":64,"flags":["icf_comum"]},{"w":"QUEREM","sv":56.6,"conf":64,"flags":["icf_comum"]},{"w":"CARROS","sv":56.5,"conf":64,"flags":["icf_comum"]},{"w":"VENDER","sv":56.5,"conf":64,"flags":["icf_comum"]},{"w":"POUCOS","sv":56.4,"conf":64,"flags":["icf_comum"]},{"w":"TITULO","sv":56.2,"conf":64,"flags":["icf_comum"]},{"w":"COMIGO","sv":56.0,"conf":64,"flags":["icf_comum"]},{"w":"PAGINA","sv":56.0,"conf":64,"flags":["icf_comum"]},{"w":"AFINAL","sv":56.0,"conf":64,"flags":["icf_comum"]},{"w":"BAIRRO","sv":56.0,"conf":64,"flags":["icf_comum"]},{"w":"CURSOS","sv":56.0,"conf":64,"flags":["icf_comum"]},{"w":"BAIXAR","sv":56.0,"conf":64,"flags":["icf_comum"]},{"w":"TEATRO","sv":55.9,"conf":64,"flags":["icf_comum"]},{"w":"VARIAS","sv":55.9,"conf":64,"flags":["icf_comum"]},{"w":"ALTURA","sv":55.7,"conf":64,"flags":["icf_comum"]},{"w":"MENINA","sv":55.6,"conf":64,"flags":["icf_comum"]},{"w":"AGOSTO","sv":55.5,"conf":64,"flags":["icf_comum"]},{"w":"ONLINE","sv":55.5,"conf":64,"flags":["icf_comum"]},{"w":"COMECA","sv":55.5,"conf":64,"flags":["icf_comum"]},{"w":"PRONTO","sv":55.2,"conf":64,"flags":["icf_comum"]},{"w":"DIARIO","sv":55.0,"conf":64,"flags":["icf_comum"]},{"w":"CARTAO","sv":54.9,"conf":64,"flags":["icf_comum"]},{"w":"ENSINO","sv":54.9,"conf":64,"flags":["icf_comum"]},{"w":"DEVIDO","sv":54.9,"conf":64,"flags":["icf_comum"]},{"w":"FUTURO","sv":54.8,"conf":64,"flags":["icf_comum"]},{"w":"DUVIDA","sv":54.6,"conf":64,"flags":["icf_comum"]},{"w":"POSSUI","sv":54.5,"conf":64,"flags":["icf_comum"]},{"w":"DESTES","sv":54.4,"conf":64,"flags":["icf_comum"]},{"w":"MISSAO","sv":53.5,"conf":64,"flags":["icf_comum"]},{"w":"QUARTA","sv":53.4,"conf":64,"flags":["icf_comum"]},{"w":"SANTOS","sv":53.0,"conf":64,"flags":["icf_comum"]},{"w":"TEXTOS","sv":53.0,"conf":64,"flags":["icf_comum"]},{"w":"PONTOS","sv":52.9,"conf":64,"flags":["icf_comum"]},{"w":"TORNAR","sv":52.8,"conf":64,"flags":["icf_comum"]},{"w":"ABAIXO","sv":52.5,"conf":64,"flags":["icf_comum"]},{"w":"MOTIVO","sv":52.3,"conf":64,"flags":["icf_comum"]},{"w":"DESSES","sv":52.2,"conf":64,"flags":["icf_comum"]},{"w":"EVENTO","sv":51.3,"conf":64,"flags":["icf_comum"]},{"w":"MAXIMO","sv":50.6,"conf":64,"flags":["icf_comum"]},{"w":"INICIO","sv":47.1,"conf":64,"flags":["icf_comum"]},{"w":"MINIMO","sv":45.3,"conf":64,"flags":["icf_comum"]},{"w":"BASICO","sv":65.0,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"RAZOES","sv":65.0,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"ATINGE","sv":64.9,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"SOFREM","sv":64.9,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"TERIAM","sv":64.8,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"VESTIR","sv":64.8,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"LEMBRO","sv":64.7,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"CADEIA","sv":64.7,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"FEIJAO","sv":64.7,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"PRISAO","sv":64.6,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"CHOQUE","sv":64.6,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"UNIDAS","sv":64.6,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"SEXUAL","sv":64.5,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"LIVRES","sv":64.5,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"LOGICA","sv":64.5,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"PORTAS","sv":64.4,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"POSTAR","sv":64.4,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"PASTOR","sv":64.4,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"PRATOS","sv":64.4,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"CRIADO","sv":64.4,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"MENSAL","sv":64.4,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"TRECHO","sv":64.3,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"GESTOR","sv":64.3,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"FELIPE","sv":64.2,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"COMITE","sv":64.2,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"COLETA","sv":64.2,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"TEORIA","sv":64.1,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"DROGAS","sv":64.1,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"PRODUZ","sv":64.1,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"BURACO","sv":64.1,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"PREMIO","sv":64.0,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"HEROIS","sv":64.0,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"LEITOR","sv":64.0,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"MATEUS","sv":64.0,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"LIMPAR","sv":64.0,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"QUINZE","sv":63.9,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"NACOES","sv":63.9,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"DIGITE","sv":63.9,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"TRAZEM","sv":63.8,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"DIESEL","sv":63.8,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"INDICE","sv":63.8,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"NEGROS","sv":63.7,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"ESCALA","sv":63.7,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"CLAROS","sv":63.7,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"FIQUEM","sv":63.7,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"FRANCO","sv":63.6,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"LIGADO","sv":63.6,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"MATRIZ","sv":63.6,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"TRILHA","sv":63.5,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"EQUIPA","sv":63.5,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"LINHAS","sv":63.4,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"FOLHAS","sv":63.3,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"CONTER","sv":63.3,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"JUNTAS","sv":63.3,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"SENADO","sv":63.3,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"FILTRO","sv":63.3,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"RAFAEL","sv":63.2,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"LABIOS","sv":63.2,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"ENTRAM","sv":63.2,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"CASTRO","sv":63.2,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"CHUVAS","sv":63.2,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"MOEDAS","sv":63.2,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"COMUNS","sv":63.2,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"AMORES","sv":63.1,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"QUEIJO","sv":63.1,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"FUNDOS","sv":63.1,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"BRILHO","sv":63.1,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"RESUMO","sv":63.1,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"INCLUI","sv":63.1,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"MUSICO","sv":63.0,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"DEMORA","sv":63.0,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"GOSTAR","sv":62.9,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"TAREFA","sv":62.9,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"GREMIO","sv":62.9,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"JUDEUS","sv":62.9,"conf":62,"flags":["icf_moderado","sv_medio"]}],"muito_dificil":[{"w":"CRISTAL","sv":68.5,"conf":100,"flags":["seed_xlsx","icf_moderado","sv_alto"]},{"w":"ECLIPSE","sv":66.1,"conf":100,"flags":["seed_xlsx","icf_pouco_comum","sv_alto"]},{"w":"CARDEAL","sv":66.0,"conf":100,"flags":["seed_xlsx","icf_pouco_comum","sv_alto"]},{"w":"VINCULO","sv":65.2,"conf":100,"flags":["seed_xlsx","icf_pouco_comum","sv_alto"]},{"w":"QUINTAL","sv":63.8,"conf":100,"flags":["seed_xlsx","icf_moderado","sv_medio"]},{"w":"ESTRADA","sv":62.8,"conf":100,"flags":["seed_xlsx","icf_moderado","sv_medio"]},{"w":"ESTRELA","sv":61.2,"conf":100,"flags":["seed_xlsx","icf_moderado","sv_medio"]},{"w":"FARINHA","sv":60.5,"conf":100,"flags":["seed_xlsx","icf_moderado","sv_medio"]},{"w":"ESPELHO","sv":60.0,"conf":100,"flags":["seed_xlsx","icf_moderado","sv_medio"]},{"w":"PROJETO","sv":59.6,"conf":100,"flags":["seed_xlsx","icf_muito_comum","sv_medio"]},{"w":"PROPRIO","sv":44.5,"conf":99,"flags":["seed_xlsx","icf_comum","sv_baixo"]},{"w":"MELIFUO","sv":66.9,"conf":93,"flags":["seed_xlsx","sem_icf","sv_alto"]},{"w":"SOMBRIO","sv":57.1,"conf":92,"flags":["seed_xlsx","icf_pouco_comum"]},{"w":"ORVALHO","sv":54.8,"conf":92,"flags":["seed_xlsx","icf_pouco_comum"]},{"w":"LUCIFER","sv":73.4,"conf":90,"flags":["seed_xlsx","icf_raro","sv_alto"]},{"w":"PERFIDO","sv":70.5,"conf":90,"flags":["seed_xlsx","icf_raro","sv_alto"]},{"w":"ESTIGMA","sv":67.8,"conf":90,"flags":["seed_xlsx","icf_raro","sv_alto"]},{"w":"PLACIDO","sv":67.3,"conf":90,"flags":["seed_xlsx","icf_raro","sv_alto"]},{"w":"LUGUBRE","sv":66.2,"conf":90,"flags":["seed_xlsx","icf_raro","sv_alto"]},{"w":"BRUXEDO","sv":66.1,"conf":90,"flags":["seed_xlsx","icf_raro","sv_alto"]},{"w":"PUTRIDO","sv":66.1,"conf":90,"flags":["seed_xlsx","icf_raro","sv_alto"]},{"w":"VORTICE","sv":65.5,"conf":90,"flags":["seed_xlsx","icf_raro","sv_alto"]},{"w":"EFLUVIO","sv":65.4,"conf":90,"flags":["seed_xlsx","icf_raro","sv_alto"]},{"w":"FUNESTO","sv":65.3,"conf":90,"flags":["seed_xlsx","icf_raro","sv_alto"]},{"w":"INTEGRO","sv":65.3,"conf":90,"flags":["seed_xlsx","icf_raro","sv_alto"]},{"w":"PIRANHA","sv":60.4,"conf":89,"flags":["seed_xlsx","sem_icf","sv_medio"]},{"w":"VESPERA","sv":62.2,"conf":88,"flags":["seed_xlsx","icf_pouco_comum","sv_medio","suspeita_futuro_subj"]},{"w":"CADINHO","sv":64.9,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"LISONJA","sv":63.8,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"FIDUCIA","sv":63.5,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"CELEUMA","sv":63.4,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"MORINGA","sv":62.7,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"FRENESI","sv":62.5,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"HERESIA","sv":62.4,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"FISSURA","sv":61.1,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"PELAGEM","sv":61.1,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"CONLUIO","sv":60.7,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"TREFEGO","sv":60.7,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"FLAGELO","sv":60.4,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"EMBUSTE","sv":60.2,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"MIRAGEM","sv":60.0,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"CANFORA","sv":58.6,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"DITONGO","sv":58.0,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"ASSIDUO","sv":58.0,"conf":86,"flags":["seed_xlsx","icf_raro","sv_medio"]},{"w":"CHIMERA","sv":68.2,"conf":85,"flags":["seed_xlsx","sem_icf","sv_alto","suspeita_futuro_subj"]},{"w":"PILATES","sv":69.3,"conf":85,"flags":["icf_pouco_comum","sv_alto","reintegrada_manualmente"]},{"w":"CODORNA","sv":57.8,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"MISTICO","sv":57.6,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"MOCINHO","sv":57.5,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"DEVASSO","sv":57.5,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"ATAVICO","sv":56.5,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"MONARCA","sv":56.2,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"MALOGRO","sv":55.9,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"FALACIA","sv":55.9,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"FRIVOLO","sv":55.8,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"CIZANIA","sv":53.4,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"EFEMERO","sv":53.0,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"JANGADA","sv":52.0,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"NEMESIS","sv":51.8,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"CETACEO","sv":51.6,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"LAGARTA","sv":51.2,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"OBLONGO","sv":50.7,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"BRAVURA","sv":50.4,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"RALADOR","sv":49.8,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"OBLIVIO","sv":48.0,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"OMINOSO","sv":47.6,"conf":82,"flags":["seed_xlsx","icf_raro"]},{"w":"QUIMERA","sv":64.7,"conf":78,"flags":["seed_xlsx","icf_raro","sv_medio","suspeita_futuro_subj"]},{"w":"TEMPERA","sv":61.4,"conf":78,"flags":["seed_xlsx","icf_raro","sv_medio","suspeita_futuro_subj"]},{"w":"ABOBADA","sv":42.8,"conf":77,"flags":["seed_xlsx","icf_raro","sv_baixo"]},{"w":"PUBLICO","sv":68.7,"conf":76,"flags":["icf_muito_comum","sv_alto"]},{"w":"DURANTE","sv":67.1,"conf":76,"flags":["icf_muito_comum","sv_alto"]},{"w":"PLACEBO","sv":69.6,"conf":75,"flags":["icf_raro","sv_alto","reintegrada_manualmente"]},{"w":"PRECISA","sv":72.5,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"SEGUIDA","sv":70.7,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"PUBLICA","sv":70.2,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"PRECISO","sv":69.5,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"SEGUNDA","sv":69.3,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"DECISAO","sv":69.3,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"CREDITO","sv":69.2,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"GRANDES","sv":69.2,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"JUSTICA","sv":68.9,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"DIRECAO","sv":68.6,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"PODERIA","sv":68.2,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"ESCRITO","sv":68.2,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"OFERTAS","sv":68.1,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"LEITURA","sv":68.0,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"CENTRAL","sv":67.8,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"FUTEBOL","sv":67.6,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"ESCOLHA","sv":67.5,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"REVISTA","sv":67.0,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"MUNDIAL","sv":67.0,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"MERCADO","sv":66.9,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"IMAGENS","sv":66.7,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"SUPORTE","sv":66.5,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"PARTIDO","sv":66.5,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"CIDADES","sv":66.4,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"SENHORA","sv":66.0,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"ARTIGOS","sv":66.0,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"SENTIDO","sv":65.8,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"DESTINO","sv":65.8,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"SERVICO","sv":65.7,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"FEDERAL","sv":65.3,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"MILHOES","sv":65.1,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"MAIORES","sv":65.1,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"HUMANOS","sv":65.1,"conf":72,"flags":["icf_comum","sv_alto"]},{"w":"JANEIRO","sv":64.5,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"EMPRESA","sv":63.2,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"SISTEMA","sv":60.4,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"DIREITO","sv":60.3,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"ATRAVES","sv":59.2,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"PRODUTO","sv":58.3,"conf":72,"flags":["icf_muito_comum","sv_medio"]},{"w":"CELULAR","sv":64.6,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"REUNIAO","sv":64.6,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"COZINHA","sv":64.4,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"VALORES","sv":64.3,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"AFIRMOU","sv":64.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"QUESTAO","sv":63.9,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"RECEITA","sv":63.8,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"CAMINHO","sv":63.8,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"AUMENTO","sv":63.6,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"TURISMO","sv":63.6,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"QUARTOS","sv":63.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"CLIENTE","sv":63.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"PRATICA","sv":63.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"CERTEZA","sv":62.8,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"PROXIMA","sv":62.6,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"PARTIDA","sv":62.5,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"VONTADE","sv":62.4,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"PRESSAO","sv":62.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"AGENCIA","sv":62.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ALEGRIA","sv":62.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"PERMITE","sv":61.9,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"PERIODO","sv":61.9,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"CAPITAL","sv":61.7,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ARQUIVO","sv":61.7,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"DIGITAL","sv":61.5,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"TECNICA","sv":61.3,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"RECEBEU","sv":61.3,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"MUDANCA","sv":61.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ESCOLAS","sv":61.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"SELECAO","sv":61.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"SIMPLES","sv":61.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"UNIDADE","sv":61.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"RECURSO","sv":61.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"GERACAO","sv":61.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"RELACAO","sv":60.6,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ESPORTE","sv":60.6,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"DIFICIL","sv":60.5,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"NEGOCIO","sv":60.4,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ANALISE","sv":60.3,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"DIRETOR","sv":60.3,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"PISCINA","sv":60.3,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"CULTURA","sv":60.3,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ENERGIA","sv":60.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"EMPREGO","sv":60.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"PESSOAL","sv":60.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ESPECIE","sv":59.9,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ENTRADA","sv":59.9,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"MATERIA","sv":59.8,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ESTIVER","sv":59.8,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"DEVERIA","sv":59.6,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"MEMBROS","sv":59.6,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"CUIDADO","sv":59.5,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"AQUELES","sv":59.5,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"POSICAO","sv":59.4,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ENTREGA","sv":59.4,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"SOLUCAO","sv":59.3,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"TECNICO","sv":59.3,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ESTADOS","sv":59.3,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"PROCURA","sv":59.3,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"OFICIAL","sv":59.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"MODELOS","sv":59.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"PODEMOS","sv":59.1,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"MENINAS","sv":58.9,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"ESTUDOS","sv":58.8,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"CONSIGO","sv":58.7,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"POLICIA","sv":58.6,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"COMECAR","sv":58.5,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"POPULAR","sv":58.4,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"COMPRAR","sv":58.4,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"PEQUENA","sv":58.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"POSTADO","sv":58.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"CONSUMO","sv":58.2,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"DUVIDAS","sv":58.0,"conf":68,"flags":["icf_comum","sv_medio"]},{"w":"GOVERNO","sv":56.0,"conf":68,"flags":["icf_muito_comum"]},{"w":"PESSOAS","sv":53.9,"conf":68,"flags":["icf_muito_comum"]},{"w":"MOMENTO","sv":48.2,"conf":68,"flags":["icf_muito_comum"]},{"w":"INCLUEM","sv":71.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"FRANCES","sv":71.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"ESCRITA","sv":70.9,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"GABRIEL","sv":70.4,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"NUCLEAR","sv":70.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"FECHADO","sv":69.4,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"POBREZA","sv":69.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"APRENDI","sv":69.2,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"EXCLUIR","sv":69.2,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PADROES","sv":69.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PERCEBI","sv":69.0,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"SEGUIDO","sv":68.6,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"DESAFIO","sv":68.6,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"ESTUDAR","sv":68.5,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"FIGURAS","sv":68.5,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"FIZERAM","sv":68.4,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"FERIADO","sv":68.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"REDUCAO","sv":68.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"TERMICA","sv":68.2,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"INGLESA","sv":68.2,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"ESCOLAR","sv":68.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"FATORES","sv":68.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"EXPLICA","sv":68.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"MUSICAL","sv":67.9,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"MEDICOS","sv":67.8,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"DISPUTA","sv":67.8,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"RESULTA","sv":67.8,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"TECLADO","sv":67.8,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"ASPECTO","sv":67.7,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"LEMBROU","sv":67.7,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"COMPREI","sv":67.6,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"ESTADIO","sv":67.5,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"TRAFEGO","sv":67.4,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"ESTAGIO","sv":67.4,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"DOLARES","sv":67.4,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"REGISTO","sv":67.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"MILAGRE","sv":67.2,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"GRAFICO","sv":67.2,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"LINGUAS","sv":67.2,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"LIMPEZA","sv":67.2,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"ESTUDIO","sv":67.2,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"MISTURE","sv":67.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"VEICULO","sv":67.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"TRAFICO","sv":67.0,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CADERNO","sv":67.0,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PRATICO","sv":67.0,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CASTELO","sv":66.9,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"VIRTUDE","sv":66.8,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"EDITORA","sv":66.8,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"COMEDIA","sv":66.8,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"TORCIDA","sv":66.8,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"SUJEITO","sv":66.7,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"SUPREMO","sv":66.7,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"QUERIDA","sv":66.6,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CINTURA","sv":66.6,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"JARDINS","sv":66.6,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"FECHADA","sv":66.5,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"LONDRES","sv":66.5,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CRISTAO","sv":66.4,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PINTURA","sv":66.4,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"JULGADO","sv":66.4,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"DIVULGA","sv":66.4,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CORAGEM","sv":66.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"DELICIA","sv":66.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"ABSURDO","sv":66.2,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PIMENTA","sv":66.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"FIZEMOS","sv":66.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PAREDES","sv":66.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PARCELA","sv":66.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"BARULHO","sv":66.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"OBSERVA","sv":66.0,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"FAZEMOS","sv":66.0,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"SENADOR","sv":65.9,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"RIQUEZA","sv":65.9,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"QUERIDO","sv":65.9,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"COMPRAS","sv":65.9,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CENARIO","sv":65.8,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"LUCIANO","sv":65.8,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"ULTIMAS","sv":65.8,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PERFUME","sv":65.7,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"TERMINA","sv":65.7,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"LEANDRO","sv":65.7,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PARECIA","sv":65.7,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"DESFILE","sv":65.7,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"JAPONES","sv":65.6,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"COSTUME","sv":65.6,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"NASCIDO","sv":65.6,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"INFORME","sv":65.6,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"RELATOS","sv":65.6,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"VIAGENS","sv":65.5,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"BOLETIM","sv":65.5,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"MISTURA","sv":65.5,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"MARQUES","sv":65.5,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"COMBATE","sv":65.5,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CHEGUEI","sv":65.4,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CONSIGA","sv":65.4,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"NUMEROS","sv":65.4,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"MELHORA","sv":65.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"SITUADO","sv":65.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"AUTORES","sv":65.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"FICAMOS","sv":65.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"PERCEBE","sv":65.3,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"VESTIDO","sv":65.2,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"ROMANCE","sv":65.2,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"DEBAIXO","sv":65.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"ADESIVO","sv":65.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"POSTURA","sv":65.1,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"FORMULA","sv":65.0,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"COIMBRA","sv":65.0,"conf":66,"flags":["icf_moderado","sv_alto"]},{"w":"CONFIRA","sv":65.4,"conf":64,"flags":["icf_comum","sv_alto","suspeita_futuro_subj"]},{"w":"NATURAL","sv":57.9,"conf":64,"flags":["icf_comum"]},{"w":"PEQUENO","sv":57.8,"conf":64,"flags":["icf_comum"]},{"w":"JOGADOR","sv":57.8,"conf":64,"flags":["icf_comum"]},{"w":"EXISTEM","sv":57.6,"conf":64,"flags":["icf_comum"]},{"w":"INTEIRO","sv":57.6,"conf":64,"flags":["icf_comum"]},{"w":"AVENIDA","sv":57.5,"conf":64,"flags":["icf_comum"]},{"w":"MILITAR","sv":57.5,"conf":64,"flags":["icf_comum"]},{"w":"RECEBER","sv":57.4,"conf":64,"flags":["icf_comum"]},{"w":"CHAMADO","sv":57.4,"conf":64,"flags":["icf_comum"]},{"w":"ATENCAO","sv":57.3,"conf":64,"flags":["icf_comum"]},{"w":"DOMINGO","sv":57.2,"conf":64,"flags":["icf_comum"]},{"w":"USUARIO","sv":57.0,"conf":64,"flags":["icf_comum"]},{"w":"OFERECE","sv":57.0,"conf":64,"flags":["icf_comum"]},{"w":"MEMORIA","sv":56.9,"conf":64,"flags":["icf_comum"]},{"w":"ESTAMOS","sv":56.8,"conf":64,"flags":["icf_comum"]},{"w":"ESTAVAM","sv":56.8,"conf":64,"flags":["icf_comum"]},{"w":"EXEMPLO","sv":56.2,"conf":64,"flags":["icf_comum"]},{"w":"VENDIDO","sv":56.0,"conf":64,"flags":["icf_comum"]},{"w":"MOSTRAR","sv":56.0,"conf":64,"flags":["icf_comum"]},{"w":"TAMANHO","sv":55.9,"conf":64,"flags":["icf_comum"]},{"w":"MAQUINA","sv":55.9,"conf":64,"flags":["icf_comum"]},{"w":"VITORIA","sv":55.8,"conf":64,"flags":["icf_comum"]},{"w":"SOMENTE","sv":55.7,"conf":64,"flags":["icf_comum"]},{"w":"ASSUNTO","sv":55.5,"conf":64,"flags":["icf_comum"]},{"w":"PROXIMO","sv":55.2,"conf":64,"flags":["icf_comum"]},{"w":"CIENCIA","sv":54.4,"conf":64,"flags":["icf_comum"]},{"w":"SUCESSO","sv":54.2,"conf":64,"flags":["icf_comum"]},{"w":"COMECOU","sv":53.3,"conf":64,"flags":["icf_comum"]},{"w":"CHAMADA","sv":53.1,"conf":64,"flags":["icf_comum"]},{"w":"INICIAL","sv":52.7,"conf":64,"flags":["icf_comum"]},{"w":"VERDADE","sv":52.5,"conf":64,"flags":["icf_comum"]},{"w":"CRIANCA","sv":51.8,"conf":64,"flags":["icf_comum"]},{"w":"PROPRIA","sv":51.6,"conf":64,"flags":["icf_comum"]},{"w":"PASSADO","sv":51.6,"conf":64,"flags":["icf_comum"]},{"w":"PALAVRA","sv":51.2,"conf":64,"flags":["icf_comum"]},{"w":"FAMILIA","sv":50.7,"conf":64,"flags":["icf_comum"]},{"w":"COLOCAR","sv":50.7,"conf":64,"flags":["icf_comum"]},{"w":"CRIACAO","sv":50.6,"conf":64,"flags":["icf_comum"]},{"w":"ANIMAIS","sv":49.9,"conf":64,"flags":["icf_comum"]},{"w":"OUTUBRO","sv":49.6,"conf":64,"flags":["icf_comum"]},{"w":"HORARIO","sv":48.8,"conf":64,"flags":["icf_comum"]},{"w":"ENTANTO","sv":48.1,"conf":64,"flags":["icf_comum"]},{"w":"OPINIAO","sv":47.9,"conf":64,"flags":["icf_comum"]},{"w":"CONTATO","sv":47.9,"conf":64,"flags":["icf_comum"]},{"w":"MAIORIA","sv":47.5,"conf":64,"flags":["icf_comum"]},{"w":"CHEGADA","sv":64.9,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"MARTINS","sv":64.9,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"PERDIDA","sv":64.8,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"CONDUTA","sv":64.8,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"FASHION","sv":64.7,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"REVISAO","sv":64.7,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"TAREFAS","sv":64.7,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"IMPORTA","sv":64.7,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"ADULTOS","sv":64.6,"conf":62,"flags":["icf_moderado","sv_medio"]},{"w":"FABRICA","sv":64.6,"conf":62,"flags":["icf_moderado","sv_medio"]}]};
+
+// ── LETTERS — paths exatos do index.html ────────────
+const LETTERS = {
+  A:{paths:["M 5 200 L 100 0 L 195 200","M 0 100 L 200 100"],lc:"butt",lj:"miter"},
+  B:{paths:["M 5.0 5.0 L 177.0 5.0 L 195.0 23.0 L 195.0 82.0 L 177.0 100.0 L 5.0 100.0 L 177.0 100.0 L 195.0 118.0 L 195.0 177.0 L 177.0 195.0 L 5.0 195.0 Z","M 5.0 5.0 L 5.0 195.0"],lc:"square",lj:"miter",ml:6},
+  C:{paths:["M 200.0 5.0 L 0.0 5.0 M 5.0 5.0 L 5.0 195.0 M 0.0 195.0 L 200.0 195.0"],lc:"butt",lj:"miter"},
+  D:{paths:["M 5.0 5.0 L 177.0 5.0 L 195.0 23.0 L 195.0 177.0 L 177.0 195.0 L 5.0 195.0 Z"],lc:"butt",lj:"miter"},
+  E:{paths:["M 5.0 0.0 L 5.0 200.0 M 0.0 5.0 L 200.0 5.0 M 0.0 100.0 L 200.0 100.0 M 0.0 195.0 L 200.0 195.0"],lc:"butt",lj:"miter"},
+  F:{paths:["M 5.0 0.0 L 5.0 200.0 M 0.0 5.0 L 200.0 5.0 M 0.0 100.0 L 200.0 100.0"],lc:"butt",lj:"miter"},
+  G:{paths:["M 195.0 100.0 L 195.0 195.0 L 5.0 195.0 L 5.0 5.0 L 195.0 5.0","M 100.0 100.0 L 195.0 100.0"],lc:"square",lj:"miter",ml:6},
+  H:{paths:["M 5.0 0.0 L 5.0 200.0 M 195.0 0.0 L 195.0 200.0 M 0.0 100.0 L 200.0 100.0"],lc:"butt",lj:"miter"},
+  I:{paths:["M 0.0 5.0 L 200.0 5.0 M 100.0 0.0 L 100.0 200.0 M 0.0 195.0 L 200.0 195.0"],lc:"butt",lj:"miter"},
+  J:{paths:["M 195.0 0.0 L 195.0 200.0 M 0.0 195.0 L 200.0 195.0 M 5.0 195.0 L 5.0 100.0"],lc:"butt",lj:"miter"},
+  L:{paths:["M 5.0 0.0 L 5.0 195.0 L 200.0 195.0"],lc:"butt",lj:"miter"},
+  M:{paths:["M 5.0 195.0 L 5.0 5.0 L 97.5 97.5 L 102.5 97.5 L 195.0 5.0 L 195.0 195.0","M 100.0 97.5 L 100.0 100.0"],lc:"square",lj:"miter",ml:6},
+  N:{paths:["M 5.0 200.0 L 5.0 5.0 L 195.0 195.0 L 195.0 200.0","M 5.0 5.0 L 5.0 0.0","M 195.0 195.0 L 195.0 0.0"],lc:"butt",lj:"bevel"},
+  O:{paths:["M 23.0 5.0 L 177.0 5.0 L 195.0 23.0 L 195.0 177.0 L 177.0 195.0 L 23.0 195.0 L 5.0 177.0 L 5.0 23.0 Z"],lc:"butt",lj:"miter",ml:8},
+  P:{paths:["M 5.0 0.0 L 5.0 200.0","M 5.0 5.0 L 195.0 5.0 L 195.0 100.0 L 5.0 100.0"],lc:"butt",lj:"miter"},
+  Q:{paths:["M 23.0 5.0 L 177.0 5.0 L 195.0 23.0 L 195.0 177.0 L 177.0 195.0 L 23.0 195.0 L 5.0 177.0 L 5.0 23.0 Z","M 100.0 100.0 L 195.0 195.0"],lc:"butt",lj:"miter",ml:8},
+  R:{paths:["M 5.0 0.0 L 5.0 200.0","M 5.0 5.0 L 195.0 5.0 L 195.0 100.0 L 5.0 100.0","M 100.0 100.0 L 195.0 195.0"],lc:"butt",lj:"bevel"},
+  S:{paths:["M 200.0 5.0 L 0.0 5.0 M 5.0 5.0 L 5.0 100.0 M 0.0 100.0 L 200.0 100.0 M 195.0 100.0 L 195.0 195.0 M 0.0 195.0 L 200.0 195.0"],lc:"butt",lj:"miter"},
+  T:{paths:["M 0.0 5.0 L 200.0 5.0 M 100.0 0.0 L 100.0 200.0"],lc:"butt",lj:"miter"},
+  U:{paths:["M 5.0 0.0 L 5.0 200.0","M 195.0 0.0 L 195.0 200.0","M 5.0 195.0 L 195.0 195.0"],lc:"butt",lj:"miter"},
+  V:{paths:["M 5 0 L 100 200 L 195 0"],lc:"butt",lj:"miter"},
+  X:{paths:["M 5.0 5.0 L 195.0 195.0 M 195.0 5.0 L 5.0 195.0"],lc:"butt",lj:"bevel"},
+  Z:{paths:["M 5.0 5.0 L 195.0 5.0 L 5.0 195.0 L 195.0 195.0"],lc:"butt",lj:"bevel"},
+};
+
+const GLYPH_COLORS = ['var(--gc0)','var(--gc1)','var(--gc2)','var(--gc3)','var(--gc4)','var(--gc5)'];
+
+// makeSVG — idêntico ao index.html
+function makeSVG(letter, color) {
+  const def = LETTERS[letter.toUpperCase()];
+  if (!def) return null;
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns,'svg');
+  svg.setAttribute('viewBox','0 0 200 200');
+  svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;';
+  const g = document.createElementNS(ns,'g');
+  g.setAttribute('fill','none');
+  g.setAttribute('stroke',color);
+  g.setAttribute('stroke-width','10');
+  g.setAttribute('stroke-linecap', def.lc||'butt');
+  g.setAttribute('stroke-linejoin', def.lj||'miter');
+  g.setAttribute('stroke-miterlimit', String(def.ml||4));
+  if (def.transform) g.setAttribute('transform', def.transform);
+  def.paths.forEach(d => {
+    const p = document.createElementNS(ns,'path');
+    p.setAttribute('d',d); g.appendChild(p);
+  });
+  svg.appendChild(g);
+  return svg;
+}
+
+// buildGlyph — empilha SVGs na div, mesmo padrão do index.html
+function buildGlyph(word, wrap) {
+  wrap.innerHTML = '';
+  const unicas = [...new Set(word.toUpperCase().split('').filter(l => LETTERS[l]))];
+  // bottom-up: última letra no DOM fica na frente visualmente
+  for (let i = unicas.length - 1; i >= 0; i--) {
+    const svg = makeSVG(unicas[i], GLYPH_COLORS[i % GLYPH_COLORS.length]);
+    if (svg) wrap.appendChild(svg);
+  }
+}
+
+// ── Estado ───────────────────────────────────────────
+let nivel = 'facil', filter = 'all', rFilter = 'all', idx = 0;
+const decisions = {};
+
+const NIVEL_LABELS = {facil:'Fácil',medio:'Médio',dificil:'Difícil',muito_dificil:'Muito Difícil'};
+
+// ── helpers de cor ────────────────────────────────────
+function confColor(c) {
+  if (c >= 80) return 'var(--correct)';
+  if (c >= 60) return 'var(--amber-400)';
+  if (c >= 40) return '#e8b45b';
+  return '#e87a6b';
+}
+function svColor(sv) {
+  if (sv >= 65) return 'var(--amber-400)';
+  if (sv >= 55) return 'var(--text2)';
+  return 'var(--text3)';
+}
+
+// ── lista filtrada ────────────────────────────────────
+function getFiltered() {
+  return (BANCO[nivel]||[]).filter(item => {
+    const d = decisions[item.w];
+    if (filter==='pendente' && d) return false;
+    if (filter==='aceitar'  && d!=='aceitar') return false;
+    if (filter==='recusar'  && d!=='recusar') return false;
+    if (filter==='baixa'    && item.conf>=50) return false;
+    return true;
+  });
+}
+
+// ── render curar ──────────────────────────────────────
+function renderCurar() {
+  const list = getFiltered();
+  const card = document.getElementById('main-card');
+  const empty = document.getElementById('empty-curar');
+
+  if (idx >= list.length) idx = Math.max(0, list.length-1);
+
+  if (list.length === 0) {
+    card.classList.add('hidden'); empty.classList.remove('hidden');
+    document.getElementById('prog-pos').textContent = '0 / 0';
+    document.getElementById('prog-fill').style.width = '0%';
+    document.getElementById('prog-pct').textContent = '';
+    return;
+  }
+  card.classList.remove('hidden'); empty.classList.add('hidden');
+
+  const item = list[idx];
+  const dec = decisions[item.w];
+
+  // progresso
+  document.getElementById('prog-pos').textContent = `${idx+1} / ${list.length}`;
+  const pct = Math.round(((idx+1)/list.length)*100);
+  document.getElementById('prog-pct').textContent = `${pct}%`;
+  document.getElementById('prog-fill').style.width = pct+'%';
+
+  // glifo
+  buildGlyph(item.w, document.getElementById('glifo-wrap'));
+
+  // palavra
+  document.getElementById('word-text').textContent = item.w;
+
+  // badge nível
+  const bn = document.getElementById('badge-nivel');
+  bn.textContent = NIVEL_LABELS[nivel]; bn.className = 'dif-badge '+nivel;
+
+  // sv
+  const svEl = document.getElementById('badge-sv');
+  svEl.textContent = `◆ SV ${item.sv}`;
+  svEl.style.color = svColor(item.sv);
+
+  // comprimento
+  document.getElementById('badge-len').textContent = item.w.length+'L';
+
+  // confiança
+  const conf = item.conf;
+  document.getElementById('conf-val').textContent = conf+'%';
+  document.getElementById('conf-val').style.color = confColor(conf);
+  const fill = document.getElementById('conf-fill');
+  fill.style.width = conf+'%'; fill.style.background = confColor(conf);
+
+  // flags
+  const flagsEl = document.getElementById('conf-flags');
+  flagsEl.innerHTML = item.flags.map(f => {
+    const isPos = /^(seed|icf_muito|icf_comum|sv_alto|sv_med)/.test(f);
+    const isNeg = /^(suspeita|icf_raro|sem_icf)/.test(f);
+    return `<span class="conf-flag ${isPos?'pos':isNeg?'neg':''}">${f}</span>`;
+  }).join('');
+
+  // decisão
+  document.getElementById('btn-aceitar').classList.toggle('active', dec==='aceitar');
+  document.getElementById('btn-recusar').classList.toggle('active', dec==='recusar');
+  card.className = 'card' + (dec ? ' dec-'+dec : '');
+
+  updateBadges(); updateFooter();
+}
+
+// ── decisão ───────────────────────────────────────────
+function decidir(d) {
+  const list = getFiltered();
+  if (!list.length) return;
+  const w = list[idx].w;
+  if (decisions[w] === d) { delete decisions[w]; renderCurar(); return; }
+  decisions[w] = d;
+  renderCurar();
+  setTimeout(() => { if (idx < getFiltered().length-1) { idx++; renderCurar(); } }, 140);
+}
+function navDelta(n) {
+  const list = getFiltered();
+  idx = Math.max(0, Math.min(list.length-1, idx+n));
+  renderCurar();
+}
+
+// ── revisar ───────────────────────────────────────────
+function renderRevisar() {
+  const search = document.getElementById('search-inp').value.toUpperCase();
+  const grid = document.getElementById('word-grid');
+  grid.innerHTML = '';
+
+  (BANCO[nivel]||[]).filter(item => {
+    const d = decisions[item.w];
+    if (rFilter==='pendente' && d) return false;
+    if (rFilter==='aceitar'  && d!=='aceitar') return false;
+    if (rFilter==='recusar'  && d!=='recusar') return false;
+    if (rFilter==='baixa'    && item.conf>=50) return false;
+    if (search && !item.w.includes(search)) return false;
+    return true;
+  }).forEach(item => {
+    const dec = decisions[item.w]||'';
+    const btn = document.createElement('button');
+    btn.className = 'word-chip fadein ' + dec;
+    btn.innerHTML = item.w + `<span class="chip-conf" style="color:${confColor(item.conf)}">${item.conf}</span>`;
+    btn.title = `SV: ${item.sv} | ${item.flags.join(', ')}`;
+    btn.onclick = () => {
+      filter = 'all';
+      document.querySelectorAll('[data-f]').forEach(b => b.classList.toggle('active', b.dataset.f==='all'));
+      const fi = getFiltered().findIndex(x => x.w===item.w);
+      if (fi >= 0) { idx = fi; switchView('curar'); }
+    };
+    grid.appendChild(btn);
+  });
+}
+
+// ── exportar ──────────────────────────────────────────
+function renderExportar() {
+  const el = document.getElementById('export-stats');
+  el.innerHTML = '';
+  for (const [n, lst] of Object.entries(BANCO)) {
+    const total = lst.length;
+    const aceitos = lst.filter(x=>decisions[x.w]==='aceitar').length;
+    const recusados = lst.filter(x=>decisions[x.w]==='recusar').length;
+    const pendentes = total - aceitos - recusados;
+    const pA = (aceitos/total*100).toFixed(1);
+    const pR = (recusados/total*100).toFixed(1);
+    el.innerHTML += `<div class="stat-card">
+      <div class="stat-head">
+        <span class="stat-name dif-badge ${n}">${NIVEL_LABELS[n]}</span>
+        <span class="stat-total">${total} palavras</span>
+      </div>
+      <div class="stat-nums">
+        <span style="color:var(--correct)">✓ ${aceitos} aceitas</span>
+        <span style="color:#e87a6b">✕ ${recusados} recusadas</span>
+        <span style="color:var(--amber-400)">⏳ ${pendentes} pendentes</span>
+      </div>
+      <div class="stat-bar">
+        <div style="width:${pA}%;background:var(--correct)"></div>
+        <div style="width:${pR}%;background:#e87a6b"></div>
+      </div>
+    </div>`;
+  }
+}
+
+function exportar() {
+  const curado={}, aceitos={};
+  for (const [n,lst] of Object.entries(BANCO)) {
+    curado[n]  = lst.filter(x=>decisions[x.w]!=='recusar').map(x=>x.w);
+    aceitos[n] = lst.filter(x=>decisions[x.w]==='aceitar').map(x=>x.w);
+  }
+  const out = {
+    exportado_em: new Date().toISOString(),
+    banco_curado: curado,
+    banco_so_aceitos: aceitos,
+    decisoes,
+    stats: Object.fromEntries(Object.entries(BANCO).map(([n,lst])=>[n,{
+      total:lst.length,
+      aceitos:lst.filter(x=>decisions[x.w]==='aceitar').length,
+      recusados:lst.filter(x=>decisions[x.w]==='recusar').length,
+      pendentes:lst.filter(x=>!decisions[x.w]).length,
+    }]))
+  };
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(out,null,2)],{type:'application/json'}));
+  a.download = 'banco_curado.json'; a.click(); URL.revokeObjectURL(a.href);
+}
+
+// ── badges / footer ───────────────────────────────────
+function updateBadges() {
+  for (const n of Object.keys(BANCO)) {
+    const pend = (BANCO[n]||[]).filter(x=>!decisions[x.w]).length;
+    const el = document.getElementById('badge-'+n);
+    if (el) el.textContent = pend>0 ? pend : '✓';
+  }
+}
+function updateFooter() {
+  document.getElementById('footer').innerHTML = Object.entries(BANCO).map(([n,lst])=>{
+    const a=lst.filter(x=>decisions[x.w]==='aceitar').length;
+    const r=lst.filter(x=>decisions[x.w]==='recusar').length;
+    const p=lst.length-a-r;
+    return `<span><b class="dif-badge ${n}" style="font-size:.6rem">${NIVEL_LABELS[n]}</b> ${a}✓ ${r}✕ ${p}⏳</span>`;
+  }).join('');
+}
+
+// ── view switcher ─────────────────────────────────────
+function switchView(v) {
+  document.querySelectorAll('main > div').forEach(el => el.classList.toggle('hidden', el.id !== 'view-'+v));
+  document.querySelectorAll('.view-tab').forEach(b => b.classList.toggle('active', b.dataset.view===v));
+  if (v==='revisar')  renderRevisar();
+  if (v==='exportar') renderExportar();
+  if (v==='curar')    renderCurar();
+}
+document.querySelectorAll('.view-tab').forEach(b => b.addEventListener('click', ()=>switchView(b.dataset.view)));
+
+// ── nivel tabs ────────────────────────────────────────
+document.querySelectorAll('.nivel-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    nivel = tab.dataset.nivel; idx = 0;
+    document.querySelectorAll('.nivel-tab').forEach(t => t.classList.toggle('active', t.dataset.nivel===nivel));
+    const active = document.querySelector('main > div:not(.hidden)');
+    const v = active ? active.id.replace('view-','') : 'curar';
+    if (v==='curar') renderCurar();
+    if (v==='revisar') renderRevisar();
+  });
+});
+
+// ── filter pills (curar) ──────────────────────────────
+document.querySelectorAll('[data-f]').forEach(b => {
+  b.addEventListener('click', ()=>{
+    filter = b.dataset.f; idx = 0;
+    document.querySelectorAll('[data-f]').forEach(x=>x.classList.toggle('active',x.dataset.f===filter));
+    renderCurar();
+  });
+});
+
+// ── filter pills (revisar) ────────────────────────────
+document.querySelectorAll('[data-rf]').forEach(b => {
+  b.addEventListener('click', ()=>{
+    rFilter = b.dataset.rf;
+    document.querySelectorAll('[data-rf]').forEach(x=>x.classList.toggle('active',x.dataset.rf===rFilter));
+    renderRevisar();
+  });
+});
+
+// ── teclado ───────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (document.getElementById('view-curar').classList.contains('hidden')) return;
+  if (e.target.tagName==='INPUT') return;
+  if (e.key==='ArrowRight'||e.key==='a'||e.key==='A') { e.preventDefault(); decidir('aceitar'); }
+  if (e.key==='ArrowLeft' ||e.key==='r'||e.key==='R') { e.preventDefault(); decidir('recusar'); }
+  if (e.key==='ArrowDown')  { e.preventDefault(); navDelta(1);  }
+  if (e.key==='ArrowUp')    { e.preventDefault(); navDelta(-1); }
+});
+
+// ── tema ──────────────────────────────────────────────
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('icon-dark').classList.toggle('hidden', !isDark);
+  document.getElementById('icon-light').classList.toggle('hidden', isDark);
+}
+
+// ── init ──────────────────────────────────────────────
+renderCurar();
+updateBadges();
+updateFooter();
+</script>
+</body>
+</html>

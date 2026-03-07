@@ -1,0 +1,2619 @@
+{
+  "metadata": {
+    "version": 2,
+    "generated": "2026-03-07",
+    "start": "2026-03-07",
+    "end": "2027-03-06",
+    "total_days": 365,
+    "epoch": "2025-01-01",
+    "ciclo_dif": [
+      "facil",
+      "facil",
+      "medio",
+      "medio",
+      "dificil",
+      "dificil",
+      "muito_dificil"
+    ],
+    "dias_da_semana": {
+      "Domingo": {
+        "nivel": "facil",
+        "nivelLabel": "Fácil"
+      },
+      "Segunda": {
+        "nivel": "facil",
+        "nivelLabel": "Fácil"
+      },
+      "Terça": {
+        "nivel": "medio",
+        "nivelLabel": "Médio"
+      },
+      "Quarta": {
+        "nivel": "medio",
+        "nivelLabel": "Médio"
+      },
+      "Quinta": {
+        "nivel": "dificil",
+        "nivelLabel": "Difícil"
+      },
+      "Sexta": {
+        "nivel": "dificil",
+        "nivelLabel": "Difícil"
+      },
+      "Sábado": {
+        "nivel": "muito_dificil",
+        "nivelLabel": "Muito Difícil"
+      }
+    },
+    "stats_por_nivel": {
+      "muito_dificil": 53,
+      "facil": 104,
+      "medio": 104,
+      "dificil": 104
+    },
+    "colisoes_consecutivas": 0,
+    "tamanhos": {
+      "facil": "400 palavras (4L)",
+      "medio": "400 palavras (5L)",
+      "dificil": "371 palavras (6L)",
+      "muito_dificil": "300 palavras (7L)"
+    }
+  },
+  "days": [
+    {
+      "date": "2026-03-07",
+      "word": "EFLUVIO",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 431
+    },
+    {
+      "date": "2026-03-08",
+      "word": "OLHA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 432
+    },
+    {
+      "date": "2026-03-09",
+      "word": "AREA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 433
+    },
+    {
+      "date": "2026-03-10",
+      "word": "CARPA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 434
+    },
+    {
+      "date": "2026-03-11",
+      "word": "DANCA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 435
+    },
+    {
+      "date": "2026-03-12",
+      "word": "COMECO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 436
+    },
+    {
+      "date": "2026-03-13",
+      "word": "EQUIPA",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 437
+    },
+    {
+      "date": "2026-03-14",
+      "word": "HUMANOS",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 438
+    },
+    {
+      "date": "2026-03-15",
+      "word": "LODO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 439
+    },
+    {
+      "date": "2026-03-16",
+      "word": "OUCA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 440
+    },
+    {
+      "date": "2026-03-17",
+      "word": "ARFAR",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 441
+    },
+    {
+      "date": "2026-03-18",
+      "word": "CAULE",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 442
+    },
+    {
+      "date": "2026-03-19",
+      "word": "JURADO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 443
+    },
+    {
+      "date": "2026-03-20",
+      "word": "SENTIR",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 444
+    },
+    {
+      "date": "2026-03-21",
+      "word": "DIREITA",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 445
+    },
+    {
+      "date": "2026-03-22",
+      "word": "CAES",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 446
+    },
+    {
+      "date": "2026-03-23",
+      "word": "MACA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 447
+    },
+    {
+      "date": "2026-03-24",
+      "word": "LIGHT",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 448
+    },
+    {
+      "date": "2026-03-25",
+      "word": "AVARO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 449
+    },
+    {
+      "date": "2026-03-26",
+      "word": "BAIXAR",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 450
+    },
+    {
+      "date": "2026-03-27",
+      "word": "CRIADO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 451
+    },
+    {
+      "date": "2026-03-28",
+      "word": "CAMINHO",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 452
+    },
+    {
+      "date": "2026-03-29",
+      "word": "VAGA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 453
+    },
+    {
+      "date": "2026-03-30",
+      "word": "GRAU",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 454
+    },
+    {
+      "date": "2026-03-31",
+      "word": "GANHA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 455
+    },
+    {
+      "date": "2026-04-01",
+      "word": "LOCAL",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 456
+    },
+    {
+      "date": "2026-04-02",
+      "word": "ORGAOS",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 457
+    },
+    {
+      "date": "2026-04-03",
+      "word": "PRONTO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 458
+    },
+    {
+      "date": "2026-04-04",
+      "word": "DECISAO",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 459
+    },
+    {
+      "date": "2026-04-05",
+      "word": "SECO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 460
+    },
+    {
+      "date": "2026-04-06",
+      "word": "VERA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 461
+    },
+    {
+      "date": "2026-04-07",
+      "word": "DIZIA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 462
+    },
+    {
+      "date": "2026-04-08",
+      "word": "GLOBO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 463
+    },
+    {
+      "date": "2026-04-09",
+      "word": "VISUAL",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 464
+    },
+    {
+      "date": "2026-04-10",
+      "word": "FECHAR",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 465
+    },
+    {
+      "date": "2026-04-11",
+      "word": "ATENCAO",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 466
+    },
+    {
+      "date": "2026-04-12",
+      "word": "LAGO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 467
+    },
+    {
+      "date": "2026-04-13",
+      "word": "SENA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 468
+    },
+    {
+      "date": "2026-04-14",
+      "word": "AJUDA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 469
+    },
+    {
+      "date": "2026-04-15",
+      "word": "ERROS",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 470
+    },
+    {
+      "date": "2026-04-16",
+      "word": "MEDIDA",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 471
+    },
+    {
+      "date": "2026-04-17",
+      "word": "PARECE",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 472
+    },
+    {
+      "date": "2026-04-18",
+      "word": "ROTEIRO",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 473
+    },
+    {
+      "date": "2026-04-19",
+      "word": "FOFA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 474
+    },
+    {
+      "date": "2026-04-20",
+      "word": "PERA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 475
+    },
+    {
+      "date": "2026-04-21",
+      "word": "OTIMO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 476
+    },
+    {
+      "date": "2026-04-22",
+      "word": "AMENO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 477
+    },
+    {
+      "date": "2026-04-23",
+      "word": "CAVALO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 478
+    },
+    {
+      "date": "2026-04-24",
+      "word": "DORMIR",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 479
+    },
+    {
+      "date": "2026-04-25",
+      "word": "AGENCIA",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 480
+    },
+    {
+      "date": "2026-04-26",
+      "word": "COLA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 481
+    },
+    {
+      "date": "2026-04-27",
+      "word": "FRIA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 482
+    },
+    {
+      "date": "2026-04-28",
+      "word": "MANGA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 483
+    },
+    {
+      "date": "2026-04-29",
+      "word": "PASSA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 484
+    },
+    {
+      "date": "2026-04-30",
+      "word": "IMAGEM",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 485
+    },
+    {
+      "date": "2026-05-01",
+      "word": "REVELA",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 486
+    },
+    {
+      "date": "2026-05-02",
+      "word": "REDUCAO",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 487
+    },
+    {
+      "date": "2026-05-03",
+      "word": "ALTO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 488
+    },
+    {
+      "date": "2026-05-04",
+      "word": "CRIA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 489
+    },
+    {
+      "date": "2026-05-05",
+      "word": "CRIVO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 490
+    },
+    {
+      "date": "2026-05-06",
+      "word": "MENOR",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 491
+    },
+    {
+      "date": "2026-05-07",
+      "word": "ANFORA",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 492
+    },
+    {
+      "date": "2026-05-08",
+      "word": "CLARAO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 493
+    },
+    {
+      "date": "2026-05-09",
+      "word": "OBLONGO",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 494
+    },
+    {
+      "date": "2026-05-10",
+      "word": "OLEO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 495
+    },
+    {
+      "date": "2026-05-11",
+      "word": "ARCO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 496
+    },
+    {
+      "date": "2026-05-12",
+      "word": "CARNE",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 497
+    },
+    {
+      "date": "2026-05-13",
+      "word": "CUSTO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 498
+    },
+    {
+      "date": "2026-05-14",
+      "word": "NIVEIS",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 499
+    },
+    {
+      "date": "2026-05-15",
+      "word": "POMBAL",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 500
+    },
+    {
+      "date": "2026-05-16",
+      "word": "QUERIDA",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 501
+    },
+    {
+      "date": "2026-05-17",
+      "word": "LOBO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 502
+    },
+    {
+      "date": "2026-05-18",
+      "word": "OSSO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 503
+    },
+    {
+      "date": "2026-05-19",
+      "word": "AREIA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 504
+    },
+    {
+      "date": "2026-05-20",
+      "word": "CASTA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 505
+    },
+    {
+      "date": "2026-05-21",
+      "word": "ULTIMA",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 506
+    },
+    {
+      "date": "2026-05-22",
+      "word": "ESPUMA",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 507
+    },
+    {
+      "date": "2026-05-23",
+      "word": "MOTIVOS",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 508
+    },
+    {
+      "date": "2026-05-24",
+      "word": "GELO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 509
+    },
+    {
+      "date": "2026-05-25",
+      "word": "LUXO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 510
+    },
+    {
+      "date": "2026-05-26",
+      "word": "LIDER",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 511
+    },
+    {
+      "date": "2026-05-27",
+      "word": "AUTOR",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 512
+    },
+    {
+      "date": "2026-05-28",
+      "word": "MACULA",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 513
+    },
+    {
+      "date": "2026-05-29",
+      "word": "OFERTA",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 514
+    },
+    {
+      "date": "2026-05-30",
+      "word": "FEDERAL",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 515
+    },
+    {
+      "date": "2026-05-31",
+      "word": "VACA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 516
+    },
+    {
+      "date": "2026-06-01",
+      "word": "GRAO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 517
+    },
+    {
+      "date": "2026-06-02",
+      "word": "GALHO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 518
+    },
+    {
+      "date": "2026-06-03",
+      "word": "LIVRO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 519
+    },
+    {
+      "date": "2026-06-04",
+      "word": "BRINDE",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 520
+    },
+    {
+      "date": "2026-06-05",
+      "word": "DEMAIS",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 521
+    },
+    {
+      "date": "2026-06-06",
+      "word": "CRISTAL",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 522
+    },
+    {
+      "date": "2026-06-07",
+      "word": "SECA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 523
+    },
+    {
+      "date": "2026-06-08",
+      "word": "VELO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 524
+    },
+    {
+      "date": "2026-06-09",
+      "word": "DISCO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 525
+    },
+    {
+      "date": "2026-06-10",
+      "word": "GLEBA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 526
+    },
+    {
+      "date": "2026-06-11",
+      "word": "GLOBAL",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 527
+    },
+    {
+      "date": "2026-06-12",
+      "word": "QUERER",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 528
+    },
+    {
+      "date": "2026-06-13",
+      "word": "ESTRADA",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 529
+    },
+    {
+      "date": "2026-06-14",
+      "word": "PAPO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 530
+    },
+    {
+      "date": "2026-06-15",
+      "word": "SEMI",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 531
+    },
+    {
+      "date": "2026-06-16",
+      "word": "AGUDO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 532
+    },
+    {
+      "date": "2026-06-17",
+      "word": "EPOCA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 533
+    },
+    {
+      "date": "2026-06-18",
+      "word": "ACERVO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 534
+    },
+    {
+      "date": "2026-06-19",
+      "word": "CAMISA",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 535
+    },
+    {
+      "date": "2026-06-20",
+      "word": "CONSIGO",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 536
+    },
+    {
+      "date": "2026-06-21",
+      "word": "FOCO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 537
+    },
+    {
+      "date": "2026-06-22",
+      "word": "PENA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 538
+    },
+    {
+      "date": "2026-06-23",
+      "word": "ORGIA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 539
+    },
+    {
+      "date": "2026-06-24",
+      "word": "AMEBA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 540
+    },
+    {
+      "date": "2026-06-25",
+      "word": "MINGUA",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 541
+    },
+    {
+      "date": "2026-06-26",
+      "word": "PEDIDO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 542
+    },
+    {
+      "date": "2026-06-27",
+      "word": "VINCULO",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 543
+    },
+    {
+      "date": "2026-06-28",
+      "word": "COCA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 544
+    },
+    {
+      "date": "2026-06-29",
+      "word": "FORO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 545
+    },
+    {
+      "date": "2026-06-30",
+      "word": "MALTE",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 546
+    },
+    {
+      "date": "2026-07-01",
+      "word": "PASMO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 547
+    },
+    {
+      "date": "2026-07-02",
+      "word": "TELADO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 548
+    },
+    {
+      "date": "2026-07-03",
+      "word": "ENORME",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 549
+    },
+    {
+      "date": "2026-07-04",
+      "word": "COLOSSO",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 550
+    },
+    {
+      "date": "2026-07-05",
+      "word": "ALTA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 551
+    },
+    {
+      "date": "2026-07-06",
+      "word": "CRER",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 552
+    },
+    {
+      "date": "2026-07-07",
+      "word": "CRISE",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 553
+    },
+    {
+      "date": "2026-07-08",
+      "word": "MEDIO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 554
+    },
+    {
+      "date": "2026-07-09",
+      "word": "JANTAR",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 555
+    },
+    {
+      "date": "2026-07-10",
+      "word": "MORREU",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 556
+    },
+    {
+      "date": "2026-07-11",
+      "word": "ULTIMAS",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 557
+    },
+    {
+      "date": "2026-07-12",
+      "word": "OITO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 558
+    },
+    {
+      "date": "2026-07-13",
+      "word": "ANTE",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 559
+    },
+    {
+      "date": "2026-07-14",
+      "word": "CARGO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 560
+    },
+    {
+      "date": "2026-07-15",
+      "word": "CUSTA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 561
+    },
+    {
+      "date": "2026-07-16",
+      "word": "ASTUTO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 562
+    },
+    {
+      "date": "2026-07-17",
+      "word": "CONCHA",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 563
+    },
+    {
+      "date": "2026-07-18",
+      "word": "PROXIMO",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 564
+    },
+    {
+      "date": "2026-07-19",
+      "word": "LIXO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 565
+    },
+    {
+      "date": "2026-07-20",
+      "word": "ORAR",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 566
+    },
+    {
+      "date": "2026-07-21",
+      "word": "ANZOL",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 567
+    },
+    {
+      "date": "2026-07-22",
+      "word": "CASOS",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 568
+    },
+    {
+      "date": "2026-07-23",
+      "word": "FREIRA",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 569
+    },
+    {
+      "date": "2026-07-24",
+      "word": "PRISMA",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 570
+    },
+    {
+      "date": "2026-07-25",
+      "word": "TECNICA",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 571
+    },
+    {
+      "date": "2026-07-26",
+      "word": "GATO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 572
+    },
+    {
+      "date": "2026-07-27",
+      "word": "LUVA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 573
+    },
+    {
+      "date": "2026-07-28",
+      "word": "LETRA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 574
+    },
+    {
+      "date": "2026-07-29",
+      "word": "AUDIO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 575
+    },
+    {
+      "date": "2026-07-30",
+      "word": "VIAGEM",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 576
+    },
+    {
+      "date": "2026-07-31",
+      "word": "EXTASE",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 577
+    },
+    {
+      "date": "2026-08-01",
+      "word": "POSSUEM",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 578
+    },
+    {
+      "date": "2026-08-02",
+      "word": "UTIL",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 579
+    },
+    {
+      "date": "2026-08-03",
+      "word": "GOTA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 580
+    },
+    {
+      "date": "2026-08-04",
+      "word": "FUNIL",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 581
+    },
+    {
+      "date": "2026-08-05",
+      "word": "LIVRE",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 582
+    },
+    {
+      "date": "2026-08-06",
+      "word": "MAZELA",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 583
+    },
+    {
+      "date": "2026-08-07",
+      "word": "PAISES",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 584
+    },
+    {
+      "date": "2026-08-08",
+      "word": "MELIFUO",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 585
+    },
+    {
+      "date": "2026-08-09",
+      "word": "SAPO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 586
+    },
+    {
+      "date": "2026-08-10",
+      "word": "VELA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 587
+    },
+    {
+      "date": "2026-08-11",
+      "word": "DIETA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 588
+    },
+    {
+      "date": "2026-08-12",
+      "word": "GENRO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 589
+    },
+    {
+      "date": "2026-08-13",
+      "word": "SESSAO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 590
+    },
+    {
+      "date": "2026-08-14",
+      "word": "DILEMA",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 591
+    },
+    {
+      "date": "2026-08-15",
+      "word": "PESSOAS",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 592
+    },
+    {
+      "date": "2026-08-16",
+      "word": "PAPA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 593
+    },
+    {
+      "date": "2026-08-17",
+      "word": "SELO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 594
+    },
+    {
+      "date": "2026-08-18",
+      "word": "ACHAR",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 595
+    },
+    {
+      "date": "2026-08-19",
+      "word": "ENVIO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 596
+    },
+    {
+      "date": "2026-08-20",
+      "word": "HOTEIS",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 597
+    },
+    {
+      "date": "2026-08-21",
+      "word": "REGIME",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 598
+    },
+    {
+      "date": "2026-08-22",
+      "word": "LISONJA",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 599
+    },
+    {
+      "date": "2026-08-23",
+      "word": "FOCA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 600
+    },
+    {
+      "date": "2026-08-24",
+      "word": "PELE",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 601
+    },
+    {
+      "date": "2026-08-25",
+      "word": "ORGAO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 602
+    },
+    {
+      "date": "2026-08-26",
+      "word": "AMBAR",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 603
+    },
+    {
+      "date": "2026-08-27",
+      "word": "ALUGAR",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 604
+    },
+    {
+      "date": "2026-08-28",
+      "word": "CIDADE",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 605
+    },
+    {
+      "date": "2026-08-29",
+      "word": "ENTRADA",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 606
+    },
+    {
+      "date": "2026-08-30",
+      "word": "CINE",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 607
+    },
+    {
+      "date": "2026-08-31",
+      "word": "FORA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 608
+    },
+    {
+      "date": "2026-09-01",
+      "word": "MALHA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 609
+    },
+    {
+      "date": "2026-09-02",
+      "word": "PARIS",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 610
+    },
+    {
+      "date": "2026-09-03",
+      "word": "FERIDA",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 611
+    },
+    {
+      "date": "2026-09-04",
+      "word": "PLASMA",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 612
+    },
+    {
+      "date": "2026-09-05",
+      "word": "INTERNA",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 613
+    },
+    {
+      "date": "2026-09-06",
+      "word": "ALMA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 614
+    },
+    {
+      "date": "2026-09-07",
+      "word": "COTA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 615
+    },
+    {
+      "date": "2026-09-08",
+      "word": "CRIME",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 616
+    },
+    {
+      "date": "2026-09-09",
+      "word": "MEDIA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 617
+    },
+    {
+      "date": "2026-09-10",
+      "word": "TRATAR",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 618
+    },
+    {
+      "date": "2026-09-11",
+      "word": "ESPERA",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 619
+    },
+    {
+      "date": "2026-09-12",
+      "word": "ECLIPSE",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 620
+    },
+    {
+      "date": "2026-09-13",
+      "word": "ODIO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 621
+    },
+    {
+      "date": "2026-09-14",
+      "word": "ANJO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 622
+    },
+    {
+      "date": "2026-09-15",
+      "word": "CARGA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 623
+    },
+    {
+      "date": "2026-09-16",
+      "word": "CURVA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 624
+    },
+    {
+      "date": "2026-09-17",
+      "word": "LIMITE",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 625
+    },
+    {
+      "date": "2026-09-18",
+      "word": "NUMERO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 626
+    },
+    {
+      "date": "2026-09-19",
+      "word": "CELEUMA",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 627
+    },
+    {
+      "date": "2026-09-20",
+      "word": "LISA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 628
+    },
+    {
+      "date": "2026-09-21",
+      "word": "ORAL",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 629
+    },
+    {
+      "date": "2026-09-22",
+      "word": "ANTRO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 630
+    },
+    {
+      "date": "2026-09-23",
+      "word": "CASCA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 631
+    },
+    {
+      "date": "2026-09-24",
+      "word": "BRANCO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 632
+    },
+    {
+      "date": "2026-09-25",
+      "word": "DEDALO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 633
+    },
+    {
+      "date": "2026-09-26",
+      "word": "DIFICIL",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 634
+    },
+    {
+      "date": "2026-09-27",
+      "word": "GATA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 635
+    },
+    {
+      "date": "2026-09-28",
+      "word": "LUTA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 636
+    },
+    {
+      "date": "2026-09-29",
+      "word": "LETAL",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 637
+    },
+    {
+      "date": "2026-09-30",
+      "word": "ATUAL",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 638
+    },
+    {
+      "date": "2026-10-01",
+      "word": "GERAIS",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 639
+    },
+    {
+      "date": "2026-10-02",
+      "word": "QUATRO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 640
+    },
+    {
+      "date": "2026-10-03",
+      "word": "BRAVURA",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 641
+    },
+    {
+      "date": "2026-10-04",
+      "word": "USOS",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 642
+    },
+    {
+      "date": "2026-10-05",
+      "word": "GOLO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 643
+    },
+    {
+      "date": "2026-10-06",
+      "word": "FUNGO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 644
+    },
+    {
+      "date": "2026-10-07",
+      "word": "LIVOR",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 645
+    },
+    {
+      "date": "2026-10-08",
+      "word": "ABERTO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 646
+    },
+    {
+      "date": "2026-10-09",
+      "word": "CALCIO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 647
+    },
+    {
+      "date": "2026-10-10",
+      "word": "SEGUIDA",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 648
+    },
+    {
+      "date": "2026-10-11",
+      "word": "SALA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 649
+    },
+    {
+      "date": "2026-10-12",
+      "word": "VEJO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 650
+    },
+    {
+      "date": "2026-10-13",
+      "word": "DICAS",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 651
+    },
+    {
+      "date": "2026-10-14",
+      "word": "GENIO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 652
+    },
+    {
+      "date": "2026-10-15",
+      "word": "METODO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 653
+    },
+    {
+      "date": "2026-10-16",
+      "word": "PASTOR",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 654
+    },
+    {
+      "date": "2026-10-17",
+      "word": "ASSIDUO",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 655
+    },
+    {
+      "date": "2026-10-18",
+      "word": "PANO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 656
+    },
+    {
+      "date": "2026-10-19",
+      "word": "SELA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 657
+    },
+    {
+      "date": "2026-10-20",
+      "word": "ACENO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 658
+    },
+    {
+      "date": "2026-10-21",
+      "word": "ENTRA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 659
+    },
+    {
+      "date": "2026-10-22",
+      "word": "TAPETE",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 660
+    },
+    {
+      "date": "2026-10-23",
+      "word": "EFEITO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 661
+    },
+    {
+      "date": "2026-10-24",
+      "word": "REUNIAO",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 662
+    },
+    {
+      "date": "2026-10-25",
+      "word": "FLOR",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 663
+    },
+    {
+      "date": "2026-10-26",
+      "word": "PEGO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 664
+    },
+    {
+      "date": "2026-10-27",
+      "word": "ORDEM",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 665
+    },
+    {
+      "date": "2026-10-28",
+      "word": "CHEIO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 666
+    },
+    {
+      "date": "2026-10-29",
+      "word": "INVEJA",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 667
+    },
+    {
+      "date": "2026-10-30",
+      "word": "MISSAO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 668
+    },
+    {
+      "date": "2026-10-31",
+      "word": "PALAVRA",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 669
+    },
+    {
+      "date": "2026-11-01",
+      "word": "CIMA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 670
+    },
+    {
+      "date": "2026-11-02",
+      "word": "FONE",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 671
+    },
+    {
+      "date": "2026-11-03",
+      "word": "MAGRO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 672
+    },
+    {
+      "date": "2026-11-04",
+      "word": "PARAR",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 673
+    },
+    {
+      "date": "2026-11-05",
+      "word": "ARTIGO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 674
+    },
+    {
+      "date": "2026-11-06",
+      "word": "COMIDA",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 675
+    },
+    {
+      "date": "2026-11-07",
+      "word": "RECEITA",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 676
+    },
+    {
+      "date": "2026-11-08",
+      "word": "ALHO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 677
+    },
+    {
+      "date": "2026-11-09",
+      "word": "COPO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 678
+    },
+    {
+      "date": "2026-11-10",
+      "word": "CRIAR",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 679
+    },
+    {
+      "date": "2026-11-11",
+      "word": "MASSA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 680
+    },
+    {
+      "date": "2026-11-12",
+      "word": "FORMAS",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 681
+    },
+    {
+      "date": "2026-11-13",
+      "word": "PREMIO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 682
+    },
+    {
+      "date": "2026-11-14",
+      "word": "NOTICIA",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 683
+    },
+    {
+      "date": "2026-11-15",
+      "word": "OCIO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 684
+    },
+    {
+      "date": "2026-11-16",
+      "word": "ANEL",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 685
+    },
+    {
+      "date": "2026-11-17",
+      "word": "CAPIM",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 686
+    },
+    {
+      "date": "2026-11-18",
+      "word": "GRUTA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 687
+    },
+    {
+      "date": "2026-11-19",
+      "word": "VERBAL",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 688
+    },
+    {
+      "date": "2026-11-20",
+      "word": "BELEZA",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 689
+    },
+    {
+      "date": "2026-11-21",
+      "word": "FRIVOLO",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 690
+    },
+    {
+      "date": "2026-11-22",
+      "word": "LIRA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 691
+    },
+    {
+      "date": "2026-11-23",
+      "word": "ONZE",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 692
+    },
+    {
+      "date": "2026-11-24",
+      "word": "ANGRA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 693
+    },
+    {
+      "date": "2026-11-25",
+      "word": "CASAS",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 694
+    },
+    {
+      "date": "2026-11-26",
+      "word": "MARCOS",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 695
+    },
+    {
+      "date": "2026-11-27",
+      "word": "ORIGEM",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 696
+    },
+    {
+      "date": "2026-11-28",
+      "word": "MOMENTO",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 697
+    },
+    {
+      "date": "2026-11-29",
+      "word": "GAMA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 698
+    },
+    {
+      "date": "2026-11-30",
+      "word": "LUPA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 699
+    },
+    {
+      "date": "2026-12-01",
+      "word": "LENTO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 700
+    },
+    {
+      "date": "2026-12-02",
+      "word": "ATRIZ",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 701
+    },
+    {
+      "date": "2026-12-03",
+      "word": "SENHOR",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 702
+    },
+    {
+      "date": "2026-12-04",
+      "word": "DEVIDO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 703
+    },
+    {
+      "date": "2026-12-05",
+      "word": "FALACIA",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 704
+    },
+    {
+      "date": "2026-12-06",
+      "word": "URSO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 705
+    },
+    {
+      "date": "2026-12-07",
+      "word": "GIRO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 706
+    },
+    {
+      "date": "2026-12-08",
+      "word": "FUNDO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 707
+    },
+    {
+      "date": "2026-12-09",
+      "word": "PIANO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 708
+    },
+    {
+      "date": "2026-12-10",
+      "word": "GUARDA",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 709
+    },
+    {
+      "date": "2026-12-11",
+      "word": "MELHOR",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 710
+    },
+    {
+      "date": "2026-12-12",
+      "word": "CREDITO",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 711
+    },
+    {
+      "date": "2026-12-13",
+      "word": "SAGA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 712
+    },
+    {
+      "date": "2026-12-14",
+      "word": "VEIO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 713
+    },
+    {
+      "date": "2026-12-15",
+      "word": "DENTE",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 714
+    },
+    {
+      "date": "2026-12-16",
+      "word": "GARRA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 715
+    },
+    {
+      "date": "2026-12-17",
+      "word": "ALEGRE",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 716
+    },
+    {
+      "date": "2026-12-18",
+      "word": "CHARCO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 717
+    },
+    {
+      "date": "2026-12-19",
+      "word": "ESTACAO",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 718
+    },
+    {
+      "date": "2026-12-20",
+      "word": "PAIS",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 719
+    },
+    {
+      "date": "2026-12-21",
+      "word": "SEIS",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 720
+    },
+    {
+      "date": "2026-12-22",
+      "word": "CERTA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 721
+    },
+    {
+      "date": "2026-12-23",
+      "word": "DUPLA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 722
+    },
+    {
+      "date": "2026-12-24",
+      "word": "FALCAO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 723
+    },
+    {
+      "date": "2026-12-25",
+      "word": "PEROLA",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 724
+    },
+    {
+      "date": "2026-12-26",
+      "word": "CONHECE",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 725
+    },
+    {
+      "date": "2026-12-27",
+      "word": "FIXO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 726
+    },
+    {
+      "date": "2026-12-28",
+      "word": "PEGA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 727
+    },
+    {
+      "date": "2026-12-29",
+      "word": "ORCAR",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 728
+    },
+    {
+      "date": "2026-12-30",
+      "word": "CHEIA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 729
+    },
+    {
+      "date": "2026-12-31",
+      "word": "TONICO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 730
+    },
+    {
+      "date": "2027-01-01",
+      "word": "ANIMAL",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 731
+    },
+    {
+      "date": "2027-01-02",
+      "word": "VESTIDO",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 732
+    },
+    {
+      "date": "2027-01-03",
+      "word": "CHAO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 733
+    },
+    {
+      "date": "2027-01-04",
+      "word": "FOME",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 734
+    },
+    {
+      "date": "2027-01-05",
+      "word": "MACAO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 735
+    },
+    {
+      "date": "2027-01-06",
+      "word": "PAPEL",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 736
+    },
+    {
+      "date": "2027-01-07",
+      "word": "LEMBRA",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 737
+    },
+    {
+      "date": "2027-01-08",
+      "word": "NOMADE",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 738
+    },
+    {
+      "date": "2027-01-09",
+      "word": "COLECAO",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 739
+    },
+    {
+      "date": "2027-01-10",
+      "word": "AGUA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 740
+    },
+    {
+      "date": "2027-01-11",
+      "word": "COPA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 741
+    },
+    {
+      "date": "2027-01-12",
+      "word": "GOSTA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 742
+    },
+    {
+      "date": "2027-01-13",
+      "word": "MARCA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 743
+    },
+    {
+      "date": "2027-01-14",
+      "word": "RESUMO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 744
+    },
+    {
+      "date": "2027-01-15",
+      "word": "DEBATE",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 745
+    },
+    {
+      "date": "2027-01-16",
+      "word": "TORNADO",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 746
+    },
+    {
+      "date": "2027-01-17",
+      "word": "OBRA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 747
+    },
+    {
+      "date": "2027-01-18",
+      "word": "ANDA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 748
+    },
+    {
+      "date": "2027-01-19",
+      "word": "CAPAZ",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 749
+    },
+    {
+      "date": "2027-01-20",
+      "word": "GROTA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 750
+    },
+    {
+      "date": "2027-01-21",
+      "word": "GANHAR",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 751
+    },
+    {
+      "date": "2027-01-22",
+      "word": "MADURO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 752
+    },
+    {
+      "date": "2027-01-23",
+      "word": "PROPINA",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 753
+    },
+    {
+      "date": "2027-01-24",
+      "word": "LIMA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 754
+    },
+    {
+      "date": "2027-01-25",
+      "word": "TAVA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 755
+    },
+    {
+      "date": "2027-01-26",
+      "word": "ANDOR",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 756
+    },
+    {
+      "date": "2027-01-27",
+      "word": "CASAL",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 757
+    },
+    {
+      "date": "2027-01-28",
+      "word": "ZENITE",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 758
+    },
+    {
+      "date": "2027-01-29",
+      "word": "CABECA",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 759
+    },
+    {
+      "date": "2027-01-30",
+      "word": "SUPORTE",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 760
+    },
+    {
+      "date": "2027-01-31",
+      "word": "GALO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 761
+    },
+    {
+      "date": "2027-02-01",
+      "word": "LOTE",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 762
+    },
+    {
+      "date": "2027-02-02",
+      "word": "PEDRA",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 763
+    },
+    {
+      "date": "2027-02-03",
+      "word": "ATRAS",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 764
+    },
+    {
+      "date": "2027-02-04",
+      "word": "ESPOSA",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 765
+    },
+    {
+      "date": "2027-02-05",
+      "word": "PARTIR",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 766
+    },
+    {
+      "date": "2027-02-06",
+      "word": "POLVORA",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 767
+    },
+    {
+      "date": "2027-02-07",
+      "word": "UNIR",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 768
+    },
+    {
+      "date": "2027-02-08",
+      "word": "GIRL",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 769
+    },
+    {
+      "date": "2027-02-09",
+      "word": "FUMAR",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 770
+    },
+    {
+      "date": "2027-02-10",
+      "word": "PERTO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 771
+    },
+    {
+      "date": "2027-02-11",
+      "word": "TALVEZ",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 772
+    },
+    {
+      "date": "2027-02-12",
+      "word": "ACESSO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 773
+    },
+    {
+      "date": "2027-02-13",
+      "word": "MAQUINA",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 774
+    },
+    {
+      "date": "2027-02-14",
+      "word": "SACO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 775
+    },
+    {
+      "date": "2027-02-15",
+      "word": "DONO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 776
+    },
+    {
+      "date": "2027-02-16",
+      "word": "DENSO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 777
+    },
+    {
+      "date": "2027-02-17",
+      "word": "GARFO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 778
+    },
+    {
+      "date": "2027-02-18",
+      "word": "INICIO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 779
+    },
+    {
+      "date": "2027-02-19",
+      "word": "MINHAS",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 780
+    },
+    {
+      "date": "2027-02-20",
+      "word": "PERMITA",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 781
+    },
+    {
+      "date": "2027-02-21",
+      "word": "PAGO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 782
+    },
+    {
+      "date": "2027-02-22",
+      "word": "SEIO",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 783
+    },
+    {
+      "date": "2027-02-23",
+      "word": "CERRO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 784
+    },
+    {
+      "date": "2027-02-24",
+      "word": "DUELO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 785
+    },
+    {
+      "date": "2027-02-25",
+      "word": "QUENTE",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 786
+    },
+    {
+      "date": "2027-02-26",
+      "word": "COLEGA",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 787
+    },
+    {
+      "date": "2027-02-27",
+      "word": "LEMBRAR",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 788
+    },
+    {
+      "date": "2027-02-28",
+      "word": "FIXA",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 789
+    },
+    {
+      "date": "2027-03-01",
+      "word": "PEDI",
+      "nivel": "facil",
+      "nivelLabel": "Fácil",
+      "puzzle": 790
+    },
+    {
+      "date": "2027-03-02",
+      "word": "OPCAO",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 791
+    },
+    {
+      "date": "2027-03-03",
+      "word": "CHEFE",
+      "nivel": "medio",
+      "nivelLabel": "Médio",
+      "puzzle": 792
+    },
+    {
+      "date": "2027-03-04",
+      "word": "FLANCO",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 793
+    },
+    {
+      "date": "2027-03-05",
+      "word": "JARDIM",
+      "nivel": "dificil",
+      "nivelLabel": "Difícil",
+      "puzzle": 794
+    },
+    {
+      "date": "2027-03-06",
+      "word": "ENCANTO",
+      "nivel": "muito_dificil",
+      "nivelLabel": "Muito Difícil",
+      "puzzle": 795
+    }
+  ]
+}
