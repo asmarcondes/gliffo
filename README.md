@@ -54,12 +54,12 @@ gliffo/
 
 ## Banco de palavras
 
-| Dificuldade    | Tamanho | Quantidade |
-| -------------- | ------- | ---------- |
-| Fácil          | 4 letras | 400 palavras |
-| Médio          | 5 letras | 400 palavras |
-| Difícil        | 6 letras | 371 palavras |
-| Muito difícil  | 7 letras | 300 palavras |
+| Dificuldade   | Tamanho  | Quantidade   |
+| ------------- | -------- | ------------ |
+| Fácil         | 4 letras | 400 palavras |
+| Médio         | 5 letras | 400 palavras |
+| Difícil       | 6 letras | 371 palavras |
+| Muito difícil | 7 letras | 300 palavras |
 
 O ciclo de dificuldade segue o dia da semana (Dom=Fácil … Sáb=Muito Difícil).  
 Fonte de verdade: `data/word_bank_final.json`. O banco está duplicado em `index.html` e `supabase/functions/daily-word/index.ts` — ambos precisam ser atualizados em conjunto.

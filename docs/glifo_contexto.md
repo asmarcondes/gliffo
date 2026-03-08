@@ -6,7 +6,7 @@ Jogo de palavras PT-BR inspirado no Wordle, com uma mecânica visual única: as 
 
 ## Stack
 
-- **Single-file:** `index.html` (~6424 linhas) — HTML + CSS + JS, sem dependências externas
+- **Single-file:** `index.html` — HTML + CSS + JS, sem dependências externas
 - Fontes: DM Serif Display + DM Sans (Google Fonts)
 - SVG gerado programaticamente via `makeSVG(letter, color, style)`
 - Supabase Project ID: `ppssfweuotjgcfejdznn`
@@ -125,14 +125,14 @@ Palavra de demonstração: **BOLA** (B=âmbar, O=lavanda, L=mint, A=coral)
 
 - **URL:** `https://ppssfweuotjgcfejdznn.supabase.co/functions/v1/daily-word`
 - **Auth:** `verify_jwt: false` (pública)
-- **Versão deployada:** v4
+- **Versão deployada:** v5
 - **Parâmetro opcional:** `?date=YYYY-MM-DD` (debug/modo arquivo)
 - **Resposta:** `{ word, nivel, nivelLabel, puzzle, date }`
 
 ### Lógica atual
 
 ```ts
-// Época: 2025-01-01T00:00:00Z
+// Época: 2026-03-08T00:00:00Z (puzzle #1 = dia de lançamento)
 // diasDesdeEpoca = (hoje - EPOCA) / 86400000
 // nivel = CICLO_DIF[hoje.getUTCDay()]
 // idx = ((diasDesdeEpoca * 2654435761) >>> 0) % lista.length
@@ -151,10 +151,11 @@ O banco `PALAVRAS` está **duplicado** entre `index.html` e `supabase/functions/
 
 ```
 PALAVRAS = {
-  facil:         400 palavras (4L)
-  medio:         400 palavras (5L)
-  dificil:       371 palavras (6L)
+  facil:         281 palavras (4L)
+  medio:         382 palavras (5L)
+  dificil:       362 palavras (6L)
   muito_dificil: 300 palavras (7L)
+  TOTAL:         1325 palavras curadas
 }
 DICIONARIO: ~38.664 palavras cobrindo 4L–7L para validação
 ```
@@ -163,8 +164,8 @@ DICIONARIO: ~38.664 palavras cobrindo 4L–7L para validação
 - Dicionário de validação: `data/dicionario.json` — 38.664 palavras (léxico fserb/pt-br normalizado, 354 KB)
   - Carregamento: localStorage `gliffoo_dic` → fetch `data/dicionario.json` → fallback PALAVRAS
 - `dicionarioValido(word)`: checa DICIONARIO (4L–7L) primeiro; fallback para PALAVRAS
-- `data/words_ptbr_year.json`: agenda 365 dias (2026-03-07 a 2027-03-06), v2, CICLO correto
-  - Verificado: hoje (2026-03-07, sáb) = EFLUVIO / muito_dificil / puzzle 431 ✓
+- `data/words_ptbr_year.json`: agenda 365 dias (2026-03-08 a 2027-03-07), v3, época 2026-03-08
+  - Verificado: 2026-03-08 (dom) = MESA / facil / puzzle #1 ✓
 
 ## Estrutura do Projeto
 
@@ -172,22 +173,31 @@ DICIONARIO: ~38.664 palavras cobrindo 4L–7L para validação
 gliffo/
 ├── .gitignore
 ├── README.md
-├── index.html          (~8.400L - jogo completo)
+├── index.html          (jogo completo)
 ├── curadoria.html      (ferramenta de curadoria do banco)
+├── gen-og.html         (gerador do og.png)
+├── og.png              (imagem Open Graph 1200×630)
 ├── sw.js               (service worker PWA, cache glifo-static-v3)
 ├── manifest.json       (PWA manifest)
 ├── icons/              (ícones PWA)
 ├── data/
-│   ├── word_bank_final.json     (134 KB - fonte de verdade do banco)
-│   ├── dicionario.json          (354 KB - 38.664 palavras 4L–7L, gerado do léxico fserb/pt-br)
-│   └── words_ptbr_year.json     (52 KB  - agenda anual → vai pro Supabase Storage)
+│   ├── banco_curado.json        (80 KB  - exportação da curadoria: decisões + stats)
+│   ├── word_bank_final.json     (62 KB  - fonte de verdade: 1.325 palavras aceitas)
+│   ├── dicionario.json          (346 KB - 38.664 palavras 4L–7L para validação)
+│   ├── words_ptbr_year.json     (92 KB  - agenda 365 dias → Supabase Storage)
+│   ├── icf.txt                  (inputs do gen_banco.ps1)
+│   ├── verbos.txt               (inputs do gen_banco.ps1)
+│   └── lexico_ptbr.txt          (inputs do gen_banco.ps1)
 ├── docs/
 │   ├── glifo_contexto.md
 │   └── resumo_banco.md
+├── scripts/
+│   ├── gen_banco.ps1            (gera candidatos com SV+conf — reusa se expandir banco)
+│   └── gen_year.ps1             (regenera words_ptbr_year.json — rodar todo ano)
 └── supabase/
     └── functions/
         └── daily-word/
-            └── index.ts         (Edge Function v3, deployada)
+            └── index.ts         (Edge Function v5, deployada)
 ```
 
 ## Histórico de Chats Concluídos
@@ -241,6 +251,23 @@ gliffo/
 18. ✅ README atualizado: estrutura real (sem src/, sem Swap), stack atual,
     banco de palavras tabelado, instrução regenerar og.png, roadmap com checkboxes
 
+### ✅ Chat H — Curadoria Expandida do Banco + Deploy
+
+19. ✅ **gen_banco.ps1** criado: gera banco com SV (similaridade visual) + conf (confiança) por palavra
+    — corrigidos 3 bugs (null array, base score=0, scalar unboxing PowerShell)
+20. ✅ **Nova fórmula SV**: `SV = 45 + (1 − avgOverlap) × 35 + nUnique × 2` (LETTER_SIM Jaccard 23×23)
+    — Thresholds: sv_alto≥80, sv_medio≥68, sv_baixo<60
+21. ✅ **banco_novo.json** gerado: 3.264 candidatos (facil=489, medio=854, dificil=878, muito_dificil=1043)
+22. ✅ **curadoria.html** atualizado: novo BANCO, fórmula SV, thresholds, LETTER_SIM, computeSV() embarcados
+23. ✅ **Curadoria manual** de 1.618 palavras via curadoria.html → **1.325 aceitas** (293 recusadas):
+    facil=281, medio=382, dificil=362, muito_dificil=300
+24. ✅ Banco sincronizado em `data/word_bank_final.json`, `index.html`, `index.ts`
+25. ✅ `data/words_ptbr_year.json` v3 regenerado: 365 dias a partir de 2026-03-08
+26. ✅ **Época redefinida**: 2026-03-08 = puzzle #1 (era 2025-01-01 = puzzle #432 no lançamento)
+    — atualizado em `index.html` (3 locais), `index.ts`, `gen_year.ps1`
+27. ✅ **Upload Storage** + **deploy Edge Function v5** — API confirmada: puzzle #1 = MESA / Fácil
+28. ✅ Limpeza: removidos `banco_novo.json`, `gen_banco_log.txt`, `letter_sim.js`, `letter_sim.json`, `integrar_banco.ps1`
+
 ---
 
 ## Plano de Próximos Chats
@@ -260,17 +287,9 @@ gliffo/
 
 ---
 
-### 🔴 Chat H — Curadoria de Qualidade do Banco Jogável
+### ✅ Chat H — Curadoria Expandida do Banco + Deploy (concluído)
 
-**Problema:** Lista `facil` contém anglicismos e palavras borderline: GIRL, HIGH, HITS, HALL, ISOL, PART, NOEL, GRID, TOFU, SURF, JAZZ… Lista `medio`/`dificil` com problemas similares (siglas, topônimos, termos técnicos). Banco duplicado em `index.html` e `index.ts` — qualquer edição precisa ser feita nos dois.
-
-**Itens:**
-
-1. Revisar e limpar lista `facil` — remover anglicismos, siglas, top
-   ônimos, palavras não-PT-BR cotidianas
-2. Revisar `medio` e `dificil` com mesma lente
-3. Sincronizar banco limpo em `index.ts` (Edge Function)
-4. Atualizar `data/word_bank_final.json` como fonte de verdade
+Ver **Histórico de Chats Concluídos** acima.
 
 ---
 
