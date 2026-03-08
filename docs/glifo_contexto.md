@@ -293,17 +293,30 @@ Ver **Histórico de Chats Concluídos** acima.
 
 ---
 
-### 🟡 Chat I — Modo Arquivo (puzzles anteriores)
+### ✅ Chat I — Modo Arquivo (puzzles anteriores)
 
-**Problema:** Jogadores não conseguem voltar a puzzles perdidos. Estrutura do debug mode (`palavraPorOffset()`, `resetParaDebug()`) já implementa a lógica — falta UX.
+**Implementado em 2026-03-08.**
 
-**Itens:**
+1. ✅ Botão "📅 Arquivo" no cabeçalho (antes do ícone de stats)
+2. ✅ Modal com grade estilo GitHub contribution calendar — 7 colunas (Dom–Sáb), semanas empilhadas (mais recente no topo), rótulo de mês separando grupos
+3. ✅ Cada célula mostra: `#N` (canto superior esquerdo), ícone central de status, badge "hoje" — sem rótulo de letras
+4. ✅ Estado separado por puzzle: `gliffoo_archive_N` (não altera `gliffoo_state`)
+5. ✅ Não conta para streak — `atualizarStats()` retorna imediatamente se `ARQUIVO_MODO=true`
+6. ✅ Header-meta mostra badge "📅 Arquivo #N"
+7. ✅ Win/lose modais: sem countdown, midCard mostra "📅 Arquivo #N" em vez de streak
+8. ✅ Share text: `glif.foo #N (arquivo)` para identificar puzzles de arquivo
+9. ✅ "← Voltar ao Puzzle de Hoje" quando em modo arquivo
+10. ✅ Cabeçalho de dias da semana sticky (fica fixo ao rolar)
+11. ✅ Dia atual: anel âmbar pulsante (`@keyframes arquivo-pulse`). Dias futuros: desbloqueados mas opacos
+12. ✅ Puzzle em jogo (archive): anel roxo `active`
+13. ✅ Células coloridas **por status**, não por dificuldade — verde tênue (ganhou), neutro escuro (perdeu), âmbar tênue (em progresso), superfície (não jogado)
+14. ✅ Ícone central: `★` (primeira tentativa sem chave), `●●○○` (dots de tentativas), `✕` (perdeu), `···` (em progresso)
+15. ✅ Badge de chave 🗝 (canto superior direito) quando `keyUsed || keyPos.length > 0`
+16. ✅ Tooltip completo com data, dificuldade e resultado ao passar o mouse
+17. ✅ Funções: `palavraPorDia()`, `openArquivo()`, `buildArquivoList()`, `startArquivoMode()`, `exitArquivoMode()`, `salvarEstadoArquivo()`, `carregarEstadoArquivo()`
 
-1. Botão "Arquivo" no cabeçalho (ou dentro do modal de stats)
-2. UI de seleção por data ou número de puzzle
-3. Aproveitar Edge Function `?date=YYYY-MM-DD` para puzzles históricos
-4. Estado de arquivo separado do estado diário (sem sobrescrever `gliffoo_state`)
-5. Indicação visual clara de que é modo arquivo (não conta para streak)
+**Bug corrigido no mesmo chat:**
+- ✅ **Duplicatas em `elim`**: letras excedentes de duplicatas (ex.: 2º E em PENEDO quando a resposta tem 1 E) eram incorretamente adicionadas ao conjunto de eliminadas → warning falso "E já foi eliminada". Corrigido na 2ª passagem do two-pass: `eli.push(l)` só ocorre se `!WL.includes(l)`
 
 ---
 
