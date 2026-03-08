@@ -338,15 +338,13 @@ Ver **Histórico de Chats Concluídos** acima.
 
 ---
 
-### 🟡 Chat K — Race Condition do Dicionário
+### ✅ Chat K — Race Condition do Dicionário
 
-**Problema:** `DICIONARIO` é populado de forma async (localStorage/fetch), mas `dicionarioValido()` é chamado síncronamente no submit. Se o usuário submeter antes do fetch/parse completar (improvável mas possível em conexões lentas sem cache), o Set estará vazio e a validação cai no fallback PALAVRAS — aceitando qualquer coisa.
+**Implementado em 2026-03-08.**
 
-**Itens:**
-
-1. Adicionar flag `dicReady = false` → `true` após Set populado
-2. No submit: se `!dicReady`, mostrar spinner breve ou aceitar (graceful degradation)
-3. Alternativa mais simples: pré-popular `DICIONARIO` com `PALAVRAS` (inline, sync) e substituir pelo JSON após fetch
+1. ✅ `DICIONARIO` pré-populado **sincronamente** com `Object.values(PALAVRAS).flat()` logo após a definição de `PALAVRAS` — validação mínima garantida desde o primeiro submit, sem race condition
+2. ✅ `loadDicionario()` movida para após `PALAVRAS`; Fase 2 assíncrona (localStorage → fetch) substitui o Set pelo léxico completo de 38.6k palavras
+3. ✅ Flag `let dicReady = false` → `true` após Set completo populado (ou no `catch` do fallback)
 
 ---
 
@@ -494,23 +492,7 @@ Itens:
 
 ---
 
-### Chat K — Race Condition do Dicionário
-
-```
-Frente: tornar o carregamento do dicionário robusto.
-
-Estado atual:
-- DICIONARIO é populado de forma async (localStorage/fetch)
-- dicionarioValido() é chamado síncronamente no submit
-- Se o usuário submeter nos primeiros ~100ms (conexão lenta, sem cache):
-  Set vazio → fallback PALAVRAS → qualquer palavra de 4-7L seria aceita
-
-Itens:
-1. Opção A (recomendada): pré-popular DICIONARIO = new Set(Object.values(PALAVRAS).flat())
-   de forma síncrona imediatamente, depois substituir pelo JSON completo após fetch
-2. Opção B (estrita): no submit, se !dicReady, bloquear com feedback "Carregando..." e re-tentar
-3. Implementar flag let dicReady = false → true após Set populado (para logs/debug)
-```
+### ~~Chat K~~ — ✅ Concluído (ver Histórico de Chats Concluídos acima)
 
 ---
 

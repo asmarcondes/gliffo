@@ -3233,27 +3233,11 @@
       }
 
       // ═══════════════════════════════════════════════
-      // DICIONÁRIO — localStorage cache → fetch data/dicionario.json
+      // DICIONÁRIO — pré-populado sync c/ PALAVRAS; substituído por JSON completo async
       // ═══════════════════════════════════════════════
+      // Pré-populado logo abaixo, após definição de PALAVRAS (ver loadDicionario())
       let DICIONARIO = new Set();
-      (function loadDicionario() {
-        try {
-          const cached = localStorage.getItem("gliffoo_dic");
-          if (cached) {
-            DICIONARIO = new Set(JSON.parse(cached));
-            return;
-          }
-        } catch (_) {}
-        fetch("data/dicionario.json")
-          .then((r) => r.json())
-          .then((words) => {
-            DICIONARIO = new Set(words);
-            try {
-              localStorage.setItem("gliffoo_dic", JSON.stringify(words));
-            } catch (_) {}
-          })
-          .catch(() => {}); // fallback: dicionarioValido usa PALAVRAS
-      })();
+      let dicReady = false; // true após Set populado com léxico completo
       // ═══════════════════════════════════════════════
       // BANCO DE PALAVRAS PT-BR — rotação diária
       // Tamanho define dificuldade:
@@ -4598,9 +4582,37 @@
         ],
       };
 
+      // Pré-popula DICIONARIO sync com PALAVRAS (garante validação mínima imediata)
+      // e substitui pelo léxico completo de forma assíncrona (localStorage → fetch)
+      (function loadDicionario() {
+        // Fase 1 — sync: todas as palavras do banco jogável (cobertura imediata)
+        DICIONARIO = new Set(Object.values(PALAVRAS).flat());
+
+        // Fase 2 — async: léxico completo (38.6k palavras 4L–7L)
+        try {
+          const cached = localStorage.getItem("gliffoo_dic");
+          if (cached) {
+            DICIONARIO = new Set(JSON.parse(cached));
+            dicReady = true;
+            return;
+          }
+        } catch (_) {}
+        fetch("data/dicionario.json")
+          .then((r) => r.json())
+          .then((words) => {
+            DICIONARIO = new Set(words);
+            dicReady = true;
+            try {
+              localStorage.setItem("gliffoo_dic", JSON.stringify(words));
+            } catch (_) {}
+          })
+          .catch(() => {
+            dicReady = true; // fallback a PALAVRAS (já no Set)
+          });
+      })();
+
       // Ciclo semanal de dificuldade (0=Dom, 1=Seg, ..., 6=Sáb)
       // Inspirado no glyph.today: dificuldade baseada em sobreposição visual dos shapes
-      // Ciclo semanal de dificuldade (0=Dom, 1=Seg, ..., 6=Sáb)
       // Score visual: ~40 (fácil) → ~75 (muito difícil)
       const CICLO_DIF = [
         "facil", // Dom
