@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 1200px;
+    height: 630px;
+    overflow: hidden;
+    background: #111118;
+    font-family: 'DM Sans', system-ui, sans-serif;
+  }
+  .card {
+    width: 1200px;
+    height: 630px;
+    background: #111118;
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  /* Decorative background circles */
+  .bg-circle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .bg-circle-1 {
+    width: 600px; height: 600px;
+    left: -80px; top: -120px;
+    background: radial-gradient(circle at 40% 40%, rgba(245,166,35,0.07) 0%, transparent 70%);
+    border: 1px solid rgba(245,166,35,0.06);
+  }
+  .bg-circle-2 {
+    width: 400px; height: 400px;
+    right: -60px; bottom: -80px;
+    background: radial-gradient(circle at 60% 60%, rgba(155,143,232,0.06) 0%, transparent 70%);
+    border: 1px solid rgba(155,143,232,0.04);
+  }
+  .bg-dot-grid {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  /* Left panel — glifo */
+  .left {
+    position: relative;
+    width: 560px;
+    height: 630px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .glifo-wrap {
+    position: relative;
+    width: 280px;
+    height: 280px;
+  }
+  .glifo-wrap svg {
+    position: absolute;
+    width: 280px;
+    height: 280px;
+    left: 0;
+    top: 0;
+  }
+
+  /* Divider */
+  .divider {
+    position: absolute;
+    left: 520px;
+    top: 60px;
+    bottom: 60px;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, rgba(245,166,35,0.3) 30%, rgba(245,166,35,0.3) 70%, transparent);
+  }
+
+  /* Right panel — text */
+  .right {
+    flex: 1;
+    padding: 0 64px 0 56px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0;
+  }
+  .label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #f5a623;
+    margin-bottom: 18px;
+  }
+  .title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 96px;
+    line-height: 1;
+    color: #f5f0e8;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+  }
+  .title .dot {
+    color: #f5a623;
+  }
+  .subtitle {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: rgba(245,240,232,0.55);
+    line-height: 1.5;
+    margin-bottom: 40px;
+    max-width: 400px;
+  }
+
+  /* Pills */
+  .pills {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 16px;
+    border-radius: 999px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .pill-amber {
+    background: rgba(245,166,35,0.12);
+    border: 1px solid rgba(245,166,35,0.35);
+    color: #f5a623;
+  }
+  .pill-gray {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(245,240,232,0.6);
+  }
+  .pill-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #f5a623;
+    display: inline-block;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="bg-dot-grid"></div>
+  <div class="bg-circle bg-circle-1"></div>
+  <div class="bg-circle bg-circle-2"></div>
+
+  <!-- Glifo panel -->
+  <div class="left">
+    <div class="glifo-wrap">
+      <!-- A (bottom) — mint #3 -->
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="#5bbfa0" stroke-width="10" stroke-linecap="butt" stroke-linejoin="miter">
+          <path d="M 5 200 L 100 0 L 195 200"/>
+          <path d="M 0 100 L 200 100"/>
+        </g>
+      </svg>
+      <!-- T — coral #2 -->
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="#e87a6b" stroke-width="10" stroke-linecap="butt" stroke-linejoin="miter">
+          <path d="M 0.0 5.0 L 200.0 5.0 M 100.0 0.0 L 100.0 200.0"/>
+        </g>
+      </svg>
+      <!-- N — lavender #1 -->
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="#9b8fe8" stroke-width="10" stroke-linecap="butt" stroke-linejoin="bevel">
+          <path d="M 5.0 200.0 L 5.0 5.0 L 195.0 195.0 L 195.0 200.0"/>
+          <path d="M 5.0 5.0 L 5.0 0.0"/>
+          <path d="M 195.0 195.0 L 195.0 0.0"/>
+        </g>
+      </svg>
+      <!-- E (top) — amber #0 -->
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="#f5a623" stroke-width="10" stroke-linecap="butt" stroke-linejoin="miter">
+          <path d="M 5.0 0.0 L 5.0 200.0 M 0.0 5.0 L 200.0 5.0 M 0.0 100.0 L 200.0 100.0 M 0.0 195.0 L 200.0 195.0"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Text panel -->
+  <div class="right">
+    <div class="label">Jogo de palavras codificadas</div>
+    <div class="title">glif<span class="dot">.</span>foo</div>
+    <div class="subtitle">Decodifique a palavra escondida no glifo geométrico. Novo puzzle todo dia.</div>
+    <div class="pills">
+      <div class="pill pill-amber"><span class="pill-dot"></span>Jogos diários</div>
+      <div class="pill pill-gray">4 tentativas</div>
+      <div class="pill pill-gray">Feito no <svg width="20" height="14" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;vertical-align:middle;margin-left:4px;border-radius:2px"><rect width="20" height="14" fill="#009C3B"/><polygon points="10,1.5 18.5,7 10,12.5 1.5,7" fill="#FFDF00"/><circle cx="10" cy="7" r="3.2" fill="#002776"/><path d="M 6.9 5.8 A 3.2 3.2 0 0 1 13.1 5.8" stroke="white" stroke-width="0.9" fill="none"/></svg></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

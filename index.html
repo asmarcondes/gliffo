@@ -5610,6 +5610,13 @@
         const DIM = "#8a7f74";
         const BORDER = "#3a342a";
         const FONT = '"DM Sans", "Inter", system-ui, sans-serif';
+        const SERIF = '"DM Serif Display", Georgia, serif';
+
+        // Garantir que as fontes customizadas estejam carregadas antes de desenhar
+        await Promise.all([
+          document.fonts.load(`normal 20px ${SERIF}`),
+          document.fonts.load(`300 13px ${FONT}`),
+        ]).catch(() => {});
 
         // Pre-load glyph image before drawing
         const glyphImg = await new Promise((resolve) => {
@@ -5659,12 +5666,21 @@
         let y = PAD;
         ctx.textAlign = "left";
 
-        ctx.font = `900 15px ${FONT}`;
-        ctx.fillStyle = AMBER;
+        // Logo: "glif.foo" — serif para glif+ponto (ponto âmbar), sans pequeno para foo
+        ctx.font = `normal 20px ${SERIF}`;
+        ctx.fillStyle = TEXT;
         const glifW = ctx.measureText("glif").width;
         ctx.fillText("glif", PAD, y + 18);
+        ctx.fillStyle = AMBER;
+        const dotW = ctx.measureText(".").width;
+        ctx.fillText(".", PAD + glifW, y + 18);
         ctx.fillStyle = TEXT;
-        ctx.fillText(".foo", PAD + glifW, y + 18);
+        ctx.font = `300 12px ${FONT}`;
+        // "foo" alinhado ao centro vertical de "glif" (topo aprox. y+2, altura 20px → centro y+12)
+        // Para 12px sans: baseline ≈ centro + 4px
+        ctx.textBaseline = "middle";
+        ctx.fillText("foo", PAD + glifW + dotW + 1, y + 9);
+        ctx.textBaseline = "alphabetic";
 
         ctx.font = `600 10px ${FONT}`;
         ctx.fillStyle = "#5a5049";

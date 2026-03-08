@@ -231,6 +231,16 @@ gliffo/
 14. ✅ Carregamento IIFE: localStorage `gliffoo_dic` → fetch → fallback PALAVRAS
 15. ✅ sw.js `glifo-static-v3`, `dicionario.json` no PRECACHE
 
+### ✅ Chat G — OG Image & README
+
+16. ✅ `og.png` (1200×630) criado via `gen-og.html` + screenshot Playwright
+    - Glifo empilhado 4 camadas (G=âmbar, L=lavanda, I=coral, F=mint) à esquerda
+    - Título "glif.foo" em DM Serif Display + label âmbar + subtitle + pills
+    - Background dark (#111118) com dot-grid sutil e gradientes radiais
+17. ✅ `gen-og.html` mantido na raiz como fonte para regeneração futura
+18. ✅ README atualizado: estrutura real (sem src/, sem Swap), stack atual,
+    banco de palavras tabelado, instrução regenerar og.png, roadmap com checkboxes
+
 ---
 
 ## Plano de Próximos Chats
