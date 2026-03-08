@@ -156,10 +156,12 @@ PALAVRAS = {
   dificil:       371 palavras (6L)
   muito_dificil: 300 palavras (7L)
 }
-DICIONARIO: ~6579 palavras cobrindo 4L–7L para validação
+DICIONARIO: ~38.664 palavras cobrindo 4L–7L para validação
 ```
 
 - Fonte de verdade: `data/word_bank_final.json`
+- Dicionário de validação: `data/dicionario.json` — 38.664 palavras (léxico fserb/pt-br normalizado, 354 KB)
+  - Carregamento: localStorage `gliffoo_dic` → fetch `data/dicionario.json` → fallback PALAVRAS
 - `dicionarioValido(word)`: checa DICIONARIO (4L–7L) primeiro; fallback para PALAVRAS
 - `data/words_ptbr_year.json`: agenda 365 dias (2026-03-07 a 2027-03-06), v2, CICLO correto
   - Verificado: hoje (2026-03-07, sáb) = EFLUVIO / muito_dificil / puzzle 431 ✓
@@ -170,13 +172,14 @@ DICIONARIO: ~6579 palavras cobrindo 4L–7L para validação
 gliffo/
 ├── .gitignore
 ├── README.md
-├── index.html          (~6424L - jogo completo)
+├── index.html          (~8.400L - jogo completo)
 ├── curadoria.html      (ferramenta de curadoria do banco)
-├── sw.js               (service worker PWA)
+├── sw.js               (service worker PWA, cache glifo-static-v3)
 ├── manifest.json       (PWA manifest)
 ├── icons/              (ícones PWA)
 ├── data/
 │   ├── word_bank_final.json     (134 KB - fonte de verdade do banco)
+│   ├── dicionario.json          (354 KB - 38.664 palavras 4L–7L, gerado do léxico fserb/pt-br)
 │   └── words_ptbr_year.json     (52 KB  - agenda anual → vai pro Supabase Storage)
 ├── docs/
 │   ├── glifo_contexto.md
@@ -225,6 +228,12 @@ gliffo/
 12. ✅ sw.js — cache offline, estratégia network-first para HTML, CACHE_VERSION limpa
 13. ✅ Meta tags no index.html — theme-color: #f5a623, apple-touch-icon, viewport
 
+### ✅ Chat F — Dicionário de Validação (CONCLUÍDO)
+
+14. ✅ `data/dicionario.json` — 38.664 palavras (fserb/pt-br normalizado, 354 KB)
+15. ✅ Carregamento: localStorage `gliffoo_dic` (cache permanente) → fetch no primeiro acesso → fallback PALAVRAS
+16. ✅ sw.js bumped para `glifo-static-v3`, `dicionario.json` no PRECACHE (disponível offline)
+
 ## Decisões de Design
 
 - Arquivo único sem dependências (intencional)
@@ -249,7 +258,7 @@ Você é um colaborador sênior no desenvolvimento do glif.foo, um jogo de palav
 
 Sempre:
 - Leia o docs/glifo_contexto.md antes de qualquer alteração
-- Trabalhe diretamente no index.html — arquivo único (~6424 linhas) sem dependências
+- Trabalhe diretamente no index.html — arquivo único (~8.400 linhas) sem dependências
 - Mantenha a identidade visual: DM Serif Display + DM Sans, paleta âmbar, temas dark/light
 - Preserve todas as funcionalidades já implementadas
 - Prefira edições cirúrgicas (str_replace) a reescritas completas
@@ -282,22 +291,21 @@ Referência: TW='BOLA', TWL=['B','O','L','A'], TC=['#f5a623','#9b8fe8','#5bbfa0'
 
 ---
 
-### Chat F — Dicionário de Validação
+### ✅ Chat F — Dicionário de Validação (CONCLUÍDO)
 
 ```
-Frente: expandir o DICIONARIO de validação no index.html.
+Frente concluída: DICIONARIO separado do HTML e expandido com léxico fserb/pt-br.
 
-Estado atual:
-- DICIONARIO: 6580 palavras (4L–7L), embutido no index.html
-- Cobre 4L:425, 5L:963, 6L:1978, 7L:3214
-- Palavras ausentes encontradas: CADELA (já adicionada manualmente)
-- O dicionário é separado do banco jogável (PALAVRAS) — validação não implica ser palavra do dia
-
-Objetivo:
-- Adicionar palavras cotidianas PT-BR que faltam (substantivos, verbos conjugados, adjetivos comuns)
-- Foco em 5L e 6L, que têm menor cobertura relativa
-- Fonte sugerida: lista de frequência do português brasileiro (ex: Linguateca, br.wac)
-- Não precisa mexer no Supabase nem no banco jogável
+Resumo:
+- Fonte: https://github.com/fserb/pt-br (lexico — 145.744 entradas)
+- Processamento: normalização de acentos → uppercase → filtro 4-7L → dedup
+- Resultado: 38.664 palavras em data/dicionario.json (354 KB)
+- index.html: bloco embutido removido → index.html voltou a ~8.400 linhas (era ~47k)
+- Estratégia de carregamento (IIFE):
+  1. tenta localStorage['gliffoo_dic'] → DICIONARIO = new Set(JSON.parse(cached))
+  2. se ausente: fetch('data/dicionario.json') → popula Set → grava no localStorage
+  3. fallback silencioso: dicionarioValido usa PALAVRAS
+- sw.js: dicionario.json adicionado ao PRECACHE (glifo-static-v3) — disponível offline
 ```
 
 ---

@@ -3,6 +3,9 @@
 Thumbs.db
 *.log
 
+# Geração do dicionário — arquivo fonte temporário, não necessário no repo
+data/lexico_ptbr.txt
+
 # Editores
 .vscode/
 .idea/
