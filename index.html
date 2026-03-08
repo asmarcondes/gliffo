@@ -472,6 +472,13 @@
         position: relative;
         width: 100%;
         aspect-ratio: 1;
+        border-radius: 50%;
+        transition: box-shadow 0.4s ease;
+      }
+      .glyph-stack.win-glow {
+        box-shadow:
+          0 0 0 6px rgba(245, 166, 35, 0.22),
+          0 0 32px 8px rgba(245, 166, 35, 0.18);
       }
       .glyph-stack svg {
         position: absolute;
@@ -496,6 +503,7 @@
       .atts-row {
         display: flex;
         align-items: center;
+        justify-content: center;
         gap: 6px;
       }
       .att-label {
@@ -516,10 +524,13 @@
         transition: background 0.3s;
       }
       .adot.used {
-        background: var(--text3);
+        background: var(--amber-400);
+        opacity: 0.55;
       }
       .adot.cur {
         background: var(--amber-400);
+        opacity: 1;
+        box-shadow: 0 0 0 1.5px rgba(245, 166, 35, 0.35);
       }
 
       /* Letter boxes */
@@ -556,6 +567,18 @@
       .lbox.active {
         border-color: var(--amber-400);
         box-shadow: 0 0 0 2.5px rgba(245, 166, 35, 0.18);
+        animation: cursorPulse 1.2s ease-in-out infinite;
+      }
+      @keyframes cursorPulse {
+        0%,
+        100% {
+          box-shadow: 0 0 0 2.5px rgba(245, 166, 35, 0.18);
+          border-color: var(--amber-400);
+        }
+        50% {
+          box-shadow: 0 0 0 4px rgba(245, 166, 35, 0.38);
+          border-color: rgba(245, 166, 35, 0.75);
+        }
       }
       .lboxes.invalid .lbox.active {
         border-color: rgba(245, 166, 35, 0.9);
@@ -1054,6 +1077,23 @@
       .sbtn:hover {
         opacity: 0.9;
       }
+      .passport-share-btn {
+        width: 100%;
+        padding: 11px;
+        background: transparent;
+        color: var(--amber-400);
+        border: 1px solid rgba(245, 166, 35, 0.5);
+        border-radius: 11px;
+        font-family: "DM Sans", sans-serif;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        margin-bottom: 12px;
+        transition: background 0.15s;
+      }
+      .passport-share-btn:hover {
+        background: rgba(245, 166, 35, 0.1);
+      }
       .copied {
         text-align: center;
         font-size: 0.72rem;
@@ -1234,6 +1274,65 @@
       }
       .shake {
         animation: shake 0.3s ease;
+      }
+      @keyframes shakeSlot {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-6px);
+        }
+        75% {
+          transform: translateX(6px);
+        }
+      }
+      .shake-slot {
+        animation: shakeSlot 0.28s ease;
+      }
+      @keyframes lboxPop {
+        0% {
+          transform: scale(1);
+        }
+        35% {
+          transform: scale(1.12);
+        }
+        70% {
+          transform: scale(0.94);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      .lbox.pop {
+        animation: lboxPop 0.18s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+      }
+      @keyframes kbtnTap {
+        0% {
+          transform: scale(1);
+        }
+        40% {
+          transform: scale(0.87);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      .kbtn.tap {
+        animation: kbtnTap 0.14s ease;
+      }
+      @keyframes decodedEntry {
+        from {
+          transform: scaleY(0);
+          opacity: 0.4;
+        }
+        to {
+          transform: scaleY(1);
+          opacity: 1;
+        }
+      }
+      .lbox.decoded-enter {
+        animation: decodedEntry 0.22s ease-out;
       }
       .fadein {
         animation: fadeIn 0.2s ease forwards;
@@ -1833,6 +1932,48 @@
         background: var(--border);
         margin: 0 0 12px;
       }
+      .rank-banner {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(245, 166, 35, 0.08);
+        border: 1px solid rgba(245, 166, 35, 0.22);
+        border-radius: 9px;
+        padding: 8px 12px;
+        margin-bottom: 12px;
+      }
+      .rank-emoji {
+        font-size: 1.3rem;
+        line-height: 1;
+      }
+      .rank-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .rank-name {
+        font-family: "DM Serif Display", serif;
+        font-size: 0.95rem;
+        color: var(--amber-400);
+        letter-spacing: 0.03em;
+      }
+      .rank-next {
+        font-size: 0.65rem;
+        color: var(--text3);
+        margin-top: 1px;
+      }
+      .rank-bar-wrap {
+        width: 56px;
+        height: 4px;
+        background: var(--border2);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      .rank-bar {
+        height: 100%;
+        background: var(--amber-400);
+        border-radius: 2px;
+        transition: width 0.4s;
+      }
 
       /* ── CABEÇALHO DAS CONQUISTAS (inline) ── */
       .conquistas-inline-header {
@@ -2315,7 +2456,7 @@
         <div class="mdivider"></div>
         <div class="sharepreview" id="win-share"></div>
         <button class="sbtn" onclick="share()">Compartilhar resultado</button>
-        <div class="copied" id="copied">✓ Copiado!</div>
+        <div class="copied">✓ Copiado!</div>
       </div>
     </div>
 
@@ -2359,6 +2500,7 @@
         <div class="mdivider"></div>
         <div class="sharepreview" id="lose-share"></div>
         <button class="sbtn" onclick="share()">Compartilhar resultado</button>
+        <div class="copied">✓ Copiado!</div>
       </div>
     </div>
 
@@ -2395,10 +2537,16 @@
               <div class="passport-glyph" id="passport-glyph"></div>
             </div>
             <div class="passport-grid" id="stats-grid-main"></div>
+            <div id="stats-rank-banner"></div>
             <div class="passport-divider"></div>
             <div class="distrib-title">Distribuição de tentativas</div>
             <div id="stats-distrib"></div>
           </div>
+          <button class="passport-share-btn" onclick="sharePassport()">
+            📸 Compartilhar passaporte
+          </button>
+          <!-- Share section (preenchido por openStats quando G.done) -->
+          <div id="stats-share-section"></div>
           <!-- Conquistas inline -->
           <div class="conquistas-inline-header">
             <span class="conquistas-inline-title">Conquistas</span>
@@ -3719,6 +3867,7 @@
         "CADEADO",
         "CADEIA",
         "CADEIRA",
+        "CADELA",
         "CADERNO",
         "CAEM",
         "CAETANO",
@@ -10864,6 +11013,8 @@
         done: false,
         won: false,
         selKey: null,
+        _flipping: false,
+        _flipGen: 0,
       };
 
       function glyphStroke() {
@@ -10950,18 +11101,27 @@
 
       function buildAtts() {
         const row = document.getElementById("atts-row");
+        const cls = (i) =>
+          "adot" +
+          (i < G.attempts.length
+            ? " used"
+            : !G.done && i === G.attempts.length
+              ? " cur"
+              : "");
+        const existing = row.querySelectorAll(".adot");
+        if (existing.length === 4) {
+          existing.forEach((d, i) => {
+            d.className = cls(i);
+          });
+          return;
+        }
+        // Primeira montagem
         const lbl = row.querySelector(".att-label");
         row.innerHTML = "";
-        row.appendChild(lbl);
+        if (lbl) row.appendChild(lbl);
         for (let i = 0; i < 4; i++) {
           const d = document.createElement("div");
-          d.className =
-            "adot" +
-            (i < G.attempts.length
-              ? " used"
-              : i === G.attempts.length
-                ? " cur"
-                : "");
+          d.className = cls(i);
           row.appendChild(d);
         }
       }
@@ -11044,7 +11204,12 @@
             b.className = "kbtn" + (k.length > 1 ? " wide" : "");
             b.textContent = k;
             if (G.elim.has(k)) b.classList.add("elim");
-            b.onclick = () => handleKey(k);
+            b.onclick = () => {
+              b.classList.remove("tap");
+              void b.offsetWidth;
+              b.classList.add("tap");
+              handleKey(k);
+            };
             row.appendChild(b);
           });
           kb.appendChild(row);
@@ -11121,7 +11286,7 @@
       }
 
       function handleKey(k) {
-        if (G.done) return;
+        if (G.done || G._flipping) return;
 
         if (k === "⌫") {
           let apagou = false;
@@ -11171,6 +11336,14 @@
         G.cursor = nextCursor(c + 1);
         refresh();
         calcWarns();
+        haptic(30);
+        // Pop animation no slot recem digitado
+        const typedSlot = document.getElementById("lboxes").children[c];
+        if (typedSlot) {
+          typedSlot.classList.remove("pop");
+          void typedSlot.offsetWidth;
+          typedSlot.classList.add("pop");
+        }
       }
 
       function calcWarns() {
@@ -11234,6 +11407,12 @@
         calcWarns();
       }
 
+      function haptic(pattern) {
+        try {
+          navigator.vibrate && navigator.vibrate(pattern);
+        } catch (e) {}
+      }
+
       // ═══════════════════════════════════════════════
       // DECODE
       // ═══════════════════════════════════════════════
@@ -11244,11 +11423,17 @@
         );
         if (full.some((x) => !x)) {
           setFb("Complete todas as letras antes de decodificar.", "err");
-          document.getElementById("lboxes").classList.add("shake");
-          setTimeout(
-            () => document.getElementById("lboxes").classList.remove("shake"),
-            320,
-          );
+          haptic(80);
+          const slots = document.getElementById("lboxes").children;
+          for (let i = 0; i < WN; i++) {
+            const s = slots[i];
+            if (!s) continue;
+            setTimeout(() => {
+              s.classList.remove("shake-slot");
+              void s.offsetWidth;
+              s.classList.add("shake-slot");
+            }, i * 35);
+          }
           return;
         }
         const guess = full.join("");
@@ -11259,14 +11444,25 @@
               ? "Palavra não encontrada no dicionário."
               : "Não reconhecida — dicionário limitado para " + WN + " letras.";
           setFb(msg, "err");
+          haptic(80);
           const lb = document.getElementById("lboxes");
-          lb.classList.add("invalid", "shake");
-          setTimeout(() => lb.classList.remove("shake"), 320);
+          lb.classList.add("invalid");
+          const slotsDic = lb.children;
+          for (let i = 0; i < WN; i++) {
+            const s = slotsDic[i];
+            if (!s || s.classList.contains("decoded")) continue;
+            setTimeout(() => {
+              s.classList.remove("shake-slot");
+              void s.offsetWidth;
+              s.classList.add("shake-slot");
+            }, i * 35);
+          }
           return;
         }
         document.getElementById("lboxes").classList.remove("invalid");
         const dec = [],
           fnd = [],
+          fndPos = [],
           eli = [];
 
         // Two-pass para tratar duplicatas corretamente (igual ao Wordle)
@@ -11284,62 +11480,156 @@
           const idx = estoque.indexOf(l);
           if (idx !== -1) {
             fnd.push(l);
+            fndPos.push(i); // posição correta para share
             estoque[idx] = null; // consumido — não pode ser usado de novo
           } else {
             eli.push(l); // excedente ou letra inexistente
           }
         });
-        dec.forEach((p) => G.decoded.add(p));
-        fnd.forEach((l) => G.found.add(l));
-        eli.forEach((l) => G.elim.add(l));
-        G.attempts.push({ word: guess, decoded: dec, found: fnd });
+        // Resultado por posição para a animação de flip
+        const posResult = new Array(WN).fill("miss");
+        const estoque2 = [...WL];
+        full.forEach((l, i) => {
+          if (l === WL[i]) {
+            posResult[i] = "correct";
+            estoque2[i] = null;
+          }
+        });
+        full.forEach((l, i) => {
+          if (posResult[i] === "correct") return;
+          const idx = estoque2.indexOf(l);
+          if (idx !== -1) {
+            posResult[i] = "found";
+            estoque2[idx] = null;
+          }
+        });
 
-        if (G.decoded.size === WN) {
-          G.done = G.won = true;
-          G.typed = WL.slice();
+        // Flip reveal — cada slot gira individualmente esquerda→direita
+        const FLIP_MS = 380,
+          STAGGER_MS = 120;
+        G._flipping = true;
+        const flipGen = ++G._flipGen;
+        const flipSlots = document.getElementById("lboxes").children;
+        const stroke = glyphStroke();
+        for (let i = 0; i < WN; i++) {
+          if (G.decoded.has(i) || G.keyPos.has(i)) continue;
+          const slot = flipSlots[i];
+          const res = posResult[i];
+          const delay = i * STAGGER_MS;
+          ((slot, i, res) => {
+            setTimeout(() => {
+              slot.style.transition = `transform ${FLIP_MS / 2}ms ease-in`;
+              slot.style.transform = "scaleY(0)";
+              setTimeout(() => {
+                slot.innerHTML = "";
+                if (res === "correct") {
+                  slot.style.background = colorOf[WL[i]];
+                  slot.style.borderColor = "transparent";
+                  const svg = makeSVG(WL[i], "#fff");
+                  if (svg) {
+                    svg.style.cssText = "width:65%;height:65%;";
+                    slot.appendChild(svg);
+                  }
+                } else if (res === "found") {
+                  slot.style.background = "var(--surface2)";
+                  slot.style.borderColor = colorOf[full[i]];
+                  slot.style.borderWidth = "2.5px";
+                  const svg = makeSVG(full[i], colorOf[full[i]]);
+                  if (svg) {
+                    svg.style.cssText = "width:65%;height:65%;";
+                    slot.appendChild(svg);
+                  }
+                } else {
+                  slot.style.background = "var(--surface3)";
+                  slot.style.borderColor = "var(--border)";
+                  const svg = makeSVG(full[i], stroke);
+                  if (svg) {
+                    svg.style.cssText = "width:65%;height:65%;opacity:0.25;";
+                    slot.appendChild(svg);
+                  }
+                }
+                slot.style.transition = `transform ${FLIP_MS / 2}ms ease-out`;
+                slot.style.transform = "scaleY(1)";
+              }, FLIP_MS / 2);
+            }, delay);
+          })(slot, i, res);
+        }
+
+        // Após todos os flips: aplica estado e reconstrói UI
+        const totalFlip = (WN - 1) * STAGGER_MS + FLIP_MS + 420;
+        setTimeout(() => {
+          if (G._flipGen !== flipGen) return; // jogo foi resetado durante animação
+          G._flipping = false;
+          dec.forEach((p) => G.decoded.add(p));
+          fnd.forEach((l) => G.found.add(l));
+          eli.forEach((l) => G.elim.add(l));
+          G.attempts.push({
+            word: guess,
+            decoded: dec,
+            found: fnd,
+            foundPos: fndPos,
+          });
+
+          if (G.decoded.size === WN) {
+            G.done = G.won = true;
+            G.typed = WL.slice();
+            buildBoxes();
+            renderDaily(); // sem arg: evita timer de 620ms que sobrescreveria iso
+            renderYours();
+            buildHistory();
+            buildAtts();
+            buildKB();
+            salvarEstado();
+            haptic([80, 60, 150]);
+            setTimeout(() => winAnim(), 300);
+            return;
+          }
+          if (G.attempts.length >= 4) {
+            G.done = true;
+            G.typed = [];
+            G.cursor = nextCursor(0);
+            buildBoxes();
+            renderDaily(dec);
+            renderYours();
+            buildHistory();
+            buildAtts();
+            salvarEstado();
+            setTimeout(() => loseMod(), 400);
+            return;
+          }
+
+          salvarEstado();
+          G.typed = [];
+          G.cursor = nextCursor(0);
+          G.keyUsed = false;
+          setFb("", "");
+          G.selKey = null;
+          document.getElementById("key-dot").classList.add("show");
+          document.getElementById("lboxes").classList.remove("invalid");
+          let i2 = 0;
+          while (i2 < WN && (G.decoded.has(i2) || G.keyPos.has(i2))) {
+            G.typed.push(WL[i2]);
+            i2++;
+          }
           buildBoxes();
+          // Animação de entrada apenas nos slots decoded de RODADAS ANTERIORES
+          // (os de dec acabaram de flipar — não precisam de animação extra)
+          const newSlots = document.getElementById("lboxes").children;
+          for (let i = 0; i < WN; i++) {
+            const s = newSlots[i];
+            if (s && s.classList.contains("decoded") && !dec.includes(i)) {
+              setTimeout(() => {
+                s.classList.add("decoded-enter");
+                setTimeout(() => s.classList.remove("decoded-enter"), 250);
+              }, i * 50);
+            }
+          }
           renderDaily(dec);
           renderYours();
           buildHistory();
           buildAtts();
           buildKB();
-          salvarEstado();
-          setTimeout(() => winAnim(), 300);
-          return;
-        }
-        if (G.attempts.length >= 4) {
-          G.done = true;
-          G.typed = [];
-          G.cursor = nextCursor(0);
-          buildBoxes();
-          renderDaily(dec);
-          renderYours();
-          buildHistory();
-          buildAtts();
-          salvarEstado();
-          setTimeout(() => loseMod(), 400);
-          return;
-        }
-
-        salvarEstado();
-        G.typed = [];
-        G.cursor = nextCursor(0);
-        G.keyUsed = false;
-        setFb("", "");
-        G.selKey = null;
-        document.getElementById("key-dot").classList.add("show");
-        document.getElementById("lboxes").classList.remove("invalid");
-        let i = 0;
-        while (i < WN && (G.decoded.has(i) || G.keyPos.has(i))) {
-          G.typed.push(WL[i]);
-          i++;
-        }
-        buildBoxes();
-        renderDaily(dec);
-        renderYours();
-        buildHistory();
-        buildAtts();
-        buildKB();
+        }, totalFlip);
       }
 
       function setFb(msg, type) {
@@ -11430,36 +11720,137 @@
       // WIN ANIMATION
       // ═══════════════════════════════════════════════
       function winAnim() {
-        const dc = document.getElementById("daily-stack"),
-          yc = document.getElementById("your-stack");
-        dc.innerHTML = "";
+        const yc = document.getElementById("your-stack");
+
+        const stroke = glyphStroke();
+
+        // Exibe seu glifo em branco durante a animação
         yc.innerHTML = "";
         for (let i = WN - 1; i >= 0; i--) {
-          const l = WL[i],
-            color = colorOf[l];
-          const delay = (WN - 1 - i) * 280;
-          setTimeout(() => {
-            const svg = makeSVG(
-              l,
-              color,
-              "position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;transition:opacity 0.35s;",
-            );
-            if (svg) {
-              dc.appendChild(svg);
-              requestAnimationFrame(() => (svg.style.opacity = "1"));
-            }
-            yc.innerHTML = "";
-            for (let j = WN - 1; j >= i; j--) {
-              const gg = makeSVG(
-                WL[j],
-                colorOf[WL[j]],
-                "position:absolute;top:0;left:0;width:100%;height:100%;",
-              );
-              if (gg) yc.appendChild(gg);
-            }
-          }, delay);
+          const gg = makeSVG(
+            WL[i],
+            stroke,
+            "position:absolute;top:0;left:0;width:100%;height:100%;",
+          );
+          if (gg) yc.appendChild(gg);
         }
-        setTimeout(() => winMod(), WN * 280 + 600);
+
+        // Cria overlay fixo sobre o jogo (igual ao tutorial)
+        const overlay = document.createElement("div");
+        overlay.style.cssText = `
+          position:fixed; inset:0; z-index:800;
+          display:flex; align-items:center; justify-content:center;
+          background:rgba(0,0,0,0); transition:background 0.35s ease;
+          pointer-events:none;
+        `;
+
+        const stage = document.createElement("div");
+        stage.style.cssText = `
+          width:min(55vw,55vh,320px); aspect-ratio:1;
+          perspective:600px; perspective-origin:50% 40%;
+        `;
+        const stack = document.createElement("div");
+        stack.style.cssText = `
+          position:relative; width:100%; height:100%;
+          transform-style:preserve-3d;
+        `;
+        stage.appendChild(stack);
+        overlay.appendChild(stage);
+        document.body.appendChild(overlay);
+        // Fade para fundo semi-opaco
+        requestAnimationFrame(() => {
+          overlay.style.background = "rgba(0,0,0,0.72)";
+        });
+
+        const Z_STEP = 32;
+        const half = ((WN - 1) * Z_STEP) / 2;
+        const ISO_IN = 650;
+        const ISO_HOLD = 650;
+        const ISO_OUT = 750;
+        const STAGGER = 420;
+        let isoTimer = null;
+        let idx = WN - 1; // começa da última letra (camada de baixo) → sobe até a primeira
+
+        function addLayer() {
+          const zVal = half - idx * Z_STEP;
+          const layer = document.createElement("div");
+          layer.className = "iso-layer";
+          layer.style.setProperty("--iso-z", zVal + "px");
+          layer.style.zIndex = WN - idx;
+          layer.style.opacity = "0";
+          layer.style.transform = "translateZ(0px) rotateX(0deg) rotateZ(0deg)";
+          layer.style.transition = "none";
+          const svg = makeSVG(WL[idx], colorOf[WL[idx]]);
+          if (svg) {
+            svg.style.cssText = "width:90%;height:90%;";
+            layer.appendChild(svg);
+          }
+          stack.appendChild(layer);
+
+          // Double-rAF idêntico ao runIso
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => {
+              layer.style.transition = `transform ${ISO_IN}ms cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s ease`;
+              layer.style.transform = `translateZ(${zVal}px) rotateX(45deg) rotateZ(-30deg)`;
+              layer.style.opacity = "1";
+            }),
+          );
+
+          idx--;
+          if (idx >= 0) {
+            isoTimer = setTimeout(addLayer, STAGGER);
+          } else {
+            // Todas as layers → pausa → colapsa
+            isoTimer = setTimeout(() => {
+              const layers = [...stack.querySelectorAll(".iso-layer")];
+              layers.forEach((lay) => {
+                lay.style.transition = `opacity 0.18s ease, transform ${ISO_OUT}ms cubic-bezier(0.22,1.2,0.36,1)`;
+                lay.style.opacity = "0.06";
+                lay.style.transform =
+                  "translateZ(0px) rotateX(0deg) rotateZ(0deg)";
+              });
+              setTimeout(() => {
+                layers.forEach((lay) => {
+                  lay.style.transition = "opacity 0.4s ease";
+                  lay.style.opacity = "1";
+                });
+                // Fade out overlay e mostra glifo no daily-stack
+                setTimeout(() => {
+                  overlay.style.transition = "opacity 0.45s ease";
+                  overlay.style.opacity = "0";
+                  // Atualiza daily-stack com glifo colorido final
+                  const dc = document.getElementById("daily-stack");
+                  if (dc) {
+                    dc.innerHTML = "";
+                    for (let i = WN - 1; i >= 0; i--) {
+                      const s = makeSVG(
+                        WL[i],
+                        colorOf[WL[i]],
+                        "position:absolute;top:0;left:0;width:100%;height:100%;",
+                      );
+                      if (s) dc.appendChild(s);
+                    }
+                  }
+                  // Coloriza seu glifo
+                  yc.innerHTML = "";
+                  for (let i = WN - 1; i >= 0; i--) {
+                    const s = makeSVG(
+                      WL[i],
+                      colorOf[WL[i]],
+                      "position:absolute;top:0;left:0;width:100%;height:100%;",
+                    );
+                    if (s) yc.appendChild(s);
+                  }
+                  setTimeout(() => {
+                    overlay.remove();
+                    winMod();
+                  }, 480);
+                }, 500);
+              }, ISO_OUT + 60);
+            }, ISO_IN + ISO_HOLD);
+          }
+        }
+        addLayer();
       }
 
       // ═══════════════════════════════════════════════
@@ -11541,10 +11932,8 @@
           s.ultimaVitoria = hoje;
         } else {
           s.distribuicao["X"] = (s.distribuicao["X"] || 0) + 1;
-          // Derrota quebra streak
-          if (s.ultimaVitoria !== ontemStr && s.ultimaVitoria !== hoje) {
-            s.streakAtual = 0;
-          }
+          // Derrota sempre quebra streak (padrão Wordle)
+          s.streakAtual = 0;
         }
 
         localStorage.setItem("gliffoo_stats", JSON.stringify(s));
@@ -11563,6 +11952,11 @@
           firstDec: firstAtt ? firstAtt.decoded.length : 0,
           firstFnd: firstAtt ? firstAtt.found.length : 0,
         });
+        // Badge exclusivo para quem jogou durante o beta
+        if (Date.now() < BETA_END_DATE) {
+          localStorage.setItem(BETA_KEY, "true");
+          queueAch("beta_tester");
+        }
       }
 
       function salvarEstado() {
@@ -11664,69 +12058,370 @@
         const c = document.getElementById(id);
         if (!c) return;
         c.innerHTML = "";
+
+        const resultado = G.won ? `${G.attempts.length}/4` : "X/4";
+        const s2 = carregarStats();
+        const titulo = getTituloStreak(s2.streakAtual);
+
+        const header = document.createElement("div");
+        header.style.cssText =
+          "font-size:0.78rem;color:var(--text2);font-weight:600;margin-bottom:2px;letter-spacing:0.04em;";
+        header.textContent = `joguei glif.foo #${numeroPuzzle()} — ${resultado}`;
+        c.appendChild(header);
+
+        const rankLine = document.createElement("div");
+        rankLine.style.cssText =
+          "font-size:0.75rem;color:var(--text3);margin-bottom:8px;";
+        rankLine.textContent = `${titulo.emoji} ${titulo.nome}`;
+        c.appendChild(rankLine);
+
         G.attempts.forEach((a) => {
           const row = document.createElement("div");
-          row.className = "srow";
+          row.style.cssText =
+            "font-size:1.25rem;line-height:1.5;letter-spacing:0.1em;";
+          let emojis = "";
           for (let i = 0; i < WN; i++) {
-            const sq = document.createElement("div");
-            sq.className = "ssq";
-            if (a.decoded.includes(i)) {
-              sq.style.background = colorOf[WL[i]];
-              if (G.keyPos.has(i)) sq.textContent = "🔑";
-            } else if (a.found.includes(a.word[i])) {
-              sq.style.background = colorOf[a.word[i]];
-              sq.style.opacity = "0.4";
-            } else sq.style.background = "var(--border2)";
-            row.appendChild(sq);
+            if (a.decoded.includes(i)) emojis += G.keyPos.has(i) ? "🔑" : "✅";
+            else if (new Set(a.foundPos || []).has(i)) emojis += "\ud83d\udd0d";
+            else emojis += "⬛";
           }
+          row.textContent = emojis;
           c.appendChild(row);
         });
-        const footer = document.createElement("div");
-        footer.style.cssText =
-          "display:flex;justify-content:space-between;width:100%;margin-top:4px;";
-        const url = document.createElement("div");
-        url.className = "shareurl";
-        url.textContent = "glif.foo";
-        const num = document.createElement("div");
-        num.className = "shareurl";
-        num.textContent = `#${numeroPuzzle()}`;
-        footer.appendChild(url);
-        footer.appendChild(num);
-        c.appendChild(footer);
       }
 
       function share() {
         const n = numeroPuzzle();
-        const data = new Date(
-          new Date().toLocaleString("en-US", { timeZone: "America/Sao_Paulo" }),
-        );
-        const dataFmt = data.toLocaleDateString("pt-BR", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        });
         const resultado = G.won ? `${G.attempts.length}/4` : "X/4";
+        const s2 = carregarStats();
+        const titulo = getTituloStreak(s2.streakAtual);
         const lines = [
-          `glif.foo #${n} — ${resultado}`,
-          dataFmt,
-          "https://glif.foo",
+          `joguei glif.foo #${n} — ${resultado}`,
+          `${titulo.emoji} ${titulo.nome}`,
+          "",
         ];
         G.attempts.forEach((a) => {
           let l = "";
           for (let i = 0; i < WN; i++) {
-            if (a.decoded.includes(i)) l += G.keyPos.has(i) ? "🔑" : "🟩";
-            else if (a.found.includes(a.word[i])) l += "🟨";
+            if (a.decoded.includes(i)) l += G.keyPos.has(i) ? "🔑" : "✅";
+            else if (new Set(a.foundPos || []).has(i)) l += "\ud83d\udd0d";
             else l += "⬛";
           }
           lines.push(l);
         });
+        lines.push("");
         navigator.clipboard?.writeText(lines.join("\n")).then(() => {
-          const el = document.getElementById("copied");
-          el.style.display = "block";
-          setTimeout(() => (el.style.display = "none"), 2500);
+          const el = document.querySelector(".moverlay.show .copied");
+          if (el) {
+            el.style.display = "block";
+            setTimeout(() => (el.style.display = "none"), 2500);
+          }
           // Conquista: compartilhou resultado
           queueAch("spread_the_word");
         });
+      }
+
+      // ═══════════════════════════════════════════════
+      // SHARE PASSPORT
+      // ═══════════════════════════════════════════════
+      function makeGlyphDataURL(letters, strokeColor, size) {
+        let inner = "";
+        for (let i = letters.length - 1; i >= 0; i--) {
+          const def = LETTERS[letters[i].toUpperCase()];
+          if (!def) continue;
+          const xform = def.transform ? ` transform="${def.transform}"` : "";
+          const px = def.paths.map((d) => `<path d="${d}"/>`).join("");
+          inner +=
+            `<g fill="none" stroke="${strokeColor}" stroke-width="10"` +
+            ` stroke-linecap="${def.lc || "butt"}" stroke-linejoin="${def.lj || "miter"}"` +
+            ` stroke-miterlimit="${def.ml || 4}"${xform}>${px}</g>`;
+        }
+        const svgStr =
+          `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"` +
+          ` width="${size}" height="${size}">${inner}</svg>`;
+        return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgStr);
+      }
+
+      function downloadBlob(blob) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "glifoo-passaporte.png";
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+      }
+
+      async function sharePassport() {
+        const s = carregarStats();
+        const pct =
+          s.jogados > 0 ? Math.round((s.vitorias / s.jogados) * 100) : 0;
+        const titulo = getTituloStreak(s.streakAtual);
+
+        // ── Square 1:1 — funciona em WhatsApp status, Instagram feed e stories ──
+        const W = 640,
+          H = 640,
+          SC = 2;
+        const cv = document.createElement("canvas");
+        cv.width = W * SC;
+        cv.height = H * SC;
+        const ctx = cv.getContext("2d");
+        ctx.scale(SC, SC);
+
+        const PAD = 36;
+        const AMBER = "#f5a623";
+        const TEXT = "#f0ebe4";
+        const DIM = "#8a7f74";
+        const BORDER = "#3a342a";
+        const FONT = '"DM Sans", "Inter", system-ui, sans-serif';
+
+        // Pre-load glyph image before drawing
+        const glyphImg = await new Promise((resolve) => {
+          const url = makeGlyphDataURL(WL, "#f0ebe4", 92);
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.onerror = () => resolve(null);
+          img.src = url;
+        });
+
+        // ── Background ────────────────────────────────────
+        ctx.save();
+        ctx.beginPath();
+        ctx.roundRect(0, 0, W, H, 18);
+        ctx.clip();
+
+        const bg = ctx.createLinearGradient(0, 0, W * 0.7, H);
+        bg.addColorStop(0, "#252118");
+        bg.addColorStop(1, "#2c271f");
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, W, H);
+
+        const glow = ctx.createRadialGradient(W, 0, 0, W, 0, 200);
+        glow.addColorStop(0, "rgba(245,166,35,0.12)");
+        glow.addColorStop(1, "rgba(245,166,35,0)");
+        ctx.fillStyle = glow;
+        ctx.fillRect(0, 0, W, H);
+
+        // Glyph watermark grande — centro-direita
+        if (glyphImg) {
+          const gs = 180;
+          ctx.globalAlpha = 0.035;
+          ctx.drawImage(glyphImg, W - PAD - gs + 20, H / 2 - gs / 2, gs, gs);
+          ctx.globalAlpha = 1;
+        }
+
+        ctx.restore();
+
+        // Card border
+        ctx.strokeStyle = BORDER;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(0.5, 0.5, W - 1, H - 1, 18);
+        ctx.stroke();
+
+        // ── Header ────────────────────────────────────────
+        let y = PAD;
+        ctx.textAlign = "left";
+
+        ctx.font = `900 15px ${FONT}`;
+        ctx.fillStyle = AMBER;
+        const glifW = ctx.measureText("glif").width;
+        ctx.fillText("glif", PAD, y + 18);
+        ctx.fillStyle = TEXT;
+        ctx.fillText(".foo", PAD + glifW, y + 18);
+
+        ctx.font = `600 10px ${FONT}`;
+        ctx.fillStyle = "#5a5049";
+        ctx.fillText("PASSAPORTE DO JOGADOR", PAD, y + 36);
+
+        // Glyph pequeno no header (canto topo-direito)
+        if (glyphImg) {
+          const gs = 34;
+          ctx.globalAlpha = 0.18;
+          ctx.drawImage(glyphImg, W - PAD - gs, PAD + 2, gs, gs);
+          ctx.globalAlpha = 1;
+        }
+
+        y += 60;
+
+        // ── Stats grid 2×2 ────────────────────────────────
+        const goldenStats = loadGoldenStats();
+        const statsData = [
+          { val: pct + "%", lbl: "Vitórias" },
+          { val: String(goldenStats.total) + " ✨", lbl: "Dourados" },
+          { val: s.streakAtual + " 🔥", lbl: "Sequência" },
+          { val: String(s.streakMax), lbl: "Recorde" },
+        ];
+        const gapC = 10;
+        const cardW = (W - PAD * 2 - gapC) / 2;
+        const cardH = 100;
+
+        statsData.forEach((st, i) => {
+          const col = i % 2;
+          const row = Math.floor(i / 2);
+          const cx = PAD + col * (cardW + gapC);
+          const cy = y + row * (cardH + gapC);
+
+          ctx.fillStyle = "#1d1a14";
+          ctx.beginPath();
+          ctx.roundRect(cx, cy, cardW, cardH, 11);
+          ctx.fill();
+          ctx.strokeStyle = "#2a251d";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.roundRect(cx + 0.5, cy + 0.5, cardW - 1, cardH - 1, 11);
+          ctx.stroke();
+
+          ctx.font = `bold 28px ${FONT}`;
+          ctx.fillStyle = TEXT;
+          ctx.textAlign = "center";
+          ctx.fillText(st.val, cx + cardW / 2, cy + 52);
+          ctx.font = `11px ${FONT}`;
+          ctx.fillStyle = DIM;
+          ctx.fillText(st.lbl, cx + cardW / 2, cy + 74);
+        });
+
+        y += 2 * cardH + gapC + 16;
+
+        // ── Rank banner ───────────────────────────────────
+        const bannerH = 56;
+        ctx.fillStyle = "#2b2218";
+        ctx.beginPath();
+        ctx.roundRect(PAD, y, W - PAD * 2, bannerH, 11);
+        ctx.fill();
+        ctx.strokeStyle = "#4a3a1f";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(PAD + 0.5, y + 0.5, W - PAD * 2 - 1, bannerH - 1, 11);
+        ctx.stroke();
+
+        ctx.font = "22px serif";
+        ctx.fillStyle = TEXT;
+        ctx.textAlign = "left";
+        ctx.fillText(titulo.emoji, PAD + 14, y + bannerH / 2 + 8);
+
+        const textOffX = PAD + 50;
+        ctx.font = `bold 15px ${FONT}`;
+        ctx.fillStyle = AMBER;
+        ctx.fillText(titulo.nome, textOffX, y + bannerH / 2 - 2);
+
+        if (titulo.proximo) {
+          const thresholds = [3, 7, 14, 21, 30, 60, 100, 365];
+          const idx = thresholds.findIndex((t) => s.streakAtual < t);
+          const prev = idx > 0 ? thresholds[idx - 1] : 0;
+          const cur = thresholds[idx];
+          const pctBarVal = (s.streakAtual - prev) / (cur - prev);
+
+          ctx.font = `10px ${FONT}`;
+          ctx.fillStyle = DIM;
+          ctx.fillText(
+            `Faltam ${titulo.faltam} dia${titulo.faltam !== 1 ? "s" : ""} para ${titulo.proximo}`,
+            textOffX,
+            y + bannerH / 2 + 15,
+          );
+
+          const barX2 = W - PAD - 80;
+          const barW2 = 70;
+          const barY2 = y + bannerH / 2 - 4;
+          ctx.fillStyle = BORDER;
+          ctx.beginPath();
+          ctx.roundRect(barX2, barY2, barW2, 6, 3);
+          ctx.fill();
+          ctx.fillStyle = AMBER;
+          ctx.beginPath();
+          ctx.roundRect(barX2, barY2, Math.max(barW2 * pctBarVal, 5), 6, 3);
+          ctx.fill();
+        }
+
+        y += bannerH + 16;
+
+        // ── Divider ───────────────────────────────────────
+        ctx.strokeStyle = BORDER;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(PAD, y);
+        ctx.lineTo(W - PAD, y);
+        ctx.stroke();
+        y += 14;
+
+        // ── Distribution ──────────────────────────────────
+        ctx.font = `600 9px ${FONT}`;
+        ctx.fillStyle = "#5a5049";
+        ctx.textAlign = "left";
+        ctx.fillText("DISTRIBUIÇÃO DE TENTATIVAS", PAD, y + 9);
+        y += 18;
+
+        const chaves = ["1", "2", "3", "4", "X"];
+        const maxVal = Math.max(
+          1,
+          ...chaves.map((k) => s.distribuicao[k] || 0),
+        );
+        const tentativaAtual =
+          G.done && G.won
+            ? String(G.attempts.length)
+            : G.done && !G.won
+              ? "X"
+              : null;
+        const rowH = 19,
+          rowGap = 4;
+        const keyColW = 18;
+        const barStartX = PAD + keyColW + 8;
+        const barAreaW = W - PAD - barStartX - 10;
+
+        chaves.forEach((k, i) => {
+          const val = s.distribuicao[k] || 0;
+          const frac = val / maxVal;
+          const isCur = k === tentativaAtual;
+          const ry = y + i * (rowH + rowGap);
+
+          ctx.font = `11px ${FONT}`;
+          ctx.fillStyle = DIM;
+          ctx.textAlign = "center";
+          ctx.fillText(k, PAD + keyColW / 2, ry + rowH - 4);
+
+          const bw = Math.max(barAreaW * frac, 24);
+          ctx.fillStyle = isCur ? "#4a9d6f" : val > 0 ? "#c17f20" : "#2e281f";
+          ctx.beginPath();
+          ctx.roundRect(barStartX, ry, bw, rowH, rowH / 2);
+          ctx.fill();
+
+          ctx.font = `bold 11px ${FONT}`;
+          ctx.fillStyle = isCur || val > 0 ? "#1d1a14" : DIM;
+          ctx.textAlign = "left";
+          ctx.fillText(String(val), barStartX + 10, ry + rowH - 4);
+        });
+
+        // ── Footer ────────────────────────────────────────
+        ctx.font = `9px ${FONT}`;
+        ctx.fillStyle = "#4a3f35";
+        ctx.textAlign = "center";
+        ctx.fillText(
+          "Estatísticas refletem apenas a primeira tentativa do dia  •  glif.foo",
+          W / 2,
+          H - 16,
+        );
+
+        // ── Export ────────────────────────────────────────
+        cv.toBlob(async (blob) => {
+          const file = new File([blob], "glifoo-passaporte.png", {
+            type: "image/png",
+          });
+          if (
+            navigator.share &&
+            navigator.canShare &&
+            navigator.canShare({ files: [file] })
+          ) {
+            try {
+              await navigator.share({
+                files: [file],
+                title: "glif.foo — Passaporte",
+              });
+            } catch (e) {
+              if (e.name !== "AbortError") downloadBlob(blob);
+            }
+          } else {
+            downloadBlob(blob);
+          }
+        }, "image/png");
       }
 
       // ═══════════════════════════════════════════════
@@ -11750,7 +12445,12 @@
       // ═══════════════════════════════════════════════
       document.addEventListener("keydown", (e) => {
         if (document.querySelector(".moverlay.show")) return;
-        if (!document.getElementById("tutorial-overlay").classList.contains("hidden")) return;
+        if (
+          !document
+            .getElementById("tutorial-overlay")
+            .classList.contains("hidden")
+        )
+          return;
         const k = e.key.toUpperCase();
         if (e.key === "Backspace") handleKey("⌫");
         else if (e.key === "Enter") handleKey("↵");
@@ -11769,17 +12469,111 @@
       // ═══════════════════════════════════════════════
       // MODAL DE ESTATÍSTICAS
       // ═══════════════════════════════════════════════
+      function getTituloStreak(streak) {
+        if (streak >= 365)
+          return {
+            emoji: "⚡",
+            nome: "Guardião dos Glifos",
+            proximo: null,
+            faltam: 0,
+          };
+        if (streak >= 100)
+          return {
+            emoji: "🔮",
+            nome: "Oráculo",
+            proximo: "Guardião dos Glifos",
+            faltam: 365 - streak,
+          };
+        if (streak >= 60)
+          return {
+            emoji: "👑",
+            nome: "Hierofante",
+            proximo: "Oráculo",
+            faltam: 100 - streak,
+          };
+        if (streak >= 30)
+          return {
+            emoji: "🎓",
+            nome: "Erudito dos Glifos",
+            proximo: "Hierofante",
+            faltam: 60 - streak,
+          };
+        if (streak >= 21)
+          return {
+            emoji: "🧩",
+            nome: "Mestre dos Enigmas",
+            proximo: "Erudito dos Glifos",
+            faltam: 30 - streak,
+          };
+        if (streak >= 14)
+          return {
+            emoji: "📚",
+            nome: "Linguista",
+            proximo: "Mestre dos Enigmas",
+            faltam: 21 - streak,
+          };
+        if (streak >= 7)
+          return {
+            emoji: "🔑",
+            nome: "Criptógrafo",
+            proximo: "Linguista",
+            faltam: 14 - streak,
+          };
+        if (streak >= 3)
+          return {
+            emoji: "🎯",
+            nome: "Decodificador",
+            proximo: "Criptógrafo",
+            faltam: 7 - streak,
+          };
+        return {
+          emoji: "🔰",
+          nome: "Novato",
+          proximo: "Decodificador",
+          faltam: 3 - streak,
+        };
+      }
+
       function openStats() {
         const s = carregarStats();
         const pct =
           s.jogados > 0 ? Math.round((s.vitorias / s.jogados) * 100) : 0;
 
         // Cards no passaporte (4 colunas)
+        const gs2 = loadGoldenStats();
         document.getElementById("stats-grid-main").innerHTML = `
-    <div class="stat-card"><div class="stat-val">${s.jogados}</div><div class="stat-lbl">Jogados</div></div>
     <div class="stat-card"><div class="stat-val">${pct}%</div><div class="stat-lbl">Vitórias</div></div>
+    <div class="stat-card"><div class="stat-val">✨ ${gs2.total}</div><div class="stat-lbl">Dourados</div></div>
     <div class="stat-card"><div class="stat-val">${s.streakAtual}🔥</div><div class="stat-lbl">Sequência</div></div>
     <div class="stat-card"><div class="stat-val">${s.streakMax}</div><div class="stat-lbl">Recorde</div></div>`;
+
+        // Rank banner
+        const titulo = getTituloStreak(s.streakAtual);
+        const rankEl = document.getElementById("stats-rank-banner");
+        if (rankEl) {
+          if (titulo.proximo) {
+            const thresholds = [3, 7, 14, 21, 30, 60, 100, 365];
+            const idx = thresholds.findIndex((t) => s.streakAtual < t);
+            const prev = idx > 0 ? thresholds[idx - 1] : 0;
+            const cur = thresholds[idx];
+            const pctBar = Math.round(
+              ((s.streakAtual - prev) / (cur - prev)) * 100,
+            );
+            rankEl.innerHTML = `<div class="rank-banner">
+  <div class="rank-emoji">${titulo.emoji}</div>
+  <div class="rank-info">
+    <div class="rank-name">${titulo.nome}</div>
+    <div class="rank-next">Faltam ${titulo.faltam} dia${titulo.faltam !== 1 ? "s" : ""} para ${titulo.proximo}</div>
+  </div>
+  <div class="rank-bar-wrap"><div class="rank-bar" style="width:${pctBar}%"></div></div>
+</div>`;
+          } else {
+            rankEl.innerHTML = `<div class="rank-banner">
+  <div class="rank-emoji">${titulo.emoji}</div>
+  <div class="rank-info"><div class="rank-name">${titulo.nome}</div></div>
+</div>`;
+          }
+        }
 
         // Glifo decorativo no passaporte
         const pg = document.getElementById("passport-glyph");
@@ -11826,6 +12620,12 @@
       </div>`;
           distrib.appendChild(row);
         });
+
+        // Share section removida — substituída pelo botão "Compartilhar passaporte"
+        const statsShareSection = document.getElementById(
+          "stats-share-section",
+        );
+        if (statsShareSection) statsShareSection.innerHTML = "";
 
         document.getElementById("stats-modal").classList.add("show");
         document
@@ -11904,6 +12704,15 @@
           ray: "#fbcfe8",
           dot: "#f472b6",
         },
+        teal: {
+          dark: "#042f2e",
+          mid: "#134e4a",
+          rim: "#14b8a6",
+          ribbon: "#0d9488",
+          rdark: "#0f3a38",
+          ray: "#99f6e4",
+          dot: "#2dd4bf",
+        },
       };
 
       // Ícones SVG inline (Lucide-style, 24×24)
@@ -11950,10 +12759,24 @@
         mirror:
           '<circle cx="12" cy="10" r="8"/><path d="M12 18v4"/><path d="M7 22h10"/>',
         check2: '<path d="M18 6 7 17l-5-5"/><path d="m22 10-7.5 7.5L13 16"/>',
+        flask:
+          '<path d="M9 3h6v7.5l4.5 7.5a1 1 0 0 1-.9 1.5H5.4a1 1 0 0 1-.9-1.5L9 10.5V3z"/><line x1="6.5" y1="14" x2="17.5" y2="14"/>',
       };
 
       // Definição das conquistas
       const ACHIEVEMENTS = [
+        {
+          section: "Fundadores",
+          palette: "teal",
+          items: [
+            {
+              id: "beta_tester",
+              name: "Fundador Beta",
+              icon: "flask",
+              desc: "Jogou durante o período beta do glif.foo",
+            },
+          ],
+        },
         {
           section: "Primeiros Passos",
           palette: "violet",
@@ -12175,6 +12998,10 @@
       );
       const ACH_TOTAL = Object.keys(ACH_MAP).length;
       const ACH_KEY = "gliffoo_ach_v1";
+      // ── BETA: altere a data abaixo para encerrar o beta e zerar as stats ──
+      const BETA_END_DATE = new Date("2026-06-01T00:00:00-03:00").getTime();
+      const BETA_KEY = "gliffoo_beta_v1";
+      const BETA_RESET_KEY = "gliffoo_beta_reset_done";
 
       function loadAch() {
         try {
@@ -12219,6 +13046,7 @@
         saveAch(earned);
         // Emoji para popup
         const emojiMap = {
+          beta_tester: "🧪",
           first_decode: "🔑",
           on_a_roll: "🔥",
           spread_the_word: "📤",
@@ -12355,6 +13183,24 @@
         if (n >= threshold) queueAch(id);
       }
 
+      function checkBetaReset() {
+        if (Date.now() < BETA_END_DATE) return;
+        if (localStorage.getItem(BETA_RESET_KEY)) return;
+        // Preserva apenas o badge de beta nas conquistas
+        const allAch = loadAch();
+        const kept = {};
+        if (allAch["beta_tester"]) kept["beta_tester"] = allAch["beta_tester"];
+        saveAch(kept);
+        // Zera todas as estatísticas
+        localStorage.removeItem("gliffoo_stats");
+        localStorage.removeItem("gliffoo_stats_date");
+        localStorage.removeItem(GOLDEN_KEY);
+        Object.keys(localStorage)
+          .filter((k) => k.startsWith("gliffoo_timed_"))
+          .forEach((k) => localStorage.removeItem(k));
+        localStorage.setItem(BETA_RESET_KEY, "true");
+      }
+
       function achIsAnagram(a, b) {
         return (
           a !== b &&
@@ -12489,6 +13335,7 @@
 
       // ═══════════════════════════════════════════════
       // INIT
+      checkBetaReset();
       carregarEstado();
       buildAtts();
       buildBoxes();
@@ -12842,7 +13689,7 @@
       let iTyped = ["", "", "", ""],
         iCursor = 0,
         iConfirmed = new Set(), // índices de slots pré-confirmados (não editáveis)
-        iWrongCount = 0,        // easter egg: contador de letras erradas
+        iWrongCount = 0, // easter egg: contador de letras erradas
         tutKeyHandler = null;
 
       function removeTutKeyHandler() {
@@ -12872,11 +13719,17 @@
           } else if (k === "ARROWLEFT") {
             let prev = iCursor - 1;
             while (prev >= 0 && iConfirmed.has(prev)) prev--;
-            if (prev >= 0) { iCursor = prev; buildInteract(); }
+            if (prev >= 0) {
+              iCursor = prev;
+              buildInteract();
+            }
           } else if (k === "ARROWRIGHT") {
             let next = iCursor + 1;
             while (next <= 3 && iConfirmed.has(next)) next++;
-            if (next <= 3) { iCursor = next; buildInteract(); }
+            if (next <= 3) {
+              iCursor = next;
+              buildInteract();
+            }
           } else if (/^[A-Z]$/.test(k)) {
             if (iConfirmed.has(iCursor)) return; // protege slot confirmado
             // Easter egg: conta letras erradas
@@ -12946,7 +13799,11 @@
           };
           c.appendChild(el);
         });
-        tStack("ts5-yours", iTyped.filter((l, i) => l && !iConfirmed.has(i)), () => tStroke());
+        tStack(
+          "ts5-yours",
+          iTyped.filter((l, i) => l && !iConfirmed.has(i)),
+          () => tStroke(),
+        );
 
         const hint = document.getElementById("ts5-hint");
         const btn = document.getElementById("tut-next-btn");
@@ -12974,7 +13831,8 @@
             title6.style.transition = "opacity 0.3s";
             title6.style.opacity = "0";
             setTimeout(() => {
-              title6.querySelector("div").innerHTML = "🎉 <strong style=\"color:var(--amber-400)\">BOLA!</strong>";
+              title6.querySelector("div").innerHTML =
+                '🎉 <strong style="color:var(--amber-400)">BOLA!</strong>';
               title6.style.opacity = "1";
             }, 350);
           }
@@ -12997,7 +13855,8 @@
           const filled = iTyped.filter(Boolean).length;
           if (hint) {
             if (iWrongCount >= 2) {
-              hint.innerHTML = "😂 se você não acerta nem esses, não perde seu tempo jogando não...";
+              hint.innerHTML =
+                "😂 se você não acerta nem esses, não perde seu tempo jogando não...";
             } else {
               hint.textContent =
                 filled === 0
@@ -13465,6 +14324,8 @@
           G.done = false;
           G.won = false;
           G.selKey = null;
+          G._flipping = false;
+          G._flipGen++; // invalida qualquer flip em andamento
           // Fechar modais se abertos
           ["win-modal", "lose-modal", "key-modal", "stats-modal"].forEach(
             (id) => {
@@ -13599,15 +14460,18 @@
             const el = document.getElementById(id);
             if (el) el.addEventListener("click", fn);
           };
-          safe("dbg-prev", () => {
+          safe("dbg-prev", (e) => {
+            e.currentTarget.blur();
             _dbgOffset--;
             resetParaDebug(_dbgOffset);
           });
-          safe("dbg-next", () => {
+          safe("dbg-next", (e) => {
+            e.currentTarget.blur();
             _dbgOffset++;
             resetParaDebug(_dbgOffset);
           });
-          safe("dbg-today", () => {
+          safe("dbg-today", (e) => {
+            e.currentTarget.blur();
             _dbgOffset = 0;
             resetParaDebug(0);
           });
@@ -14042,7 +14906,13 @@
 
         <!-- Nav — pinned outside scroll -->
         <div class="tut-nav">
-          <button class="tut-skip" id="tut-skip-btn" onclick="tutSkipOrRestart()">Pular</button>
+          <button
+            class="tut-skip"
+            id="tut-skip-btn"
+            onclick="tutSkipOrRestart()"
+          >
+            Pular
+          </button>
           <button class="tut-next" id="tut-next-btn" onclick="tutNext()">
             Próximo →
           </button>

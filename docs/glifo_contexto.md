@@ -282,22 +282,56 @@ Referência: TW='BOLA', TWL=['B','O','L','A'], TC=['#f5a623','#9b8fe8','#5bbfa0'
 
 ---
 
-### Chat D — Streak & Estatísticas
+### Chat F — Dicionário de Validação
 
 ```
-Frente: sistema de streak e estatísticas.
+Frente: expandir o DICIONARIO de validação no index.html.
+
+Estado atual:
+- DICIONARIO: 6580 palavras (4L–7L), embutido no index.html
+- Cobre 4L:425, 5L:963, 6L:1978, 7L:3214
+- Palavras ausentes encontradas: CADELA (já adicionada manualmente)
+- O dicionário é separado do banco jogável (PALAVRAS) — validação não implica ser palavra do dia
+
+Objetivo:
+- Adicionar palavras cotidianas PT-BR que faltam (substantivos, verbos conjugados, adjetivos comuns)
+- Foco em 5L e 6L, que têm menor cobertura relativa
+- Fonte sugerida: lista de frequência do português brasileiro (ex: Linguateca, br.wac)
+- Não precisa mexer no Supabase nem no banco jogável
+```
+
+---
+
+### ✅ Chat D — Streak & Estatísticas (CONCLUÍDO)
+
+```
+Frente concluída: sistema de streak, estatísticas, compartilhar e micro-interactions.
+
+Resumo do que foi aplicado:
+- atualizarStats(): streak, distribuição, taxa de vitória — já existia, corrigido bug de derrota (agora sempre reseta streak)
+- Emojis de share: ✅ (acerto) 🔍 (posição errada) ⬛ (miss) 🔑 (chave)
+- foundPos: posições exatas de letras encontradas salvas no attempt, corrigindo duplicatas no share
+- Share no stats-modal: aparece após jogo concluído, com preview idêntico ao texto copiado
+- Rank por streak: getTituloStreak() — 9 títulos PT-BR (Novato → Guardião dos Glifos), banner no passaporte
+- Rank no texto compartilhado: glif.foo #N — X/4 🎯 Decodificador
+- Micro-interactions: cursor pulsando (âmbar), pop ao digitar, shake por slot com stagger, pop no teclado virtual, flip reveal (scaleY) ao enviar tentativa, entrada animada dos slots decoded, glyph glow na vitória, háptico mobile
+- CADELA adicionada ao dicionário de validação
+```
 
 localStorage atual:
+
 - gliffoo_estado: { word, nivel, typed, attempts, decoded, found, elim, keyUsed, keyPos, done, won, cursor }
 - gliffoo_stats: { jogados, vitorias, sequencia, maxSequencia, ultimaData, distribuicao }
 
 Stats modal já existe (openStats(), carregarStats()) mas distribuição é básica.
 
 Objetivos:
+
 1. Streak de dias consecutivos jogados
 2. Distribuição de tentativas (1–4 + derrota)
 3. Taxa de vitória
 4. Compartilhar resultado com emojis estilo Wordle (⬛🟡✅)
+
 ```
 
 ---
@@ -305,11 +339,16 @@ Objetivos:
 ### Chat E — PWA
 
 ```
+
 Frente: completar a PWA.
 
 Já existem: manifest.json, sw.js, icons/
 Verificar e completar:
+
 1. manifest.json — nome "glif.foo", display: standalone, theme_color: #f5a623, ícones corretos
 2. sw.js — cache do index.html para offline, estratégia network-first para HTML
 3. Meta tags no index.html — theme-color, apple-touch-icon, viewport
+
+```
+
 ```
