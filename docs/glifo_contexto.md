@@ -211,11 +211,11 @@ gliffo/
 6. ✅ Passo final redesenhado para o cursor não-linear
 7. ✅ Tutorial atualizado para demonstrar o novo sistema de input
 
-### Chat D — Streak & Estatísticas
+### ✅ Chat D — Streak & Estatísticas (concluído)
 
-8. Sistema de streak de dias consecutivos
-9. Distribuição de tentativas, taxa de vitória
-10. Compartilhar resultado com emojis estilo Wordle
+8. ✅ Sistema de streak de dias consecutivos
+9. ✅ Distribuição de tentativas, taxa de vitória
+10. ✅ Compartilhar resultado com emojis estilo Wordle
 
 ### Chat E — PWA (parcialmente pronto)
 
@@ -318,22 +318,6 @@ Resumo do que foi aplicado:
 - CADELA adicionada ao dicionário de validação
 ```
 
-localStorage atual:
-
-- gliffoo_estado: { word, nivel, typed, attempts, decoded, found, elim, keyUsed, keyPos, done, won, cursor }
-- gliffoo_stats: { jogados, vitorias, sequencia, maxSequencia, ultimaData, distribuicao }
-
-Stats modal já existe (openStats(), carregarStats()) mas distribuição é básica.
-
-Objetivos:
-
-1. Streak de dias consecutivos jogados
-2. Distribuição de tentativas (1–4 + derrota)
-3. Taxa de vitória
-4. Compartilhar resultado com emojis estilo Wordle (⬛🟡✅)
-
-```
-
 ---
 
 ### Chat E — PWA
@@ -348,6 +332,8 @@ Verificar e completar:
 1. manifest.json — nome "glif.foo", display: standalone, theme_color: #f5a623, ícones corretos
 2. sw.js — cache do index.html para offline, estratégia network-first para HTML
 3. Meta tags no index.html — theme-color, apple-touch-icon, viewport
+
+```
 
 ```
 
