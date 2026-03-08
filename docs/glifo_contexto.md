@@ -348,15 +348,15 @@ Ver **Histórico de Chats Concluídos** acima.
 
 ---
 
-### 🟢 Chat L — Compartilhar Passaporte (verificação iOS)
+### ✅ Chat L — Compartilhar Passaporte (verificação iOS)
 
-**Problema:** Botão "📸 Compartilhar passaporte" usa Canvas `toBlob` + `navigator.share` — funcionalidade com limitações conhecidas em iOS Safari (requer interação do usuário, `share` com `files` só em iOS 15+).
+**Implementado em 2026-03-08.**
 
-**Itens:**
-
-1. Testar fluxo no iOS Safari — identificar falhas
-2. Fallback: se `navigator.share` com files não disponível, fazer download direto (`<a download>`)
-3. Fallback 2: copiar link com og.png como alternativa ao canvas
+1. ✅ `toBlob` convertido de callback para Promise — preserva user gesture no iOS Safari (microtask vs macrotask); `await navigator.share()` fica na mesma cadeia async, Safari 15+ reconhece como oriundo do toque
+2. ✅ Fallback `downloadBlob()` já existia — acionado quando `navigator.canShare({ files })` retorna falso (iOS < 15 ou desktop sem share)
+3. ✅ Loading state no botão: desabilita + muda texto para `⏳ Gerando…` durante geração do canvas
+4. ✅ `try/finally` em torno do corpo completo — botão sempre restaurado mesmo em erro
+5. ✅ CSS `.passport-share-btn:disabled { opacity: 0.6; cursor: not-allowed }` adicionado
 
 ---
 
@@ -496,22 +496,7 @@ Itens:
 
 ---
 
-### Chat L — Verificação Share iOS & Passaporte
-
-```
-Frente: garantir que o compartilhamento funciona em todos os dispositivos.
-
-Estado atual:
-- "📸 Compartilhar passaporte" usa Canvas toBlob() + navigator.share({ files })
-- iOS Safari: share com files requer iOS 15+; toBlob() tem bugs de escala em alguns devices
-- Sem fallback implementado atualmente
-
-Itens:
-1. Detectar suporte: if (!navigator.canShare?.({ files: [blob] }))
-2. Fallback primário: <a download="glifoo-passaporte.png"> ao invés de share
-3. Fallback secundário: copiar texto alternativo (share de texto já implementado)
-4. Feedback visual durante geração do canvas (loading spinner)
-```
+### ~~Chat L~~ — ✅ Concluído (ver Histórico de Chats Concluídos acima)
 
 ---
 
