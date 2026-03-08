@@ -316,20 +316,25 @@ Ver **Histórico de Chats Concluídos** acima.
 17. ✅ Funções: `palavraPorDia()`, `openArquivo()`, `buildArquivoList()`, `startArquivoMode()`, `exitArquivoMode()`, `salvarEstadoArquivo()`, `carregarEstadoArquivo()`
 
 **Bug corrigido no mesmo chat:**
+
 - ✅ **Duplicatas em `elim`**: letras excedentes de duplicatas (ex.: 2º E em PENEDO quando a resposta tem 1 E) eram incorretamente adicionadas ao conjunto de eliminadas → warning falso "E já foi eliminada". Corrigido na 2ª passagem do two-pass: `eli.push(l)` só ocorre se `!WL.includes(l)`
 
 ---
 
-### 🟡 Chat J — Decisão Beta Reset + Streak Cross-Device
+### ✅ Chat J — Beta Reset + Modal de Configurações
 
-**Problema:** `BETA_END_DATE = 2026-06-01` vai zerar estatísticas de todos os jogadores em ~3 meses. Decisão de produto necessária antes do lançamento oficial.
+**Implementado em 2026-03-08.**
 
-**Itens:**
-
-1. Definir: manter beta reset (lançamento limpo) ou remover flag e preservar histórico
-2. Se remover: limpar `checkBetaReset()`, `BETA_END_DATE`, `BETA_RESET_KEY` do código
-3. Avaliar streak cross-device: Supabase Auth simples (email magic link) ou manter local-only
-4. Se cross-device: schema Supabase `user_stats`, sync no `atualizarStats()`
+1. ✅ **Decisão beta reset:** manter `checkBetaReset()` — lançamento limpo em jun/2026
+2. ✅ **Badge "Acesso Antecipado"** no header (ao lado do logo) — visível enquanto `Date.now() < BETA_END_DATE`, some automaticamente após jun/2026
+3. ✅ **Botão ⚙️** no header substituindo o antigo botão dark/light
+4. ✅ **Modal Configurações** (`config-modal`) com:
+   - Toggle **Tema escuro** (dark/light movido para cá, com switch visual âmbar)
+   - Toggle **Modo Difícil 🔥** — row desabilitada, label "Em breve" (prep para Chat N)
+   - Info block âmbar sobre Acesso Antecipado (aparece só enquanto beta ativo)
+5. ✅ **`gliffoo_config`** em localStorage — persiste `theme`; `initConfig()` aplicado antes do init para evitar flash
+6. ✅ `config-modal` adicionado às 3 listas de fechar modais ao trocar puzzle
+7. ✅ Streak cross-device: adiado — mantido local-only por ora
 
 ---
 
@@ -485,26 +490,7 @@ Itens:
 
 ---
 
-### Chat J — Decisão Beta Reset + Configurações
-
-```
-Frente: resolver a flag de beta reset e centralizar configurações do jogo.
-
-Estado atual:
-- BETA_END_DATE = 2026-06-01: em ~3 meses, checkBetaReset() vai zerar estatísticas
-  de TODOS os jogadores. Decisão de produto necessária.
-- Não existe tela de configurações — toggle dark/light está no header, sem local
-  centralizado para futuras opções (modo difícil, notificações, etc.)
-
-Itens:
-1. Definir: manter beta reset (lançamento limpo em jun/2026) ou remover a flag
-2. Se remover: limpar checkBetaReset(), BETA_END_DATE, BETA_RESET_KEY do código
-3. Criar modal de Configurações (ícone ⚙️ no header):
-   - Toggle dark/light (mover para cá)
-   - Toggle modo difícil (preparar para Chat N)
-   - Botão "Resetar estatísticas" com confirmação
-4. Persiste configurações em localStorage gliffoo_config
-```
+### ~~Chat J~~ — ✅ Concluído (ver Histórico de Chats Concluídos acima)
 
 ---
 
