@@ -190,9 +190,9 @@ gliffo/
             └── index.ts         (Edge Function v3, deployada)
 ```
 
-## Pendente (em ordem de prioridade)
+## Histórico de Chats Concluídos
 
-### ✅ Chat A — Banco de Palavras & Dicionário (CONCLUÍDO)
+### ✅ Chat A — Banco de Palavras & Dicionário
 
 1. ✅ Banco curado PT-BR aplicado em `index.html` e `index.ts`
 2. ✅ Dicionário 4L–7L (~6579 entradas) aplicado em `index.html`
@@ -201,38 +201,144 @@ gliffo/
 5. ✅ Edge Function v3 deployada e verificada
 6. ✅ `words_ptbr_year.json` regenerado com CICLO correto (v2)
 
-### ✅ Chat B — Supabase Storage (CONCLUÍDO)
+### ✅ Chat B — Supabase Storage
 
 1. ✅ Bucket público `data` criado no Supabase Storage
-2. ✅ `words_ptbr_year.json` hospedado em `storage/v1/object/public/data/words_ptbr_year.json`
+2. ✅ `words_ptbr_year.json` hospedado em Storage público
 3. ✅ Edge Function v4: lookup por data no schedule → fallback on-the-fly
-4. ✅ Cache em memória do schedule entre invocações quentes (timeout 3s)
-5. ✅ Verificado: hoje=EFLUVIO/muito_dificil/431 (Storage ✓) + data fora do range=fallback ✓
+4. ✅ Cache em memória do schedule (timeout 3s)
 
-### ✅ Chat C — Tutorial (CONCLUÍDO)
+### ✅ Chat C — Tutorial
 
-6. ✅ Passo final redesenhado para o cursor não-linear
-7. ✅ Tutorial atualizado para demonstrar o novo sistema de input
+5. ✅ Passo final redesenhado para cursor não-linear
+6. ✅ Tutorial atualizado: BOLA, BICO → feedback → B+L confirmados → completar
 
-### ✅ Chat D — Streak & Estatísticas (concluído)
+### ✅ Chat D — Streak & Estatísticas
 
-8. ✅ Sistema de streak de dias consecutivos
-9. ✅ Distribuição de tentativas, taxa de vitória
-10. ✅ Compartilhar resultado com emojis estilo Wordle
+7. ✅ Streak, distribuição, taxa de vitória, share com emojis
+8. ✅ 9 títulos de rank por streak (Novato → Guardião dos Glifos)
+9. ✅ Micro-interactions: pop, shake, flip reveal, glow, háptico
 
-### ✅ Chat E — PWA (CONCLUÍDO)
+### ✅ Chat E — PWA
 
-- `manifest.json` e `sw.js` já existiam
+10. ✅ manifest.json: theme_color #f5a623, shortcuts, sem screenshots
+11. ✅ sw.js: network-first HTML, cache-first assets, offline fallback
+12. ✅ Meta tags: theme-color, apple-touch-icon, viewport
 
-11. ✅ manifest.json — theme_color: #f5a623, shortcuts adicionado, screenshots removido
-12. ✅ sw.js — cache offline, estratégia network-first para HTML, CACHE_VERSION limpa
-13. ✅ Meta tags no index.html — theme-color: #f5a623, apple-touch-icon, viewport
+### ✅ Chat F — Dicionário de Validação
 
-### ✅ Chat F — Dicionário de Validação (CONCLUÍDO)
+13. ✅ `data/dicionario.json` — 38.664 palavras 4–7L (léxico fserb/pt-br normalizado, 354 KB)
+14. ✅ Carregamento IIFE: localStorage `gliffoo_dic` → fetch → fallback PALAVRAS
+15. ✅ sw.js `glifo-static-v3`, `dicionario.json` no PRECACHE
 
-14. ✅ `data/dicionario.json` — 38.664 palavras (fserb/pt-br normalizado, 354 KB)
-15. ✅ Carregamento: localStorage `gliffoo_dic` (cache permanente) → fetch no primeiro acesso → fallback PALAVRAS
-16. ✅ sw.js bumped para `glifo-static-v3`, `dicionario.json` no PRECACHE (disponível offline)
+---
+
+## Plano de Próximos Chats
+
+> Baseado em levantamento completo do projeto (2026-03-08).
+
+---
+
+### 🔴 Chat G — OG Image & README (alta prioridade)
+
+**Problema:** `og.png` (1200×630) referenciada em `<head>` mas inexistente → previews de link quebrados em WhatsApp, iMessage, Twitter. README menciona `src/glifo_ptbr.html` (removido), "Swap" (removido), estrutura desatualizada.
+
+**Itens:**
+
+1. Criar `og.png` — composição com glifo + identidade visual âmbar
+2. Atualizar README: estrutura real, stack atual, roadmap atualizado, remover Swap/src/
+
+---
+
+### 🔴 Chat H — Curadoria de Qualidade do Banco Jogável
+
+**Problema:** Lista `facil` contém anglicismos e palavras borderline: GIRL, HIGH, HITS, HALL, ISOL, PART, NOEL, GRID, TOFU, SURF, JAZZ… Lista `medio`/`dificil` com problemas similares (siglas, topônimos, termos técnicos). Banco duplicado em `index.html` e `index.ts` — qualquer edição precisa ser feita nos dois.
+
+**Itens:**
+
+1. Revisar e limpar lista `facil` — remover anglicismos, siglas, top
+   ônimos, palavras não-PT-BR cotidianas
+2. Revisar `medio` e `dificil` com mesma lente
+3. Sincronizar banco limpo em `index.ts` (Edge Function)
+4. Atualizar `data/word_bank_final.json` como fonte de verdade
+
+---
+
+### 🟡 Chat I — Modo Arquivo (puzzles anteriores)
+
+**Problema:** Jogadores não conseguem voltar a puzzles perdidos. Estrutura do debug mode (`palavraPorOffset()`, `resetParaDebug()`) já implementa a lógica — falta UX.
+
+**Itens:**
+
+1. Botão "Arquivo" no cabeçalho (ou dentro do modal de stats)
+2. UI de seleção por data ou número de puzzle
+3. Aproveitar Edge Function `?date=YYYY-MM-DD` para puzzles históricos
+4. Estado de arquivo separado do estado diário (sem sobrescrever `gliffoo_state`)
+5. Indicação visual clara de que é modo arquivo (não conta para streak)
+
+---
+
+### 🟡 Chat J — Decisão Beta Reset + Streak Cross-Device
+
+**Problema:** `BETA_END_DATE = 2026-06-01` vai zerar estatísticas de todos os jogadores em ~3 meses. Decisão de produto necessária antes do lançamento oficial.
+
+**Itens:**
+
+1. Definir: manter beta reset (lançamento limpo) ou remover flag e preservar histórico
+2. Se remover: limpar `checkBetaReset()`, `BETA_END_DATE`, `BETA_RESET_KEY` do código
+3. Avaliar streak cross-device: Supabase Auth simples (email magic link) ou manter local-only
+4. Se cross-device: schema Supabase `user_stats`, sync no `atualizarStats()`
+
+---
+
+### 🟡 Chat K — Race Condition do Dicionário
+
+**Problema:** `DICIONARIO` é populado de forma async (localStorage/fetch), mas `dicionarioValido()` é chamado síncronamente no submit. Se o usuário submeter antes do fetch/parse completar (improvável mas possível em conexões lentas sem cache), o Set estará vazio e a validação cai no fallback PALAVRAS — aceitando qualquer coisa.
+
+**Itens:**
+
+1. Adicionar flag `dicReady = false` → `true` após Set populado
+2. No submit: se `!dicReady`, mostrar spinner breve ou aceitar (graceful degradation)
+3. Alternativa mais simples: pré-popular `DICIONARIO` com `PALAVRAS` (inline, sync) e substituir pelo JSON após fetch
+
+---
+
+### 🟢 Chat L — Compartilhar Passaporte (verificação iOS)
+
+**Problema:** Botão "📸 Compartilhar passaporte" usa Canvas `toBlob` + `navigator.share` — funcionalidade com limitações conhecidas em iOS Safari (requer interação do usuário, `share` com `files` só em iOS 15+).
+
+**Itens:**
+
+1. Testar fluxo no iOS Safari — identificar falhas
+2. Fallback: se `navigator.share` com files não disponível, fazer download direto (`<a download>`)
+3. Fallback 2: copiar link com og.png como alternativa ao canvas
+
+---
+
+### 🟢 Chat M — Acessibilidade
+
+**Problema:** Feedback de letras não anunciado para leitores de tela. Modal de conquistas sem navegação por teclado. Sem suporte a alto contraste.
+
+**Itens:**
+
+1. `aria-live="polite"` no `#fbmsg` e nas mensagens de feedback
+2. `aria-label` adequados nos slots de letra e no teclado virtual
+3. Navegação por Tab/Enter nos modais de conquistas e stats
+4. Tema alto contraste como variante CSS (`prefers-contrast: more`)
+
+---
+
+### 🟢 Chat N — Modo Difícil
+
+**Problema:** Sem variante de dificuldade de gameplay (apenas dificuldade de vocabulário já existe via ciclo semanal).
+
+**Itens:**
+
+1. Toggle "Modo Difícil" nas configurações
+2. Regra: letras confirmadas (decoded/found) devem aparecer nas tentativas seguintes
+3. Regra: avisos de `calcWarns()` desativados (sem indicação de letras eliminadas/posição errada)
+4. Persiste em localStorage (`gliffoo_hard_mode`)
+5. Badge de conquista exclusivo para vitorias em modo difícil
 
 ## Decisões de Design
 
@@ -244,6 +350,7 @@ gliffo/
 - Slot com cursor mantém borda âmbar mesmo no estado inválido
 - Histórico de tentativas em ordem reversa (mais recente no topo)
 - `renderDaily` recebe índices para animar só letras específicas
+- `palavraDoDia()` usa hash determinístico local — intencional para offline/latência zero; Edge Function existe para dados adicionais/agenda externa
 
 ---
 
@@ -269,77 +376,174 @@ Código: JS vanilla, sem frameworks. CSS com variáveis do :root.
 
 ---
 
-### ~~Chat B~~ — ✅ Concluído (bucket `data` criado, v4 deployada)
+### ~~Chats A–F~~ — ✅ Concluídos (ver Histórico de Chats Concluídos acima)
 
 ---
 
-### ~~Chat C — Tutorial~~ — ✅ Concluído
+### Chat G — OG Image & README
 
 ```
-Frente concluída: tutorial atualizado para o novo input não-linear.
+Frente: criar og.png e atualizar README.
 
-Resumo do que foi aplicado:
-- palavra demo mantida em BOLA
-- passo de swap removido e substituído por interação com cursor não-linear
-- fluxo intermediário atualizado para BICO → feedback → B confirmado → chave revela L
-- passo final começa com B e L confirmados; só os slots vazios são editáveis
-- título final vira BOLA!, com confetes, cards-resumo e botão Jogar agora!
-- botão da esquerda vira Ver de novo quando a etapa final é destravada
+Estado atual:
+- og.png (1200×630) referenciada em <head> og:image e twitter:image, mas o arquivo NÃO EXISTE no repo
+  → qualquer preview de link (WhatsApp, iMessage, Twitter/X) está quebrado
+- README.md menciona src/glifo_ptbr.html (pasta inexistente), mecânica de Swap (removida),
+  estrutura de pastas desatualizada (sem data/, sem dicionario.json)
 
-Referência: TW='BOLA', TWL=['B','O','L','A'], TC=['#f5a623','#9b8fe8','#5bbfa0','#e87a6b']
-```
-
----
-
-### ✅ Chat F — Dicionário de Validação (CONCLUÍDO)
-
-```
-Frente concluída: DICIONARIO separado do HTML e expandido com léxico fserb/pt-br.
-
-Resumo:
-- Fonte: https://github.com/fserb/pt-br (lexico — 145.744 entradas)
-- Processamento: normalização de acentos → uppercase → filtro 4-7L → dedup
-- Resultado: 38.664 palavras em data/dicionario.json (354 KB)
-- index.html: bloco embutido removido → index.html voltou a ~8.400 linhas (era ~47k)
-- Estratégia de carregamento (IIFE):
-  1. tenta localStorage['gliffoo_dic'] → DICIONARIO = new Set(JSON.parse(cached))
-  2. se ausente: fetch('data/dicionario.json') → popula Set → grava no localStorage
-  3. fallback silencioso: dicionarioValido usa PALAVRAS
-- sw.js: dicionario.json adicionado ao PRECACHE (glifo-static-v3) — disponível offline
+Itens:
+1. Criar icons/og.png — composição 1200×630 com glifo + identidade visual âmbar + texto glif.foo
+   (pode ser SVG exportado, Figma, ou gerado via canvas no Node)
+2. Atualizar README: estrutura real do repo, mecânicas atuais (sem Swap), stack atual,
+   roadmap atualizado, instruções de dev local corretas
 ```
 
 ---
 
-### ✅ Chat D — Streak & Estatísticas (CONCLUÍDO)
+### Chat H — Curadoria de Qualidade do Banco Jogável
 
 ```
-Frente concluída: sistema de streak, estatísticas, compartilhar e micro-interactions.
+Frente: revisar e limpar as listas PALAVRAS de anglicismos e palavras inadequadas.
 
-Resumo do que foi aplicado:
-- atualizarStats(): streak, distribuição, taxa de vitória — já existia, corrigido bug de derrota (agora sempre reseta streak)
-- Emojis de share: ✅ (acerto) 🔍 (posição errada) ⬛ (miss) 🔑 (chave)
-- foundPos: posições exatas de letras encontradas salvas no attempt, corrigindo duplicatas no share
-- Share no stats-modal: aparece após jogo concluído, com preview idêntico ao texto copiado
-- Rank por streak: getTituloStreak() — 9 títulos PT-BR (Novato → Guardião dos Glifos), banner no passaporte
-- Rank no texto compartilhado: glif.foo #N — X/4 🎯 Decodificador
-- Micro-interactions: cursor pulsando (âmbar), pop ao digitar, shake por slot com stagger, pop no teclado virtual, flip reveal (scaleY) ao enviar tentativa, entrada animada dos slots decoded, glyph glow na vitória, háptico mobile
-- CADELA adicionada ao dicionário de validação
+Estado atual:
+- Lista `facil` contém: GIRL, HIGH, HITS, HALL, ISOL, PART, NOEL, GRID, TOFU, SURF, JAZZ,
+  PNEU, TAXI, AUTO e outros termos não-PT-BR cotidianos
+- Listas `medio` e `dificil` com problemas similares (siglas, topônimos, termos técnicos)
+- Banco DUPLICADO em index.html e supabase/functions/daily-word/index.ts
+  → qualquer edição precisa ser feita nos dois arquivos em sincronia
+- Fonte de verdade: data/word_bank_final.json (precisa ser atualizado também)
+
+Itens:
+1. Revisar lista `facil` — remover anglicismos, siglas, topônimos, palavras não-PT-BR
+2. Revisar `medio` e `dificil` com mesma lente
+3. Adicionar reposições PT-BR cotidianas para manter contagens (400/400/371/300)
+4. Sincronizar banco limpo em index.ts (Edge Function) e data/word_bank_final.json
 ```
 
 ---
 
-### ✅ Chat E — PWA (CONCLUÍDO)
+### Chat I — Modo Arquivo (puzzles anteriores)
 
 ```
-Frente concluída: PWA verificada e ajustada.
+Frente: implementar UX para jogar puzzles de dias anteriores.
 
-Resumo do que foi aplicado:
-- manifest.json: theme_color corrigido para #f5a623 (âmbar); screenshots removido (arquivo inexistente); shortcuts adicionado ("Jogar agora" → /)
-- sw.js: variável CACHE_VERSION não utilizada removida; cache renomeado para glifo-static-v2
-- index.html: theme-color meta tag corrigida para #f5a623 (alinhado com manifest)
-- Já estavam corretos: ícones (icon-192, icon-512, icon-maskable-512, apple-touch-icon), registro do SW, estratégia network-first para HTML com fallback offline, apple-mobile-web-app-capable, viewport
+Estado atual:
+- Lógica já existe no debug mode: palavraPorOffset(offset) e resetParaDebug(offset)
+  → gera a palavra de qualquer dia a partir de um offset relativo a hoje
+- Edge Function aceita ?date=YYYY-MM-DD para lookup histórico no Storage
+- Sem UX para o jogador comum — apenas acessível via Ctrl+Shift+D
+
+Itens:
+1. Botão "Arquivo 📅" no cabeçalho (ao lado dos ícones de stats/tutorial)
+2. Modal de seleção: calendário ou lista dos últimos N puzzles com data + dificuldade
+3. Ao jogar arquivo: estado separado (não sobrescreve gliffoo_state do dia atual)
+4. Não conta para streak; indicação visual clara ("Modo Arquivo — #{N}")
+5. Conquistas de arquivo opcionais (ex: completar 7 puzzles do arquivo)
 ```
 
+---
+
+### Chat J — Decisão Beta Reset + Configurações
+
+```
+Frente: resolver a flag de beta reset e centralizar configurações do jogo.
+
+Estado atual:
+- BETA_END_DATE = 2026-06-01: em ~3 meses, checkBetaReset() vai zerar estatísticas
+  de TODOS os jogadores. Decisão de produto necessária.
+- Não existe tela de configurações — toggle dark/light está no header, sem local
+  centralizado para futuras opções (modo difícil, notificações, etc.)
+
+Itens:
+1. Definir: manter beta reset (lançamento limpo em jun/2026) ou remover a flag
+2. Se remover: limpar checkBetaReset(), BETA_END_DATE, BETA_RESET_KEY do código
+3. Criar modal de Configurações (ícone ⚙️ no header):
+   - Toggle dark/light (mover para cá)
+   - Toggle modo difícil (preparar para Chat N)
+   - Botão "Resetar estatísticas" com confirmação
+4. Persiste configurações em localStorage gliffoo_config
 ```
 
+---
+
+### Chat K — Race Condition do Dicionário
+
+```
+Frente: tornar o carregamento do dicionário robusto.
+
+Estado atual:
+- DICIONARIO é populado de forma async (localStorage/fetch)
+- dicionarioValido() é chamado síncronamente no submit
+- Se o usuário submeter nos primeiros ~100ms (conexão lenta, sem cache):
+  Set vazio → fallback PALAVRAS → qualquer palavra de 4-7L seria aceita
+
+Itens:
+1. Opção A (recomendada): pré-popular DICIONARIO = new Set(Object.values(PALAVRAS).flat())
+   de forma síncrona imediatamente, depois substituir pelo JSON completo após fetch
+2. Opção B (estrita): no submit, se !dicReady, bloquear com feedback "Carregando..." e re-tentar
+3. Implementar flag let dicReady = false → true após Set populado (para logs/debug)
+```
+
+---
+
+### Chat L — Verificação Share iOS & Passaporte
+
+```
+Frente: garantir que o compartilhamento funciona em todos os dispositivos.
+
+Estado atual:
+- "📸 Compartilhar passaporte" usa Canvas toBlob() + navigator.share({ files })
+- iOS Safari: share com files requer iOS 15+; toBlob() tem bugs de escala em alguns devices
+- Sem fallback implementado atualmente
+
+Itens:
+1. Detectar suporte: if (!navigator.canShare?.({ files: [blob] }))
+2. Fallback primário: <a download="glifoo-passaporte.png"> ao invés de share
+3. Fallback secundário: copiar texto alternativo (share de texto já implementado)
+4. Feedback visual durante geração do canvas (loading spinner)
+```
+
+---
+
+### Chat M — Acessibilidade
+
+```
+Frente: melhorar suporte a leitores de tela e navegação por teclado.
+
+Estado atual:
+- Feedback de letras (#fbmsg) não tem aria-live → leitores de tela ignoram
+- Slots de letra têm role implícito, sem aria-label descritivo
+- Teclado virtual: botões sem label de texto visível
+- Modais de conquistas/stats sem trap de foco
+
+Itens:
+1. aria-live="polite" no #fbmsg e mensagens de resultado
+2. aria-label dinâmico nos .lbox: "Posição 1 — vazia" / "Posição 2 — letra B, confirmada"
+3. aria-label nos botões do teclado virtual: "Letra A", "Apagar", "Confirmar"
+4. Focus trap nos modais (Tab/Shift+Tab circula dentro do modal)
+5. CSS @media (prefers-contrast: more) com bordas mais espessas e sem blur
+```
+
+---
+
+### Chat N — Modo Difícil
+
+```
+Frente: implementar variante de gameplay mais desafiadora.
+
+Estado atual:
+- Dificuldade atual é apenas de vocabulário (ciclo semanal 4L→7L)
+- calcWarns() mostra avisos contextuais (letras eliminadas, posição errada conhecida)
+- Chat J (Configurações) é pré-requisito
+
+Itens:
+1. Toggle "Modo Difícil 🔥" no modal de Configurações (Chat J prerequisito)
+2. Regras:
+   a. Letras decoded (posição certa) devem aparecer na mesma posição → validar no submit
+   b. Letras found (existem mas posição errada) devem aparecer em alguma posição
+   c. calcWarns() desativado (sem avisos de "letra eliminada" ou "posição diferente")
+3. Badge "🔥 Difícil" persistente no cabeçalho durante partida
+4. Persiste: gliffoo_config.hardMode; não ativa no meio de uma partida em andamento
+5. Share: adiciona "🔥" ao texto compartilhado
+6. Conquista: "Ferro em Brasa" — vencer no modo difícil
 ```
