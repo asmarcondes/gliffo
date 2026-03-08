@@ -217,13 +217,13 @@ gliffo/
 9. ✅ Distribuição de tentativas, taxa de vitória
 10. ✅ Compartilhar resultado com emojis estilo Wordle
 
-### Chat E — PWA (parcialmente pronto)
+### ✅ Chat E — PWA (CONCLUÍDO)
 
-- `manifest.json` e `sw.js` já existem
+- `manifest.json` e `sw.js` já existiam
 
-11. Verificar/completar manifest (theme_color, ícones, display: standalone)
-12. Verificar service worker (cache offline)
-13. Meta tags no index.html (theme-color, apple-touch-icon)
+11. ✅ manifest.json — theme_color: #f5a623, shortcuts adicionado, screenshots removido
+12. ✅ sw.js — cache offline, estratégia network-first para HTML, CACHE_VERSION limpa
+13. ✅ Meta tags no index.html — theme-color: #f5a623, apple-touch-icon, viewport
 
 ## Decisões de Design
 
@@ -320,19 +320,16 @@ Resumo do que foi aplicado:
 
 ---
 
-### Chat E — PWA
+### ✅ Chat E — PWA (CONCLUÍDO)
 
 ```
+Frente concluída: PWA verificada e ajustada.
 
-Frente: completar a PWA.
-
-Já existem: manifest.json, sw.js, icons/
-Verificar e completar:
-
-1. manifest.json — nome "glif.foo", display: standalone, theme_color: #f5a623, ícones corretos
-2. sw.js — cache do index.html para offline, estratégia network-first para HTML
-3. Meta tags no index.html — theme-color, apple-touch-icon, viewport
-
+Resumo do que foi aplicado:
+- manifest.json: theme_color corrigido para #f5a623 (âmbar); screenshots removido (arquivo inexistente); shortcuts adicionado ("Jogar agora" → /)
+- sw.js: variável CACHE_VERSION não utilizada removida; cache renomeado para glifo-static-v2
+- index.html: theme-color meta tag corrigida para #f5a623 (alinhado com manifest)
+- Já estavam corretos: ícones (icon-192, icon-512, icon-maskable-512, apple-touch-icon), registro do SW, estratégia network-first para HTML com fallback offline, apple-mobile-web-app-capable, viewport
 ```
 
 ```

@@ -7,7 +7,7 @@
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#141210",
-  "theme_color": "#141210",
+  "theme_color": "#f5a623",
   "lang": "pt-BR",
   "categories": ["games", "entertainment"],
   "icons": [
@@ -30,13 +30,13 @@
       "purpose": "maskable"
     }
   ],
-  "screenshots": [
+  "shortcuts": [
     {
-      "src": "/screenshots/mobile.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "glif.foo no celular"
+      "name": "Jogar agora",
+      "short_name": "Jogar",
+      "description": "Iniciar o jogo do dia",
+      "url": "/",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }

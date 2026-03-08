@@ -2,8 +2,7 @@
 // Estratégia: cache-first para assets estáticos, network-first para o HTML
 // Versão do cache: incrementar ao fazer deploy com mudanças
 
-const CACHE_VERSION = 'glifo-v1';
-const CACHE_STATIC  = 'glifo-static-v1';
+const CACHE_STATIC = 'glifo-static-v2';
 
 // Assets que sempre ficam em cache (fontes, ícones)
 const PRECACHE = [
