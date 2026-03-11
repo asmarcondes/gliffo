@@ -6,7 +6,8 @@ Jogo de palavras PT-BR inspirado no Wordle, com uma mecânica visual única: as 
 
 ## Stack
 
-- **Single-file:** `index.html` — HTML + CSS + JS, sem dependências externas
+- **Single-file:** `index.html` — HTML + CSS + JS
+- **CDN (tutorial/animações):** `animejs@3.2.2` (micro-interações do tutorial), `@lottiefiles/dotlottie-web@0.41.2` (personagem animado sadGoodbye)
 - Fontes: DM Serif Display + DM Sans (Google Fonts)
 - SVG gerado programaticamente via `makeSVG(letter, color, style)`
 - Supabase Project ID: `ppssfweuotjgcfejdznn`
@@ -360,16 +361,17 @@ Ver **Histórico de Chats Concluídos** acima.
 
 ---
 
-### 🟢 Chat M — Acessibilidade
+### ✅ Chat M — Acessibilidade
 
-**Problema:** Feedback de letras não anunciado para leitores de tela. Modal de conquistas sem navegação por teclado. Sem suporte a alto contraste.
+**Implementado em 2026-03-11.**
 
-**Itens:**
-
-1. `aria-live="polite"` no `#fbmsg` e nas mensagens de feedback
-2. `aria-label` adequados nos slots de letra e no teclado virtual
-3. Navegação por Tab/Enter nos modais de conquistas e stats
-4. Tema alto contraste como variante CSS (`prefers-contrast: more`)
+1. ✅ `aria-live="polite"` + `aria-atomic="true"` no `#fbmsg` — leitores de tela anunciam cada mensagem de feedback automaticamente
+2. ✅ `role="group"` + `aria-label` nos containers `#lboxes` e `#keyboard`
+3. ✅ `aria-label` dinâmico por slot em `buildBoxes()` — `"Posição N — letra X, confirmada"` / `"revelada pela chave"` / `"vazia"`; SVGs internos com `aria-hidden="true"`
+4. ✅ `aria-label` por tecla em `buildKB()` — `"Letra X"`, `"Apagar"`, `"Confirmar"`
+5. ✅ Focus trap genérico (`_installTrap` / `_removeTrap`) integrado em `openM()` / `closeM()` — Tab/Shift+Tab circula dentro do modal, foco restaurado ao fechar
+6. ✅ `winMod()`, `loseMod()`, `openKeyModal()`, `openStats()` refatorados para usar `openM()` (garantindo focus trap em todos os modais)
+7. ✅ `@media (prefers-contrast: more)` — bordas mais espessas, outline no slot ativo, backdrop-filter removido, overlay mais opaco
 
 ---
 
@@ -384,6 +386,28 @@ Ver **Histórico de Chats Concluídos** acima.
 3. Regra: avisos de `calcWarns()` desativados (sem indicação de letras eliminadas/posição errada)
 4. Persiste em localStorage (`gliffoo_hard_mode`)
 5. Badge de conquista exclusivo para vitorias em modo difícil
+
+---
+
+### 🟡 Chat O — Micro-interações com Anime.js (jogo)
+
+**Contexto:** Anime.js (`animejs@3.2.2`) já está adicionado como CDN para o tutorial (stagger das escolhas). Aplicar também nas animações do tabuleiro para maior polish.
+
+**Itens:**
+
+1. **Flip reveal** dos tiles ao submeter tentativa — `rotateX: [0, 180]` com stagger por posição, revelando a cor de feedback ao chegar em 90°
+2. **Shake** da linha atual quando a palavra é inválida — substitui ou complementa a borda vermelha atual
+3. **Bounce** ao digitar uma letra no slot — `scale: [1, 1.12, 1]` rápido (150ms)
+4. **Stagger entrada** do teclado virtual no carregamento inicial
+5. **Pop** dos tiles corretamente posicionados (decoded) — pequeno `scale` pulse ao confirmar
+
+**Notas técnicas:**
+
+- `anime` disponível via `window.anime` — verificar antes de usar (CDN pode falhar)
+- Funções afetadas: `decode()` (flip+shake), `buildBoxes()` (bounce no input), `buildKB()` (stagger kb), `renderDaily()` (pop nos decoded)
+- Coordenar com o CSS de transições já existentes nos `.lbox` e `.key` para não haver conflito
+
+---
 
 ## Decisões de Design
 
@@ -500,24 +524,7 @@ Itens:
 
 ---
 
-### Chat M — Acessibilidade
-
-```
-Frente: melhorar suporte a leitores de tela e navegação por teclado.
-
-Estado atual:
-- Feedback de letras (#fbmsg) não tem aria-live → leitores de tela ignoram
-- Slots de letra têm role implícito, sem aria-label descritivo
-- Teclado virtual: botões sem label de texto visível
-- Modais de conquistas/stats sem trap de foco
-
-Itens:
-1. aria-live="polite" no #fbmsg e mensagens de resultado
-2. aria-label dinâmico nos .lbox: "Posição 1 — vazia" / "Posição 2 — letra B, confirmada"
-3. aria-label nos botões do teclado virtual: "Letra A", "Apagar", "Confirmar"
-4. Focus trap nos modais (Tab/Shift+Tab circula dentro do modal)
-5. CSS @media (prefers-contrast: more) com bordas mais espessas e sem blur
-```
+### ~~Chat M~~ — ✅ Concluído (ver Histórico de Chats Concluídos acima)
 
 ---
 
