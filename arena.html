@@ -19,8 +19,8 @@
       href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap"
       rel="stylesheet"
     />
-    <!-- Supabase JS client v3 (suporta sb_publishable_ keys) -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@3/dist/umd/supabase.min.js"></script>
+    <!-- Supabase JS client v2 (local, evita bloqueio de CDN pelo Edge) -->
+    <script src="/vendor/supabase.min.js"></script>
 
     <style>
       *,
@@ -61,6 +61,14 @@
         --quartz-hi: #9da8ff;
         --quartz-lo: #5a69db;
         --correct: #4a9d6f;
+        --found: #e8940a;
+        /* Glyph colors — idênticos ao index.html */
+        --gc0: #f5a623;
+        --gc1: #9b8fe8;
+        --gc2: #e87a6b;
+        --gc3: #5bbfa0;
+        --gc4: #6baee8;
+        --gc5: #e8b45b;
       }
 
       [data-theme="dark"] {
@@ -141,14 +149,34 @@
       /* ─── WELCOME ────────────────────────────────────────────── */
       .welcome-logo {
         margin-top: 2.5rem;
-        font-family: "DM Serif Display", serif;
-        font-size: 2.5rem;
-        color: var(--text);
-        text-align: center;
-        line-height: 1.1;
+        display: flex;
+        align-items: baseline;
+        justify-content: center;
+        gap: 3px;
+        text-decoration: none;
+        color: inherit;
       }
-      .welcome-logo .accent {
+      .welcome-logo-text {
+        font-family: "DM Serif Display", serif;
+        font-size: 2.2rem;
+        line-height: 1;
+        letter-spacing: -0.01em;
+        color: var(--text);
+      }
+      .welcome-logo-dot {
+        font-family: "DM Serif Display", serif;
+        font-size: 2.2rem;
         color: var(--amber-400);
+        line-height: 1;
+      }
+      .welcome-logo-tag {
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.78rem;
+        font-weight: 300;
+        color: var(--text3);
+        letter-spacing: 0.01em;
+        margin-left: 2px;
+        align-self: center;
       }
       .welcome-sub {
         text-align: center;
@@ -786,7 +814,14 @@
       /* glyph */
       .glyph-wrap {
         position: relative;
-        margin: 0 auto;
+        width: 180px;
+        height: 180px;
+        margin: 0.5rem auto;
+        border-radius: 20px;
+        background: var(--surface2);
+        border: 1.5px solid var(--border2);
+        box-shadow: 0 4px 24px var(--shadow);
+        padding: 10px;
       }
       .glyph-wrap svg {
         position: absolute;
@@ -842,14 +877,17 @@
         user-select: none;
       }
       .vote-card:hover:not(.my-vote) {
-        border-color: var(--border);
+        border-color: var(--amber-400);
         background: var(--surface2);
       }
       .vote-card.my-vote {
         border-color: var(--amber-400);
         background: var(--surface2);
-        box-shadow: 0 0 0 3px
-          color-mix(in srgb, var(--amber-400) 18%, transparent);
+        animation: cardPulse 1.4s ease-in-out infinite;
+      }
+      @keyframes cardPulse {
+        0%, 100% { box-shadow: 0 0 0 2px rgba(245,166,35,0.15); }
+        50%       { box-shadow: 0 0 0 4px rgba(245,166,35,0.35); }
       }
       .vote-card .word {
         font-size: 1.05rem;
@@ -880,38 +918,52 @@
       }
       .feedback-slots {
         display: flex;
-        gap: 0.35rem;
+        gap: 6px;
         justify-content: center;
         flex-wrap: wrap;
       }
       .feedback-slot {
-        width: 42px;
-        height: 42px;
-        border-radius: 0.5rem;
+        width: 52px;
+        height: 52px;
+        border-radius: 11px;
+        border: 1.5px solid var(--border2);
+        background: var(--surface2);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.1rem;
+        font-size: 0.65rem;
         font-weight: 700;
-        background: var(--surface3);
         color: var(--text3);
+        letter-spacing: 0.04em;
+        transition: background 0.3s, border-color 0.3s;
+        position: relative;
+        overflow: hidden;
+      }
+      .feedback-slot svg {
+        width: 65%;
+        height: 65%;
       }
       .feedback-slot.correct {
         background: var(--correct);
+        border-color: transparent;
         color: #fff;
       }
       .feedback-slot.present {
-        background: var(--amber-500);
+        background: var(--found);
+        border-color: transparent;
         color: #fff;
       }
       .feedback-slot.absent {
-        background: var(--surface2);
+        background: var(--surface3);
+        border-color: var(--border);
         color: var(--text3);
+        opacity: 0.55;
       }
       .outcome-msg {
         font-family: "DM Serif Display", serif;
-        font-size: 1.45rem;
+        font-size: 1.6rem;
         text-align: center;
+        letter-spacing: -0.01em;
       }
       .outcome-msg.win {
         color: var(--correct);
@@ -923,9 +975,10 @@
       /* finished */
       .winner-banner {
         font-family: "DM Serif Display", serif;
-        font-size: 1.9rem;
+        font-size: 2.1rem;
         text-align: center;
         color: var(--amber-400);
+        letter-spacing: -0.02em;
       }
       .winner-sub {
         text-align: center;
@@ -1323,7 +1376,7 @@
     ════════════════════════════════════════════════════════ -->
     <div id="view-welcome" class="view active" role="main">
       <div class="welcome-logo" aria-label="Gliffo Arena">
-        ⚔️ <span class="accent">Gliffo</span> Arena
+        <span class="welcome-logo-text">glif</span><span class="welcome-logo-dot">.</span><span class="welcome-logo-text">foo</span><span class="welcome-logo-tag">arena</span>
       </div>
       <p class="welcome-sub">
         Modo multiplayer em tempo real.<br />
@@ -2360,7 +2413,7 @@
           btn.innerHTML = '<span class="spinner spinner-dark"></span>';
           const { error } = await sb
             .from("arena_rooms")
-            .update({ status: "playing", turn_number: 1 })
+            .update({ status: "playing", turn_number: 1, phase: "between", current_turn: "A" })
             .eq("id", S.roomId);
           if (error) {
             toast("Erro ao iniciar partida", "error");
@@ -2576,13 +2629,12 @@
       };
 
       const GLYPH_COLORS = [
-        "#f5a623",
-        "#7c8cff",
-        "#4a9d6f",
-        "#e07b7b",
-        "#a87cdf",
-        "#5bc8c8",
-        "#e0a04d",
+        "var(--gc0)", // amber
+        "var(--gc1)", // lavender
+        "var(--gc2)", // coral
+        "var(--gc3)", // mint
+        "var(--gc4)", // sky
+        "var(--gc5)", // gold
       ];
 
       function makeSVG(letter, color, extraStyle) {
@@ -2613,44 +2665,40 @@
       function renderGlyph(word, container, opts = {}) {
         container.innerHTML = "";
         const letters = word.split("");
-        const SIZE = 90,
-          STEP = 13;
-        const total = SIZE + (letters.length - 1) * STEP;
+        // Container é 180px no CSS com 10px padding → SVGs em 100% preenchem a área interna
         container.style.position = "relative";
-        container.style.width = total + "px";
-        container.style.height = total + "px";
 
         // Névoa: embaralha 2 posições de cor
-        let colors = [...GLYPH_COLORS];
+        let colorVars = ["var(--gc0)","var(--gc1)","var(--gc2)","var(--gc3)","var(--gc4)","var(--gc5)"];
         if (opts.fog && letters.length >= 2) {
           const i1 = Math.floor(Math.random() * letters.length);
           let i2 = (i1 + 1 + Math.floor(Math.random() * (letters.length - 1))) % letters.length;
-          [colors[i1], colors[i2]] = [colors[i2], colors[i1]];
+          [colorVars[i1], colorVars[i2]] = [colorVars[i2], colorVars[i1]];
         }
 
-        letters.forEach((letter, i) => {
-          const color = colors[i % colors.length];
-          // Revelar: mostra letra real em posição revelada
+        // Igual ao tStackEl do index.html: todas as letras sobrepostas em top:0 left:0
+        for (let i = letters.length - 1; i >= 0; i--) {
+          const letter = letters[i];
+          const color = colorVars[i % colorVars.length];
           const isRevealed = opts.revealSlot === i;
-          const extraStyle = `width:${SIZE}px;height:${SIZE}px;position:absolute;` +
-            `top:${i * STEP}px;left:${i * STEP}px;` +
-            `opacity:${Math.min(1, 0.78 + i * 0.04)};` +
+          const extraStyle =
+            `position:absolute;top:10px;left:10px;width:calc(100% - 20px);height:calc(100% - 20px);` +
             (opts.mirror ? `transform:scaleX(-1);transform-origin:center;` : "") +
-            (isRevealed ? `filter:drop-shadow(0 0 6px ${color});` : "");
+            (isRevealed ? `filter:drop-shadow(0 0 8px ${color});` : "");
           const svg = makeSVG(letter, color, extraStyle);
           if (svg) {
+            container.appendChild(svg);
             if (isRevealed) {
-              // Agrega badge de letra revelada
               const badge = document.createElement("div");
-              badge.style.cssText = `position:absolute;top:${i*STEP}px;left:${i*STEP}px;` +
-                `width:${SIZE}px;height:20px;text-align:center;font-size:0.75rem;` +
-                `font-weight:700;color:${color};line-height:20px;pointer-events:none;z-index:10;`;
+              badge.style.cssText =
+                `position:absolute;bottom:6px;left:0;width:100%;` +
+                `text-align:center;font-size:0.78rem;font-weight:700;` +
+                `color:${color};pointer-events:none;z-index:10;`;
               badge.textContent = letter;
               container.appendChild(badge);
             }
-            container.appendChild(svg);
           }
-        });
+        }
       }
 
       // ─────────────────────────────────────────────────────────
@@ -3074,10 +3122,22 @@
 
         const { feedback, correct, chosenWord } = G_feedbackData;
         const targetWord = turn === "A" ? room.team_a_word : room.team_b_word;
+
+        // Slots estilo lbox: SVG da letra com cor de status (igual ao index.html)
         const slotsHtml = (feedback || [])
-          .map(
-            (f) => `<div class="feedback-slot ${f.status}">${f.letter}</div>`,
-          )
+          .map((f) => {
+            const colorMap = { correct: "#fff", present: "#fff", absent: "var(--text3)" };
+            const svgColor = colorMap[f.status] || "var(--text3)";
+            const letterDef = LETTERS[f.letter?.toUpperCase()];
+            const svgInner = letterDef
+              ? (() => {
+                  const paths = letterDef.paths.map(d => `<path d="${d}"/>`).join("");
+                  const lc = letterDef.lc || "butt", lj = letterDef.lj || "miter", ml = letterDef.ml || 4;
+                  return `<svg viewBox="0 0 200 200" aria-hidden="true" style="width:65%;height:65%" fill="none" stroke="${svgColor}" stroke-width="10" stroke-linecap="${lc}" stroke-linejoin="${lj}" stroke-miterlimit="${ml}"${letterDef.transform ? ` transform="${letterDef.transform}"` : ""}><g>${paths}</g></svg>`;
+                })()
+              : escHtml(f.letter || "");
+            return `<div class="feedback-slot ${f.status}" title="${f.letter}">${svgInner}</div>`;
+          })
           .join("");
 
         // Dispara confete ao acertar
@@ -3095,12 +3155,10 @@
           <div class="outcome-msg ${correct ? "win" : "fail"}">
             ${correct ? "✅ Acertou!" : "❌ Não foi dessa vez"}
           </div>
-          <div class="feedback-chosen">
-            Proposta escolhida: <strong>${escHtml(chosenWord || "—")}</strong>
-          </div>
+          <div id="feedback-glyph-box" class="glyph-wrap" style="margin:0.25rem auto"></div>
           <div class="feedback-slots">${slotsHtml}</div>
-          <div class="feedback-chosen" style="margin-top:0.25rem">
-            A palavra era: <strong>${escHtml(targetWord || "?")}</strong>
+          <div class="feedback-chosen" style="margin-top:0.25rem;font-size:0.78rem">
+            ${correct ? `A palavra era: <strong>${escHtml(targetWord || "?")}</strong>` : `A palavra era: <strong style="color:var(--amber-400)">${escHtml(targetWord || "?")}</strong>`}
           </div>
           <div style="font-size:0.82rem;text-align:center;color:${correct ? "var(--correct)" : "var(--text2)"}">
             ${correct ? ((turn === "A" && (room.team_a_level || 1) >= 7) || (turn === "B" && (room.team_b_level || 1) >= 7) ? "🏆 Nível máximo!" : "⬆️ Próximo nível!") : "Mantém no mesmo nível."}
@@ -3114,6 +3172,11 @@
               : `<div class="info-msg" style="margin:0;text-align:center">Aguardando o host avançar…</div>`
           }
         `;
+        // Renderiza o glifo da palavra alvo (para todos verem)
+        if (targetWord) {
+          const glBox = document.getElementById("feedback-glyph-box");
+          if (glBox) renderGlyph(targetWord, glBox);
+        }
         pc.querySelectorAll(".reaction-btn").forEach((btn) => {
           btn.addEventListener("click", () => sendReact(btn.dataset.emoji));
         });
@@ -3245,7 +3308,9 @@
         G_proposalSubmitted = false;
         G_feedbackData = null;
 
-        // Chama arena-word; fallback client-side se falhar
+        // Sorteia a palavra — tenta edge function, fallback local
+        const level = turn === "A" ? S.room.team_a_level || 1 : S.room.team_b_level || 1;
+        let chosenWord = null;
         try {
           const resp = await fetch(`${SUPA_URL}/functions/v1/arena-word`, {
             method: "POST",
@@ -3255,90 +3320,41 @@
             },
             body: JSON.stringify({ roomId: S.roomId, team: turn }),
           });
-          if (!resp.ok) throw new Error("arena-word error");
-        } catch {
-          // Fallback: sorteia localmente e salva no DB
-          const level =
-            turn === "A" ? S.room.team_a_level || 1 : S.room.team_b_level || 1;
-          const pool =
-            level <= 2
-              ? "facil"
-              : level <= 4
-                ? "medio"
-                : level <= 6
-                  ? "dificil"
-                  : "muito_dificil";
-          const lists = {
-            facil: [
-              "CASA",
-              "MESA",
-              "BOLA",
-              "FOGO",
-              "AMOR",
-              "VIDA",
-              "ROSA",
-              "LUPA",
-              "CAMA",
-              "LAGO",
-              "PELE",
-              "VELA",
-              "MEDO",
-              "GUIA",
-              "ILHA",
-            ],
-            medio: [
-              "CAMPO",
-              "CARTA",
-              "ORDEM",
-              "TERRA",
-              "SONHO",
-              "PEDRA",
-              "MONTE",
-              "CHUVA",
-              "FORCA",
-              "TEMPO",
-              "NOITE",
-              "PRAIA",
-              "FESTA",
-            ],
-            dificil: [
-              "JARDIM",
-              "CIDADE",
-              "SONETO",
-              "PRISMA",
-              "ESCUDO",
-              "FRENTE",
-              "HEROIS",
-              "MAXIMO",
-              "SANGUE",
-            ],
-            muito_dificil: [
-              "VITORIA",
-              "MEMORIA",
-              "SISTEMA",
-              "EMPRESA",
-              "FAMILIA",
-              "PALAVRA",
-              "DECISAO",
-              "CORAGEM",
-            ],
-          };
-          const lista = lists[pool] || lists.facil;
-          const word = lista[Math.floor(Math.random() * lista.length)];
-          const field =
-            turn === "A" ? { team_a_word: word } : { team_b_word: word };
-          await sb.from("arena_rooms").update(field).eq("id", S.roomId);
+          if (!resp.ok) throw new Error("arena-word " + resp.status);
+          const data = await resp.json();
+          chosenWord = data.word;
+        } catch (e) {
+          console.warn("arena-word falhou, usando fallback local:", e);
         }
 
+        // Fallback: sorteia localmente se edge function falhou
+        if (!chosenWord) {
+          const pool =
+            level <= 2 ? "facil" : level <= 4 ? "medio" : level <= 6 ? "dificil" : "muito_dificil";
+          const lists = {
+            facil:  ["CASA","MESA","BOLA","FOGO","AMOR","VIDA","ROSA","LUPA","CAMA","LAGO","PELE","VELA","MEDO","GUIA","ILHA","DOCE","DEDO","ARTE","ERRO","FATO"],
+            medio:  ["CAMPO","CARTA","ORDEM","TERRA","SONHO","PEDRA","MONTE","CHUVA","FORCA","TEMPO","NOITE","PRAIA","FESTA","CHAVE","CAUSA"],
+            dificil:["JARDIM","CIDADE","SONETO","PRISMA","ESCUDO","FRENTE","HEROIS","MAXIMO","SANGUE"],
+            muito_dificil:["VITORIA","MEMORIA","SISTEMA","EMPRESA","FAMILIA","PALAVRA","DECISAO","CORAGEM"],
+          };
+          const lista = lists[pool] || lists.facil;
+          chosenWord = lista[Math.floor(Math.random() * lista.length)];
+        }
+
+        // Um único UPDATE com palavra + fase + deadline elimina a race condition Realtime
         const cfg = S.room.config || {};
         const timerSec = cfg.timer_propose || 45;
         const deadline = new Date(Date.now() + timerSec * 1000).toISOString();
-        G_roundStartMs = Date.now(); // para tiebreaker e ganho de power-ups
+        const wordField = turn === "A" ? "team_a_word" : "team_b_word";
+        G_roundStartMs = Date.now();
         await sb
           .from("arena_rooms")
-          .update({ phase: "propose", phase_deadline: deadline })
+          .update({ [wordField]: chosenWord, phase: "propose", phase_deadline: deadline })
           .eq("id", S.roomId);
+        // Patch local imediato para o host (não espera Realtime)
+        S.room = { ...S.room, [wordField]: chosenWord, phase: "propose", phase_deadline: deadline };
         S.busy = false;
+        renderGamePhase(); // host vê o glifo imediatamente
       }
 
       async function doSubmitProposal(word) {
