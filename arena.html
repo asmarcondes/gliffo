@@ -706,10 +706,20 @@
         background: var(--border2);
         transition: all 0.4s;
       }
-      .level-pip.done   { background: var(--amber-400); }
-      .level-pip.done-b { background: var(--quartz); }
-      .level-pip.cur    { background: var(--amber-500); box-shadow: 0 0 5px var(--amber-400); }
-      .level-pip.cur-b  { background: var(--quartz-hi); box-shadow: 0 0 5px var(--quartz); }
+      .level-pip.done {
+        background: var(--amber-400);
+      }
+      .level-pip.done-b {
+        background: var(--quartz);
+      }
+      .level-pip.cur {
+        background: var(--amber-500);
+        box-shadow: 0 0 5px var(--amber-400);
+      }
+      .level-pip.cur-b {
+        background: var(--quartz-hi);
+        box-shadow: 0 0 5px var(--quartz);
+      }
       .turn-emblem {
         font-size: 0.8rem;
         font-weight: 700;
@@ -723,7 +733,9 @@
       }
 
       /* timer */
-      .game-timer { margin-bottom: 0.75rem; }
+      .game-timer {
+        margin-bottom: 0.75rem;
+      }
       .timer-bar-bg {
         height: 5px;
         border-radius: 99px;
@@ -734,9 +746,13 @@
         height: 100%;
         background: var(--amber-400);
         border-radius: 99px;
-        transition: width 1s linear, background 0.5s;
+        transition:
+          width 1s linear,
+          background 0.5s;
       }
-      .timer-bar-fill.urgent { background: #e05555; }
+      .timer-bar-fill.urgent {
+        background: #e05555;
+      }
       .timer-num {
         display: block;
         text-align: right;
@@ -761,14 +777,27 @@
         color: var(--amber-400);
         text-align: center;
       }
-      .between-sub { color: var(--text2); font-size: 0.88rem; text-align: center; }
+      .between-sub {
+        color: var(--text2);
+        font-size: 0.88rem;
+        text-align: center;
+      }
 
       /* glyph */
-      .glyph-wrap { position: relative; margin: 0 auto; }
-      .glyph-wrap svg { position: absolute; }
+      .glyph-wrap {
+        position: relative;
+        margin: 0 auto;
+      }
+      .glyph-wrap svg {
+        position: absolute;
+      }
 
       /* proposal input */
-      .proposal-input-area { display: flex; flex-direction: column; gap: 0.5rem; }
+      .proposal-input-area {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
       .proposal-input-area input[type="text"] {
         text-transform: uppercase;
         letter-spacing: 0.15em;
@@ -782,9 +811,17 @@
         font-size: 0.8rem;
         color: var(--text2);
       }
-      .submitted-item { display: flex; align-items: center; gap: 0.4rem; }
-      .submitted-item .check { color: var(--correct); }
-      .submitted-item .waiting { color: var(--text3); }
+      .submitted-item {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+      .submitted-item .check {
+        color: var(--correct);
+      }
+      .submitted-item .waiting {
+        color: var(--text3);
+      }
 
       /* vote cards */
       .vote-cards {
@@ -798,19 +835,37 @@
         border: 2px solid var(--border2);
         background: var(--surface);
         cursor: pointer;
-        transition: border-color 0.15s, background 0.15s;
+        transition:
+          border-color 0.15s,
+          background 0.15s;
         text-align: center;
         user-select: none;
       }
-      .vote-card:hover:not(.my-vote) { border-color: var(--border); background: var(--surface2); }
+      .vote-card:hover:not(.my-vote) {
+        border-color: var(--border);
+        background: var(--surface2);
+      }
       .vote-card.my-vote {
         border-color: var(--amber-400);
         background: var(--surface2);
-        box-shadow: 0 0 0 3px color-mix(in srgb, var(--amber-400) 18%, transparent);
+        box-shadow: 0 0 0 3px
+          color-mix(in srgb, var(--amber-400) 18%, transparent);
       }
-      .vote-card .word { font-size: 1.05rem; font-weight: 700; letter-spacing: 0.1em; }
-      .vote-card .proposer { font-size: 0.72rem; color: var(--text3); margin-top: 2px; }
-      .vote-card .vcount { font-size: 0.72rem; color: var(--text2); margin-top: 3px; }
+      .vote-card .word {
+        font-size: 1.05rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+      }
+      .vote-card .proposer {
+        font-size: 0.72rem;
+        color: var(--text3);
+        margin-top: 2px;
+      }
+      .vote-card .vcount {
+        font-size: 0.72rem;
+        color: var(--text2);
+        margin-top: 3px;
+      }
 
       /* feedback */
       .feedback-chosen {
@@ -818,8 +873,17 @@
         font-size: 0.85rem;
         color: var(--text2);
       }
-      .feedback-chosen strong { font-size: 1.15rem; letter-spacing: 0.1em; color: var(--text); }
-      .feedback-slots { display: flex; gap: 0.35rem; justify-content: center; flex-wrap: wrap; }
+      .feedback-chosen strong {
+        font-size: 1.15rem;
+        letter-spacing: 0.1em;
+        color: var(--text);
+      }
+      .feedback-slots {
+        display: flex;
+        gap: 0.35rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
       .feedback-slot {
         width: 42px;
         height: 42px;
@@ -832,16 +896,29 @@
         background: var(--surface3);
         color: var(--text3);
       }
-      .feedback-slot.correct { background: var(--correct); color: #fff; }
-      .feedback-slot.present { background: var(--amber-500); color: #fff; }
-      .feedback-slot.absent  { background: var(--surface2); color: var(--text3); }
+      .feedback-slot.correct {
+        background: var(--correct);
+        color: #fff;
+      }
+      .feedback-slot.present {
+        background: var(--amber-500);
+        color: #fff;
+      }
+      .feedback-slot.absent {
+        background: var(--surface2);
+        color: var(--text3);
+      }
       .outcome-msg {
         font-family: "DM Serif Display", serif;
         font-size: 1.45rem;
         text-align: center;
       }
-      .outcome-msg.win  { color: var(--correct); }
-      .outcome-msg.fail { color: var(--text2); }
+      .outcome-msg.win {
+        color: var(--correct);
+      }
+      .outcome-msg.fail {
+        color: var(--text2);
+      }
 
       /* finished */
       .winner-banner {
@@ -850,10 +927,26 @@
         text-align: center;
         color: var(--amber-400);
       }
-      .winner-sub { text-align: center; color: var(--text2); font-size: 0.88rem; }
-      .score-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-      .score-table th, .score-table td { padding: 0.45rem 0.6rem; border-bottom: 1px solid var(--border); text-align: center; }
-      .score-table th { color: var(--text2); font-weight: 600; }
+      .winner-sub {
+        text-align: center;
+        color: var(--text2);
+        font-size: 0.88rem;
+      }
+      .score-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+      }
+      .score-table th,
+      .score-table td {
+        padding: 0.45rem 0.6rem;
+        border-bottom: 1px solid var(--border);
+        text-align: center;
+      }
+      .score-table th {
+        color: var(--text2);
+        font-weight: 600;
+      }
 
       /* ─── TOASTS ─────────────────────────────────────────────── */
       .toast {
@@ -931,6 +1024,272 @@
       .loading-overlay p {
         color: var(--text2);
         font-size: 0.9rem;
+      }
+
+      /* ─── POWER-UPS ─────────────────────────────────────────── */
+      .powerup-strip {
+        display: flex;
+        gap: 0.4rem;
+        align-items: center;
+        justify-content: center;
+        min-height: 2rem;
+        padding: 0.2rem 0 0.5rem;
+        flex-wrap: wrap;
+      }
+      .powerup-icon-btn {
+        position: relative;
+        background: var(--surface2);
+        border: 1.5px solid var(--border2);
+        border-radius: 8px;
+        width: 36px;
+        height: 36px;
+        font-size: 1.05rem;
+        cursor: pointer;
+        transition: border-color 0.15s, transform 0.1s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+        flex-shrink: 0;
+      }
+      .powerup-icon-btn:hover:not([disabled]) {
+        border-color: var(--amber-400);
+        transform: scale(1.08);
+      }
+      .powerup-icon-btn[disabled] {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
+      .pu-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: var(--amber-500);
+        color: #1c1008;
+        font-size: 0.58rem;
+        font-weight: 700;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+      }
+      .powerup-icon-btn.shield-on {
+        border-color: var(--quartz) !important;
+        box-shadow: 0 0 6px var(--quartz);
+      }
+      .powerup-divider {
+        color: var(--border2);
+        font-size: 1rem;
+        margin: 0 0.1rem;
+        line-height: 1;
+      }
+      .powerup-empty {
+        font-size: 0.72rem;
+        color: var(--text3);
+      }
+
+      /* ─── CONFETTI ───────────────────────────────────────────── */
+      .confetti-particle {
+        position: fixed;
+        pointer-events: none;
+        font-size: 1.1rem;
+        z-index: 9999;
+        animation: confetti-fall 1.9s ease-in forwards;
+      }
+      @keyframes confetti-fall {
+        0%   { opacity: 1; transform: translateY(-20px) rotate(0deg) scale(1); }
+        80%  { opacity: 0.8; }
+        100% { opacity: 0; transform: translateY(75vh) rotate(540deg) scale(0.4); }
+      }
+
+      /* ─── SPECTATOR REACTIONS ────────────────────────────────── */
+      .reaction-bar {
+        display: flex;
+        gap: 0.45rem;
+        justify-content: center;
+        padding: 0.3rem 0;
+      }
+      .reaction-btn {
+        background: var(--surface2);
+        border: 1.5px solid var(--border2);
+        border-radius: 8px;
+        padding: 0.3rem 0.6rem;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: transform 0.12s, border-color 0.15s;
+        line-height: 1;
+      }
+      .reaction-btn:hover {
+        border-color: var(--amber-400);
+        transform: scale(1.12);
+      }
+      .floating-react {
+        position: fixed;
+        pointer-events: none;
+        font-size: 2rem;
+        z-index: 9998;
+        animation: float-up 2.2s ease forwards;
+      }
+      @keyframes float-up {
+        0%   { opacity: 1; transform: translateY(0) scale(1); }
+        70%  { opacity: 0.9; }
+        100% { opacity: 0; transform: translateY(-130px) scale(1.5); }
+      }
+
+      /* ─── CHAT ───────────────────────────────────────────────── */
+      .chat-toggle-btn {
+        position: fixed;
+        bottom: 1rem;
+        right: 1rem;
+        background: var(--surface2);
+        border: 1.5px solid var(--border2);
+        border-radius: 50%;
+        width: 42px;
+        height: 42px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 500;
+        box-shadow: 0 2px 10px var(--shadow);
+        transition: background 0.2s;
+      }
+      .chat-toggle-btn.visible {
+        display: flex;
+      }
+      .chat-toggle-btn:hover {
+        background: var(--surface3);
+      }
+      .chat-unread-dot {
+        position: absolute;
+        top: -2px;
+        right: -2px;
+        background: #e55555;
+        color: #fff;
+        font-size: 0.58rem;
+        font-weight: 700;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
+      .chat-unread-dot.visible {
+        display: flex;
+      }
+      .chat-panel {
+        position: fixed;
+        bottom: 4rem;
+        right: 1rem;
+        width: min(300px, calc(100vw - 2rem));
+        max-height: 280px;
+        background: var(--surface);
+        border: 1.5px solid var(--border2);
+        border-radius: 14px;
+        display: flex;
+        flex-direction: column;
+        z-index: 499;
+        box-shadow: 0 4px 24px var(--shadow);
+        overflow: hidden;
+        transition: opacity 0.15s, transform 0.15s;
+      }
+      .chat-panel.hidden {
+        display: none;
+      }
+      .chat-header {
+        padding: 0.45rem 0.75rem;
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: var(--text3);
+        border-bottom: 1px solid var(--border);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        user-select: none;
+      }
+      .chat-msgs {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0.5rem 0.75rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+        scroll-behavior: smooth;
+      }
+      .chat-msg {
+        font-size: 0.8rem;
+        color: var(--text2);
+        line-height: 1.4;
+      }
+      .chat-msg .msg-nick {
+        font-weight: 600;
+        color: var(--text);
+      }
+      .chat-msg.mine .msg-nick {
+        color: var(--amber-400);
+      }
+      .chat-input-row {
+        display: flex;
+        border-top: 1px solid var(--border);
+        padding: 0.4rem;
+        gap: 0.4rem;
+      }
+      .chat-input-row input {
+        flex: 1;
+        background: var(--surface2);
+        border: none;
+        border-radius: 8px;
+        padding: 0.35rem 0.6rem;
+        font-size: 0.82rem;
+        color: var(--text);
+        outline: none;
+        font-family: "DM Sans", sans-serif;
+      }
+      .chat-send-btn {
+        background: var(--amber-400);
+        border: none;
+        border-radius: 8px;
+        padding: 0.3rem 0.65rem;
+        cursor: pointer;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #1c1008;
+        transition: background 0.15s;
+        font-family: "DM Sans", sans-serif;
+      }
+      .chat-send-btn:hover {
+        background: var(--amber-500);
+      }
+
+      /* ─── CAPTAIN BADGE ──────────────────────────────────────── */
+      .captain-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        font-size: 0.68rem;
+        background: color-mix(in srgb, var(--amber-400) 16%, transparent);
+        color: var(--amber-400);
+        border: 1px solid color-mix(in srgb, var(--amber-400) 30%, transparent);
+        border-radius: 4px;
+        padding: 1px 5px;
+        margin-left: 4px;
+        font-weight: 600;
+        line-height: 1.5;
+      }
+
+      /* ─── URGENCY SHAKE ─────────────────────────────────────── */
+      @keyframes phase-shake {
+        0%, 100% { transform: translateX(0); }
+        20%       { transform: translateX(-6px); }
+        60%       { transform: translateX(6px); }
+        80%       { transform: translateX(-3px); }
+      }
+      .phase-card.shaking {
+        animation: phase-shake 0.4s ease;
       }
     </style>
   </head>
@@ -1170,31 +1529,77 @@
          VIEW: GAME
     ════════════════════════════════════════════════════════ -->
     <div id="view-game" class="view" role="main">
-
       <!-- ── Topo: scoreboard ───────────────────────────────── -->
       <div class="game-top">
-        <button class="back-btn" id="btn-lobby-back" title="Voltar ao lobby" aria-label="Voltar ao lobby">←</button>
+        <button
+          class="back-btn"
+          id="btn-lobby-back"
+          title="Voltar ao lobby"
+          aria-label="Voltar ao lobby"
+        >
+          ←
+        </button>
         <div class="game-scoreboard">
           <div class="score-team">
-            <div class="level-pips" id="pips-a" aria-label="Nível Time Âmbar"></div>
+            <div
+              class="level-pips"
+              id="pips-a"
+              aria-label="Nível Time Âmbar"
+            ></div>
             <div class="score-team-label">
-              <span class="team-dot team-amber" style="width:8px;height:8px;border-radius:50%;display:inline-block;background:var(--amber-400)"></span>
+              <span
+                class="team-dot team-amber"
+                style="
+                  width: 8px;
+                  height: 8px;
+                  border-radius: 50%;
+                  display: inline-block;
+                  background: var(--amber-400);
+                "
+              ></span>
               Âmbar
             </div>
           </div>
-          <div class="turn-emblem" id="turn-emblem" title="Times em jogo">⚔️</div>
+          <div class="turn-emblem" id="turn-emblem" title="Times em jogo">
+            ⚔️
+          </div>
           <div class="score-team">
-            <div class="level-pips" id="pips-b" aria-label="Nível Time Quartzo"></div>
+            <div
+              class="level-pips"
+              id="pips-b"
+              aria-label="Nível Time Quartzo"
+            ></div>
             <div class="score-team-label">
               Quartzo
-              <span class="team-dot team-quartz" style="width:8px;height:8px;border-radius:50%;display:inline-block;background:var(--quartz)"></span>
+              <span
+                class="team-dot team-quartz"
+                style="
+                  width: 8px;
+                  height: 8px;
+                  border-radius: 50%;
+                  display: inline-block;
+                  background: var(--quartz);
+                "
+              ></span>
             </div>
           </div>
         </div>
       </div>
 
+      <!-- ── Power-up strip ────────────────────────────────── -->
+      <div
+        class="powerup-strip"
+        id="powerup-strip"
+        aria-label="Power-ups do seu time"
+      ></div>
+
       <!-- ── Timer ──────────────────────────────────────────── -->
-      <div class="game-timer" id="game-timer" style="display:none" aria-live="polite">
+      <div
+        class="game-timer"
+        id="game-timer"
+        style="display: none"
+        aria-live="polite"
+      >
         <div class="timer-bar-bg">
           <div class="timer-bar-fill" id="timer-fill"></div>
         </div>
@@ -1202,13 +1607,45 @@
       </div>
 
       <!-- ── Conteúdo da fase (renderizado por JS) ─────────── -->
-      <div class="phase-card" id="phase-card" role="region" aria-live="polite"></div>
-
+      <div
+        class="phase-card"
+        id="phase-card"
+        role="region"
+        aria-live="polite"
+      ></div>
     </div>
 
     <!-- ═══════════════════════════════════════════════════════
          SCRIPT
     ════════════════════════════════════════════════════════ -->
+    <!-- ── Chat: botão flutuante + painel ──────────────────── -->
+    <button
+      class="chat-toggle-btn"
+      id="chat-toggle-btn"
+      title="Chat do time"
+      aria-label="Chat do time"
+    >
+      💬
+      <span class="chat-unread-dot" id="chat-unread-dot"></span>
+    </button>
+
+    <div class="chat-panel hidden" id="chat-panel" aria-label="Chat do time">
+      <div class="chat-header" id="chat-header">💬 Chat do Time</div>
+      <div class="chat-msgs" id="chat-msgs"></div>
+      <div class="chat-input-row">
+        <input
+          type="text"
+          id="chat-input"
+          placeholder="Mensagem…"
+          maxlength="120"
+          autocomplete="off"
+          autocorrect="off"
+          spellcheck="false"
+        />
+        <button class="chat-send-btn" id="chat-send-btn">→</button>
+      </div>
+    </div>
+
     <script>
       // ── Supabase config ──────────────────────────────────────
       // TODO: cole sua anon key pública aqui.
@@ -1602,7 +2039,9 @@
           },
           ({ new: newRoom }) => {
             S.room = newRoom;
-            const inGame = document.getElementById("view-game")?.classList.contains("active");
+            const inGame = document
+              .getElementById("view-game")
+              ?.classList.contains("active");
             if (newRoom.status === "playing" || newRoom.status === "finished") {
               if (!inGame) {
                 handleGameStart();
@@ -1620,6 +2059,25 @@
         S.channel.on("broadcast", { event: "feedback" }, ({ payload }) => {
           G_feedbackData = payload;
           renderGamePhase();
+        });
+
+        // Broadcast: power-up usado
+        S.channel.on("broadcast", { event: "power_use" }, ({ payload }) => {
+          // Atualiza powerups no state local (o DB update já ocorreu, mas Realtime pode demorar)
+          applyFxLocal(payload);
+        });
+
+        // Broadcast: chat do time
+        S.channel.on("broadcast", { event: "chat_A" }, ({ payload }) => {
+          if (S.myTeam === "A" || S.myTeam === "spec") receiveChatMsg(payload);
+        });
+        S.channel.on("broadcast", { event: "chat_B" }, ({ payload }) => {
+          if (S.myTeam === "B" || S.myTeam === "spec") receiveChatMsg(payload);
+        });
+
+        // Broadcast: reação de espectador
+        S.channel.on("broadcast", { event: "react" }, ({ payload }) => {
+          showFloatingReact(payload.emoji);
         });
 
         // Subscribe e rastreia presença
@@ -1916,111 +2374,355 @@
       function handleGameStart() {
         showView("view-game");
         subscribeGameExtensions(S.roomId);
-        refreshProposals().then(() => refreshVotes()).then(() => renderGamePhase());
+        initChat();
+        refreshProposals()
+          .then(() => refreshVotes())
+          .then(() => renderGamePhase());
       }
 
       // ─────────────────────────────────────────────────────────
       // LETTERS + GLYPH (portado de index.html)
       // ─────────────────────────────────────────────────────────
       const LETTERS = {
-        A:{paths:["M 5 200 L 100 0 L 195 200","M 0 100 L 200 100"],lc:"butt",lj:"miter"},
-        B:{paths:["M 5.0 5.0 L 177.0 5.0 L 195.0 23.0 L 195.0 82.0 L 177.0 100.0 L 5.0 100.0 L 177.0 100.0 L 195.0 118.0 L 195.0 177.0 L 177.0 195.0 L 5.0 195.0 Z","M 5.0 5.0 L 5.0 195.0"],lc:"square",lj:"miter",ml:6},
-        C:{paths:["M 200.0 5.0 L 0.0 5.0 M 5.0 5.0 L 5.0 195.0 M 0.0 195.0 L 200.0 195.0"],lc:"butt",lj:"miter"},
-        D:{paths:["M 5.0 5.0 L 177.0 5.0 L 195.0 23.0 L 195.0 177.0 L 177.0 195.0 L 5.0 195.0 Z"],lc:"butt",lj:"miter"},
-        E:{paths:["M 5.0 0.0 L 5.0 200.0 M 0.0 5.0 L 200.0 5.0 M 0.0 100.0 L 200.0 100.0 M 0.0 195.0 L 200.0 195.0"],lc:"butt",lj:"miter"},
-        F:{paths:["M 5.0 0.0 L 5.0 200.0 M 0.0 5.0 L 200.0 5.0 M 0.0 100.0 L 200.0 100.0"],lc:"butt",lj:"miter"},
-        G:{paths:["M 195.0 100.0 L 195.0 195.0 L 5.0 195.0 L 5.0 5.0 L 195.0 5.0","M 100.0 100.0 L 195.0 100.0"],lc:"square",lj:"miter",ml:6},
-        H:{paths:["M 5.0 0.0 L 5.0 200.0 M 195.0 0.0 L 195.0 200.0 M 0.0 100.0 L 200.0 100.0"],lc:"butt",lj:"miter"},
-        I:{paths:["M 0.0 5.0 L 200.0 5.0 M 100.0 0.0 L 100.0 200.0 M 0.0 195.0 L 200.0 195.0"],lc:"butt",lj:"miter"},
-        J:{paths:["M 195.0 0.0 L 195.0 200.0 M 0.0 195.0 L 200.0 195.0 M 5.0 195.0 L 5.0 100.0"],lc:"butt",lj:"miter"},
-        K:{paths:["M 5 0 L 5 200","M 5 100 L 100 100","M 100 100 L 195 5","M 100 100 L 195 195"],lc:"butt",lj:"bevel"},
-        L:{paths:["M 5.0 0.0 L 5.0 195.0 L 200.0 195.0"],lc:"butt",lj:"miter"},
-        M:{paths:["M 5.0 195.0 L 5.0 5.0 L 97.5 97.5 L 102.5 97.5 L 195.0 5.0 L 195.0 195.0","M 100.0 97.5 L 100.0 100.0"],lc:"square",lj:"miter",ml:6},
-        N:{paths:["M 5.0 200.0 L 5.0 5.0 L 195.0 195.0 L 195.0 200.0","M 5.0 5.0 L 5.0 0.0","M 195.0 195.0 L 195.0 0.0"],lc:"butt",lj:"bevel"},
-        O:{paths:["M 23.0 5.0 L 177.0 5.0 L 195.0 23.0 L 195.0 177.0 L 177.0 195.0 L 23.0 195.0 L 5.0 177.0 L 5.0 23.0 Z"],lc:"butt",lj:"miter",ml:8},
-        P:{paths:["M 5.0 0.0 L 5.0 200.0","M 5.0 5.0 L 195.0 5.0 L 195.0 100.0 L 5.0 100.0"],lc:"butt",lj:"miter"},
-        Q:{paths:["M 23.0 5.0 L 177.0 5.0 L 195.0 23.0 L 195.0 177.0 L 177.0 195.0 L 23.0 195.0 L 5.0 177.0 L 5.0 23.0 Z","M 100.0 100.0 L 195.0 195.0"],lc:"butt",lj:"miter",ml:8},
-        R:{paths:["M 5.0 0.0 L 5.0 200.0","M 5.0 5.0 L 195.0 5.0 L 195.0 100.0 L 5.0 100.0","M 100.0 100.0 L 195.0 195.0"],lc:"butt",lj:"bevel"},
-        S:{paths:["M 200.0 5.0 L 0.0 5.0 M 5.0 5.0 L 5.0 100.0 M 0.0 100.0 L 200.0 100.0 M 195.0 100.0 L 195.0 195.0 M 0.0 195.0 L 200.0 195.0"],lc:"butt",lj:"miter"},
-        T:{paths:["M 0.0 5.0 L 200.0 5.0 M 100.0 0.0 L 100.0 200.0"],lc:"butt",lj:"miter"},
-        U:{paths:["M 5.0 0.0 L 5.0 200.0","M 195.0 0.0 L 195.0 200.0","M 5.0 195.0 L 195.0 195.0"],lc:"butt",lj:"miter"},
-        V:{paths:["M 5 0 L 100 200 L 195 0"],lc:"butt",lj:"miter"},
-        W:{paths:["M 5.0 195.0 L 5.0 5.0 L 97.5 97.5 L 102.5 97.5 L 195.0 5.0 L 195.0 195.0","M 100.0 97.5 L 100.0 100.0"],lc:"square",lj:"miter",ml:6,transform:"translate(0 200) scale(1 -1)"},
-        X:{paths:["M 5.0 5.0 L 195.0 195.0 M 195.0 5.0 L 5.0 195.0"],lc:"butt",lj:"bevel"},
-        Y:{paths:["M 5.0 5.0 L 100.0 100.0 L 195.0 5.0","M 100.0 100.0 L 100.0 200.0"],lc:"butt",lj:"bevel"},
-        Z:{paths:["M 5.0 5.0 L 195.0 5.0 L 5.0 195.0 L 195.0 195.0"],lc:"butt",lj:"bevel"},
+        A: {
+          paths: ["M 5 200 L 100 0 L 195 200", "M 0 100 L 200 100"],
+          lc: "butt",
+          lj: "miter",
+        },
+        B: {
+          paths: [
+            "M 5.0 5.0 L 177.0 5.0 L 195.0 23.0 L 195.0 82.0 L 177.0 100.0 L 5.0 100.0 L 177.0 100.0 L 195.0 118.0 L 195.0 177.0 L 177.0 195.0 L 5.0 195.0 Z",
+            "M 5.0 5.0 L 5.0 195.0",
+          ],
+          lc: "square",
+          lj: "miter",
+          ml: 6,
+        },
+        C: {
+          paths: [
+            "M 200.0 5.0 L 0.0 5.0 M 5.0 5.0 L 5.0 195.0 M 0.0 195.0 L 200.0 195.0",
+          ],
+          lc: "butt",
+          lj: "miter",
+        },
+        D: {
+          paths: [
+            "M 5.0 5.0 L 177.0 5.0 L 195.0 23.0 L 195.0 177.0 L 177.0 195.0 L 5.0 195.0 Z",
+          ],
+          lc: "butt",
+          lj: "miter",
+        },
+        E: {
+          paths: [
+            "M 5.0 0.0 L 5.0 200.0 M 0.0 5.0 L 200.0 5.0 M 0.0 100.0 L 200.0 100.0 M 0.0 195.0 L 200.0 195.0",
+          ],
+          lc: "butt",
+          lj: "miter",
+        },
+        F: {
+          paths: [
+            "M 5.0 0.0 L 5.0 200.0 M 0.0 5.0 L 200.0 5.0 M 0.0 100.0 L 200.0 100.0",
+          ],
+          lc: "butt",
+          lj: "miter",
+        },
+        G: {
+          paths: [
+            "M 195.0 100.0 L 195.0 195.0 L 5.0 195.0 L 5.0 5.0 L 195.0 5.0",
+            "M 100.0 100.0 L 195.0 100.0",
+          ],
+          lc: "square",
+          lj: "miter",
+          ml: 6,
+        },
+        H: {
+          paths: [
+            "M 5.0 0.0 L 5.0 200.0 M 195.0 0.0 L 195.0 200.0 M 0.0 100.0 L 200.0 100.0",
+          ],
+          lc: "butt",
+          lj: "miter",
+        },
+        I: {
+          paths: [
+            "M 0.0 5.0 L 200.0 5.0 M 100.0 0.0 L 100.0 200.0 M 0.0 195.0 L 200.0 195.0",
+          ],
+          lc: "butt",
+          lj: "miter",
+        },
+        J: {
+          paths: [
+            "M 195.0 0.0 L 195.0 200.0 M 0.0 195.0 L 200.0 195.0 M 5.0 195.0 L 5.0 100.0",
+          ],
+          lc: "butt",
+          lj: "miter",
+        },
+        K: {
+          paths: [
+            "M 5 0 L 5 200",
+            "M 5 100 L 100 100",
+            "M 100 100 L 195 5",
+            "M 100 100 L 195 195",
+          ],
+          lc: "butt",
+          lj: "bevel",
+        },
+        L: {
+          paths: ["M 5.0 0.0 L 5.0 195.0 L 200.0 195.0"],
+          lc: "butt",
+          lj: "miter",
+        },
+        M: {
+          paths: [
+            "M 5.0 195.0 L 5.0 5.0 L 97.5 97.5 L 102.5 97.5 L 195.0 5.0 L 195.0 195.0",
+            "M 100.0 97.5 L 100.0 100.0",
+          ],
+          lc: "square",
+          lj: "miter",
+          ml: 6,
+        },
+        N: {
+          paths: [
+            "M 5.0 200.0 L 5.0 5.0 L 195.0 195.0 L 195.0 200.0",
+            "M 5.0 5.0 L 5.0 0.0",
+            "M 195.0 195.0 L 195.0 0.0",
+          ],
+          lc: "butt",
+          lj: "bevel",
+        },
+        O: {
+          paths: [
+            "M 23.0 5.0 L 177.0 5.0 L 195.0 23.0 L 195.0 177.0 L 177.0 195.0 L 23.0 195.0 L 5.0 177.0 L 5.0 23.0 Z",
+          ],
+          lc: "butt",
+          lj: "miter",
+          ml: 8,
+        },
+        P: {
+          paths: [
+            "M 5.0 0.0 L 5.0 200.0",
+            "M 5.0 5.0 L 195.0 5.0 L 195.0 100.0 L 5.0 100.0",
+          ],
+          lc: "butt",
+          lj: "miter",
+        },
+        Q: {
+          paths: [
+            "M 23.0 5.0 L 177.0 5.0 L 195.0 23.0 L 195.0 177.0 L 177.0 195.0 L 23.0 195.0 L 5.0 177.0 L 5.0 23.0 Z",
+            "M 100.0 100.0 L 195.0 195.0",
+          ],
+          lc: "butt",
+          lj: "miter",
+          ml: 8,
+        },
+        R: {
+          paths: [
+            "M 5.0 0.0 L 5.0 200.0",
+            "M 5.0 5.0 L 195.0 5.0 L 195.0 100.0 L 5.0 100.0",
+            "M 100.0 100.0 L 195.0 195.0",
+          ],
+          lc: "butt",
+          lj: "bevel",
+        },
+        S: {
+          paths: [
+            "M 200.0 5.0 L 0.0 5.0 M 5.0 5.0 L 5.0 100.0 M 0.0 100.0 L 200.0 100.0 M 195.0 100.0 L 195.0 195.0 M 0.0 195.0 L 200.0 195.0",
+          ],
+          lc: "butt",
+          lj: "miter",
+        },
+        T: {
+          paths: ["M 0.0 5.0 L 200.0 5.0 M 100.0 0.0 L 100.0 200.0"],
+          lc: "butt",
+          lj: "miter",
+        },
+        U: {
+          paths: [
+            "M 5.0 0.0 L 5.0 200.0",
+            "M 195.0 0.0 L 195.0 200.0",
+            "M 5.0 195.0 L 195.0 195.0",
+          ],
+          lc: "butt",
+          lj: "miter",
+        },
+        V: { paths: ["M 5 0 L 100 200 L 195 0"], lc: "butt", lj: "miter" },
+        W: {
+          paths: [
+            "M 5.0 195.0 L 5.0 5.0 L 97.5 97.5 L 102.5 97.5 L 195.0 5.0 L 195.0 195.0",
+            "M 100.0 97.5 L 100.0 100.0",
+          ],
+          lc: "square",
+          lj: "miter",
+          ml: 6,
+          transform: "translate(0 200) scale(1 -1)",
+        },
+        X: {
+          paths: ["M 5.0 5.0 L 195.0 195.0 M 195.0 5.0 L 5.0 195.0"],
+          lc: "butt",
+          lj: "bevel",
+        },
+        Y: {
+          paths: [
+            "M 5.0 5.0 L 100.0 100.0 L 195.0 5.0",
+            "M 100.0 100.0 L 100.0 200.0",
+          ],
+          lc: "butt",
+          lj: "bevel",
+        },
+        Z: {
+          paths: ["M 5.0 5.0 L 195.0 5.0 L 5.0 195.0 L 195.0 195.0"],
+          lc: "butt",
+          lj: "bevel",
+        },
       };
 
-      const GLYPH_COLORS = ["#f5a623","#7c8cff","#4a9d6f","#e07b7b","#a87cdf","#5bc8c8","#e0a04d"];
+      const GLYPH_COLORS = [
+        "#f5a623",
+        "#7c8cff",
+        "#4a9d6f",
+        "#e07b7b",
+        "#a87cdf",
+        "#5bc8c8",
+        "#e0a04d",
+      ];
 
       function makeSVG(letter, color, extraStyle) {
         const def = LETTERS[letter.toUpperCase()];
         if (!def) return null;
         const ns = "http://www.w3.org/2000/svg";
         const svg = document.createElementNS(ns, "svg");
-        svg.setAttribute("viewBox","0 0 200 200");
-        svg.setAttribute("aria-hidden","true");
+        svg.setAttribute("viewBox", "0 0 200 200");
+        svg.setAttribute("aria-hidden", "true");
         if (extraStyle) svg.style.cssText = extraStyle;
-        const g = document.createElementNS(ns,"g");
-        g.setAttribute("fill","none");
-        g.setAttribute("stroke",color);
-        g.setAttribute("stroke-width","10");
-        g.setAttribute("stroke-linecap",def.lc||"butt");
-        g.setAttribute("stroke-linejoin",def.lj||"miter");
-        g.setAttribute("stroke-miterlimit",String(def.ml||4));
-        if (def.transform) g.setAttribute("transform",def.transform);
-        def.paths.forEach(d => {
-          const p = document.createElementNS(ns,"path");
-          p.setAttribute("d",d);
+        const g = document.createElementNS(ns, "g");
+        g.setAttribute("fill", "none");
+        g.setAttribute("stroke", color);
+        g.setAttribute("stroke-width", "10");
+        g.setAttribute("stroke-linecap", def.lc || "butt");
+        g.setAttribute("stroke-linejoin", def.lj || "miter");
+        g.setAttribute("stroke-miterlimit", String(def.ml || 4));
+        if (def.transform) g.setAttribute("transform", def.transform);
+        def.paths.forEach((d) => {
+          const p = document.createElementNS(ns, "path");
+          p.setAttribute("d", d);
           g.appendChild(p);
         });
         svg.appendChild(g);
         return svg;
       }
 
-      function renderGlyph(word, container) {
+      function renderGlyph(word, container, opts = {}) {
         container.innerHTML = "";
         const letters = word.split("");
-        const SIZE = 90, STEP = 13;
+        const SIZE = 90,
+          STEP = 13;
         const total = SIZE + (letters.length - 1) * STEP;
         container.style.position = "relative";
         container.style.width = total + "px";
         container.style.height = total + "px";
+
+        // Névoa: embaralha 2 posições de cor
+        let colors = [...GLYPH_COLORS];
+        if (opts.fog && letters.length >= 2) {
+          const i1 = Math.floor(Math.random() * letters.length);
+          let i2 = (i1 + 1 + Math.floor(Math.random() * (letters.length - 1))) % letters.length;
+          [colors[i1], colors[i2]] = [colors[i2], colors[i1]];
+        }
+
         letters.forEach((letter, i) => {
-          const color = GLYPH_COLORS[i % GLYPH_COLORS.length];
-          const svg = makeSVG(letter, color,
-            `width:${SIZE}px;height:${SIZE}px;position:absolute;top:${i*STEP}px;left:${i*STEP}px;opacity:${Math.min(1, 0.78 + i * 0.04)}`
-          );
-          if (svg) container.appendChild(svg);
+          const color = colors[i % colors.length];
+          // Revelar: mostra letra real em posição revelada
+          const isRevealed = opts.revealSlot === i;
+          const extraStyle = `width:${SIZE}px;height:${SIZE}px;position:absolute;` +
+            `top:${i * STEP}px;left:${i * STEP}px;` +
+            `opacity:${Math.min(1, 0.78 + i * 0.04)};` +
+            (opts.mirror ? `transform:scaleX(-1);transform-origin:center;` : "") +
+            (isRevealed ? `filter:drop-shadow(0 0 6px ${color});` : "");
+          const svg = makeSVG(letter, color, extraStyle);
+          if (svg) {
+            if (isRevealed) {
+              // Agrega badge de letra revelada
+              const badge = document.createElement("div");
+              badge.style.cssText = `position:absolute;top:${i*STEP}px;left:${i*STEP}px;` +
+                `width:${SIZE}px;height:20px;text-align:center;font-size:0.75rem;` +
+                `font-weight:700;color:${color};line-height:20px;pointer-events:none;z-index:10;`;
+              badge.textContent = letter;
+              container.appendChild(badge);
+            }
+            container.appendChild(svg);
+          }
         });
       }
 
       // ─────────────────────────────────────────────────────────
       // ESTADO DO JOGO
       // ─────────────────────────────────────────────────────────
-      let G_proposals       = [];   // arena_proposals do turno atual
-      let G_votes           = {};   // { [proposalId]: [playerIds] }
-      let G_myVote          = null; // proposalId que votei
+      let G_proposals = []; // arena_proposals do turno atual
+      let G_votes = {}; // { [proposalId]: [playerIds] }
+      let G_myVote = null; // proposalId que votei
       let G_proposalSubmitted = false;
-      let G_timerInterval   = null;
-      let G_feedbackData    = null; // { feedback, correct, chosenWord }
+      let G_timerInterval = null;
+      let G_feedbackData = null; // { feedback, correct, chosenWord }
+      let G_roundStartMs = 0; // timestamp quando fase propose começou (para tiebreaker)
+
+      // Power-up state
+      let G_shieldActive = false; // escudo ativado pelo meu time
+      let G_fogActive = false; // névoa aplicada sobre meu time
+      let G_mirrorActive = false; // espelho aplicado sobre meu time
+      let G_hiddenVotes = false; // votos ocultos ativos (para mim)
+      let G_revealSlot = null; // índice do slot revelado por ✨ Revelar
+
+      // Chat
+      let G_chatOpen = false;
+      let G_chatUnread = 0;
+
+      // Catálogo de power-ups
+      const POWERUP_CATALOG = {
+        nevoa:         { emoji: "🌫️", label: "Névoa",          desc: "Embaralha 2 camadas do glifo adversário (30s)" },
+        espelho:       { emoji: "🪞",  label: "Espelho",        desc: "Espelha horizontalmente o glifo adversário (30s)" },
+        relogio:       { emoji: "⏱️",  label: "Relógio",        desc: "Rouba 20s do timer adversário" },
+        votos_ocultos: { emoji: "👁️",  label: "Votos Ocultos",  desc: "Oculta contagem de votos aos adversários (1 rodada)" },
+        revelar:       { emoji: "✨",  label: "Revelar",         desc: "Revela posição de 1 letra no glifo do seu time" },
+        turbo:         { emoji: "⚡",  label: "Turbo",           desc: "+30s no seu timer" },
+        escudo:        { emoji: "🛡️",  label: "Escudo",          desc: "Bloqueia o próximo power-up aplicado pelo adversário" },
+        ultima_chance: { emoji: "🎲",  label: "Última Chance",   desc: "Abre nova fase de proposta para o mesmo glifo" },
+      };
+      const POWERUP_POOL = ["nevoa","espelho","relogio","votos_ocultos","revelar","turbo","escudo"];
 
       // ─────────────────────────────────────────────────────────
       // SUBSCRIÇÕES ADICIONAIS (proposals + votes)
       // ─────────────────────────────────────────────────────────
       function subscribeGameExtensions(roomId) {
-        S.channel.on("postgres_changes",
-          { event: "*", schema: "public", table: "arena_proposals", filter: `room_id=eq.${roomId}` },
-          async () => { await refreshProposals(); renderGamePhase(); }
+        S.channel.on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "arena_proposals",
+            filter: `room_id=eq.${roomId}`,
+          },
+          async () => {
+            await refreshProposals();
+            renderGamePhase();
+          },
         );
-        S.channel.on("postgres_changes",
-          { event: "*", schema: "public", table: "arena_votes", filter: `room_id=eq.${roomId}` },
-          async () => { await refreshVotes(); renderGamePhase(); }
+        S.channel.on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "arena_votes",
+            filter: `room_id=eq.${roomId}`,
+          },
+          async () => {
+            await refreshVotes();
+            renderGamePhase();
+          },
         );
       }
 
       async function refreshProposals() {
-        const { data } = await sb.from("arena_proposals")
+        const { data } = await sb
+          .from("arena_proposals")
           .select("*")
           .eq("room_id", S.roomId)
           .eq("turn_number", S.room?.turn_number ?? 1);
@@ -2028,16 +2730,17 @@
       }
 
       async function refreshVotes() {
-        const { data } = await sb.from("arena_votes")
+        const { data } = await sb
+          .from("arena_votes")
           .select("*")
           .eq("room_id", S.roomId)
           .eq("turn_number", S.room?.turn_number ?? 1);
         G_votes = {};
-        (data || []).forEach(v => {
+        (data || []).forEach((v) => {
           if (!G_votes[v.proposal_id]) G_votes[v.proposal_id] = [];
           G_votes[v.proposal_id].push(v.player_id);
         });
-        const mine = (data || []).find(v => v.player_id === PLAYER_ID);
+        const mine = (data || []).find((v) => v.player_id === PLAYER_ID);
         G_myVote = mine ? mine.proposal_id : null;
       }
 
@@ -2054,9 +2757,12 @@
           let html = "";
           for (let i = 1; i <= 7; i++) {
             const lbl = i <= 2 ? "4L" : i <= 4 ? "5L" : i <= 6 ? "6L" : "7L★";
-            if (i < level)       html += `<div class="level-pip done${suffix}" title="Nível ${i} (${lbl}) — completo"></div>`;
-            else if (i === level) html += `<div class="level-pip cur${suffix}"  title="Nível ${i} (${lbl}) — atual"></div>`;
-            else                  html += `<div class="level-pip"                title="Nível ${i} (${lbl})"></div>`;
+            if (i < level)
+              html += `<div class="level-pip done${suffix}" title="Nível ${i} (${lbl}) — completo"></div>`;
+            else if (i === level)
+              html += `<div class="level-pip cur${suffix}"  title="Nível ${i} (${lbl}) — atual"></div>`;
+            else
+              html += `<div class="level-pip"                title="Nível ${i} (${lbl})"></div>`;
           }
           el.innerHTML = html;
         }
@@ -2076,24 +2782,43 @@
       function startCountdown(deadlineISO, totalSec, onExpire) {
         stopCountdown();
         const timerEl = document.getElementById("game-timer");
-        const fillEl  = document.getElementById("timer-fill");
-        const numEl   = document.getElementById("timer-num");
+        const fillEl = document.getElementById("timer-fill");
+        const numEl = document.getElementById("timer-num");
         if (!timerEl) return;
         timerEl.style.display = "";
+        let shook = false;
         function tick() {
-          const remaining = Math.max(0, Math.floor((new Date(deadlineISO) - Date.now()) / 1000));
+          const remaining = Math.max(
+            0,
+            Math.floor((new Date(deadlineISO) - Date.now()) / 1000),
+          );
           const pct = totalSec > 0 ? (remaining / totalSec) * 100 : 0;
           numEl.textContent = remaining + "s";
           fillEl.style.width = pct + "%";
           fillEl.classList.toggle("urgent", remaining <= 10);
-          if (remaining === 0) { stopCountdown(); onExpire(); }
+          // Shake de urgência na primeira vez que chega a ≤10s
+          if (remaining <= 10 && remaining > 0 && !shook) {
+            shook = true;
+            const card = document.getElementById("phase-card");
+            if (card) {
+              card.classList.add("shaking");
+              setTimeout(() => card.classList.remove("shaking"), 500);
+            }
+          }
+          if (remaining === 0) {
+            stopCountdown();
+            onExpire();
+          }
         }
         tick();
         G_timerInterval = setInterval(tick, 1000);
       }
 
       function stopCountdown() {
-        if (G_timerInterval) { clearInterval(G_timerInterval); G_timerInterval = null; }
+        if (G_timerInterval) {
+          clearInterval(G_timerInterval);
+          G_timerInterval = null;
+        }
         const el = document.getElementById("game-timer");
         if (el) el.style.display = "none";
       }
@@ -2105,11 +2830,15 @@
         const room = S.room;
         if (!room) return;
         renderScoreboard();
-        if (room.status === "finished" || room.phase === "finished") { renderFinished(); return; }
+        renderPowerUpStrip();
+        if (room.status === "finished" || room.phase === "finished") {
+          renderFinished();
+          return;
+        }
         const phase = room.phase || "between";
-        if      (phase === "between")  renderBetween();
-        else if (phase === "propose")  renderPropose();
-        else if (phase === "vote")     renderVote();
+        if (phase === "between") renderBetween();
+        else if (phase === "propose") renderPropose();
+        else if (phase === "vote") renderVote();
         else if (phase === "feedback") renderFeedback();
       }
 
@@ -2128,16 +2857,22 @@
             ${isMyTurn ? "É a vez do seu time decodificar um glifo!" : "Aguardando o time adversário…"}
           </div>
           <div style="display:flex;flex-direction:column;gap:0.75rem;margin-top:0.5rem">
-            ${S.isHost ? `
+            ${
+              S.isHost
+                ? `
               <button id="btn-start-round" class="btn btn-primary">🎯 Iniciar Rodada</button>
-            ` : `
+            `
+                : `
               <div class="info-msg" style="margin:0;text-align:center">
                 ${isMyTurn ? "Aguardando o host iniciar a rodada…" : "Adversário está se preparando…"}
               </div>
-            `}
+            `
+            }
           </div>
         `;
-        document.getElementById("btn-start-round")?.addEventListener("click", doStartRound);
+        document
+          .getElementById("btn-start-round")
+          ?.addEventListener("click", doStartRound);
       }
 
       // ─── FASE: PROPOSE ────────────────────────────────────────
@@ -2147,39 +2882,65 @@
         const isActiveTeam = turn === S.myTeam;
         const cfg = room.config || {};
         const timerSec = cfg.timer_propose || 45;
-        const myTeamPlayers = S.players.filter(p => p.team === turn);
-        G_proposalSubmitted = G_proposals.some(pr => pr.player_id === PLAYER_ID);
-        const allSent = myTeamPlayers.length > 0 && myTeamPlayers.every(p => G_proposals.some(pr => pr.player_id === p.id));
+        const myTeamPlayers = S.players.filter((p) => p.team === turn);
+        G_proposalSubmitted = G_proposals.some(
+          (pr) => pr.player_id === PLAYER_ID,
+        );
+        const allSent =
+          myTeamPlayers.length > 0 &&
+          myTeamPlayers.every((p) =>
+            G_proposals.some((pr) => pr.player_id === p.id),
+          );
         const myWord = turn === "A" ? room.team_a_word : room.team_b_word;
 
-        const submittedListHtml = myTeamPlayers.map(p => {
-          const sent = G_proposals.some(pr => pr.player_id === p.id);
-          return `<div class="submitted-item" style="${sent ? "" : "opacity:0.45"}">
+        // Capitão de turno
+        const captain = getCaptain(turn);
+        const captainBadge = captain?.id === PLAYER_ID
+          ? `<span class="captain-badge">👑 Capitão</span>`
+          : (captain ? `<span style="font-size:0.72rem;color:var(--text3)"> (capitão: ${escHtml(captain.nickname)})</span>` : "");
+
+        const submittedListHtml = myTeamPlayers
+          .map((p) => {
+            const sent = G_proposals.some((pr) => pr.player_id === p.id);
+            const isCap = captain?.id === p.id;
+            return `<div class="submitted-item" style="${sent ? "" : "opacity:0.45"}">
             <span class="${sent ? "check" : "waiting"}">${sent ? "✓" : "⋯"}</span>
             ${escHtml(p.nickname)}${p.id === PLAYER_ID ? " <em style='color:var(--text3)'>(você)</em>" : ""}
+            ${isCap ? "👑" : ""}
           </div>`;
-        }).join("");
+          })
+          .join("");
 
         const pc = document.getElementById("phase-card");
-        pc.innerHTML = isActiveTeam ? `
+        pc.innerHTML = isActiveTeam
+          ? `
           <div style="text-align:center;font-size:0.82rem;color:var(--text2)">
-            Observe o glifo — escreva sua proposta de palavra
+            Observe o glifo — escreva sua proposta${captainBadge}
           </div>
           <div id="glyph-box" class="glyph-wrap" style="margin:0.25rem auto 0"></div>
           <div class="proposal-input-area">
-            ${!G_proposalSubmitted ? `
+            ${
+              !G_proposalSubmitted
+                ? `
               <input id="proposal-input" type="text" maxlength="9"
                 placeholder="Sua proposta…" autocomplete="off" autocorrect="off" spellcheck="false" />
               <button id="btn-submit-proposal" class="btn btn-primary">✔ Enviar Proposta</button>
-            ` : `
+            `
+                : `
               <div class="info-msg" style="margin:0;text-align:center">✔ Proposta enviada! Aguardando outros…</div>
-            `}
+            `
+            }
           </div>
           <div class="submitted-list">${submittedListHtml}</div>
-          ${S.isHost && allSent ? `
+          ${
+            S.isHost && allSent
+              ? `
             <button id="btn-advance-vote" class="btn btn-secondary">→ Avançar para Votação</button>
-          ` : ""}
-        ` : `
+          `
+              : ""
+          }
+        `
+          : `
           <div class="between-msg" style="font-size:1.1rem">
             ${turn === "A" ? "🟡 Time Âmbar" : "🔵 Time Quartzo"} está decodificando…
           </div>
@@ -2189,26 +2950,42 @@
 
         if (isActiveTeam && myWord) {
           const box = document.getElementById("glyph-box");
-          if (box) renderGlyph(myWord, box);
+          if (box) renderGlyph(myWord, box, { fog: G_fogActive, mirror: G_mirrorActive, revealSlot: G_revealSlot });
         }
 
         const propInput = document.getElementById("proposal-input");
         if (propInput) {
           propInput.addEventListener("input", () => {
-            propInput.value = propInput.value.toUpperCase().replace(/[^A-ZÁÉÍÓÚÂÊÔÃÕÇ]/g,"");
+            propInput.value = propInput.value
+              .toUpperCase()
+              .replace(/[^A-ZÁÉÍÓÚÂÊÔÃÕÇ]/g, "");
           });
-          propInput.addEventListener("keydown", e => { if (e.key === "Enter") document.getElementById("btn-submit-proposal")?.click(); });
+          propInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter")
+              document.getElementById("btn-submit-proposal")?.click();
+          });
           setTimeout(() => propInput.focus(), 50);
         }
-        document.getElementById("btn-submit-proposal")?.addEventListener("click", () => {
-          const w = (document.getElementById("proposal-input")?.value||"").trim().toUpperCase();
-          if (w.length < 2) { toast("Palavra muito curta","error"); return; }
-          doSubmitProposal(w);
-        });
-        document.getElementById("btn-advance-vote")?.addEventListener("click", doAdvanceToVote);
+        document
+          .getElementById("btn-submit-proposal")
+          ?.addEventListener("click", () => {
+            const w = (document.getElementById("proposal-input")?.value || "")
+              .trim()
+              .toUpperCase();
+            if (w.length < 2) {
+              toast("Palavra muito curta", "error");
+              return;
+            }
+            doSubmitProposal(w);
+          });
+        document
+          .getElementById("btn-advance-vote")
+          ?.addEventListener("click", doAdvanceToVote);
 
         if (room.phase_deadline) {
-          startCountdown(room.phase_deadline, timerSec, () => { if (S.isHost) doAdvanceToVote(); });
+          startCountdown(room.phase_deadline, timerSec, () => {
+            if (S.isHost) doAdvanceToVote();
+          });
         }
       }
 
@@ -2226,37 +3003,60 @@
             <div class="between-sub" style="text-align:center">Nenhuma proposta foi enviada neste turno.</div>
             ${S.isHost ? `<button id="btn-skip-vote" class="btn btn-secondary">Pular rodada →</button>` : ""}
           `;
-          document.getElementById("btn-skip-vote")?.addEventListener("click", () => doResolveVote(null));
+          document
+            .getElementById("btn-skip-vote")
+            ?.addEventListener("click", () => doResolveVote(null));
           return;
         }
 
-        const cardsHtml = G_proposals.map(p => {
-          const vc = (G_votes[p.id]||[]).length;
+        const cardsHtml = G_proposals.map((p) => {
+          const vc = (G_votes[p.id] || []).length;
           const isMyV = G_myVote === p.id;
-          return `<div class="vote-card ${isMyV?"my-vote":""}" data-pid="${p.id}">
+          const vcDisplay = G_hiddenVotes ? "? votos" : `${vc} voto${vc !== 1 ? "s" : ""}`;
+          return `<div class="vote-card ${isMyV ? "my-vote" : ""}" data-pid="${p.id}">
             <div class="word">${escHtml(p.word)}</div>
             <div class="proposer">${escHtml(p.nickname)}</div>
-            <div class="vcount">${vc} voto${vc!==1?"s":""}</div>
+            <div class="vcount">${vcDisplay}</div>
           </div>`;
         }).join("");
+
+        const reactionsHtml = S.myTeam === "spec"
+          ? `<div class="reaction-bar">
+              <button class="reaction-btn" data-emoji="🔥" title="Fogo!">🔥</button>
+              <button class="reaction-btn" data-emoji="😮" title="Surpreso!">😮</button>
+              <button class="reaction-btn" data-emoji="👀" title="Atenção!">👀</button>
+             </div>`
+          : "";
 
         pc.innerHTML = `
           <div class="between-sub" style="text-align:center">
             ${isActiveTeam ? "Vote na melhor proposta! Pode votar na própria." : "Time ativo está votando…"}
           </div>
           <div class="vote-cards" id="vote-cards">${cardsHtml}</div>
+          ${reactionsHtml}
           ${S.isHost ? `<button id="btn-resolve" class="btn btn-secondary">→ Resolver Votação</button>` : ""}
         `;
 
+        // Reações de espectador
+        pc.querySelectorAll(".reaction-btn").forEach((btn) => {
+          btn.addEventListener("click", () => sendReact(btn.dataset.emoji));
+        });
+
         if (isActiveTeam || S.myTeam === "spec") {
-          document.querySelectorAll(".vote-card").forEach(card => {
-            card.addEventListener("click", () => doSubmitVote(card.dataset.pid));
+          document.querySelectorAll(".vote-card").forEach((card) => {
+            card.addEventListener("click", () =>
+              doSubmitVote(card.dataset.pid),
+            );
           });
         }
-        document.getElementById("btn-resolve")?.addEventListener("click", () => doResolveVote());
+        document
+          .getElementById("btn-resolve")
+          ?.addEventListener("click", () => doResolveVote());
 
         if (room.phase_deadline) {
-          startCountdown(room.phase_deadline, timerSec, () => { if (S.isHost) doResolveVote(); });
+          startCountdown(room.phase_deadline, timerSec, () => {
+            if (S.isHost) doResolveVote();
+          });
         }
       }
 
@@ -2274,29 +3074,52 @@
 
         const { feedback, correct, chosenWord } = G_feedbackData;
         const targetWord = turn === "A" ? room.team_a_word : room.team_b_word;
-        const slotsHtml = (feedback||[]).map(f =>
-          `<div class="feedback-slot ${f.status}">${f.letter}</div>`
-        ).join("");
+        const slotsHtml = (feedback || [])
+          .map(
+            (f) => `<div class="feedback-slot ${f.status}">${f.letter}</div>`,
+          )
+          .join("");
+
+        // Dispara confete ao acertar
+        if (correct) {
+          burstConfetti(turn === "A" ? "amber" : "quartz");
+        }
+
+        const reactionsHtml = `<div class="reaction-bar">
+          <button class="reaction-btn" data-emoji="🔥" title="Fogo!">🔥</button>
+          <button class="reaction-btn" data-emoji="😮" title="Surpreso!">😮</button>
+          <button class="reaction-btn" data-emoji="👀" title="Atenção!">👀</button>
+        </div>`;
 
         pc.innerHTML = `
-          <div class="outcome-msg ${correct?"win":"fail"}">
+          <div class="outcome-msg ${correct ? "win" : "fail"}">
             ${correct ? "✅ Acertou!" : "❌ Não foi dessa vez"}
           </div>
           <div class="feedback-chosen">
-            Proposta escolhida: <strong>${escHtml(chosenWord||"—")}</strong>
+            Proposta escolhida: <strong>${escHtml(chosenWord || "—")}</strong>
           </div>
           <div class="feedback-slots">${slotsHtml}</div>
           <div class="feedback-chosen" style="margin-top:0.25rem">
-            A palavra era: <strong>${escHtml(targetWord||"?")}</strong>
+            A palavra era: <strong>${escHtml(targetWord || "?")}</strong>
           </div>
-          <div style="font-size:0.82rem;text-align:center;color:${correct?"var(--correct)":"var(--text2)"}">
-            ${correct ? (turn==="A"&&(room.team_a_level||1)>=7)||(turn==="B"&&(room.team_b_level||1)>=7) ? "🏆 Nível máximo!" : "⬆️ Próximo nível!" : "Mantém no mesmo nível."}
+          <div style="font-size:0.82rem;text-align:center;color:${correct ? "var(--correct)" : "var(--text2)"}">
+            ${correct ? ((turn === "A" && (room.team_a_level || 1) >= 7) || (turn === "B" && (room.team_b_level || 1) >= 7) ? "🏆 Nível máximo!" : "⬆️ Próximo nível!") : "Mantém no mesmo nível."}
           </div>
-          ${S.isHost ? `
+          ${reactionsHtml}
+          ${
+            S.isHost
+              ? `
             <button id="btn-next-turn" class="btn btn-primary" style="margin-top:0.5rem">Próximo Turno →</button>
-          ` : `<div class="info-msg" style="margin:0;text-align:center">Aguardando o host avançar…</div>`}
+          `
+              : `<div class="info-msg" style="margin:0;text-align:center">Aguardando o host avançar…</div>`
+          }
         `;
-        document.getElementById("btn-next-turn")?.addEventListener("click", doNextTurn);
+        pc.querySelectorAll(".reaction-btn").forEach((btn) => {
+          btn.addEventListener("click", () => sendReact(btn.dataset.emoji));
+        });
+        document
+          .getElementById("btn-next-turn")
+          ?.addEventListener("click", doNextTurn);
       }
 
       // ─── FASE: FINISHED ───────────────────────────────────────
@@ -2307,38 +3130,74 @@
         const pc = document.getElementById("phase-card");
 
         const emblem = document.getElementById("turn-emblem");
-        if (emblem) { emblem.textContent = "🏁"; emblem.title = "Partida encerrada"; }
+        if (emblem) {
+          emblem.textContent = "🏁";
+          emblem.title = "Partida encerrada";
+        }
 
         let banner, sub;
-        if (w === "A")    { banner = "🏆 Time Âmbar vence!";   sub = "O time amarelo decodificou todos os glifos!"; }
-        else if (w === "B") { banner = "🏆 Time Quartzo vence!"; sub = "O time azul decodificou todos os glifos!"; }
-        else                { banner = "🤝 Empate!";             sub = "Ambos os times chegaram ao mesmo nível."; }
+        if (w === "A") {
+          banner = "🏆 Time Âmbar vence!";
+          sub = "O time amarelo decodificou todos os glifos!";
+        } else if (w === "B") {
+          banner = "🏆 Time Quartzo vence!";
+          sub = "O time azul decodificou todos os glifos!";
+        } else {
+          // Desempate por tempo total gasto (menor = vencedor)
+          const tA = room.team_a_time_ms || 0;
+          const tB = room.team_b_time_ms || 0;
+          if (tA !== tB) {
+            const tiebreakerWinner = tA < tB ? "Âmbar" : "Quartzo";
+            banner = `🏆 ${tiebreakerWinner} vence no desempate!`;
+            sub = `Mesmo nível — critério: tempo total (Âmbar ${(tA/1000).toFixed(1)}s × Quartzo ${(tB/1000).toFixed(1)}s)`;
+          } else {
+            banner = "🤝 Empate!";
+            sub = "Ambos os times chegaram ao mesmo nível e tempo.";
+          }
+        }
+
+        // Confete do vencedor
+        if (w === "A") burstConfetti("amber");
+        else if (w === "B") burstConfetti("quartz");
 
         pc.innerHTML = `
           <div class="winner-banner">${banner}</div>
           <div class="winner-sub">${sub}</div>
           <table class="score-table">
-            <thead><tr><th>Time</th><th>Nível</th><th>Tentativas</th></tr></thead>
+            <thead><tr><th>Time</th><th>Nível</th><th>Tentativas</th><th>Tempo</th></tr></thead>
             <tbody>
               <tr>
                 <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--amber-400);margin-right:5px;vertical-align:middle"></span>Âmbar</td>
-                <td>${Math.min(room.team_a_level||1,7)}/7</td>
-                <td>${room.team_a_attempts||0}</td>
+                <td>${Math.min(room.team_a_level || 1, 7)}/7</td>
+                <td>${room.team_a_attempts || 0}</td>
+                <td>${((room.team_a_time_ms || 0)/1000).toFixed(1)}s</td>
               </tr>
               <tr>
                 <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--quartz);margin-right:5px;vertical-align:middle"></span>Quartzo</td>
-                <td>${Math.min(room.team_b_level||1,7)}/7</td>
-                <td>${room.team_b_attempts||0}</td>
+                <td>${Math.min(room.team_b_level || 1, 7)}/7</td>
+                <td>${room.team_b_attempts || 0}</td>
+                <td>${((room.team_b_time_ms || 0)/1000).toFixed(1)}s</td>
               </tr>
             </tbody>
           </table>
-          ${S.isHost ? `
+          ${
+            S.isHost
+              ? `
             <button id="btn-revanche" class="btn btn-primary">🔄 Revanche</button>
             <button id="btn-end-lobby" class="btn btn-secondary">← Voltar ao lobby</button>
-          ` : `<div class="info-msg" style="margin:0;text-align:center">Aguardando o host…</div>`}
+          `
+              : `<div class="info-msg" style="margin:0;text-align:center">Aguardando o host…</div>`
+          }
         `;
-        document.getElementById("btn-revanche")?.addEventListener("click", doRevanche);
-        document.getElementById("btn-end-lobby")?.addEventListener("click", () => { showView("view-lobby"); renderLobby(); });
+        document
+          .getElementById("btn-revanche")
+          ?.addEventListener("click", doRevanche);
+        document
+          .getElementById("btn-end-lobby")
+          ?.addEventListener("click", () => {
+            showView("view-lobby");
+            renderLobby();
+          });
       }
 
       // ─────────────────────────────────────────────────────────
@@ -2347,59 +3206,138 @@
 
       // Fallback client-side (se edge function falhar)
       function twoPassClient(guess, target) {
-        const g = guess.toUpperCase(), t = target.toUpperCase();
-        const fb = g.split("").map(l => ({ letter: l, status: "absent" }));
+        const g = guess.toUpperCase(),
+          t = target.toUpperCase();
+        const fb = g.split("").map((l) => ({ letter: l, status: "absent" }));
         const avail = {};
-        for (const l of t) avail[l] = (avail[l]||0) + 1;
+        for (const l of t) avail[l] = (avail[l] || 0) + 1;
         for (let i = 0; i < g.length; i++) {
-          if (g[i] === t[i]) { fb[i].status = "correct"; avail[g[i]]--; }
-        }
-        for (let i = 0; i < g.length; i++) {
-          if (fb[i].status !== "correct" && (avail[g[i]]||0) > 0) {
-            fb[i].status = "present"; avail[g[i]]--;
+          if (g[i] === t[i]) {
+            fb[i].status = "correct";
+            avail[g[i]]--;
           }
         }
-        return { feedback: fb, correct: fb.every(f => f.status === "correct") };
+        for (let i = 0; i < g.length; i++) {
+          if (fb[i].status !== "correct" && (avail[g[i]] || 0) > 0) {
+            fb[i].status = "present";
+            avail[g[i]]--;
+          }
+        }
+        return {
+          feedback: fb,
+          correct: fb.every((f) => f.status === "correct"),
+        };
       }
 
       async function doStartRound() {
         if (!S.isHost || S.busy) return;
         S.busy = true;
         const btn = document.getElementById("btn-start-round");
-        if (btn) { btn.disabled = true; btn.textContent = "⏳ Sorteando…"; }
+        if (btn) {
+          btn.disabled = true;
+          btn.textContent = "⏳ Sorteando…";
+        }
 
         const turn = S.room.current_turn;
-        G_proposals = []; G_votes = {}; G_myVote = null;
-        G_proposalSubmitted = false; G_feedbackData = null;
+        G_proposals = [];
+        G_votes = {};
+        G_myVote = null;
+        G_proposalSubmitted = false;
+        G_feedbackData = null;
 
         // Chama arena-word; fallback client-side se falhar
         try {
           const resp = await fetch(`${SUPA_URL}/functions/v1/arena-word`, {
             method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${SUPA_KEY}` },
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${SUPA_KEY}`,
+            },
             body: JSON.stringify({ roomId: S.roomId, team: turn }),
           });
           if (!resp.ok) throw new Error("arena-word error");
         } catch {
           // Fallback: sorteia localmente e salva no DB
-          const level = turn === "A" ? (S.room.team_a_level||1) : (S.room.team_b_level||1);
-          const pool  = level<=2?"facil":level<=4?"medio":level<=6?"dificil":"muito_dificil";
+          const level =
+            turn === "A" ? S.room.team_a_level || 1 : S.room.team_b_level || 1;
+          const pool =
+            level <= 2
+              ? "facil"
+              : level <= 4
+                ? "medio"
+                : level <= 6
+                  ? "dificil"
+                  : "muito_dificil";
           const lists = {
-            facil:["CASA","MESA","BOLA","FOGO","AMOR","VIDA","ROSA","LUPA","CAMA","LAGO","PELE","VELA","MEDO","GUIA","ILHA"],
-            medio:["CAMPO","CARTA","ORDEM","TERRA","SONHO","PEDRA","MONTE","CHUVA","FORCA","TEMPO","NOITE","PRAIA","FESTA"],
-            dificil:["JARDIM","CIDADE","SONETO","PRISMA","ESCUDO","FRENTE","HEROIS","MAXIMO","SANGUE"],
-            muito_dificil:["VITORIA","MEMORIA","SISTEMA","EMPRESA","FAMILIA","PALAVRA","DECISAO","CORAGEM"],
+            facil: [
+              "CASA",
+              "MESA",
+              "BOLA",
+              "FOGO",
+              "AMOR",
+              "VIDA",
+              "ROSA",
+              "LUPA",
+              "CAMA",
+              "LAGO",
+              "PELE",
+              "VELA",
+              "MEDO",
+              "GUIA",
+              "ILHA",
+            ],
+            medio: [
+              "CAMPO",
+              "CARTA",
+              "ORDEM",
+              "TERRA",
+              "SONHO",
+              "PEDRA",
+              "MONTE",
+              "CHUVA",
+              "FORCA",
+              "TEMPO",
+              "NOITE",
+              "PRAIA",
+              "FESTA",
+            ],
+            dificil: [
+              "JARDIM",
+              "CIDADE",
+              "SONETO",
+              "PRISMA",
+              "ESCUDO",
+              "FRENTE",
+              "HEROIS",
+              "MAXIMO",
+              "SANGUE",
+            ],
+            muito_dificil: [
+              "VITORIA",
+              "MEMORIA",
+              "SISTEMA",
+              "EMPRESA",
+              "FAMILIA",
+              "PALAVRA",
+              "DECISAO",
+              "CORAGEM",
+            ],
           };
-          const lista = lists[pool]||lists.facil;
-          const word  = lista[Math.floor(Math.random()*lista.length)];
-          const field = turn==="A"?{team_a_word:word}:{team_b_word:word};
-          await sb.from("arena_rooms").update(field).eq("id",S.roomId);
+          const lista = lists[pool] || lists.facil;
+          const word = lista[Math.floor(Math.random() * lista.length)];
+          const field =
+            turn === "A" ? { team_a_word: word } : { team_b_word: word };
+          await sb.from("arena_rooms").update(field).eq("id", S.roomId);
         }
 
         const cfg = S.room.config || {};
         const timerSec = cfg.timer_propose || 45;
         const deadline = new Date(Date.now() + timerSec * 1000).toISOString();
-        await sb.from("arena_rooms").update({ phase: "propose", phase_deadline: deadline }).eq("id", S.roomId);
+        G_roundStartMs = Date.now(); // para tiebreaker e ganho de power-ups
+        await sb
+          .from("arena_rooms")
+          .update({ phase: "propose", phase_deadline: deadline })
+          .eq("id", S.roomId);
         S.busy = false;
       }
 
@@ -2414,8 +3352,12 @@
           nickname: S.nick,
           word,
         });
-        if (error) { G_proposalSubmitted = false; toast("Erro ao enviar proposta","error"); return; }
-        toast("Proposta enviada! ✔","success");
+        if (error) {
+          G_proposalSubmitted = false;
+          toast("Erro ao enviar proposta", "error");
+          return;
+        }
+        toast("Proposta enviada! ✔", "success");
         await refreshProposals();
         renderGamePhase();
       }
@@ -2427,7 +3369,10 @@
         const cfg = S.room.config || {};
         const timerSec = cfg.timer_vote || 20;
         const deadline = new Date(Date.now() + timerSec * 1000).toISOString();
-        await sb.from("arena_rooms").update({ phase: "vote", phase_deadline: deadline }).eq("id", S.roomId);
+        await sb
+          .from("arena_rooms")
+          .update({ phase: "vote", phase_deadline: deadline })
+          .eq("id", S.roomId);
         S.busy = false;
       }
 
@@ -2450,49 +3395,105 @@
         stopCountdown();
 
         // Escolhe proposta com mais votos (tie → aleatório; sem votos → aleatório)
-        let chosen = (forcedId !== undefined) ? forcedId : null;
+        let chosen = forcedId !== undefined ? forcedId : null;
         if (chosen === null && G_proposals.length > 0) {
-          let best = null, bestCt = -1;
-          G_proposals.forEach(pr => {
-            const n = (G_votes[pr.id]||[]).length;
-            if (n > bestCt || (n === bestCt && Math.random() < 0.5)) { bestCt = n; best = pr; }
+          let best = null,
+            bestCt = -1;
+          G_proposals.forEach((pr) => {
+            const n = (G_votes[pr.id] || []).length;
+            if (n > bestCt || (n === bestCt && Math.random() < 0.5)) {
+              bestCt = n;
+              best = pr;
+            }
           });
-          chosen = best?.id ?? G_proposals[Math.floor(Math.random()*G_proposals.length)]?.id ?? null;
+          chosen =
+            best?.id ??
+            G_proposals[Math.floor(Math.random() * G_proposals.length)]?.id ??
+            null;
         }
 
-        const chosenProp = G_proposals.find(p => p.id === chosen);
-        const guessWord  = chosenProp?.word || "";
+        const chosenProp = G_proposals.find((p) => p.id === chosen);
+        const guessWord = chosenProp?.word || "";
         let feedback, correct, word;
 
         try {
           const resp = await fetch(`${SUPA_URL}/functions/v1/arena-result`, {
             method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${SUPA_KEY}` },
-            body: JSON.stringify({ roomId: S.roomId, team: S.room.current_turn, guess: guessWord, turnNumber: S.room.turn_number||1 }),
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${SUPA_KEY}`,
+            },
+            body: JSON.stringify({
+              roomId: S.roomId,
+              team: S.room.current_turn,
+              guess: guessWord,
+              turnNumber: S.room.turn_number || 1,
+            }),
           });
           if (!resp.ok) throw new Error();
           ({ feedback, correct, word } = await resp.json());
         } catch {
           // Fallback client-side
           const turn = S.room.current_turn;
-          word = turn==="A" ? S.room.team_a_word : S.room.team_b_word;
-          ({ feedback, correct } = twoPassClient(guessWord, word||""));
+          word = turn === "A" ? S.room.team_a_word : S.room.team_b_word;
+          ({ feedback, correct } = twoPassClient(guessWord, word || ""));
           const updates = { phase: "feedback" };
-          if (turn==="A") {
-            updates.team_a_attempts = (S.room.team_a_attempts||0) + 1;
-            if (correct) { const nl=(S.room.team_a_level||1)+1; updates.team_a_level=nl; if(nl>7){updates.winner="A";updates.status="finished";updates.phase="finished";} }
+          if (turn === "A") {
+            updates.team_a_attempts = (S.room.team_a_attempts || 0) + 1;
+            if (correct) {
+              const nl = (S.room.team_a_level || 1) + 1;
+              updates.team_a_level = nl;
+              if (nl > 7) {
+                updates.winner = "A";
+                updates.status = "finished";
+                updates.phase = "finished";
+              }
+            }
           } else {
-            updates.team_b_attempts = (S.room.team_b_attempts||0) + 1;
-            if (correct) { const nl=(S.room.team_b_level||1)+1; updates.team_b_level=nl; if(nl>7){updates.winner="B";updates.status="finished";updates.phase="finished";} }
+            updates.team_b_attempts = (S.room.team_b_attempts || 0) + 1;
+            if (correct) {
+              const nl = (S.room.team_b_level || 1) + 1;
+              updates.team_b_level = nl;
+              if (nl > 7) {
+                updates.winner = "B";
+                updates.status = "finished";
+                updates.phase = "finished";
+              }
+            }
           }
           await sb.from("arena_rooms").update(updates).eq("id", S.roomId);
         }
 
         G_feedbackData = { feedback, correct, chosenWord: guessWord };
+
+        // Rastreia tempo gasto neste turno para tiebreaker
+        if (G_roundStartMs > 0) {
+          const timeUsedMs = Date.now() - G_roundStartMs;
+          const turn = S.room.current_turn;
+          const timeField = turn === "A" ? "team_a_time_ms" : "team_b_time_ms";
+          const prev = turn === "A" ? (S.room.team_a_time_ms || 0) : (S.room.team_b_time_ms || 0);
+          await sb.from("arena_rooms")
+            .update({ [timeField]: prev + timeUsedMs })
+            .eq("id", S.roomId);
+          G_roundStartMs = 0;
+        }
+
+        // Ganho de power-ups (host aplica)
+        if (S.isHost && (S.room.config?.powerups !== false)) {
+          await earnPowerUps(correct);
+        }
+
         // Broadcast para todos os clientes (não host verão pelo broadcast)
-        S.channel?.send({ type: "broadcast", event: "feedback", payload: G_feedbackData });
+        S.channel?.send({
+          type: "broadcast",
+          event: "feedback",
+          payload: G_feedbackData,
+        });
         // Garante fase feedback no DB (arena-result já fez, mas re-confirma)
-        await sb.from("arena_rooms").update({ phase: "feedback" }).eq("id", S.roomId);
+        await sb
+          .from("arena_rooms")
+          .update({ phase: "feedback" })
+          .eq("id", S.roomId);
         S.busy = false;
         renderGamePhase();
       }
@@ -2500,28 +3501,67 @@
       async function doNextTurn() {
         if (!S.isHost || S.busy) return;
         S.busy = true;
-        G_feedbackData = null; G_proposals = []; G_votes = {}; G_myVote = null; G_proposalSubmitted = false;
+        G_feedbackData = null;
+        G_proposals = [];
+        G_votes = {};
+        G_myVote = null;
+        G_proposalSubmitted = false;
+        // Reseta efeitos por turno
+        G_fogActive = false;
+        G_mirrorActive = false;
+        G_hiddenVotes = false;
+        G_revealSlot = null;
         const nextTurn = S.room.current_turn === "A" ? "B" : "A";
-        const nextTurnNum = (S.room.turn_number||1) + 1;
-        await sb.from("arena_rooms").update({
-          phase: "between", phase_deadline: null,
-          current_turn: nextTurn, turn_number: nextTurnNum,
-        }).eq("id", S.roomId);
+        const nextTurnNum = (S.room.turn_number || 1) + 1;
+        await sb
+          .from("arena_rooms")
+          .update({
+            phase: "between",
+            phase_deadline: null,
+            current_turn: nextTurn,
+            turn_number: nextTurnNum,
+          })
+          .eq("id", S.roomId);
         S.busy = false;
       }
 
       async function doRevanche() {
         if (!S.isHost || S.busy) return;
         S.busy = true;
-        G_feedbackData = null; G_proposals = []; G_votes = {}; G_myVote = null; G_proposalSubmitted = false;
-        await sb.from("arena_rooms").update({
-          status: "playing", phase: "between", phase_deadline: null,
-          current_turn: "A", turn_number: 1,
-          team_a_level: 1, team_b_level: 1,
-          team_a_attempts: 0, team_b_attempts: 0,
-          team_a_word: null, team_b_word: null,
-          winner: null,
-        }).eq("id", S.roomId);
+        G_feedbackData = null;
+        G_proposals = [];
+        G_votes = {};
+        G_myVote = null;
+        G_proposalSubmitted = false;
+        await sb
+          .from("arena_rooms")
+          .update({
+            status: "playing",
+            phase: "between",
+            phase_deadline: null,
+            current_turn: "A",
+            turn_number: 1,
+            team_a_level: 1,
+            team_b_level: 1,
+            team_a_attempts: 0,
+            team_b_attempts: 0,
+            team_a_time_ms: 0,
+            team_b_time_ms: 0,
+            team_a_powerups: [],
+            team_b_powerups: [],
+            active_fx: {},
+            team_a_word: null,
+            team_b_word: null,
+            winner: null,
+          })
+          .eq("id", S.roomId);
+        // Reseta efeitos locais
+        G_shieldActive = false;
+        G_fogActive = false;
+        G_mirrorActive = false;
+        G_hiddenVotes = false;
+        G_revealSlot = null;
+        G_roundStartMs = 0;
         S.busy = false;
       }
 
@@ -2534,10 +3574,12 @@
           showView("view-welcome");
         });
 
-      document.getElementById("btn-lobby-back").addEventListener("click", () => {
-        showView("view-lobby");
-        renderLobby();
-      });
+      document
+        .getElementById("btn-lobby-back")
+        .addEventListener("click", () => {
+          showView("view-lobby");
+          renderLobby();
+        });
 
       async function leaveRoom() {
         if (S.channel) {
@@ -2566,6 +3608,385 @@
       window.addEventListener("pagehide", () => {
         if (S.channel) sb.removeChannel(S.channel);
       });
+
+      // ─────────────────────────────────────────────────────────
+      // CAPITÃO DE TURNO
+      // ─────────────────────────────────────────────────────────
+      function getCaptain(team) {
+        const teamPlayers = S.players
+          .filter((p) => p.team === team)
+          .sort((a, b) => new Date(a.joined_at) - new Date(b.joined_at));
+        if (!teamPlayers.length) return null;
+        const idx = (S.room?.turn_number || 1) % teamPlayers.length;
+        return teamPlayers[idx];
+      }
+
+      // ─────────────────────────────────────────────────────────
+      // POWER-UPS
+      // ─────────────────────────────────────────────────────────
+      function renderPowerUpStrip() {
+        const strip = document.getElementById("powerup-strip");
+        if (!strip || !S.room) return;
+        const cfg = S.room.config || {};
+        if (!cfg.powerups || S.myTeam === "spec") {
+          strip.innerHTML = "";
+          return;
+        }
+        const myTeam = S.myTeam;
+        const myPus = (myTeam === "A" ? S.room.team_a_powerups : S.room.team_b_powerups) || [];
+        const oppPus = (myTeam === "A" ? S.room.team_b_powerups : S.room.team_a_powerups) || [];
+
+        // Agrupa por tipo
+        const countMy = {}, countOpp = {};
+        myPus.forEach((t) => { countMy[t] = (countMy[t] || 0) + 1; });
+        oppPus.forEach((t) => { countOpp[t] = (countOpp[t] || 0) + 1; });
+
+        // Só pode usar durante propose ou vote, e o turno é do meu time (ou poderes próprios)
+        const phase = S.room.phase;
+        const isMyTurn = S.room.current_turn === myTeam;
+        const canUse = phase === "propose" || phase === "vote";
+
+        let html = "";
+
+        // Meus power-ups
+        const myTypes = [...new Set(myPus)];
+        if (myTypes.length === 0) {
+          html += `<span class="powerup-empty">Sem power-ups</span>`;
+        } else {
+          myTypes.forEach((t) => {
+            const cat = POWERUP_CATALOG[t];
+            if (!cat) return;
+            const cnt = countMy[t];
+            // Turbo e Escudo usáveis a qualquer momento; outros só no turno do time
+            const usable = canUse && (isMyTurn || t === "turbo" || t === "escudo");
+            html += `<button class="powerup-icon-btn${G_shieldActive && t === "escudo" ? " shield-on" : ""}"
+              title="${escHtml(cat.label)}: ${escHtml(cat.desc)}"
+              data-pu="${t}"
+              ${usable ? "" : "disabled"}>
+              ${cat.emoji}${cnt > 1 ? `<span class="pu-badge">${cnt}</span>` : ""}
+            </button>`;
+          });
+        }
+
+        // separator + power-ups do adversário (read-only)
+        const oppTypes = [...new Set(oppPus)];
+        if (oppTypes.length > 0) {
+          html += `<span class="powerup-divider">│</span>`;
+          oppTypes.forEach((t) => {
+            const cat = POWERUP_CATALOG[t];
+            if (!cat) return;
+            const cnt = countOpp[t];
+            html += `<span class="powerup-icon-btn" style="opacity:0.35;cursor:default" title="Adversário: ${escHtml(cat.label)}">
+              ${cat.emoji}${cnt > 1 ? `<span class="pu-badge">${cnt}</span>` : ""}
+            </span>`;
+          });
+        }
+
+        strip.innerHTML = html;
+
+        // Eventos de uso
+        strip.querySelectorAll("[data-pu]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            if (btn.disabled) return;
+            doUsePowerUp(btn.dataset.pu);
+          });
+        });
+      }
+
+      function drawRandomPowerup() {
+        return POWERUP_POOL[Math.floor(Math.random() * POWERUP_POOL.length)];
+      }
+
+      async function earnPowerUps(correct) {
+        if (!S.isHost) return;
+        const turn = S.room.current_turn;
+        const field = turn === "A" ? "team_a_powerups" : "team_b_powerups";
+        const current = [...((turn === "A" ? S.room.team_a_powerups : S.room.team_b_powerups) || [])];
+
+        const toEarn = [];
+        const cfg = S.room.config || {};
+        const totalSec = cfg.timer_propose || 45;
+        const timeFractionLeft = G_roundStartMs > 0
+          ? Math.max(0, 1 - (Date.now() - G_roundStartMs) / (totalSec * 1000))
+          : 0;
+
+        if (correct) {
+          toEarn.push(drawRandomPowerup());
+          toEarn.push(drawRandomPowerup());
+          // Clutch: acerto com ≥80% do tempo restante → bônus Última Chance
+          if (timeFractionLeft >= 0.8) {
+            toEarn.push("ultima_chance");
+            toast("🎲 Última Chance conquistada! (clutch)", "success");
+          } else if (timeFractionLeft > 0.5) {
+            toEarn.push(drawRandomPowerup());
+          }
+        } else if (timeFractionLeft > 0.5) {
+          // Erro mas rápido = 1 de consolação
+          toEarn.push(drawRandomPowerup());
+        }
+
+        if (!toEarn.length) return;
+
+        // Limite de 3 na fila
+        const updated = [...current, ...toEarn].slice(-3);
+        await sb.from("arena_rooms").update({ [field]: updated }).eq("id", S.roomId);
+
+        if (toEarn.length > 0) {
+          const earned = toEarn.map((t) => POWERUP_CATALOG[t]?.emoji || "⚡").join(" ");
+          toast(`${earned} Power-up${toEarn.length > 1 ? "s" : ""} ganho${toEarn.length > 1 ? "s" : ""}!`, "success");
+        }
+      }
+
+      async function doUsePowerUp(type) {
+        const myTeam = S.myTeam;
+        if (!myTeam || myTeam === "spec") return;
+
+        const field = myTeam === "A" ? "team_a_powerups" : "team_b_powerups";
+        const current = [...((myTeam === "A" ? S.room.team_a_powerups : S.room.team_b_powerups) || [])];
+        const idx = current.indexOf(type);
+        if (idx === -1) return;
+        current.splice(idx, 1);
+
+        await sb.from("arena_rooms").update({ [field]: current }).eq("id", S.roomId);
+
+        S.channel?.send({
+          type: "broadcast",
+          event: "power_use",
+          payload: { type, byTeam: myTeam },
+        });
+
+        applyFxLocal({ type, byTeam: myTeam });
+
+        const cat = POWERUP_CATALOG[type];
+        toast(`${cat?.emoji || "⚡"} ${cat?.label || type} usado!`, "success");
+      }
+
+      function applyFxLocal({ type, byTeam }) {
+        const myTeam = S.myTeam;
+        const affectsMe = byTeam !== myTeam; // adversário usou contra mim
+
+        // Escudo bloqueia efeito incoming
+        if (affectsMe && G_shieldActive) {
+          G_shieldActive = false;
+          toast("🛡️ Escudo bloqueou o ataque!", "success");
+          renderPowerUpStrip();
+          return;
+        }
+
+        switch (type) {
+          case "nevoa":
+            if (affectsMe) {
+              G_fogActive = true;
+              renderGamePhase();
+              setTimeout(() => { G_fogActive = false; renderGamePhase(); }, 30000);
+              toast("🌫️ Névoa! Suas camadas foram embaralhadas.", "error");
+            }
+            break;
+          case "espelho":
+            if (affectsMe) {
+              G_mirrorActive = true;
+              renderGamePhase();
+              setTimeout(() => { G_mirrorActive = false; renderGamePhase(); }, 30000);
+              toast("🪞 Espelho! Glifo invertido.", "error");
+            }
+            break;
+          case "votos_ocultos":
+            if (affectsMe) {
+              G_hiddenVotes = true;
+              renderGamePhase();
+              setTimeout(() => { G_hiddenVotes = false; renderGamePhase(); }, 60000);
+              toast("👁️ Votos ocultos ativados!", "error");
+            }
+            break;
+          case "revelar":
+            if (!affectsMe) {
+              // Revela slot aleatório do glifo do próprio time
+              const word = S.room.current_turn === "A" ? S.room.team_a_word : S.room.team_b_word;
+              if (word) {
+                G_revealSlot = Math.floor(Math.random() * word.length);
+                renderGamePhase();
+                setTimeout(() => { G_revealSlot = null; renderGamePhase(); }, 30000);
+                toast(`✨ Letra na posição ${G_revealSlot + 1} revelada!`, "success");
+              }
+            }
+            break;
+          case "escudo":
+            if (!affectsMe) {
+              G_shieldActive = true;
+              renderPowerUpStrip();
+              toast("🛡️ Escudo ativado! Próximo ataque bloqueado.", "success");
+            }
+            break;
+          case "relogio":
+            if (S.isHost && !affectsMe) {
+              // Rouba 20s do adversário (host regula)
+              // O host que usou o Relógio: adversário perde 20s
+              // Implementado: deadline dos adversários recua 20s
+              if (S.room.phase_deadline && S.room.current_turn !== myTeam) {
+                const nd = new Date(new Date(S.room.phase_deadline).getTime() - 20000).toISOString();
+                sb.from("arena_rooms").update({ phase_deadline: nd }).eq("id", S.roomId);
+              }
+              toast("⏱️ 20s roubados do adversário!", "success");
+            } else if (affectsMe) {
+              toast("⏱️ Adversário roubou 20s do seu timer!", "error");
+            }
+            break;
+          case "turbo":
+            if (S.isHost && !affectsMe) {
+              // Adiciona 30s ao timer do próprio time (host na vez certa)
+              if (S.room.phase_deadline && S.room.current_turn === myTeam) {
+                const nd = new Date(new Date(S.room.phase_deadline).getTime() + 30000).toISOString();
+                sb.from("arena_rooms").update({ phase_deadline: nd }).eq("id", S.roomId);
+              }
+              toast("⚡ +30s no seu timer!", "success");
+            }
+            break;
+          case "ultima_chance":
+            if (S.isHost && !affectsMe) {
+              const cfg = S.room.config || {};
+              const timerSec = cfg.timer_propose || 45;
+              const deadline = new Date(Date.now() + timerSec * 1000).toISOString();
+              G_proposals = [];
+              G_votes = {};
+              G_myVote = null;
+              G_proposalSubmitted = false;
+              G_roundStartMs = Date.now();
+              sb.from("arena_rooms")
+                .update({ phase: "propose", phase_deadline: deadline })
+                .eq("id", S.roomId);
+              toast("🎲 Última Chance! Nova proposta no mesmo glifo.", "success");
+            }
+            break;
+        }
+      }
+
+      // ─────────────────────────────────────────────────────────
+      // CONFETE
+      // ─────────────────────────────────────────────────────────
+      function burstConfetti(color) {
+        const ambParticles = ["🟧", "🟡", "⭐", "✨", "🌟", "🔶"];
+        const quaParticles = ["🔵", "💠", "✨", "⚡", "🌀", "🟣"];
+        const parts = color === "amber" ? ambParticles : quaParticles;
+        for (let i = 0; i < 18; i++) {
+          setTimeout(() => {
+            const el = document.createElement("div");
+            el.className = "confetti-particle";
+            el.textContent = parts[Math.floor(Math.random() * parts.length)];
+            el.style.left = `${10 + Math.random() * 80}vw`;
+            el.style.top = "-30px";
+            el.style.animationDuration = `${1.5 + Math.random() * 0.8}s`;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 2400);
+          }, i * 70);
+        }
+      }
+
+      // ─────────────────────────────────────────────────────────
+      // REAÇÕES DE ESPECTADOR
+      // ─────────────────────────────────────────────────────────
+      function sendReact(emoji) {
+        S.channel?.send({
+          type: "broadcast",
+          event: "react",
+          payload: { emoji },
+        });
+        showFloatingReact(emoji);
+      }
+
+      function showFloatingReact(emoji) {
+        const el = document.createElement("div");
+        el.className = "floating-react";
+        el.textContent = emoji;
+        el.style.left = `${20 + Math.random() * 60}vw`;
+        el.style.bottom = "4.5rem";
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 2400);
+      }
+
+      // ─────────────────────────────────────────────────────────
+      // CHAT DE TIME
+      // ─────────────────────────────────────────────────────────
+      function initChat() {
+        const toggleBtn = document.getElementById("chat-toggle-btn");
+        const panel = document.getElementById("chat-panel");
+        const header = document.getElementById("chat-header");
+        const sendBtn = document.getElementById("chat-send-btn");
+        const input = document.getElementById("chat-input");
+        const unreadDot = document.getElementById("chat-unread-dot");
+
+        if (!toggleBtn) return;
+
+        // Só mostra chat para jogadores de um time (não spec)
+        if (S.myTeam && S.myTeam !== "spec") {
+          toggleBtn.classList.add("visible");
+          const teamName = S.myTeam === "A" ? "Âmbar 🟡" : "Quartzo 🔵";
+          if (header) header.textContent = `💬 Chat — Time ${teamName}`;
+        }
+
+        toggleBtn.addEventListener("click", () => {
+          G_chatOpen = !G_chatOpen;
+          panel.classList.toggle("hidden", !G_chatOpen);
+          if (G_chatOpen) {
+            G_chatUnread = 0;
+            if (unreadDot) unreadDot.classList.remove("visible");
+            input?.focus();
+            // Scroll para o fim
+            const msgs = document.getElementById("chat-msgs");
+            if (msgs) msgs.scrollTop = msgs.scrollHeight;
+          }
+        });
+
+        sendBtn?.addEventListener("click", sendChatMsg);
+        input?.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") sendChatMsg();
+        });
+      }
+
+      function sendChatMsg() {
+        const input = document.getElementById("chat-input");
+        const text = input?.value.trim();
+        if (!text || !S.myTeam || S.myTeam === "spec") return;
+        input.value = "";
+        const payload = { nick: S.nick, text, playerId: PLAYER_ID };
+        S.channel?.send({
+          type: "broadcast",
+          event: `chat_${S.myTeam}`,
+          payload,
+        });
+        renderChatMsg(payload, true);
+      }
+
+      function receiveChatMsg(payload) {
+        if (payload.playerId === PLAYER_ID) return; // já renderizou ao enviar
+        renderChatMsg(payload, false);
+        if (!G_chatOpen) {
+          G_chatUnread++;
+          const dot = document.getElementById("chat-unread-dot");
+          if (dot) {
+            dot.classList.add("visible");
+            dot.textContent = G_chatUnread > 9 ? "9+" : G_chatUnread;
+          }
+        }
+      }
+
+      function renderChatMsg(payload, isMine) {
+        const msgs = document.getElementById("chat-msgs");
+        if (!msgs) return;
+        const el = document.createElement("div");
+        el.className = `chat-msg${isMine ? " mine" : ""}`;
+        el.innerHTML = `<span class="msg-nick">${escHtml(payload.nick)}:</span> ${escHtml(payload.text)}`;
+        msgs.appendChild(el);
+        msgs.scrollTop = msgs.scrollHeight;
+
+        // Abre painel se fechado (só para mensagens dos outros)
+        if (!isMine && !G_chatOpen) {
+          // Não abre automaticamente — usa apenas o badge
+        }
+      }
+
+      // ─────────────────────────────────────────────────────────
+      // INIT CHAT (hook em handleGameStart acima)
+      // initChat() é chamada dentro de handleGameStart()
     </script>
   </body>
 </html>
