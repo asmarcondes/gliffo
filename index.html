@@ -61,6 +61,10 @@
     <meta name="apple-mobile-web-app-title" content="glif.foo" />
 
     <!-- Performance -->
+    <!-- lottie-web player (tutorial sad walking) -->
+    <script src="https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js"></script>
+    <!-- Anime.js — micro-interações do tutorial -->
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -1396,6 +1400,26 @@
           transform: translateY(0);
         }
       }
+      @keyframes tut-slide-in {
+        from {
+          opacity: 0;
+          transform: translateX(24px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      @keyframes tut-slide-out {
+        from {
+          opacity: 1;
+          transform: translateX(0);
+        }
+        to {
+          opacity: 0;
+          transform: translateX(-24px);
+        }
+      }
       .shake {
         animation: shake 0.3s ease;
       }
@@ -1555,7 +1579,12 @@
       }
       .tut-content.active {
         display: flex;
-        animation: fadeIn 0.25s ease;
+        animation: tut-slide-in 0.3s ease forwards;
+      }
+      .tut-content.exiting {
+        display: flex;
+        pointer-events: none;
+        animation: tut-slide-out 0.2s ease forwards;
       }
 
       .tut-tag {
@@ -1777,9 +1806,66 @@
         font-size: 0.95rem;
         font-weight: 600;
         cursor: pointer;
+        position: relative;
+        overflow: hidden;
         transition:
           background 0.15s,
           transform 0.1s;
+      }
+      .tut-next::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 3px;
+        width: 0%;
+        background: rgba(0, 0, 0, 0.22);
+      }
+      .tut-next.auto-filling::after {
+        animation: tut-fill var(--fill-dur, 3s) linear forwards;
+      }
+      @keyframes tut-fill {
+        from {
+          width: 0%;
+        }
+        to {
+          width: 100%;
+        }
+      }
+      @keyframes tut-found-pulse {
+        0% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        30% {
+          opacity: 1;
+          transform: scale(1.22);
+        }
+        60% {
+          opacity: 0.3;
+          transform: scale(0.78);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      .tut-found-pulse {
+        animation: tut-found-pulse 0.7s ease-in-out infinite;
+      }
+      @keyframes tut-ghost-o {
+        0% {
+          opacity: 0.55;
+        }
+        50% {
+          opacity: 0.12;
+        }
+        100% {
+          opacity: 0.55;
+        }
+      }
+      .tut-ghost-o {
+        animation: tut-ghost-o 1.1s ease-in-out infinite;
       }
       .tut-next:hover {
         background: var(--amber-500);
@@ -4969,7 +5055,6 @@
             const b = document.createElement("button");
             b.className = "kbtn" + (k.length > 1 ? " wide" : "");
             b.textContent = k;
-            if (G.elim.has(k)) b.classList.add("elim");
             b.onclick = () => {
               b.classList.remove("tap");
               void b.offsetWidth;
@@ -5113,35 +5198,20 @@
       }
 
       function calcWarns() {
-        const elimUsadas = [
-          ...new Set(
-            Array.from({ length: WN }, (_, i) => G.typed[i]).filter(
-              (l, i) =>
-                l && G.elim.has(l) && !G.decoded.has(i) && !G.keyPos.has(i),
-            ),
-          ),
-        ];
+        // Apenas avisa sobre letras já tentadas na mesma posição (sem conceito de "eliminada")
         const posErrada = [];
         for (let i = 0; i < WN; i++) {
           const l = G.typed[i];
-          if (!l || G.decoded.has(i) || G.keyPos.has(i) || G.elim.has(l))
-            continue;
+          if (!l || G.decoded.has(i) || G.keyPos.has(i)) continue;
           if (G.attempts.some((a) => a.word[i] === l && !a.decoded.includes(i)))
             posErrada.push({ l, i });
         }
-        const partes = [];
-        if (elimUsadas.length > 0) {
-          const pl = elimUsadas.length > 1;
-          partes.push(
-            `${elimUsadas.join(", ")} já ${pl ? "foram eliminadas" : "foi eliminada"}`,
-          );
-        }
         if (posErrada.length > 0) {
           const letras = [...new Set(posErrada.map(({ l }) => l))].join(", ");
-          partes.push(`já tentaste ${letras} aqui sem sucesso`);
-        }
-        if (partes.length > 0) {
-          setFb(`⚠ ${partes.join(" — ")}`, "warn");
+          setFb(
+            `⚠ ${letras} já ${posErrada.length > 1 ? "foram tentadas" : "foi tentada"} nessa posição`,
+            "warn",
+          );
         }
 
         // Validação quando todos os campos preenchidos
@@ -5203,6 +5273,12 @@
           return;
         }
         const guess = full.join("");
+        // Easter egg: digitar o nome do jogo
+        if (guess === "GLIFFO") {
+          setFb("Isso não é uma palavra... mas aprecio a autoestima. 🐊", "err");
+          haptic(80);
+          return;
+        }
         // Validação de dicionário
         if (!dicionarioValido(guess)) {
           const msg =
@@ -5302,17 +5378,14 @@
                   slot.style.background = "var(--surface2)";
                   slot.style.borderColor = colorOf[full[i]];
                   slot.style.borderWidth = "2.5px";
-                  const svg = makeSVG(full[i], colorOf[full[i]]);
-                  if (svg) {
-                    svg.style.cssText = "width:65%;height:65%;";
-                    slot.appendChild(svg);
-                  }
+                  // Não revela a letra — o jogador deve deduzir pelo Glifo do Dia
                 } else {
-                  slot.style.background = "var(--surface3)";
-                  slot.style.borderColor = "var(--border)";
+                  // Letra errada — slot neutro sem conceito de "eliminação"
+                  slot.style.background = "var(--surface2)";
+                  slot.style.borderColor = "var(--border2)";
                   const svg = makeSVG(full[i], stroke);
                   if (svg) {
-                    svg.style.cssText = "width:65%;height:65%;opacity:0.25;";
+                    svg.style.cssText = "width:65%;height:65%;opacity:0.5;";
                     slot.appendChild(svg);
                   }
                 }
@@ -5349,6 +5422,8 @@
             buildKB();
             salvarEstado();
             haptic([80, 60, 150]);
+            eePlayBoing();
+            eeCanvasConfetti();
             setTimeout(() => winAnim(), 300);
             return;
           }
@@ -5362,6 +5437,7 @@
             buildHistory();
             buildAtts();
             salvarEstado();
+            eePlayTrombone();
             setTimeout(() => loseMod(), 400);
             return;
           }
@@ -7255,13 +7331,39 @@
         tcOf[l] = TC[i];
       });
 
+      // Demo word ARCO para o tutorial
+      const TDL = ["A", "R", "C", "O"];
+      const tdOf = { A: TC[0], R: TC[1], C: TC[2], O: TC[3] };
+
+      // Variáveis do desafio interativo (mudam em case 3 para AMOR)
+      let iWord = "BOLA";
+      let iLetters = TWL;
+      let iColorOf = tcOf;
+
       let tutStep = 0;
       let tutTimers = [];
       let currentActionToken = null;
+      let _byeToken = null;
+      let onTutSolved = null;
+      let onTutGiveUp = null;
 
       function tClear() {
         tutTimers.forEach(clearTimeout);
         tutTimers = [];
+        tStopProgress();
+      }
+      function tStartProgress(durationMs) {
+        const btn = document.getElementById("tut-next-btn");
+        if (!btn) return;
+        btn.style.setProperty("--fill-dur", durationMs + "ms");
+        btn.classList.remove("auto-filling");
+        void btn.offsetWidth;
+        btn.classList.add("auto-filling");
+      }
+      function tStopProgress() {
+        const btn = document.getElementById("tut-next-btn");
+        if (!btn) return;
+        btn.classList.remove("auto-filling");
       }
       function tDelay(fn, ms) {
         const t = setTimeout(fn, ms);
@@ -7292,9 +7394,12 @@
       }
 
       function tStack(id, letters, colorFn, fadeIn) {
-        const c = document.getElementById(id);
-        if (!c) return;
-        c.innerHTML = "";
+        tStackEl(document.getElementById(id), letters, colorFn, fadeIn);
+      }
+
+      function tStackEl(el, letters, colorFn, fadeIn) {
+        if (!el) return;
+        el.innerHTML = "";
         for (let i = letters.length - 1; i >= 0; i--) {
           const l = letters[i];
           if (!l) continue;
@@ -7304,7 +7409,7 @@
             : "position:absolute;top:0;left:0;width:100%;height:100%;";
           const svg = makeSVG(l, col, st);
           if (svg) {
-            c.appendChild(svg);
+            el.appendChild(svg);
             if (fadeIn) requestAnimationFrame(() => (svg.style.opacity = "1"));
           }
         }
@@ -7554,6 +7659,7 @@
         iConfirmed = new Set(), // índices de slots pré-confirmados (não editáveis)
         iWrongCount = 0, // easter egg: contador de letras erradas
         tutKeyHandler = null;
+      let tutInteractReady = false; // set by case 2 for path C (DEDO first)
 
       function removeTutKeyHandler() {
         if (tutKeyHandler) {
@@ -7564,7 +7670,7 @@
       function installTutKeyHandler() {
         removeTutKeyHandler();
         tutKeyHandler = (e) => {
-          if (iTyped.join("") === "BOLA") return;
+          if (iTyped.join("") === iWord) return;
           const k = e.key.toUpperCase();
           if (k === "BACKSPACE") {
             e.preventDefault();
@@ -7596,7 +7702,9 @@
           } else if (/^[A-Z]$/.test(k)) {
             if (iConfirmed.has(iCursor)) return; // protege slot confirmado
             // Easter egg: conta letras erradas
-            const expected = [null, "O", null, "A"];
+            const expected = iLetters.map((l, i) =>
+              iConfirmed.has(i) ? null : l,
+            );
             if (expected[iCursor] && k !== expected[iCursor]) iWrongCount++;
             iTyped[iCursor] = k;
             // Avança para o próximo slot vazio, ou o seguinte
@@ -7634,7 +7742,7 @@
           el.style.transition = "box-shadow 0.12s";
           if (confirmed) {
             // Slot pré-confirmado: fundo verde, sem cursor de edição
-            el.style.background = tcOf[l];
+            el.style.background = iColorOf[l];
             el.style.borderColor = "transparent";
             const svg = makeSVG(l, "#fff");
             if (svg) {
@@ -7671,14 +7779,14 @@
         const hint = document.getElementById("ts5-hint");
         const btn = document.getElementById("tut-next-btn");
         const skipBtn = document.getElementById("tut-skip-btn");
-        const solved = iTyped.join("") === "BOLA";
+        const solved = iTyped.join("") === iWord;
         if (solved) {
           if (hint) {
             hint.innerHTML = "";
           }
           const slots = c.querySelectorAll(".tut-slot");
-          TWL.forEach((l, i) => {
-            slots[i].style.background = tcOf[l];
+          iLetters.forEach((l, i) => {
+            slots[i].style.background = iColorOf[l];
             slots[i].style.borderColor = "transparent";
             slots[i].style.boxShadow = "";
             const sv = slots[i].querySelector("svg");
@@ -7687,24 +7795,17 @@
                 p.setAttribute("stroke", "#fff"),
               );
           });
-          tStack("ts5-yours", TWL, (l) => tcOf[l], true);
+          tStack("ts5-yours", iLetters, (l) => iColorOf[l], true);
           confetti(c);
           const title6 = document.getElementById("ts6-title");
           if (title6) {
-            title6.style.transition = "opacity 0.3s";
-            title6.style.opacity = "0";
+            title6.style.cssText =
+              "transition:opacity 0.3s;opacity:0;text-align:center;font-size:0.9rem;font-weight:700;color:var(--text);";
+            title6.style.display = "";
             setTimeout(() => {
-              title6.querySelector("div").innerHTML =
-                '🎉 <strong style="color:var(--amber-400)">BOLA!</strong>';
+              title6.innerHTML = `🎉 <strong style="color:var(--amber-400)">${iWord}!</strong> Agora você sabe jogar!`;
               title6.style.opacity = "1";
             }, 350);
-          }
-          if (btn) {
-            btn.disabled = false;
-            btn.style.opacity = "1";
-          }
-          if (skipBtn) {
-            skipBtn.textContent = "Ver de novo";
           }
           removeTutKeyHandler();
           const scards = document.getElementById("ts5-scards");
@@ -7713,6 +7814,11 @@
             requestAnimationFrame(() =>
               requestAnimationFrame(() => (scards.style.opacity = "1")),
             );
+          }
+          if (typeof onTutSolved === "function") {
+            const cb = onTutSolved;
+            onTutSolved = null;
+            cb();
           }
         } else {
           const filled = iTyped.filter(Boolean).length;
@@ -7724,24 +7830,15 @@
               hint.textContent =
                 filled === 0
                   ? "Clique num slot e comece a digitar"
-                  : `${filled}/4 letras — forme BOLA`;
+                  : `${filled}/4 letras — forme ${iWord}`;
             }
             hint.style.color = "var(--text3)";
           }
-          if (btn) {
-            if (iWrongCount >= 2) {
-              btn.disabled = false;
-              btn.style.opacity = "1";
-            } else {
-              btn.disabled = true;
-              btn.style.opacity = "0.35";
-            }
-          }
-          if (skipBtn) {
-            if (iWrongCount >= 2) {
-              skipBtn.textContent = "Ver de novo";
-            } else {
-              skipBtn.textContent = "Pular";
+          if (iWrongCount >= 2) {
+            if (typeof onTutGiveUp === "function") {
+              const cb = onTutGiveUp;
+              onTutGiveUp = null;
+              cb();
             }
           }
         }
@@ -7765,313 +7862,2152 @@
       }
 
       // ── STEP RENDERER ──
-      function renderStep(step) {
+      // ── Chat helpers (outer scope so sadGoodbye can also use them) ──
+      function scrollFeed() {
+        const feed = document.getElementById("tut-chat-feed");
+        requestAnimationFrame(() => {
+          if (feed) feed.scrollTop = feed.scrollHeight;
+        });
+      }
+      // Shows typing indicator at `showDelay`, then atomically replaces it with a message bubble at `msgDelay`.
+      // Returns the indicator id so callers can optionally replace it manually (pass msgHtml=null to skip).
+      function chatTypingThenMsg(id, showDelay, msgHtml, msgDelay, token) {
+        tDelay(() => {
+          if (token && token.cancelled) return;
+          const feed = document.getElementById("tut-chat-feed");
+          if (!feed) return;
+          const el = document.createElement("div");
+          el.id = id;
+          el.className = "tut-typing";
+          el.innerHTML = "<span></span><span></span><span></span>";
+          feed.appendChild(el);
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => {
+              el.classList.add("show");
+              scrollFeed();
+              setTimeout(scrollFeed, 200);
+            }),
+          );
+        }, showDelay);
+        if (msgHtml != null) {
+          tDelay(() => {
+            if (token && token.cancelled) return;
+            const feed = document.getElementById("tut-chat-feed");
+            if (!feed) return;
+            const indicator = document.getElementById(id);
+            const div = document.createElement("div");
+            div.className = "tut-bubble-left";
+            div.innerHTML = msgHtml;
+            if (indicator) {
+              feed.replaceChild(div, indicator);
+            } else {
+              feed.appendChild(div);
+            }
+            requestAnimationFrame(() =>
+              requestAnimationFrame(() => {
+                div.classList.add("show");
+                scrollFeed();
+              }),
+            );
+          }, msgDelay);
+        }
+      }
+      function chatMsg(html, delay) {
+        tDelay(() => {
+          if (currentActionToken && currentActionToken.cancelled) return;
+          const feed = document.getElementById("tut-chat-feed");
+          if (!feed) return;
+          const div = document.createElement("div");
+          div.className = "tut-bubble-left";
+          div.innerHTML = html;
+          feed.appendChild(div);
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => {
+              div.classList.add("show");
+              scrollFeed();
+            }),
+          );
+        }, delay);
+      }
+      // Insere bolha do usuário de forma síncrona (não depende de token)
+      // e chama cb após 400ms — evita que tClear()/newToken() no onClick cancele a UI.
+      function chatUserNow(text, cb) {
+        const feed = document.getElementById("tut-chat-feed");
+        if (!feed) {
+          if (cb) setTimeout(cb, 400);
+          return;
+        }
+        const div = document.createElement("div");
+        div.className = "tut-bubble-right";
+        div.textContent = text;
+        feed.appendChild(div);
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => {
+            div.classList.add("show");
+            scrollFeed();
+          }),
+        );
+        if (cb) setTimeout(cb, 400);
+      }
+
+      function chatUser(text, delay) {
+        tDelay(() => {
+          if (currentActionToken && currentActionToken.cancelled) return;
+          const feed = document.getElementById("tut-chat-feed");
+          if (!feed) return;
+          const div = document.createElement("div");
+          div.className = "tut-bubble-right";
+          div.textContent = text;
+          feed.appendChild(div);
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => {
+              div.classList.add("show");
+              scrollFeed();
+            }),
+          );
+        }, delay);
+      }
+      function chatCard(buildFn, delay) {
+        tDelay(() => {
+          if (currentActionToken && currentActionToken.cancelled) return;
+          const feed = document.getElementById("tut-chat-feed");
+          if (!feed) return;
+          const card = document.createElement("div");
+          card.className = "tut-chat-card";
+          buildFn(card);
+          feed.appendChild(card);
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => {
+              card.classList.add("show");
+              scrollFeed();
+            }),
+          );
+        }, delay);
+      }
+
+      // ── Tutorial State Machine ────────────────────────────────────────────
+      const TUT = {
+        // Current state id. Set via TUT.setState() before calling chatChoices().
+        // States: 'idle' | 's0_question' | 's0_yes_branch' | 's0_no_branch'
+        //       | 'sad_walk' | 'comeback'
+        //       | 'step_1' | 'step_2' | ... | 'step_6' | 'done'
+        state: "idle",
+
+        // Holds the active choices row + array so free-input can re-ask them.
+        data: { currentChoices: null, currentRow: null },
+
+        setState(id, extraData) {
+          this.state = id;
+          if (extraData) Object.assign(this.data, extraData);
+        },
+
+        // Called by the hijack whenever the user "sends" something.
+        // Override behaviour per-state; default: dismiss + re-ask same choices.
+        // Set _freeInputOverride to replace for a specific state (e.g. comeback/bajulador).
+        _freeInputOverride: null,
+
+        freeInput(typed) {
+          if (this._freeInputOverride) {
+            this._freeInputOverride(typed);
+            return;
+          }
+          // 'comeback' has its own bajulador hijack installed by showByeInput()
+          // so this path is only reached for all other waiting states.
+          const { currentChoices, currentRow } = this.data;
+          if (!currentChoices) return;
+          if (currentRow && currentRow.parentNode) currentRow.remove();
+          tClear();
+          newToken();
+          chatUser(typed, 0);
+          const DISMISS = [
+            "Ok, qualquer coisa vou avisando... \uD83D\uDC4D",
+            "T\u00E1 bom, sem press\u00E3o! \uD83D\uDE05",
+            "Entendido, pode deixar \uD83D\uDC40",
+            "Ah tudo bem, sem compromisso \uD83D\uDE0C",
+            "Certo, certo... \uD83E\uDD14",
+            "Hmm, ok \uD83D\uDE10",
+            "Anotado \uD83D\uDCDD",
+            "Tudo bem, relaxa \uD83D\uDE4F",
+            "Ok ok, sem prob \uD83D\uDE0E",
+            "Combinado \uD83E\uDD1D",
+          ];
+          const REASK = [
+            "...mas voc\u00EA j\u00E1 jogou o Termo ou n\u00E3o? \uD83D\uDE05",
+            "Ah espera \u2014 voc\u00EA jogou o Termo ou n\u00E3o?",
+            "Ok mas me responde isso: j\u00E1 jogou ou n\u00E3o jogou?",
+            "...s\u00F3 preciso saber: Termo sim ou Termo n\u00E3o? \uD83E\uDD13",
+            "Mas espera, voc\u00EA conhece o Termo?",
+            "Ei, ainda n\u00E3o me respondeu: j\u00E1 jogou Termo? \uD83D\uDC40",
+            "Uma coisa s\u00F3: j\u00E1 jogou o Termo alguma vez?",
+            "Antes de continuar \u2014 Termo: sim ou n\u00E3o? \uD83D\uDE05",
+          ];
+          chatMsg(DISMISS[Math.floor(Math.random() * DISMISS.length)], 800);
+          tDelay(() => {
+            if (currentActionToken && currentActionToken.cancelled) return;
+            chatMsg(REASK[Math.floor(Math.random() * REASK.length)], 0);
+            chatChoices(currentChoices, 600);
+          }, 2000);
+        },
+      };
+      // ─────────────────────────────────────────────────────────────────────
+
+      function chatSetChoices(choices) {
+        const feed = document.getElementById("tut-chat-feed");
+        const choicesEl = document.getElementById("tut-chat-choices");
+        if (!feed || !choicesEl) return;
+        choicesEl.innerHTML = "";
+        const row = document.createElement("div");
+        row.className = "tut-choices";
+        choices.forEach(({ label, secondary, onClick }) => {
+          const b = document.createElement("button");
+          b.className = "tut-choice-btn" + (secondary ? " secondary" : "");
+          b.textContent = label;
+          b.onclick = () => {
+            row.querySelectorAll("button").forEach((x) => (x.disabled = true));
+            row.remove();
+            TUT.data.currentRow = null;
+            const _fs = document.getElementById("tut-bye-send");
+            if (_fs) {
+              _fs.classList.add("thinking");
+              _fs.disabled = true;
+              _fs.classList.remove("ready");
+            }
+            chatUserNow(b.textContent, onClick);
+          };
+          row.appendChild(b);
+        });
+        feed.appendChild(row);
+
+        function onChoicesReady() {
+          // Store for re-ask on free-input
+          TUT.data.currentChoices = choices;
+          TUT.data.currentRow = row;
+          const _fs = document.getElementById("tut-bye-send");
+          if (_fs) {
+            _fs.classList.remove("thinking");
+          }
+          // Install hijack: delegate to state machine
+          _installHijack((typed) => TUT.freeInput(typed));
+        }
+
+        if (window.anime) {
+          row.style.opacity = "1";
+          row.style.transform = "none";
+          const btns = row.querySelectorAll(".tut-choice-btn");
+          btns.forEach((b) => {
+            b.style.opacity = "0";
+          });
+          anime({
+            targets: btns,
+            opacity: [0, 1],
+            translateY: [10, 0],
+            delay: anime.stagger(80, { start: 50 }),
+            duration: 360,
+            easing: "easeOutBack",
+            begin: () => scrollFeed(),
+            complete: () => onChoicesReady(),
+          });
+        } else {
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => {
+              row.classList.add("show");
+              scrollFeed();
+              onChoicesReady();
+            }),
+          );
+        }
+      }
+      function chatChoices(choices, delay) {
+        tDelay(() => {
+          if (!(currentActionToken && currentActionToken.cancelled))
+            chatSetChoices(choices);
+        }, delay);
+      }
+
+      function renderStep(step, noClear) {
         tClear();
         stopTyping();
         removeTutKeyHandler();
-        if (step !== 1) stopIso();
+        stopIso();
         const token = newToken();
-        document
-          .querySelectorAll(".tut-content")
-          .forEach((c) => c.classList.remove("active"));
-        const cur = document.getElementById(`ts-${step}`);
-        if (cur) cur.classList.add("active");
-        document.querySelectorAll(".tpip").forEach((p, i) => {
-          p.className =
-            "tpip" + (i < step ? " done" : i === step ? " cur" : "");
-        });
-        const ctr = document.getElementById("tut-counter");
-        if (ctr) ctr.textContent = `${step + 1} / 7`;
-        const btn = document.getElementById("tut-next-btn");
-        const skipBtn = document.getElementById("tut-skip-btn");
-        btn.disabled = false;
-        btn.style.opacity = "1";
-        if (skipBtn) {
-          skipBtn.textContent = "Pular";
+
+        const feed = document.getElementById("tut-chat-feed");
+        const choicesEl = document.getElementById("tut-chat-choices");
+        if (!feed || !choicesEl) return;
+
+        const _byeWrap = document.getElementById("tut-bye-input-wrap");
+        if (_byeWrap) {
+          TUT._freeInputOverride = null;
+          const _i = _byeWrap.querySelector(".tut-fake-input");
+          const _s = _byeWrap.querySelector(".tut-fake-send");
+          if (_i) {
+            _i.value = "";
+            _i.style.height = "auto";
+          }
+          if (_s) {
+            _s.disabled = true;
+            _s.classList.remove("ready");
+            _s.classList.add("thinking");
+          }
         }
-        if (step === 6) {
-          btn.textContent = "Jogar agora! 🎮";
-          btn.classList.add("green");
-        } else {
-          btn.textContent = "Próximo →";
-          btn.classList.remove("green");
+
+        const old = document.getElementById("ts0-arrow-overlay");
+        if (old) {
+          if (old._cleanup) old._cleanup();
+          old.remove();
+        }
+        if (!noClear) {
+          feed.innerHTML = "";
+          choicesEl.innerHTML = "";
+        }
+
+        function makeGlyphPanel(label) {
+          const panel = document.createElement("div");
+          panel.className = "tut-glyph-panel";
+          const lbl = document.createElement("div");
+          lbl.className = "tut-glyph-label";
+          lbl.textContent = label;
+          const stage = document.createElement("div");
+          stage.className = "tut-gstage";
+          const stack = document.createElement("div");
+          stack.className = "tut-gstack";
+          stage.appendChild(stack);
+          panel.appendChild(lbl);
+          panel.appendChild(stage);
+          return { panel, stack };
+        }
+        function makeGlyphSingle(label, width) {
+          const wrap = document.createElement("div");
+          wrap.className = "tut-glyph-single";
+          wrap.style.width = width || "200px";
+          const lbl = document.createElement("div");
+          lbl.className = "tut-glyph-label";
+          lbl.textContent = label;
+          const stage = document.createElement("div");
+          stage.className = "tut-gstage";
+          const stack = document.createElement("div");
+          stack.className = "tut-gstack";
+          stage.appendChild(stack);
+          wrap.appendChild(lbl);
+          wrap.appendChild(stage);
+          return { wrap, stack };
+        }
+        function makeDemoRow(word, certas, encontradas) {
+          const row = document.createElement("div");
+          row.className = "hrow";
+          const wc = document.createElement("div");
+          wc.className = "hw";
+          wc.textContent = word;
+          const dc = document.createElement("div");
+          dc.className = "dcell";
+          certas.forEach((l) => {
+            const d = document.createElement("div");
+            d.className = "hdot";
+            d.style.background = tdOf[l];
+            dc.appendChild(d);
+          });
+          const fc = document.createElement("div");
+          fc.className = "dcell";
+          encontradas.forEach((l) => {
+            const d = document.createElement("div");
+            d.className = "hdot";
+            d.style.background = tdOf[l];
+            fc.appendChild(d);
+          });
+          row.appendChild(wc);
+          row.appendChild(dc);
+          row.appendChild(fc);
+          return row;
+        }
+
+        // ── Helpers reutilizados nos desfechos ───────────────────────────
+        function buildSummaryCards(card) {
+          card.style.cssText += "background:transparent;border:none;padding:4px 0;";
+          const scards = document.createElement("div");
+          scards.className = "tut-summary-cards";
+          scards.innerHTML =
+            '<div class="tut-scard"><div class="tut-scard-icon">\uD83C\uDFAF</div><div class="tut-scard-text">4 TENTATIVAS por jogo</div></div>' +
+            '<div class="tut-scard"><div class="tut-scard-icon">\uD83D\uDCC5</div><div class="tut-scard-text">1 PALAVRA POR DIA</div></div>' +
+            '<div class="tut-scard"><div class="tut-scard-icon">\uD83D\uDD11</div><div class="tut-scard-text">1 CHAVE por tentativa para revelar uma letra</div></div>';
+          card.appendChild(scards);
+        }
+        function chatFinale(afterWin, cardsDelay, btnDelay, verDeNovoMsgOverride) {
+          chatCard(buildSummaryCards, cardsDelay);
+          tDelay(() => {
+            if (token.cancelled) return;
+            const verDeNovoMsg = verDeNovoMsgOverride ||
+              (afterWin
+                ? "Você gabaritou e ainda quer ver de novo?! \uD83E\uDD26"
+                : "Você não vai com a minha cara? \uD83D\uDE24");
+            chatChoices([
+              { label: "Jogar agora! \uD83C\uDFAE", onClick: () => closeTutorial() },
+              {
+                label: "Ver de novo \uD83D\uDD01",
+                secondary: true,
+                onClick: () => {
+                  tClear();
+                  chatMsg(verDeNovoMsg, 0);
+                  tDelay(() => { closeTutorial(); setTimeout(() => openTutorial(), 400); }, 1800);
+                },
+              },
+            ], 0);
+          }, btnDelay);
         }
 
         switch (step) {
-          case 0: // Glifo pulsando — "o que é isso?"
-            tStack("ts0-daily", TWL, () => tStroke(), true);
-            break;
+          case 0: {
+            chatMsg(
+              "Bem-vindo ao <strong style='color:var(--amber-400)'>Gliffo</strong>! \uD83D\uDC4B",
+              200,
+            );
+            let boardCardEl = null;
+            chatCard((card) => {
+              boardCardEl = card;
+              card.style.cssText +=
+                "background:#121213;border-color:var(--border2);align-self:center;display:inline-flex;flex-direction:column;align-items:center;gap:3px;padding:8px 10px 10px;";
+              const lbl = document.createElement("div");
+              lbl.style.cssText =
+                "font-size:0.58rem;font-weight:700;letter-spacing:0.14em;color:#818384;margin-bottom:4px;";
+              lbl.textContent = "TERMO";
+              card.appendChild(lbl);
+              const termoData = [
+                [
+                  ["P", "#3a3a3c"],
+                  ["I", "#3a3a3c"],
+                  ["N", "#3a3a3c"],
+                  ["G", "#b59f3b"],
+                  ["O", "#538d4e"],
+                ],
+                [
+                  ["T", "#b59f3b"],
+                  ["O", "#538d4e"],
+                  ["R", "#3a3a3c"],
+                  ["S", "#b59f3b"],
+                  ["O", "#538d4e"],
+                ],
+                [
+                  ["G", "#538d4e"],
+                  ["O", "#538d4e"],
+                  ["S", "#538d4e"],
+                  ["T", "#538d4e"],
+                  ["O", "#538d4e"],
+                ],
+              ];
+              const allCells = [];
+              termoData.forEach((row) => {
+                const rowEl = document.createElement("div");
+                rowEl.className = "tut-termo-row";
+                row.forEach(([letter, bg]) => {
+                  const cell = document.createElement("div");
+                  cell.className = "tut-termo-cell";
+                  cell.style.cssText =
+                    "background:#3a3a3c;transform:scaleY(0);transition:transform 0.18s ease-in;";
+                  cell.dataset.bg = bg;
+                  cell.dataset.letter = letter;
+                  rowEl.appendChild(cell);
+                  allCells.push(cell);
+                });
+                card.appendChild(rowEl);
+              });
+              allCells.forEach((cell, idx) => {
+                tDelay(
+                  () => {
+                    if (token.cancelled) return;
+                    cell.style.transition = "transform 0.16s ease-in";
+                    cell.style.transform = "scaleY(0)";
+                    setTimeout(() => {
+                      cell.style.background = cell.dataset.bg;
+                      cell.textContent = cell.dataset.letter;
+                      cell.style.transition = "transform 0.16s ease-out";
+                      cell.style.transform = "scaleY(1)";
+                    }, 160);
+                  },
+                  400 + Math.floor(idx / 5) * 700 + (idx % 5) * 60,
+                );
+              });
+            }, 1200);
+            chatMsg("J\u00E1 jogou o <strong>Termo</strong>?", 4100);
+            tDelay(() => {
+              if (token.cancelled || !boardCardEl) return;
+              const bubbles = feed.querySelectorAll(".tut-bubble-left");
+              const qBubble = bubbles[bubbles.length - 1];
+              if (!qBubble) return;
 
-          case 1: // ISO letra por letra — animação roda, mas usuário controla
-            runIso(null, token); // null = sem callback de auto-avanço
-            break;
+              const ns = "http://www.w3.org/2000/svg";
+              const svgEl = document.createElementNS(ns, "svg");
+              svgEl.id = "ts0-arrow-overlay";
+              svgEl.style.cssText =
+                "position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:10;overflow:visible;";
+              const mainPath = document.createElementNS(ns, "path");
+              mainPath.setAttribute("fill", "none");
+              mainPath.setAttribute("stroke", "#e879b9");
+              mainPath.setAttribute("stroke-width", "2.5");
+              mainPath.setAttribute("stroke-linecap", "round");
+              const headPath = document.createElementNS(ns, "path");
+              headPath.setAttribute("fill", "none");
+              headPath.setAttribute("stroke", "#e879b9");
+              headPath.setAttribute("stroke-width", "2.5");
+              headPath.setAttribute("stroke-linecap", "round");
+              svgEl.appendChild(mainPath);
+              svgEl.appendChild(headPath);
+              const overlayEl = document.querySelector(".tutorial-overlay");
+              (overlayEl || document.body).appendChild(svgEl);
 
-          case 2: // Digita BICO — B🟢 I⬜ C⬜ O🟡
-            tStack("ts2-daily", TWL, () => tStroke());
-            tSlots("ts2-slots", new Array(4).fill(""), null);
-            tStack("ts2-yours", [], null);
-            startTyping(
-              ["B", "I", "C", "O"],
-              "ts2-slots",
-              "ts2-yours",
-              520,
-              null,
-              token,
+              const ah = 11;
+              function updateArrowPaths() {
+                const br = qBubble.getBoundingClientRect();
+                const cr = boardCardEl.getBoundingClientRect();
+                const fr = feed.getBoundingClientRect();
+                // Esconde se o card saiu da área visível do feed
+                if (cr.bottom < fr.top || cr.top > fr.bottom) {
+                  svgEl.style.opacity = "0";
+                  return 0;
+                }
+                svgEl.style.opacity = "1";
+                const sx = br.right + 8;
+                const sy = br.top + br.height * 0.45;
+                const ex = cr.left + cr.width / 2;
+                const ey = cr.bottom + 10;
+                const cp1x = sx + 38,
+                  cp1y = sy;
+                const cp2x = ex,
+                  cp2y = ey + 50;
+                const tx = ex - cp2x,
+                  ty = ey - cp2y;
+                const tang = Math.atan2(ty, tx);
+                const a1 = tang + Math.PI + 0.4;
+                const a2 = tang + Math.PI - 0.4;
+                mainPath.setAttribute(
+                  "d",
+                  `M ${sx} ${sy} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${ex} ${ey}`,
+                );
+                headPath.setAttribute(
+                  "d",
+                  `M ${ex} ${ey} L ${ex + ah * Math.cos(a1)} ${ey + ah * Math.sin(a1)} M ${ex} ${ey} L ${ex + ah * Math.cos(a2)} ${ey + ah * Math.sin(a2)}`,
+                );
+                return Math.round(
+                  Math.sqrt((ex - sx) ** 2 + (ey - sy) ** 2) * 1.5,
+                );
+              }
+
+              // Initial draw with animation
+              const pLen = updateArrowPaths();
+              mainPath.style.cssText = `stroke-dasharray:${pLen};stroke-dashoffset:${pLen};animation:ts0DrawPath 0.8s cubic-bezier(0.4,0,0.3,1) 0.05s forwards;`;
+              headPath.style.cssText = `stroke-dasharray:30;stroke-dashoffset:30;animation:ts0DrawPath 0.25s ease-out 0.75s forwards;`;
+
+              // After animation ends, track scroll to keep arrow aligned
+              setTimeout(() => {
+                mainPath.style.cssText = "";
+                headPath.style.cssText = "";
+                updateArrowPaths();
+                feed.addEventListener("scroll", updateArrowPaths);
+                svgEl._cleanup = () =>
+                  feed.removeEventListener("scroll", updateArrowPaths);
+              }, 1100);
+            }, 4250);
+            TUT.setState("s0_question");
+            chatChoices(
+              [
+                {
+                  label: "Sim, joguei bastante!",
+                  onClick: () => {
+                    chatMsg(
+                      "\u00D3timo! O Gliffo tem a mesma ideia \u2014 adivinhar a palavra do dia.",
+                      700,
+                    );
+                    chatMsg(
+                      "S\u00F3 que aqui a resposta j\u00E1 est\u00E1 na tela, codificada como um <strong>glifo</strong>. Um pouco mais <s>chato</s> desafiador \uD83D\uDE08",
+                      1500,
+                    );
+                    chatMsg("Deixa eu te mostrar como funciona!", 2300);
+                    TUT.setState("s0_yes_branch");
+                    chatChoices(
+                      [
+                        {
+                          label: "Quero ver! \uD83C\uDFA8",
+                          onClick: () => tutNext(),
+                        },
+                        {
+                          label: "Parece complicado... vou sair!",
+                          secondary: true,
+                          onClick: () => sadGoodbye(),
+                        },
+                      ],
+                      3100,
+                    );
+                  },
+                },
+                {
+                  label: "Nunca ouvi falar",
+                  secondary: true,
+                  onClick: () => {
+                    chatMsg(
+                      '<a href="https://term.ooo" target="_blank" rel="noopener">Termo</a> \u00E9 um jogo de adivinhar palavras \u2014 voc\u00EA v\u00EA s\u00F3 as cores das respostas para chegar na solu\u00E7\u00E3o.',
+                      700,
+                    );
+                    chatMsg(
+                      "Gliffo faz (quase) o mesmo. Aqui temos que decifrar os desenhos que as letras formam!",
+                      1500,
+                    );
+                    TUT.setState("s0_no_branch");
+                    chatChoices(
+                      [
+                        {
+                          label: "Quero tentar! \uD83C\uDFA8",
+                          onClick: () => tutNext(),
+                        },
+                        {
+                          label: "Parece complicado... vou sair!",
+                          secondary: true,
+                          onClick: () => sadGoodbye(),
+                        },
+                      ],
+                      2600,
+                    );
+                  },
+                },
+              ],
+              5500,
             );
             break;
+          }
 
-          case 3: // Feedback animado: BICO → I,C eliminados → O posição errada → B correto (topo some!)
-            // Desabilita botão durante a animação
-            btn.disabled = true;
-            btn.style.opacity = "0.35";
+          case 1: {
+            TUT.setState("step_1");
+            chatMsg("Cada letra tem um glifo único. Veja a palavra BOLA!", 200);
 
-            // Reset: esvazia container de resultados (criados dinamicamente)
-            {
-              const rc = document.getElementById("ts3-result-row");
-              if (rc) rc.innerHTML = "";
+            // perspWrap → wordRow (preserve-3d) → wrappers (preserve-3d, só SVG transparente)
+            let perspWrap, wordRow, cardRef;
+            const tileWrappers = []; // outer wrappers (rotateY counter)
+            const tileData = []; // { wrapOuter, svgEl, letter } para colorir depois
+
+            chatCard((card) => {
+              cardRef = card;
+              card.style.overflow = "visible";
+              card.style.cssText +=
+                "display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;min-height:100px;";
+
+              // Perspectiva 3D — será usado no flip
+              perspWrap = document.createElement("div");
+              perspWrap.style.cssText =
+                "perspective:700px;perspective-origin:50% 50%;width:calc(100% + 20px);margin:0 -10px;display:flex;justify-content:center;overflow:visible;";
+
+              wordRow = document.createElement("div");
+              wordRow.style.cssText =
+                "display:flex;justify-content:center;gap:10px;transform-style:preserve-3d;will-change:transform;";
+              perspWrap.appendChild(wordRow);
+              card.appendChild(perspWrap);
+            }, 1200);
+
+            // Tiles 3D — aparecem um a um com camadas de extrusão
+            TWL.forEach((l, i) => {
+              tDelay(
+                () => {
+                  if (token.cancelled || !wordRow) return;
+
+                  // Wrapper transparente — só SVG, sem fundo nem extrusão
+                  const wrapOuter = document.createElement("div");
+                  wrapOuter.style.cssText =
+                    "width:96px;height:96px;display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;opacity:0;transition:opacity 0.3s;";
+
+                  const svg = makeSVG(l, tStroke());
+                  if (svg) {
+                    svg.style.cssText =
+                      "width:96px;height:96px;flex-shrink:0;transition:opacity 0.2s;";
+                    wrapOuter.appendChild(svg);
+                  }
+                  const tl = null; // sem label
+
+                  tileWrappers.push(wrapOuter);
+                  tileData.push({
+                    wrapOuter,
+                    svgEl: svg,
+                    label: tl,
+                    letter: l,
+                  });
+                  wordRow.appendChild(wrapOuter);
+                  requestAnimationFrame(() =>
+                    requestAnimationFrame(() => {
+                      wrapOuter.style.opacity = "1";
+                    }),
+                  );
+                  scrollFeed();
+                },
+                1400 + i * 180,
+              );
+            });
+
+            const allIn1 = 1400 + TWL.length * 180;
+            chatMsg("Para entender melhor... Vamos juntar as letras!", allIn1 + 400);
+
+            tDelay(() => {
+              if (token.cancelled) return;
+              chatChoices([
+                {
+                  label: "Juntar as letras \uD83E\uDDE9",
+                  onClick: () => {
+                    if (!wordRow || !window.anime) {
+                      // Fallback sem anime — pula animação e segue
+                      scrollFeed();
+                      newToken();
+                      chatChoices(
+                        [{ label: "Entendi! \u2192", onClick: () => tutNext() }],
+                        600,
+                      );
+                      return;
+                    }
+
+                    // ── FASE 0: colorir as letras uma a uma (scale pop)
+                    const N = tileWrappers.length;
+                    const wordRowOrigStyle =
+                      "display:flex;justify-content:center;gap:10px;transform-style:preserve-3d;will-change:transform;";
+                    const perspWrapOrigStyle =
+                      "perspective:700px;perspective-origin:50% 50%;width:calc(100% + 20px);margin:0 -10px;display:flex;justify-content:center;overflow:visible;";
+                    let activeSplitRow = null;
+                    let phaseRan = false;
+                    let replayCount = 0;
+
+                    const runPhases = () => {
+                      const doRun = () => {
+                        if (perspWrap.parentNode !== cardRef) {
+                          cardRef.insertBefore(perspWrap, cardRef.firstChild);
+                        }
+                        wordRow.style.cssText = wordRowOrigStyle;
+                        perspWrap.style.cssText = perspWrapOrigStyle;
+                        tileWrappers.forEach((w) => {
+                          w.style.position = "";
+                          w.style.top = "";
+                          w.style.left = "";
+                          w.style.width = "96px";
+                          w.style.height = "96px";
+                          w.style.transform = "";
+                          w.style.opacity = phaseRan ? "0" : "1";
+                        });
+                        anime.set(tileWrappers, { translateX: 0, rotateY: 0 });
+                        anime.set([wordRow], { rotateY: 0 });
+
+                        const rowCenterX = wordRow.offsetWidth / 2;
+                        const targetTX = tileWrappers.map(
+                          (el) =>
+                            rowCenterX - (el.offsetLeft + el.offsetWidth / 2),
+                        );
+                        tileWrappers.forEach((w, idx) => {
+                          w.style.zIndex = String(tileWrappers.length - idx);
+                        });
+                        if (phaseRan) {
+                          anime({
+                            targets: tileWrappers,
+                            opacity: 1,
+                            duration: 400,
+                            delay: anime.stagger(60),
+                            easing: "easeOutQuad",
+                            complete: () =>
+                              setTimeout(() => runAnimation(targetTX), 600),
+                          });
+                        } else {
+                          runAnimation(targetTX);
+                        }
+                      };
+
+                      // Reset: fade out o splitRow atual antes de reconstruir
+                      if (activeSplitRow && activeSplitRow.parentNode) {
+                        anime({
+                          targets: activeSplitRow,
+                          opacity: 0,
+                          duration: 350,
+                          easing: "easeInQuad",
+                          complete: () => {
+                            if (activeSplitRow && activeSplitRow.parentNode)
+                              activeSplitRow.parentNode.removeChild(
+                                activeSplitRow,
+                              );
+                            activeSplitRow = null;
+                            doRun();
+                          },
+                        });
+                      } else {
+                        doRun();
+                      }
+                    };
+
+                    const runAnimation = (targetTX) => {
+                      // ── FASE 1: afasta as letras
+                      anime({
+                        targets: tileWrappers,
+                        translateX: (el, i) => (i - (N - 1) / 2) * 52,
+                        duration: 700,
+                        easing: "easeOutCubic",
+                        complete: () => {
+                          // ── FASE 2: billboard
+                          anime({
+                            targets: wordRow,
+                            rotateY: 90,
+                            duration: 2200,
+                            easing: "easeInOutQuad",
+                          });
+                          anime({
+                            targets: tileWrappers,
+                            rotateY: -90,
+                            duration: 2200,
+                            easing: "easeInOutQuad",
+                            complete: () => {
+                              // ── FASE 3a: convergem
+                              anime({
+                                targets: tileWrappers,
+                                translateX: (el, i) => targetTX[i],
+                                duration: 900,
+                                easing: "easeInOutQuad",
+                                complete: () => {
+                                  // ── FASE 3b: desfaz rotação
+                                  anime({
+                                    targets: wordRow,
+                                    rotateY: 0,
+                                    duration: 900,
+                                    easing: "easeInOutSine",
+                                  });
+                                  anime({
+                                    targets: tileWrappers,
+                                    rotateY: 0,
+                                    duration: 900,
+                                    easing: "easeInOutSine",
+                                    complete: () => {
+                                      scrollFeed();
+
+                                      // ── SPLIT
+                                      setTimeout(() => {
+                                        if (!cardRef) return;
+                                        wordRow.style.cssText =
+                                          "position:relative;width:96px;height:96px;transform-style:preserve-3d;";
+                                        tileWrappers.forEach((w) => {
+                                          w.style.position = "absolute";
+                                          w.style.top = "0";
+                                          w.style.left = "0";
+                                          w.style.width = "96px";
+                                          w.style.height = "96px";
+                                          w.style.transform = "none";
+                                        });
+                                        perspWrap.style.cssText =
+                                          "perspective:700px;perspective-origin:50% 50%;flex-shrink:0;";
+
+                                        const splitRow =
+                                          document.createElement("div");
+                                        activeSplitRow = splitRow;
+                                        splitRow.style.cssText =
+                                          "position:relative;display:flex;justify-content:center;align-items:center;width:100%;height:96px;";
+
+                                        const leftCol =
+                                          document.createElement("div");
+                                        leftCol.style.cssText =
+                                          "position:absolute;display:flex;align-items:center;";
+                                        cardRef.removeChild(perspWrap);
+                                        leftCol.appendChild(perspWrap);
+
+                                        const rightCol =
+                                          document.createElement("div");
+                                        rightCol.style.cssText =
+                                          "position:absolute;display:flex;align-items:center;";
+                                        const rightStack =
+                                          document.createElement("div");
+                                        rightStack.style.cssText =
+                                          "position:relative;width:96px;height:96px;";
+                                        tileData.forEach(({ letter }) => {
+                                          const s = makeSVG(letter, tStroke());
+                                          if (s) {
+                                            s.style.cssText =
+                                              "width:96px;height:96px;position:absolute;top:0;left:0;";
+                                            rightStack.appendChild(s);
+                                          }
+                                        });
+                                        rightCol.appendChild(rightStack);
+
+                                        // Botão replay
+                                        const replayBtn =
+                                          document.createElement("button");
+                                        replayBtn.innerHTML = "&#8635;";
+                                        replayBtn.title = "Repetir animação";
+                                        replayBtn.style.cssText =
+                                          "position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:26px;height:26px;border:1px solid var(--border);background:var(--surface);color:var(--text3);border-radius:50%;font-size:0.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;z-index:10;transition:background 0.2s,color 0.2s;opacity:0;pointer-events:none;";
+                                        splitRow.appendChild(replayBtn);
+                                        splitRow.appendChild(rightCol);
+                                        splitRow.appendChild(leftCol);
+                                        cardRef.insertBefore(
+                                          splitRow,
+                                          cardRef.firstChild,
+                                        );
+
+                                        requestAnimationFrame(() =>
+                                          requestAnimationFrame(() => {
+                                            anime({
+                                              targets: leftCol,
+                                              translateX: -62,
+                                              duration: 700,
+                                              easing: "easeOutCubic",
+                                            });
+                                            anime({
+                                              targets: rightCol,
+                                              translateX: 62,
+                                              duration: 700,
+                                              easing: "easeOutCubic",
+                                              complete: () => {
+                                                // Mostra o botão replay no centro após split
+                                                anime({
+                                                  targets: replayBtn,
+                                                  opacity: 1,
+                                                  duration: 300,
+                                                  easing: "easeOutQuad",
+                                                });
+                                                replayBtn.style.pointerEvents =
+                                                  "auto";
+                                                replayBtn.addEventListener(
+                                                  "mouseover",
+                                                  () => {
+                                                    replayBtn.style.background =
+                                                      "var(--surface2)";
+                                                    replayBtn.style.color =
+                                                      "var(--text1)";
+                                                  },
+                                                );
+                                                replayBtn.addEventListener(
+                                                  "mouseout",
+                                                  () => {
+                                                    replayBtn.style.background =
+                                                      "var(--surface)";
+                                                    replayBtn.style.color =
+                                                      "var(--text3)";
+                                                  },
+                                                );
+                                                replayBtn.addEventListener(
+                                                  "click",
+                                                  () => {
+                                                    replayCount++;
+                                                    if (replayCount >= 3) {
+                                                      replayBtn.innerHTML = "\uD83D\uDE2C";
+                                                      replayBtn.title = "T\u00e1, pode parar...";
+                                                    }
+                                                    runPhases();
+                                                  },
+                                                );
+                                                if (!phaseRan) {
+                                                  phaseRan = true;
+                                                  scrollFeed();
+                                                  chatMsg(
+                                                    "Todas as letras empilhadas formam o glifo da palavra.",
+                                                    200,
+                                                  );
+                                                  chatMsg(
+                                                    "A ordem importa: BOLA \u2260 LOBA.",
+                                                    1200,
+                                                  );
+                                                  // Card comparativo BOLA vs LOBA
+                                                  chatCard((card) => {
+                                                    card.style.cssText +=
+                                                      "display:flex;justify-content:center;gap:20px;align-items:center;padding:12px;";
+                                                    [
+                                                      [
+                                                        "BOLA",
+                                                        ["B", "O", "L", "A"],
+                                                      ],
+                                                      [
+                                                        "LOBA",
+                                                        ["L", "O", "B", "A"],
+                                                      ],
+                                                    ].forEach(
+                                                      ([word, letters]) => {
+                                                        const col =
+                                                          document.createElement(
+                                                            "div",
+                                                          );
+                                                        col.style.cssText =
+                                                          "display:flex;flex-direction:column;align-items:center;gap:6px;";
+                                                        const lbl =
+                                                          document.createElement(
+                                                            "div",
+                                                          );
+                                                        lbl.textContent = word;
+                                                        lbl.style.cssText =
+                                                          "font-size:0.7rem;font-weight:700;letter-spacing:0.08em;color:var(--text3);";
+                                                        const stack =
+                                                          document.createElement(
+                                                            "div",
+                                                          );
+                                                        stack.style.cssText =
+                                                          "position:relative;width:96px;height:96px;";
+                                                        // empilhar de trás para frente (última letra = base)
+                                                        [...letters]
+                                                          .reverse()
+                                                          .forEach((l) => {
+                                                            const s = makeSVG(
+                                                              l,
+                                                              tcOf[l],
+                                                            );
+                                                            if (s) {
+                                                              s.style.cssText =
+                                                                "width:96px;height:96px;position:absolute;top:0;left:0;";
+                                                              stack.appendChild(
+                                                                s,
+                                                              );
+                                                            }
+                                                          });
+                                                        col.appendChild(lbl);
+                                                        col.appendChild(stack);
+                                                        card.appendChild(col);
+                                                      },
+                                                    );
+                                                  }, 1900);
+                                                  setTimeout(() => {
+                                                    newToken();
+                                                    chatChoices(
+                                                      [
+                                                        {
+                                                          label:
+                                                            "Entendi! \u2192",
+                                                          onClick: () =>
+                                                            tutNext(),
+                                                        },
+                                                      ],
+                                                      400,
+                                                    );
+                                                    // Easter egg: hover se repetiu (qualquer replay)
+                                                    setTimeout(() => {
+                                                      const btn =
+                                                        document.querySelector(
+                                                          ".tut-choice-btn",
+                                                        );
+                                                      if (btn) {
+                                                        const orig =
+                                                          btn.textContent;
+                                                        btn.addEventListener(
+                                                          "mouseenter",
+                                                          () => {
+                                                            if (replayCount >= 3)
+                                                              btn.textContent = "Vai logo, vai! \uD83D\uDE24";
+                                                            else if (replayCount >= 1)
+                                                              btn.textContent = "Caraca, voc\u00ea \u00e9 um g\u00eanio!";
+                                                          },
+                                                        );
+                                                        btn.addEventListener(
+                                                          "mouseleave",
+                                                          () => {
+                                                            btn.textContent =
+                                                              orig;
+                                                          },
+                                                        );
+                                                      }
+                                                    }, 600);
+                                                  }, 3200);
+                                                }
+                                              },
+                                            });
+                                            scrollFeed();
+                                          }),
+                                        );
+                                      }, 600);
+                                    },
+                                  });
+                                },
+                              });
+                            },
+                          });
+                        },
+                      });
+                    }; // fim runAnimation
+
+                    tileData.forEach(({ label }) => {
+                      if (label) label.style.opacity = "0";
+                    });
+
+                    let colored = 0;
+                    tileData.forEach(({ svgEl, letter }, i) => {
+                      setTimeout(() => {
+                        if (!svgEl || !svgEl.parentNode) return;
+                        svgEl.style.transition =
+                          "transform 0.2s ease-in, opacity 0.2s";
+                        svgEl.style.transform = "scale(0.6)";
+                        svgEl.style.opacity = "0";
+                        setTimeout(() => {
+                          const newSvg = makeSVG(letter, tcOf[letter]);
+                          if (!newSvg) return;
+                          newSvg.style.cssText = svgEl.style.cssText;
+                          newSvg.style.transform = "scale(0.6)";
+                          newSvg.style.opacity = "0";
+                          newSvg.style.transition =
+                            "transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.25s";
+                          svgEl.parentNode.replaceChild(newSvg, svgEl);
+                          tileData[i].svgEl = newSvg;
+                          requestAnimationFrame(() =>
+                            requestAnimationFrame(() => {
+                              newSvg.style.transform = "scale(1)";
+                              newSvg.style.opacity = "1";
+                            }),
+                          );
+                          colored++;
+                          if (colored === tileData.length) {
+                            setTimeout(() => runPhases(), 400);
+                          }
+                        }, 200);
+                      }, i * 450);
+                    });
+                  },
+                },
+              ]);
+            }, allIn1 + 2000);
+            break;
+          }
+
+          case 2: {
+            TUT.setState("step_2");
+            chatMsg(
+              "Agora veja <em>esse</em> Glifo do Dia. O que ser\u00E1? \uD83E\uDD14",
+              200,
+            );
+            let stack2;
+            chatCard((card) => {
+              card.style.cssText +=
+                "display:flex;justify-content:center;background:transparent;border:none;padding:0;";
+              const { wrap, stack } = makeGlyphSingle(
+                "Glifo do Dia \u2014 ???",
+                "200px",
+              );
+              stack2 = stack;
+              card.appendChild(wrap);
+            }, 500);
+            tDelay(() => {
+              if (!token.cancelled && stack2)
+                tStackEl(stack2, TDL, () => tStroke());
+            }, 600);
+
+            // ── Interactive guess section ────────────────────────────────
+            const tried2 = new Set();
+            const histEntries2 = [];
+            // Phase 1 choices (reveal found letters). Phase 2 choices (lock O at slot 3).
+            const WORDS2_P1 = ["LOTE", "RUDE", "POSE"];
+            const WORDS2_P2 = ["RATO", "CALO", "VASO"];
+            const wLetters2 = {
+              LOTE: ["L", "O", "T", "E"],
+              RUDE: ["R", "U", "D", "E"],
+              POSE: ["P", "O", "S", "E"],
+              RATO: ["R", "A", "T", "O"],
+              CALO: ["C", "A", "L", "O"],
+              VASO: ["V", "A", "S", "O"],
+            };
+            // Per-slot result against ARCO = [A(0),R(1),C(2),O(3)]
+            const wSlots2 = {
+              LOTE: ["miss", "found", "miss", "miss"],
+              RUDE: ["found", "miss", "miss", "miss"],
+              POSE: ["miss", "found", "miss", "miss"],
+              RATO: ["found", "found", "miss", "correct"],
+              CALO: ["found", "found", "miss", "correct"],
+              VASO: ["miss", "found", "miss", "correct"],
+            };
+            const wCorrect2 = {
+              LOTE: [],
+              RUDE: [],
+              POSE: [],
+              RATO: ["O"],
+              CALO: ["O"],
+              VASO: ["O"],
+            };
+            const wFound2 = {
+              LOTE: ["O"],
+              RUDE: ["R"],
+              POSE: ["O"],
+              RATO: ["R", "A"],
+              CALO: ["C", "A"],
+              VASO: ["A"],
+            };
+            const _p2Msg = `A letra <strong style="color:${tdOf["O"]}">O</strong> foi decifrada! ✅ Quando uma letra está no lugar certo, ela <strong>some do Glifo</strong> — o desenho fica mais simples, e o jogo fica mais fácil.`;
+            const wMsg2 = {
+              LOTE: `O Glifo coloriu! Uma letra existe na palavra — mas está na posição errada. 🕵️`,
+              RUDE: `Encontramos o <strong style="color:${tdOf["R"]}">R</strong>! Ele existe na palavra, mas está fora do lugar. Isso é raro — letras incomuns são pistas valiosas! 🔎`,
+              POSE: `O Glifo coloriu! Uma letra existe na palavra — mas está na posição errada. 🕵️`,
+              RATO: _p2Msg,
+              CALO: _p2Msg,
+              VASO: _p2Msg,
+            };
+
+            // Letters remaining in glyph (O removed once RATO/CALO/VASO tried)
+            function glStack2() {
+              const p2Done =
+                tried2.has("RATO") || tried2.has("CALO") || tried2.has("VASO");
+              return p2Done ? ["A", "R", "C"] : TDL;
+            }
+            // Colors for glyph based on found letters so far
+            function glColor2() {
+              const f = new Set();
+              if (tried2.has("LOTE") || tried2.has("POSE")) f.add("O");
+              if (tried2.has("RUDE")) f.add("R");
+              if (tried2.has("RATO")) {
+                f.add("R");
+                f.add("A");
+              }
+              if (tried2.has("CALO")) {
+                f.add("C");
+                f.add("A");
+              }
+              if (tried2.has("VASO")) f.add("A");
+              return (l) => (f.has(l) ? tdOf[l] : tStroke());
             }
 
-            // Estado inicial: BOLA completo neutro + BICO slots neutros
-            tStack("ts3-daily", TWL, () => tStroke());
-            {
-              const c = document.getElementById("ts3-slots");
-              if (c) {
-                c.innerHTML = "";
-                const s = tStroke();
-                ["B", "I", "C", "O"].forEach((l) => {
+            function runGuess2(word) {
+              const num2 = tried2.size + 1;
+              const letters2 = wLetters2[word];
+              const isP2 = WORDS2_P2.includes(word);
+              // Capture state BEFORE registering this guess
+              const stackBefore2 = glStack2();
+              const colorBefore2 = glColor2();
+              tried2.add(word);
+              histEntries2.push({
+                word,
+                correct: wCorrect2[word],
+                found: wFound2[word],
+              });
+              // State AFTER
+              const stackAfter2 = glStack2();
+              const colorAfter2 = glColor2();
+
+              const nextDelay2 = 3300;
+
+              // Banana boy walks right→left on the very first guess (fires bbMidCb near end)
+              let bbMidCb = null;
+              if (num2 === 1) {
+                tDelay(() => {
+                  if (!window.lottie) {
+                    if (bbMidCb) bbMidCb();
+                    return;
+                  }
+                  const panel = document.querySelector(
+                    "#tutorial-overlay .tut-panel",
+                  );
+                  if (!panel) return;
+                  const BB_W = 160;
+                  const bbDiv = document.createElement("div");
+                  bbDiv.style.cssText =
+                    [
+                      "position:absolute",
+                      "bottom:0",
+                      "right:-" + BB_W + "px",
+                      "width:" + BB_W + "px",
+                      "height:" + BB_W + "px",
+                      "z-index:10",
+                      "pointer-events:none",
+                      "will-change:right",
+                    ].join(";") + ";";
+                  panel.style.position = "relative";
+                  panel.style.overflow = "hidden";
+                  panel.appendChild(bbDiv);
+                  const bbInst = lottie.loadAnimation({
+                    container: bbDiv,
+                    renderer: "svg",
+                    loop: true,
+                    autoplay: true,
+                    animationData: _bananaBoyData || undefined,
+                    path: _bananaBoyData
+                      ? undefined
+                      : "/animations/banana_boy.json",
+                  });
+                  // Easter egg: clicar no painel enquanto o banana boy anda
+                  let bbClicked = false;
+                  panel.addEventListener("click", function _bbClick() {
+                    if (bbClicked) return;
+                    bbClicked = true;
+                    panel.removeEventListener("click", _bbClick);
+                    chatMsg("Ei! O menino s\u00f3 passa, n\u00e3o morde! \uD83C\uDF4C", 0);
+                  }, { once: true });
+                  const panelW = panel.offsetWidth || 480;
+                  const DIST = panelW + BB_W;
+                  const T_WALK = 7500;
+                  const eio = (p) => -(Math.cos(Math.PI * p) - 1) / 2;
+                  let t0 = null,
+                    midFired = false;
+                  const doFrame = (ts) => {
+                    if (!t0) t0 = ts;
+                    const t = ts - t0;
+                    if (!midFired && t >= T_WALK * 0.85) {
+                      midFired = true;
+                      if (bbMidCb) bbMidCb();
+                    }
+                    if (t >= T_WALK) {
+                      if (bbInst) bbInst.destroy();
+                      bbDiv.remove();
+                      return;
+                    }
+                    bbDiv.style.right =
+                      (-BB_W + eio(Math.min(t / T_WALK, 1)) * DIST).toFixed(0) +
+                      "px";
+                    requestAnimationFrame(doFrame);
+                  };
+                  requestAnimationFrame(doFrame);
+                }, nextDelay2 + 1000);
+              }
+
+              let gSt2, wSt2, slEl2, hEl2;
+              chatCard((card) => {
+                card.style.cssText +=
+                  "display:flex;flex-direction:column;gap:10px;";
+                const row = document.createElement("div");
+                row.className = "tut-glyph-row";
+                const { panel: dp2, stack: ds2 } =
+                  makeGlyphPanel("Glifo do Dia");
+                gSt2 = ds2;
+                const { panel: gp2, stack: gs2 } = makeGlyphPanel(word);
+                wSt2 = gs2;
+                row.appendChild(dp2);
+                row.appendChild(gp2);
+                card.appendChild(row);
+                slEl2 = document.createElement("div");
+                slEl2.className = "tut-slots";
+                slEl2.style.justifyContent = "center";
+                letters2.forEach((l) => {
                   const el = document.createElement("div");
                   el.className = "tut-slot";
-                  el.style.transition = "opacity 0.4s, background 0.4s";
-                  const svg = makeSVG(l, s);
-                  if (svg) {
-                    svg.style.cssText = "width:65%;height:65%;";
-                    el.appendChild(svg);
+                  const sv = makeSVG(l, tStroke());
+                  if (sv) {
+                    sv.style.cssText = "width:65%;height:65%;";
+                    el.appendChild(sv);
                   }
-                  c.appendChild(el);
+                  slEl2.appendChild(el);
                 });
-              }
-            }
+                card.appendChild(slEl2);
+                hEl2 = document.createElement("div");
+                hEl2.style.cssText =
+                  "border:1px solid var(--border);border-radius:10px;overflow:hidden;";
+                const hHdr = document.createElement("div");
+                hHdr.className = "hdr";
+                hHdr.innerHTML =
+                  "<span>Tentativa</span><span>Certas</span><span>Encontradas</span>";
+                hEl2.appendChild(hHdr);
+                // Rows rendered invisible so height is set from the start
+                [...histEntries2].reverse().forEach((e) => {
+                  const row = makeDemoRow(e.word, e.correct, e.found);
+                  row.style.opacity = "0";
+                  hEl2.appendChild(row);
+                });
+                card.appendChild(hEl2);
+              }, 400);
 
-            // Fase 1 — I e C eliminados (800ms)
-            tDelay(() => {
-              const c = document.getElementById("ts3-slots");
-              if (!c) return;
-              [1, 2].forEach((si) => {
-                if (c.children[si]) c.children[si].style.opacity = "0.22";
-              });
-              const rc = document.getElementById("ts3-result-row");
-              if (rc)
-                ts3Prepend(
-                  rc,
-                  "background:var(--border)",
-                  "<span style='color:var(--text3)'><strong>I, C</strong> — não existem na palavra</span>",
-                );
-            }, 800);
-
-            // Fase 2 — O posição errada: colore no glifo (1900ms)
-            // DOM order: A=0, L=1, O=2, B=3 (bottom-up render)
-            tDelay(() => {
-              tStack("ts3-daily", TWL, (l) =>
-                l === "O" ? tcOf["O"] : tStroke(),
-              );
+              // Show glyph before-state + guessed word (uncolored)
               tDelay(() => {
-                const gc = document.getElementById("ts3-daily");
-                if (!gc) return;
-                const oSvg = gc.querySelectorAll("svg")[2]; // O = DOM index 2
-                if (oSvg) {
-                  oSvg.style.filter = `drop-shadow(0 0 8px ${tcOf["O"]})`;
-                  tDelay(() => {
-                    oSvg.style.transition = "filter 0.5s";
-                    oSvg.style.filter = `drop-shadow(0 0 3px ${tcOf["O"]})`;
-                  }, 500);
-                }
-              }, 100);
-              const rc = document.getElementById("ts3-result-row");
-              if (rc)
-                ts3Prepend(
-                  rc,
-                  `background:var(--surface3);border:2px solid ${tcOf["O"]}`,
-                  `<strong style='color:${tcOf["O"]}'>O</strong> — está na palavra, posição errada`,
-                );
-            }, 1900);
+                if (token.cancelled) return;
+                tStackEl(gSt2, stackBefore2, colorBefore2);
+                tStackEl(wSt2, letters2, () => tStroke());
+              }, 500);
 
-            // Fase 3 — B correto: some do TOPO do glifo, slot fica verde (3200ms)
-            tDelay(() => {
-              const gc = document.getElementById("ts3-daily");
-              if (gc) {
-                const bSvg = gc.querySelectorAll("svg")[3]; // B = DOM index 3 (topo)
-                if (bSvg) {
-                  bSvg.style.transition = "opacity 0.6s, filter 0.6s";
-                  bSvg.style.opacity = "0";
-                  bSvg.style.filter = "blur(6px)";
-                  tDelay(() => bSvg.remove(), 650);
-                }
-              }
-              const sc = document.getElementById("ts3-slots");
-              if (sc) {
-                const bSlot = sc.children[0]; // B = índice 0 em BICO
-                if (bSlot) {
-                  bSlot.style.background = tcOf["B"];
-                  bSlot.style.borderColor = "transparent";
-                  const sv = bSlot.querySelector("svg");
-                  if (sv)
-                    sv.querySelectorAll("path").forEach((p) =>
-                      p.setAttribute("stroke", "#fff"),
+              // Animate slots revealing result
+              tDelay(() => {
+                if (token.cancelled || !slEl2) return;
+                const slots2 = [...slEl2.children];
+                letters2.forEach((l, i) => {
+                  const status = wSlots2[word][i];
+                  setTimeout(() => {
+                    const el = slots2[i];
+                    if (!el) return;
+                    el.style.transition = "transform 0.19s ease-in";
+                    el.style.transform = "scaleY(0)";
+                    setTimeout(() => {
+                      el.innerHTML = "";
+                      if (status === "correct") {
+                        el.style.background = tdOf[l];
+                        el.style.borderColor = "transparent";
+                        const sv = makeSVG(l, "#fff");
+                        if (sv) {
+                          sv.style.cssText = "width:65%;height:65%;";
+                          el.appendChild(sv);
+                        }
+                      } else {
+                        // "found" and "miss" look the same: dimmed glyph on surface
+                        el.style.background = "var(--surface2)";
+                        el.style.borderColor = "var(--border2)";
+                        const sv = makeSVG(l, tStroke());
+                        if (sv) {
+                          sv.style.cssText = "width:65%;height:65%;opacity:0.5;";
+                          el.appendChild(sv);
+                        }
+                      }
+                      el.style.transition = "transform 0.19s ease-out";
+                      el.style.transform = "scaleY(1)";
+                    }, 190);
+                  }, i * 200);
+                });
+              }, 800);
+
+              // Update glyph after all slots have finished flipping
+              // Slots: start 800ms + i*200ms offset + 380ms flip = last done ~1780ms
+              tDelay(() => {
+                if (token.cancelled) return;
+                if (isP2) {
+                  // O locks — animate O disappearing from glyph (svgIdx 0 in DOM)
+                  const oSvg = gSt2 && gSt2.querySelectorAll("svg")[0];
+                  if (oSvg) {
+                    oSvg.style.transition = "opacity 0.6s, filter 0.6s";
+                    oSvg.style.opacity = "0";
+                    oSvg.style.filter = "blur(4px)";
+                    tDelay(() => {
+                      if (oSvg) oSvg.remove();
+                    }, 650);
+                  }
+                  tDelay(() => {
+                    tStackEl(gSt2, stackAfter2, colorAfter2);
+                    tStackEl(wSt2, letters2, () => tStroke());
+                    // Ghost O — dashed pulsing outline where O used to be
+                    const ghostSvg = makeSVG(
+                      "O",
+                      tdOf["O"],
+                      "position:absolute;top:0;left:0;width:100%;height:100%;",
                     );
+                    if (ghostSvg && gSt2) {
+                      const g = ghostSvg.querySelector("g");
+                      if (g) {
+                        g.setAttribute("stroke-width", "4");
+                        g.setAttribute("stroke-dasharray", "5 8");
+                        g.setAttribute("stroke-linecap", "round");
+                      }
+                      ghostSvg.classList.add("tut-ghost-o");
+                      gSt2.appendChild(ghostSvg);
+                    }
+                  }, 700);
+                } else {
+                  // Phase 1 word: glyph gains found color
+                  tStackEl(gSt2, stackAfter2, colorAfter2);
+                  tStackEl(wSt2, letters2, () => tStroke());
                 }
-              }
-              const rc = document.getElementById("ts3-result-row");
-              if (rc)
-                ts3Prepend(
-                  rc,
-                  "background:var(--correct)",
-                  `<strong style='color:${tcOf["B"]}'>B</strong> — posição certa! Some do glifo — a cada acerto, ele fica mais simples ✨`,
-                );
+              }, 1900);
+
               tDelay(() => {
-                btn.disabled = false;
-                btn.style.opacity = "1";
-              }, 600);
-            }, 3200);
-            break;
-
-          case 4: // Cor única — B decodificado (some do topo), O colorido (posição errada)
-            tStack("ts4-daily", ["O", "L", "A"], (l) =>
-              l === "O" ? tcOf["O"] : tStroke(),
-            );
-            tSlots("ts4-slots", ["B", "", "", ""], new Set([0])); // B confirmado, 2ª tentativa
-            break;
-
-          case 5: // Chave Decodificadora — demo animado em loop
-            {
-              const kc = document.getElementById("ts5-kboxes");
-              const hint = document.getElementById("ts5-key-hint");
-              const warning = document.getElementById("ts5-key-warning");
-              if (!kc) break;
-
-              if (warning) warning.style.opacity = "0";
-
-              function runKeyDemo() {
-                // Reset
-                kc.innerHTML = "";
-                TWL.forEach(() => {
-                  const b = document.createElement("div");
-                  b.className = "kbox";
-                  b.textContent = "?";
-                  kc.appendChild(b);
+                if (token.cancelled || !hEl2) return;
+                [...hEl2.querySelectorAll(".hrow")].forEach((row, i) => {
+                  row.style.transition = "opacity 0.4s";
+                  setTimeout(
+                    () => {
+                      row.style.opacity = "1";
+                    },
+                    i * 150 + 50,
+                  );
                 });
-                if (hint) hint.textContent = "Qual posição revelar?";
-                // B já confirmado
-                const bBox = kc.children[0];
-                if (bBox) {
-                  bBox.textContent = "";
-                  bBox.classList.add("used");
-                  bBox.style.background = tcOf["B"];
-                  bBox.style.borderColor = "transparent";
-                  const svg = makeSVG("B", "#fff");
-                  if (svg) {
-                    svg.style.cssText = "width:62%;height:62%;";
-                    bBox.appendChild(svg);
-                  }
+                // Pulse found slots and history dots to draw attention
+                if (!isP2) {
+                  const foundDots = [
+                    ...hEl2.querySelectorAll(".dcell:last-child .hdot"),
+                  ];
+                  const pulseEls = [...foundDots];
+                  setTimeout(() => {
+                    pulseEls.forEach((el) =>
+                      el.classList.add("tut-found-pulse"),
+                    );
+                  }, 200);
+                  setTimeout(() => {
+                    pulseEls.forEach((el) =>
+                      el.classList.remove("tut-found-pulse"),
+                    );
+                  }, 1500); // stop 300ms before Quaaase
                 }
-                // Seleciona posição 2 (L)
-                tDelay(() => {
-                  if (!kc.children[2]) return;
-                  kc.children[2].classList.add("sel");
-                  kc.children[2].textContent = "";
-                  if (hint) hint.textContent = "Posição 3 selecionada...";
-                }, 1000);
-                // Revela L
-                tDelay(() => {
-                  const box = kc.children[2];
-                  if (!box) return;
-                  box.classList.remove("sel");
-                  box.classList.add("used");
-                  box.style.background = tcOf["L"];
-                  box.style.borderColor = "transparent";
-                  const svg = makeSVG("L", "#fff");
-                  if (svg) {
-                    svg.style.cssText = "width:62%;height:62%;";
-                    box.appendChild(svg);
-                  }
-                  if (hint)
-                    hint.innerHTML =
-                      "<strong style='color:" +
-                      tcOf["L"] +
-                      "'>L</strong> revelado!";
-                  // Aviso aparece 800ms depois do reveal
-                  tDelay(() => {
-                    const w = document.getElementById("ts5-key-warning");
-                    if (w) w.style.opacity = "1";
-                  }, 800);
-                }, 2200);
-                // Pausa e recomeça
-                tDelay(runKeyDemo, 4200);
-              }
-              runKeyDemo();
-            }
-            break;
+              }, 2000);
 
-          case 6: // Interação — digita BOLA com cursor não-linear
-            tStack("ts5-daily", ["O", "A"], (l) =>
-              l === "A" ? tcOf["A"] : tStroke(),
-            );
-            btn.disabled = true;
-            btn.style.opacity = "0.35";
-            iTyped = ["B", "", "L", ""]; // B e L já confirmados
-            iConfirmed = new Set([0, 2]); // slots 0 (B) e 2 (L) não-editáveis
-            iWrongCount = 0;
-            iCursor = 1;
-            {
-              const title = document.getElementById("ts6-title");
-              if (title) {
-                title.style.opacity = "1";
-                title.style.transition = "";
-                const titleInner = title.querySelector("div");
-                if (titleInner)
-                  titleInner.innerHTML =
-                    'Forme <strong style="color: var(--amber-400)">BOLA</strong> para continuar!';
-              }
-              const hint = document.getElementById("ts5-hint");
-              if (hint) {
-                hint.textContent = "Clique num slot e comece a digitar";
-                hint.style.color = "var(--text3)";
-              }
-              const sc = document.getElementById("ts5-scards");
-              if (sc) {
-                sc.style.opacity = "0";
-                sc.style.pointerEvents = "none";
+              if (isP2) {
+                // Explain O locking, then player confirms before CARO curiosity
+                chatMsg(wMsg2[word], nextDelay2 + 300);
+
+                // CARO comparison sequence — extracted so birra flow can also call it
+                const startCaro = (cameFromBirra) => {
+                  chatMsg(
+                    `Lembra de <strong>BOLA ≠ LOBA</strong> lá em cima? É exatamente isso aqui — mesmas letras, ordem diferente. Ficamos com 2 opções: <strong>CARO</strong> e <strong>ARCO</strong>.`,
+                    200,
+                  );
+                  chatMsg(
+                    `Mas olha a pegadinha: o glifo deles é idêntico! 😯 Ambas têm A, R, C, O — só a ordem muda.`,
+                    1200,
+                  );
+                  let caroGst, arcoGst;
+                  chatCard((card) => {
+                    card.style.cssText +=
+                      "display:flex;flex-direction:column;gap:10px;";
+                    const caroRow = document.createElement("div");
+                    caroRow.className = "tut-glyph-row";
+                    const { panel: cp, stack: cs } = makeGlyphPanel("CARO");
+                    caroGst = cs;
+                    const { panel: ap, stack: as_ } = makeGlyphPanel("ARCO");
+                    arcoGst = as_;
+                    caroRow.appendChild(cp);
+                    caroRow.appendChild(ap);
+                    card.appendChild(caroRow);
+                  }, 1800);
+                  // Color both glyphs identically (same ARCO colors) to show they're the same
+                  tDelay(() => {
+                    if (token.cancelled) return;
+                    tStackEl(caroGst, ["C", "A", "R", "O"], (l) => tdOf[l]);
+                    tStackEl(arcoGst, TDL, (l) => tdOf[l]);
+                  }, 2100);
+                  chatMsg(
+                    `Nesse caso a <strong>Chave 🔑</strong> não ajuda — ela revela uma letra, e aqui todas já são conhecidas. Só a ordem decide. Tenta a sorte! 🔓`,
+                    3200,
+                  );
+                  // Interactive slots — user types ARCO or CARO letter by letter
+                  tDelay(() => {
+                    if (token.cancelled) return;
+                    iWord = "ARCO";
+                    iLetters = TDL;
+                    iColorOf = tdOf;
+                    iTyped = ["", "", "", ""];
+                    iConfirmed = new Set();
+                    iWrongCount = -999; // disable easter egg
+                    iCursor = 0;
+                    onTutGiveUp = null;
+                    tutInteractReady = true;
+
+                    const feed = document.getElementById("tut-chat-feed");
+                    if (!feed) return;
+
+                    const wrap = document.createElement("div");
+                    wrap.className = "tut-bubble-right";
+
+                    const staticHint = document.createElement("p");
+                    staticHint.id = "ts5-hint";
+                    staticHint.style.cssText =
+                      "font-size:0.76rem;color:var(--text3);margin:0 0 8px;text-align:center;";
+                    staticHint.textContent =
+                      "ARCO ou CARO? Só a ordem certa decifra o glifo ↵";
+                    wrap.appendChild(staticHint);
+
+                    const slotsEl = document.createElement("div");
+                    slotsEl.id = "ts5-interact";
+                    slotsEl.className = "tut-slots";
+                    slotsEl.style.justifyContent = "center";
+                    wrap.appendChild(slotsEl);
+
+                    const confirmBtn = document.createElement("button");
+                    confirmBtn.className = "tut-choice-btn";
+                    confirmBtn.style.cssText =
+                      "margin-top:8px;width:100%;font-size:0.82rem;padding:6px 12px;";
+                    confirmBtn.textContent = "Confirmar ↵";
+                    wrap.appendChild(confirmBtn);
+
+                    feed.appendChild(wrap);
+                    requestAnimationFrame(() =>
+                      requestAnimationFrame(() => {
+                        wrap.classList.add("show");
+                        scrollFeed();
+                      }),
+                    );
+
+                    const handleNonArco = () => {
+                      if (!iTyped.every(Boolean)) return;
+                      const typed = iTyped.join("");
+                      if (typed === "ARCO") return; // auto-handled by buildInteract
+                      removeTutKeyHandler();
+                      tutInteractReady = false;
+                      if (confirmBtn.parentNode) confirmBtn.remove();
+                      if (typed === "CARO") {
+                        const zoada = cameFromBirra
+                          ? `Sério?! Você disse que estava confuso... e ainda errou! Isso é talento. 😂`
+                          : `Quase! Era <strong>ARCO</strong> — as letras eram as mesmas, mas a ordem importa! 😄`;
+                        chatMsg(zoada, 300);
+                        chatMsg(`A palavra do dia é <strong>ARCO</strong>. Óbvio, né? 😏`, 1400);
+                        chatMsg(`Mas agora você sabe como funciona! Bora jogar? 🎮`, 2400);
+                        const caroMsg = cameFromBirra
+                          ? "Depois de toda aquela birra... errou CARO... e ainda quer revisar?! \uD83D\uDE2D"
+                          : "Você não vai com a minha cara? \uD83D\uDE24";
+                        chatFinale(false, 2900, 3400, caroMsg);
+                      } else {
+                        chatMsg(`Hmm... nem era uma das opções! 😅 Era <strong>ARCO</strong>.`, 300);
+                        chatMsg(`Mas agora você sabe como funciona! Bora jogar? 🎮`, 1500);
+                        chatFinale(false, 2000, 2500);
+                      }
+                    };
+
+                    confirmBtn.onclick = handleNonArco;
+
+                    onTutSolved = () => {
+                      tutInteractReady = false;
+                      if (confirmBtn.parentNode) confirmBtn.remove();
+                      confetti(feed);
+                      chatMsg(`Isso aí! 🎉 Era <strong>ARCO</strong>! Você conseguiu!`, 300);
+                      chatMsg(`Mandou bem! Agora você sabe jogar. 🏆`, 1400);
+                      chatFinale(true, 1900, 2500);
+                    };
+
+                    buildInteract();
+                    installTutKeyHandler();
+
+                    // Patch: add Enter key for non-ARCO submissions
+                    const baseHandler = tutKeyHandler;
+                    document.removeEventListener("keydown", baseHandler);
+                    const caroKeyHandler = (e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleNonArco();
+                      } else {
+                        baseHandler(e);
+                      }
+                    };
+                    tutKeyHandler = caroKeyHandler;
+                    document.addEventListener("keydown", caroKeyHandler);
+                  }, 4500);
+                };
+
+                // "Birra" flow — tutorial makes a fuss before relenting
+                const irParaTermo = () => {
+                  window.open("https://term.ooo", "_blank", "noopener");
+                };
+                const birraRound3 = () => {
+                  chatMsg(
+                    `...........tá. Mas fique sabendo que eu tô fazendo um <em>enorme</em> favor. 😤`,
+                    0,
+                  );
+                  tDelay(() => {
+                    chatSetChoices([
+                      {
+                        label: "Muito obrigado! 🙏",
+                        onClick: () => {
+                          startCaro(true);
+                        },
+                      },
+                    ]);
+                  }, 1400);
+                };
+                const birraRound2 = () => {
+                  chatMsg(
+                    `Hmm. Não sei não... você me parece muito suspeito. 🤨`,
+                    0,
+                  );
+                  tDelay(() => {
+                    chatSetChoices([
+                      {
+                        label: "Eu juro que entendo! Pode continuar! 🤞",
+                        onClick: () => {
+                          birraRound3();
+                        },
+                      },
+                      {
+                        label: "Ok, pro Termo mesmo... 🚪",
+                        onClick: () => {
+                          chatMsg(`Boa escolha. 😤`, 0);
+                          setTimeout(irParaTermo, 800);
+                        },
+                      },
+                    ]);
+                  }, 1400);
+                };
+                const birraRound1 = () => {
+                  chatMsg(
+                    `Fala sério! Mais explicado do que isso? Vai jogar <a href="https://term.ooo" target="_blank" rel="noopener">Termo</a>, vai! 😄`,
+                    0,
+                  );
+                  tDelay(() => {
+                    chatSetChoices([
+                      {
+                        label: "Mas eu gosto mais do Gliffo! 🥺",
+                        onClick: () => {
+                          birraRound2();
+                        },
+                      },
+                      {
+                        label: "Tá bem, vou mesmo... 🚪",
+                        onClick: () => {
+                          chatMsg(`Boa viagem! 👋`, 0);
+                          setTimeout(irParaTermo, 800);
+                        },
+                      },
+                    ]);
+                  }, 1400);
+                };
+
+                chatChoices(
+                  [
+                    {
+                      label: "Acho que já sei! 🧠",
+                      onClick: () => {
+                        startCaro(false);
+                      },
+                    },
+                    {
+                      label: "Estou confuso ainda... 😵",
+                      onClick: () => {
+                        birraRound1();
+                      },
+                    },
+                  ],
+                  nextDelay2 + 1500,
+                );
+              } else {
+                chatTypingThenMsg(
+                  "pre-typing",
+                  1000,
+                  `Boa pista! 🔎 Glifos coloridos indicam que a letra <strong>existe</strong> na palavra — mas está na posição errada.`,
+                  nextDelay2 + 500,
+                  token,
+                );
+                chatTypingThenMsg(
+                  "bb-typing",
+                  nextDelay2 + 1000,
+                  null,
+                  null,
+                  token,
+                );
+                const showP2 = () => {
+                  const feed = document.getElementById("tut-chat-feed");
+                  const indicator = document.getElementById("bb-typing");
+                  const div = document.createElement("div");
+                  div.className = "tut-bubble-left";
+                  div.innerHTML = `Agora com essa pista, tenta de novo! Use as letras na posição certa. 💡`;
+                  if (feed && indicator) {
+                    feed.replaceChild(div, indicator);
+                  } else if (feed) {
+                    feed.appendChild(div);
+                  }
+                  requestAnimationFrame(() =>
+                    requestAnimationFrame(() => {
+                      div.classList.add("show");
+                      scrollFeed();
+                    }),
+                  );
+                  tDelay(() => {
+                    if (token.cancelled) return;
+                    chatSetChoices(
+                      WORDS2_P2.map((w) => ({
+                        label: w,
+                        onClick: () => runGuess2(w),
+                      })),
+                    );
+                  }, 1000);
+                };
+                if (num2 === 1) {
+                  bbMidCb = showP2;
+                } else {
+                  tDelay(() => {
+                    if (!token.cancelled) showP2();
+                  }, nextDelay2 + 2400);
+                }
               }
             }
-            tDelay(() => {
-              buildInteract();
-              installTutKeyHandler();
-            }, 100);
+
+            chatChoices(
+              [
+                {
+                  label: "Quero tentar descobrir!",
+                  onClick: () => {
+                    chatMsg("Qual palavra tentar primeiro?", 200);
+                    tDelay(() => {
+                      if (token.cancelled) return;
+                      chatSetChoices(
+                        WORDS2_P1.map((w) => ({
+                          label: w,
+                          onClick: () => runGuess2(w),
+                        })),
+                      );
+                    }, 800);
+                  },
+                },
+              ],
+              2000,
+            );
             break;
+          }
         }
       }
 
       function tutNext() {
+        renderStep(++tutStep, true);
+      }
+      function sadGoodbye() {
+        if (_byeToken) {
+          _byeToken.cancelled = true;
+          _byeToken = null;
+        }
+        const token = { cancelled: false };
+        _byeToken = token;
+        TUT.setState("sad_walk");
         tClear();
         stopTyping();
         stopIso();
-        removeTutKeyHandler();
-        if (currentActionToken) currentActionToken.cancelled = true;
-        if (tutStep < 6) {
-          tutStep++;
-          renderStep(tutStep);
-        } else closeTutorial();
-      }
-      function tutSkipOrRestart() {
-        const skipBtn = document.getElementById("tut-skip-btn");
-        if (skipBtn && skipBtn.textContent === "Ver de novo") {
-          tutStep = 0;
-          renderStep(0);
-          return;
+        if (currentActionToken) {
+          currentActionToken.cancelled = true;
+          currentActionToken = null;
         }
+
+        // Clear choices immediately so nothing is clickable during the walk
+        const choicesEl = document.getElementById("tut-chat-choices");
+        if (choicesEl) choicesEl.innerHTML = "";
+
+        // Mensagem imediata para preencher o tempo de carregamento do boneco
+        newToken();
+        chatMsg("Poxa\u2026 \uD83E\uDD79", 0);
+        // Typing indicator enquanto o boneco anda
+        tDelay(() => {
+          if (currentActionToken && currentActionToken.cancelled) return;
+          const feed = document.getElementById("tut-chat-feed");
+          if (!feed) return;
+          const typing = document.createElement("div");
+          typing.id = "tut-bye-typing";
+          typing.className = "tut-typing";
+          typing.innerHTML = "<span></span><span></span><span></span>";
+          feed.appendChild(typing);
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => {
+              typing.classList.add("show");
+              feed.scrollTop = feed.scrollHeight;
+            }),
+          );
+        }, 600);
+
+        const panel = document.querySelector("#tutorial-overlay .tut-panel");
+
+        // The panel is position:relative implicitly — we need it to clip and contain the cat
+        panel.style.position = "relative";
+        panel.style.overflow = "hidden"; // already set in CSS but ensure it
+
+        // lottie-web: reutiliza div pré-renderizado ou cria novo
+        const CAT_W = 160;
+        let catDiv, lottieInst;
+        if (_sadLottie) {
+          // já renderizado: apenas reposiciona no painel
+          catDiv = _sadLottie.div;
+          lottieInst = _sadLottie.inst;
+          _sadLottie = null;
+          catDiv.id = "tut-bye-cat";
+          catDiv.style.cssText =
+            [
+              "position:absolute",
+              "bottom:0",
+              "left:-" + CAT_W + "px",
+              "width:" + CAT_W + "px",
+              "height:" + CAT_W + "px",
+              "z-index:10",
+              "pointer-events:none",
+              "will-change:left",
+            ].join(";") + ";";
+          panel.appendChild(catDiv);
+        } else {
+          // fallback: cria do zero
+          catDiv = document.createElement("div");
+          catDiv.id = "tut-bye-cat";
+          catDiv.style.cssText =
+            [
+              "position:absolute",
+              "bottom:0",
+              "left:-" + CAT_W + "px",
+              "width:" + CAT_W + "px",
+              "height:" + CAT_W + "px",
+              "z-index:10",
+              "pointer-events:none",
+              "will-change:left",
+            ].join(";") + ";";
+          panel.appendChild(catDiv);
+          lottieInst = window.lottie
+            ? lottie.loadAnimation({
+                container: catDiv,
+                renderer: "svg",
+                loop: true,
+                autoplay: true,
+                animationData: _sadWalkingData || undefined,
+                path: _sadWalkingData
+                  ? undefined
+                  : "/animations/sad_walking.json",
+              })
+            : null;
+        }
+
+        const panelW = panel.offsetWidth || 480;
+        const DIST = panelW + CAT_W;
+        const T_WALK = 7500; // ms to cross panel
+        const T_MSG = T_WALK * 0.75; // dispara mensagens a 75% do percurso
+        const eio = (p) => -(Math.cos(Math.PI * p) - 1) / 2; // ease-in-out sine
+
+        let rafId = null,
+          t0 = null,
+          msgsFired = false;
+        const doFrame = (ts) => {
+          if (token.cancelled) return;
+          if (!t0) t0 = ts;
+          const t = ts - t0;
+
+          // Dispara mensagens antes do fim do percurso
+          if (!msgsFired && t >= T_MSG) {
+            msgsFired = true;
+            // Replace typing indicator atomically with first message
+            const feed = document.getElementById("tut-chat-feed");
+            const typingEl = document.getElementById("tut-bye-typing");
+            _byeToken = null;
+            newToken();
+            onTutSolved = null;
+            onTutGiveUp = null;
+            TUT.setState("comeback");
+            const div = document.createElement("div");
+            div.className = "tut-bubble-left";
+            div.innerHTML = "Psst\u2026 ficou a\u00ED? \uD83D\uDC40";
+            if (feed && typingEl) {
+              feed.replaceChild(div, typingEl);
+            } else if (feed) {
+              feed.appendChild(div);
+            }
+            requestAnimationFrame(() =>
+              requestAnimationFrame(() => {
+                div.classList.add("show");
+                scrollFeed();
+              }),
+            );
+            chatMsg(
+              "A gente promete que fica mais f\u00E1cil depois do primeiro jogo!",
+              800,
+            );
+            chatChoices(
+              [
+                {
+                  label: "Ok, me convenceu! \uD83C\uDFA8",
+                  onClick: () => {
+                    tutStep = 1;
+                    renderStep(1);
+                  },
+                },
+                {
+                  label: "Tchau mesmo \uD83D\uDC4B",
+                  secondary: true,
+                  onClick: () => showRatingAndClose(),
+                },
+              ],
+              1800,
+            );
+            tDelay(() => {
+              if (!(currentActionToken && currentActionToken.cancelled))
+                showByeInput();
+            }, 2600);
+          }
+
+          if (t >= T_WALK) {
+            if (lottieInst) {
+              lottieInst.destroy();
+              lottieInst = null;
+            }
+            catDiv.remove();
+            return;
+          }
+          catDiv.style.left =
+            (-CAT_W + eio(Math.min(t / T_WALK, 1)) * DIST).toFixed(0) + "px";
+          rafId = requestAnimationFrame(doFrame);
+        };
+
+        rafId = requestAnimationFrame(doFrame);
+      }
+
+      const BYE_PHRASES = [
+        "Nossa, que jogo incrível... em minha grande ignorância quase abandonei essa obra-prima. Me perdoa e me deixa jogar, por favor!",
+        "Reconheço meu tremendo erro. O Gliffo é claramente o pináculo da civilização e eu, humilde mortal, preciso dessa segunda chance.",
+        "Palavra de honra que nunca mais duvido. Esse jogo mudou minha vida antes mesmo de eu jogar. É arte, é filosofia, é o sentido da existência.",
+        "Ó grande e sábio Gliffo, em sua infinita misericórdia, conceda-me o privilégio de decifrar seus sagrados glifos diariamente. 🙏",
+        "Tô arrependidíssimo. Como eu, de todas as pessoas, quase saí do melhor jogo de palavras já criado? Me dá mais uma chance, juro que jogo todo dia!",
+      ];
+
+      function _installHijack(onSend) {
+        const origInput = document.getElementById("tut-bye-input");
+        const origSend = document.getElementById("tut-bye-send");
+        if (!origInput || !origSend) return;
+        // Clone to wipe previous listeners
+        const input = origInput.cloneNode(true);
+        const sendBtn = origSend.cloneNode(true);
+        origInput.replaceWith(input);
+        origSend.replaceWith(sendBtn);
+        input.removeAttribute("readonly");
+        input.readOnly = false;
+        const phrase =
+          BYE_PHRASES[Math.floor(Math.random() * BYE_PHRASES.length)];
+        let phraseIdx = 0;
+        input.value = "";
+        sendBtn.disabled = true;
+        sendBtn.classList.remove("ready");
+        sendBtn.addEventListener("click", () => {
+          const typed = input.value;
+          input.value = "";
+          input.style.height = "auto";
+          phraseIdx = 0;
+          sendBtn.disabled = true;
+          sendBtn.classList.remove("ready");
+          sendBtn.classList.add("thinking");
+          onSend(typed);
+        });
+        input.addEventListener("keydown", (e) => {
+          if (e.key === "Backspace") {
+            e.preventDefault();
+            if (phraseIdx > 0) phraseIdx--;
+            input.value = phrase.substring(0, phraseIdx);
+            if (phraseIdx < phrase.length) {
+              sendBtn.disabled = true;
+              sendBtn.classList.remove("ready");
+            }
+          } else if (e.key === "Enter") {
+            e.preventDefault();
+            if (phraseIdx === phrase.length) sendBtn.click();
+          } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+            e.preventDefault();
+            if (phraseIdx < phrase.length) {
+              phraseIdx++;
+              input.value = phrase.substring(0, phraseIdx);
+            }
+            if (phraseIdx === phrase.length) {
+              sendBtn.disabled = false;
+              sendBtn.classList.add("ready");
+            }
+          }
+          // auto-resize
+          input.style.height = "auto";
+          input.style.height = Math.min(input.scrollHeight, 120) + "px";
+        });
+      }
+
+      function showByeInput() {
+        const bajuladoCallback = (typed) => {
+          chatUser(typed, 0);
+          tDelay(() => {
+            chatMsg(
+              "\uD83E\uDD73 Sabia que voc\u00EA ia entender! Vamos l\u00E1?",
+              0,
+            );
+            chatChoices(
+              [
+                {
+                  label: "Vamos! \uD83C\uDFA8",
+                  onClick: () => {
+                    tutStep = 1;
+                    renderStep(1);
+                  },
+                },
+              ],
+              800,
+            );
+          }, 300);
+        };
+        // Override TUT.freeInput for comeback state: bajulador instead of dismiss+reask
+        TUT._freeInputOverride = bajuladoCallback;
+        _installHijack((typed) => TUT.freeInput(typed));
+        setTimeout(() => {
+          const inp = document.getElementById("tut-bye-input");
+          if (inp) inp.focus();
+        }, 50);
+      }
+
+      function tutSkipOrRestart() {
         closeTutorial();
       }
+      function showRatingAndClose() {
+        tClear();
+        newToken();
+        chatMsg(
+          "Antes de ir \u2014 s\u00F3 uma perguntinha r\u00E1pida! \uD83D\uDE07",
+          600,
+        );
+        chatMsg(
+          "De <strong>0 a 10</strong>, como voc\u00EA avalia nosso tutorial?",
+          1400,
+        );
+        tDelay(() => {
+          if (currentActionToken && currentActionToken.cancelled) return;
+          const feed = document.getElementById("tut-chat-feed");
+          if (!feed) return;
+          const wrap = document.createElement("div");
+          wrap.style.cssText =
+            "display:flex;flex-wrap:nowrap;gap:3px;padding:4px 0;width:100%;box-sizing:border-box;";
+
+          const scores = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+          scores.forEach((n) => {
+            const b = document.createElement("button");
+            b.className = "tut-choice-btn" + (n < 7 ? " secondary" : "");
+            b.style.cssText =
+              "min-width:0;padding:5px 2px;font-size:0.78rem;flex:1 1 0;border-radius:8px;line-height:1;";
+            b.textContent = String(n);
+            b.dataset.score = n;
+            wrap.appendChild(b);
+
+            if (n !== 10) {
+              b.addEventListener("mouseenter", (e) => {
+                if (b._fled) return;
+                b._fled = true;
+                b.style.pointerEvents = "none";
+
+                const rect = b.getBoundingClientRect();
+                const wrapRect = wrap.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+                const dx = cx - e.clientX;
+                const dy = cy - e.clientY;
+                const len = Math.sqrt(dx * dx + dy * dy) || 1;
+                const dist = 70 + Math.random() * 60;
+                const rawTx = (dx / len) * dist + (Math.random() - 0.5) * 40;
+                const rawTy = (dy / len) * dist + (Math.random() - 0.5) * 40;
+                // Clamp horizontal so button never exits the wrap width
+                const maxLeft = wrapRect.left - rect.left;
+                const maxRight = wrapRect.right - rect.right;
+                const tx = Math.max(maxLeft, Math.min(maxRight, rawTx));
+                const ty = rawTy;
+                const rot = (Math.random() - 0.5) * 80;
+
+                anime({
+                  targets: b,
+                  translateX: tx,
+                  translateY: ty,
+                  rotate: rot,
+                  opacity: 0.2,
+                  duration: 160,
+                  easing: "easeOutQuad",
+                });
+              });
+            }
+
+            b.addEventListener("click", () => {
+              if (b._fled) return;
+              card.remove();
+              const picked = parseInt(b.dataset.score);
+              const msg =
+                picked === 10
+                  ? "\uD83E\uDD73 Que alegria! Obrigado pelo feedback!"
+                  : picked >= 6
+                    ? "Obrigado! A gente vai trabalhar pra chegar no 10 \uD83D\uDE04"
+                    : "Poxa... pelo menos foi honesto \uD83D\uDE4F Vamos melhorar!";
+              chatUserNow(String(picked), () => {
+                newToken();
+                chatMsg(msg, 200);
+                tDelay(() => closeTutorial(), 2000);
+              });
+            });
+          });
+
+          const card = document.createElement("div");
+          card.className = "tut-chat-card show";
+          card.style.cssText += "padding:10px 12px;";
+          card.appendChild(wrap);
+          feed.appendChild(card);
+          feed.scrollTop = feed.scrollHeight;
+        }, 2200);
+      }
+
       function closeTutorial() {
+        TUT.setState("done");
+        TUT._freeInputOverride = null;
         // 1. Cancela todas as animações pendentes
+        if (_byeToken) {
+          _byeToken.cancelled = true;
+          _byeToken = null;
+        }
+        const _byeCat = document.getElementById("tut-bye-cat");
+        if (_byeCat) _byeCat.remove();
+        const _byeInput = document.getElementById("tut-bye-input-wrap");
+        if (_byeInput) {
+          const _i = _byeInput.querySelector(".tut-fake-input");
+          const _s = _byeInput.querySelector(".tut-fake-send");
+          if (_i) {
+            _i.value = "";
+            _i.style.height = "auto";
+          }
+          if (_s) {
+            _s.disabled = true;
+            _s.classList.remove("ready");
+            _s.classList.add("thinking");
+          }
+        }
+        // dotLottie cleanup handled via token.cancelled check in doFrame
+        const _byeScene = document.getElementById("tut-bye-scene");
+        if (_byeScene) _byeScene.remove();
+        const _tutPanel = document.querySelector(
+          "#tutorial-overlay .tut-panel",
+        );
+        if (_tutPanel) _tutPanel.removeAttribute("style");
         tClear();
         stopTyping();
         stopIso();
@@ -8083,6 +10019,14 @@
 
         // 2. Fecha o overlay
         document.getElementById("tutorial-overlay").classList.add("hidden");
+
+        // 2b. Limpa o chat para próxima abertura
+        const feed = document.getElementById("tut-chat-feed");
+        const choices = document.getElementById("tut-chat-choices");
+        if (feed) feed.innerHTML = "";
+        if (choices) choices.innerHTML = "";
+        onTutSolved = null;
+        onTutGiveUp = null;
 
         // 3. Reset limpo do estado do jogo (evita estado sujo após tutorial)
         G.typed = [];
@@ -8107,12 +10051,49 @@
         // 5. Persiste flag de tutorial visto
         localStorage.setItem("gliffoo_tutdone", "1");
       }
-      function openTutorial() {
-        tutStep = 0;
+      let _sadWalkingData = null; // pre-fetched lottie JSON
+      let _sadLottie = null; // { div, inst } pré-renderizado offscreen
+      let _bananaBoyData = null; // pre-fetched lottie JSON
+      function _prepareSadLottie(data) {
+        if (!window.lottie || _sadLottie) return;
+        const div = document.createElement("div");
+        div.style.cssText =
+          "position:fixed;left:-9999px;top:-9999px;width:160px;height:160px;";
+        document.body.appendChild(div);
+        const inst = lottie.loadAnimation({
+          container: div,
+          renderer: "svg",
+          loop: true,
+          autoplay: true,
+          animationData: data,
+        });
+        _sadLottie = { div, inst };
+      }
+      function openTutorial(startStep) {
+        tutStep = startStep || 0;
         document.getElementById("tutorial-overlay").classList.remove("hidden");
-        renderStep(0);
+        renderStep(tutStep);
+      }
+      function _dbgTutStep(step) {
+        openTutorial(step);
       }
       window.addEventListener("load", () => {
+        // Pré-carrega e pré-renderiza animação do personagem triste
+        if (window.fetch) {
+          fetch("/animations/sad_walking.json")
+            .then((r) => r.json())
+            .then((d) => {
+              _sadWalkingData = d;
+              _prepareSadLottie(d);
+            })
+            .catch(() => {});
+          fetch("/animations/banana_boy.json")
+            .then((r) => r.json())
+            .then((d) => {
+              _bananaBoyData = d;
+            })
+            .catch(() => {});
+        }
         if (!localStorage.getItem("gliffoo_tutdone"))
           setTimeout(() => openTutorial(), 500);
         // Registra Service Worker (PWA)
@@ -8832,7 +10813,49 @@
           safe("dbg-close", () => {
             document.getElementById("debug-panel").classList.remove("open");
           });
+          for (let s = 0; s <= 6; s++) {
+            safe(`dbg-tut-${s}`, () => _dbgTutStep(s));
+          }
         });
+
+        // ── Easter egg audio & confetti helpers (inside IIFE for decode() access) ──
+        function eePlayBoing() {
+          try {
+            const A = new (window.AudioContext || window.webkitAudioContext)();
+            const o = A.createOscillator(), g = A.createGain();
+            o.connect(g); g.connect(A.destination);
+            o.type = "sine";
+            o.frequency.setValueAtTime(520, A.currentTime);
+            o.frequency.exponentialRampToValueAtTime(900, A.currentTime + 0.09);
+            g.gain.setValueAtTime(0.25, A.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.001, A.currentTime + 0.5);
+            o.start(); o.stop(A.currentTime + 0.5);
+          } catch (e2) {}
+        }
+        function eePlayTrombone() {
+          try {
+            const A = new (window.AudioContext || window.webkitAudioContext)();
+            const o = A.createOscillator(), g = A.createGain();
+            o.connect(g); g.connect(A.destination);
+            o.type = "sawtooth";
+            o.frequency.setValueAtTime(380, A.currentTime);
+            o.frequency.exponentialRampToValueAtTime(200, A.currentTime + 0.7);
+            g.gain.setValueAtTime(0.18, A.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.001, A.currentTime + 0.7);
+            o.start(); o.stop(A.currentTime + 0.7);
+          } catch (e2) {}
+        }
+        function eeCanvasConfetti() {
+          const fire = () => window.confetti({
+            particleCount: 130, spread: 80, origin: { y: 0.65 },
+            colors: ["#f5a623","#9b8fe8","#5bbfa0","#e87a6b","#60a5fa"]
+          });
+          if (window.confetti) { fire(); return; }
+          const sc = document.createElement("script");
+          sc.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js";
+          sc.onload = fire;
+          document.head.appendChild(sc);
+        }
       })();
     </script>
 
@@ -8904,383 +10927,484 @@
         gap: 10px;
         justify-content: center;
       }
+      /* ── Tutorial dialogue bubbles ── */
+      .tut-dialog {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 4px 0;
+      }
+      .tut-bubble-left {
+        align-self: flex-start;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 0 12px 12px 12px;
+        padding: 9px 13px;
+        font-size: 0.84rem;
+        color: var(--text);
+        max-width: 88%;
+        line-height: 1.55;
+        opacity: 0;
+        transform: translateY(6px);
+        transition:
+          opacity 0.4s,
+          transform 0.4s;
+      }
+      .tut-bubble-right {
+        align-self: flex-end;
+        background: rgba(245, 166, 35, 0.1);
+        border: 1px solid rgba(245, 166, 35, 0.28);
+        border-radius: 12px 0 12px 12px;
+        padding: 9px 13px;
+        font-size: 0.84rem;
+        color: var(--amber-400);
+        max-width: 88%;
+        line-height: 1.55;
+        opacity: 0;
+        transform: translateY(6px);
+        transition:
+          opacity 0.4s,
+          transform 0.4s;
+      }
+      .tut-bubble-left.show,
+      .tut-bubble-right.show {
+        opacity: 1;
+        transform: none;
+      }
+      .tut-typing {
+        align-self: flex-start;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 0 12px 12px 12px;
+        padding: 10px 14px;
+        opacity: 0;
+        transform: translateY(6px);
+        transition:
+          opacity 0.3s,
+          transform 0.3s;
+      }
+      .tut-typing.show {
+        opacity: 1;
+        transform: none;
+      }
+      .tut-typing span {
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--text3);
+        animation: tut-typing-bounce 1.2s ease-in-out infinite;
+      }
+      .tut-typing span:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .tut-typing span:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+      @keyframes tut-typing-bounce {
+        0%,
+        60%,
+        100% {
+          transform: translateY(0);
+          opacity: 0.4;
+        }
+        30% {
+          transform: translateY(-5px);
+          opacity: 1;
+        }
+      }
+      .tut-bubble-left a {
+        color: var(--amber-400);
+        text-decoration: none;
+      }
+      .tut-bubble-left a:hover {
+        text-decoration: underline;
+      }
+      #ts0-arrow {
+        opacity: 0;
+        transition: opacity 0.2s;
+        color: #e879b9;
+        pointer-events: none;
+        align-self: flex-end;
+        margin: 0 10px 0 0;
+      }
+      #ts0-arrow.visible {
+        opacity: 1;
+      }
+      .ts0-arrow-body {
+        stroke-dasharray: 140;
+        stroke-dashoffset: 140;
+      }
+      .ts0-arrow-head {
+        stroke-dasharray: 28;
+        stroke-dashoffset: 28;
+      }
+      #ts0-arrow.visible .ts0-arrow-body {
+        animation: ts0DrawPath 0.85s cubic-bezier(0.4, 0, 0.3, 1) forwards;
+      }
+      #ts0-arrow.visible .ts0-arrow-head {
+        animation: ts0DrawPath 0.3s ease-out 0.75s forwards;
+      }
+      @keyframes ts0DrawPath {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+      .tut-choices {
+        display: flex;
+        flex-direction: column;
+        align-self: flex-end;
+        gap: 6px;
+        max-width: 85%;
+        opacity: 0;
+        transform: translateY(6px);
+        transition:
+          opacity 0.35s,
+          transform 0.35s;
+      }
+      .tut-choices.show {
+        opacity: 1;
+        transform: none;
+      }
+      .tut-choice-btn {
+        padding: 9px 16px;
+        background: var(--amber-400);
+        color: #1a1410;
+        border: none;
+        border-radius: 12px 0 12px 12px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        line-height: 1.3;
+        text-align: center;
+        transition:
+          background 0.15s,
+          opacity 0.15s;
+        width: 100%;
+      }
+      .tut-choice-btn:hover {
+        background: var(--amber-500);
+      }
+      .tut-choice-btn.secondary {
+        background: transparent;
+        color: var(--text3);
+        border: 1px solid var(--border2);
+        border-radius: 12px 0 12px 12px;
+      }
+      .tut-choice-btn.secondary:hover {
+        border-color: var(--border);
+        color: var(--text2);
+      }
+      .tut-choice-btn:disabled {
+        opacity: 0.45;
+        cursor: default;
+      }
+      [data-theme="dark"] #tut-bye-cat {
+        filter: invert(1) brightness(1.8);
+      }
+      .tut-termo-sim {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        background: #121213;
+        border: 1px solid var(--border2);
+        border-radius: 10px;
+        padding: 8px 10px 10px;
+        opacity: 0;
+        transition: opacity 0.5s;
+        align-self: center;
+      }
+      .tut-termo-sim-label {
+        font-size: 0.58rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        color: #818384;
+        margin-bottom: 2px;
+      }
+      .tut-termo-row {
+        display: flex;
+        gap: 4px;
+      }
+      .tut-termo-cell {
+        width: 30px;
+        height: 30px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.78rem;
+        font-weight: 800;
+        color: #fff;
+      }
+      /* ── Tutorial attempt history rows ── */
+      .tut-demo-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 10px;
+        background: var(--surface2);
+        border-radius: 8px;
+        border: 1px solid var(--border);
+      }
+      .tut-demo-word {
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text2);
+        letter-spacing: 0.1em;
+        min-width: 42px;
+      }
+      .tut-demo-sep {
+        width: 1px;
+        height: 16px;
+        background: var(--border2);
+        flex-shrink: 0;
+        align-self: center;
+      }
+      .tut-demo-col {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        align-items: center;
+      }
+      .tut-demo-col-lbl {
+        font-size: 0.6rem;
+        color: var(--text3);
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+      }
+      .tut-demo-dots {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+        min-height: 10px;
+      }
+      .tut-demo-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+      }
+      /* ── Tutorial chat UI ── */
+      .tut-panel {
+        position: relative;
+      }
+      .tut-chat-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 18px 12px;
+        border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
+      }
+      .tut-chat-header .mclose {
+        position: static;
+        margin-left: auto;
+      }
+      .tut-agent-avatar {
+        width: 30px;
+        height: 30px;
+        background: var(--amber-400);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        color: #1a1410;
+        flex-shrink: 0;
+      }
+      .tut-agent-name {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .tut-chat-feed {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: clip;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px 16px 8px;
+        scroll-behavior: smooth;
+        position: relative;
+      }
+      .tut-chat-card {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 12px;
+        opacity: 0;
+        transform: translateY(6px);
+        transition:
+          opacity 0.4s,
+          transform 0.4s;
+      }
+      .tut-chat-card.show {
+        opacity: 1;
+        transform: none;
+      }
+      .tut-chat-choices {
+        display: none;
+      }
+      .tut-fake-input-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 12px;
+        border-top: 1px solid var(--border);
+        background: var(--surface);
+        flex-shrink: 0;
+      }
+      .tut-fake-input {
+        flex: 1;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 8px 14px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.84rem;
+        color: var(--text);
+        outline: none;
+        caret-color: var(--amber-400);
+        min-width: 0;
+        resize: none;
+        overflow-y: hidden;
+        line-height: 1.4;
+        max-height: 120px;
+        overflow-y: auto;
+        display: block;
+      }
+      .tut-fake-input[readonly] {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .tut-fake-input::placeholder {
+        color: var(--text3);
+      }
+      .tut-fake-send {
+        flex-shrink: 0;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: none;
+        background: var(--border);
+        color: var(--text3);
+        font-size: 1rem;
+        cursor: default;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          background 0.2s,
+          color 0.2s,
+          transform 0.15s;
+      }
+      /* thinking state: show ■ square, hide ▲ */
+      .tut-fake-send.thinking {
+        font-size: 0;
+      }
+      .tut-fake-send.thinking::before {
+        content: "";
+        display: block;
+        width: 11px;
+        height: 11px;
+        border-radius: 2px;
+        background: var(--text3);
+      }
+      .tut-fake-send.ready {
+        background: var(--amber-400);
+        color: #1a1410;
+        cursor: pointer;
+        animation: tut-send-pop 0.3s ease-out;
+      }
+      .tut-fake-send.ready:hover {
+        background: var(--amber-500);
+      }
+      @keyframes tut-send-pop {
+        0% {
+          transform: scale(0.7);
+        }
+        60% {
+          transform: scale(1.15);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      /* ── Easter Eggs ── */
+      @keyframes eeHueRotate { from { filter: hue-rotate(0deg); } to { filter: hue-rotate(360deg); } }
+      .ee-konami { animation: eeHueRotate 0.5s linear infinite; }
+      @keyframes eeLogoRun {
+        0%,100% { transform: translateX(0) rotate(0deg); }
+        20% { transform: translateX(-7px) rotate(-4deg); }
+        55% { transform: translateX(8px) rotate(3deg); }
+        80% { transform: translateX(-3px) rotate(-2deg); }
+      }
+      .ee-logo-run { display: inline-block; animation: eeLogoRun 0.45s ease; }
+      #eetoast {
+        position: fixed; bottom: 28px; left: 50%;
+        transform: translateX(-50%) translateY(80px);
+        background: var(--surface); color: var(--text);
+        padding: 10px 20px; border-radius: 14px;
+        font-size: 0.84rem; line-height: 1.45;
+        box-shadow: 0 4px 22px rgba(0,0,0,0.28);
+        z-index: 10999; opacity: 0;
+        transition: opacity 0.3s, transform 0.3s;
+        pointer-events: none; max-width: 90vw; text-align: center;
+        border: 1px solid var(--surface2);
+      }
+      #eetoast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+      #snake-modal {
+        position: fixed; inset: 0; z-index: 11000;
+        background: rgba(0,0,0,0.72); display: flex;
+        align-items: center; justify-content: center;
+        opacity: 0; pointer-events: none; transition: opacity 0.25s;
+      }
+      #snake-modal.show { opacity: 1; pointer-events: auto; }
+      .sm-inner {
+        background: var(--surface); border-radius: 18px;
+        padding: 18px 18px 14px; display: flex;
+        flex-direction: column; align-items: center; gap: 10px;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+      }
+      #snake-canvas { border: 2px solid var(--surface2); border-radius: 8px; image-rendering: pixelated; }
+      .sm-close { align-self: flex-end; background: none; border: none; cursor: pointer; color: var(--text3); font-size: 1.2rem; line-height: 1; padding: 0; }
     </style>
 
     <!-- ══ TUTORIAL ══ -->
     <div class="tutorial-overlay hidden" id="tutorial-overlay">
       <div class="tut-panel">
-        <button
-          class="mclose"
-          onclick="closeTutorial()"
-          aria-label="Fechar tutorial"
-        >
-          ✕
-        </button>
-        <div class="tut-handle"></div>
-        <div class="tut-progress">
-          <div class="tpip cur"></div>
-          <div class="tpip"></div>
-          <div class="tpip"></div>
-          <div class="tpip"></div>
-          <div class="tpip"></div>
-          <div class="tpip"></div>
-          <div class="tpip"></div>
-        </div>
-        <div class="tut-panel-scroll">
-          <!-- 1/7: O que é isso? -->
-          <div class="tut-content active" id="ts-0">
-            <div class="tut-glyph-single">
-              <div class="tut-glyph-label">Glifo do Dia</div>
-              <div class="tut-gstage">
-                <div class="tut-gstack" id="ts0-daily"></div>
-              </div>
-            </div>
-            <div
-              class="tut-tagline"
-              style="text-align: center; margin-top: 18px"
-            >
-              <div
-                style="
-                  font-size: 1.25rem;
-                  font-weight: 700;
-                  color: var(--text);
-                  line-height: 1.3;
-                "
-              >
-                Isso é um
-                <strong style="color: var(--amber-400)">Gliffo</strong>.
-              </div>
-              <div
-                style="font-size: 0.85rem; color: var(--text3); margin-top: 6px"
-              >
-                Uma palavra está escondida aqui dentro.<br />
-                <em>Prometo!</em>
-              </div>
-            </div>
-          </div>
-
-          <!-- 2/7: São letras empilhadas (avança sozinho) -->
-          <div class="tut-content" id="ts-1">
-            <div class="tut-glyph-single">
-              <div class="tut-glyph-label" id="iso-lbl">A — base do glifo</div>
-              <div class="iso-stage">
-                <div class="iso-stack" id="iso-stack"></div>
-              </div>
-            </div>
-            <div style="text-align: center; margin-top: 18px">
-              <div
-                style="
-                  font-size: 1.25rem;
-                  font-weight: 700;
-                  color: var(--text);
-                  line-height: 1.3;
-                "
-              >
-                Cada letra é uma
-                <strong style="color: var(--amber-400)">camada</strong>.
-              </div>
-              <div
-                style="font-size: 0.85rem; color: var(--text3); margin-top: 6px"
-              >
-                Juntas, formam o Gliffo.<br />
-                <em>(glifo leva um f só. Gliffo leva dois porque sim)</em>
-              </div>
-            </div>
-          </div>
-
-          <!-- 3/7: Você chuta uma palavra (avança sozinho) -->
-          <div class="tut-content" id="ts-2">
-            <div class="tut-glyph-row">
-              <div class="tut-glyph-panel">
-                <div class="tut-glyph-label">Glifo do Dia</div>
-                <div class="tut-gstage">
-                  <div class="tut-gstack" id="ts2-daily"></div>
-                </div>
-              </div>
-              <div class="tut-glyph-panel">
-                <div class="tut-glyph-label">Seu Glifo</div>
-                <div class="tut-gstage">
-                  <div class="tut-gstack" id="ts2-yours"></div>
-                </div>
-              </div>
-            </div>
-            <div
-              class="tut-slots"
-              id="ts2-slots"
-              style="justify-content: center"
-            ></div>
-            <div
-              class="tut-tagline"
-              style="text-align: center; margin-top: 6px; animation-delay: 1.2s"
-            >
-              <div
-                style="
-                  font-size: 1.25rem;
-                  font-weight: 700;
-                  color: var(--text);
-                  line-height: 1.3;
-                "
-              >
-                Você digita uma
-                <strong style="color: var(--amber-400)">palavra</strong>.
-              </div>
-              <div
-                style="font-size: 0.85rem; color: var(--text3); margin-top: 6px"
-              >
-                O Seu Gliffo se forma ao vivo.
-              </div>
-            </div>
-          </div>
-
-          <!-- 4/7: O que o resultado significa — BICO feedback -->
-          <div class="tut-content" id="ts-3">
-            <div
-              class="tut-tagline"
-              style="text-align: center; animation-delay: 0.2s"
-            >
-              <div
-                style="
-                  font-size: 1.25rem;
-                  font-weight: 700;
-                  color: var(--text);
-                  line-height: 1.3;
-                "
-              >
-                O resultado de
-                <strong style="color: var(--amber-400)">BICO</strong>.
-              </div>
-              <div
-                style="font-size: 0.85rem; color: var(--text3); margin-top: 6px"
-              >
-                Cada letra diz uma coisa diferente.
-              </div>
-            </div>
-            <div class="tut-glyph-single">
-              <div class="tut-glyph-label">Glifo do Dia — após BICO</div>
-              <div class="tut-gstage">
-                <div class="tut-gstack" id="ts3-daily"></div>
-              </div>
-            </div>
-            <div
-              class="tut-slots"
-              id="ts3-slots"
-              style="justify-content: center; margin: 0"
-            ></div>
-            <div
-              class="tut-result-row"
-              id="ts3-result-row"
-              style="margin-top: 2px"
-            ></div>
-          </div>
-
-          <!-- 5/7: A cor como pista -->
-          <div class="tut-content" id="ts-4">
-            <div class="tut-glyph-single">
-              <div class="tut-glyph-label">Glifo do Dia</div>
-              <div class="tut-gstage">
-                <div class="tut-gstack" id="ts4-daily"></div>
-              </div>
-            </div>
-            <div
-              class="tut-slots"
-              id="ts4-slots"
-              style="justify-content: center; margin: 0"
-            ></div>
-            <div
-              class="tut-tagline"
-              style="text-align: center; margin-top: 6px"
-            >
-              <div
-                style="
-                  font-size: 1.25rem;
-                  font-weight: 700;
-                  color: var(--text);
-                  line-height: 1.3;
-                "
-              >
-                Cada letra tem uma
-                <strong style="color: var(--amber-400)">cor</strong> única.
-              </div>
-              <div
-                style="font-size: 0.85rem; color: var(--text3); margin-top: 6px"
-              >
-                Tá vendo o <strong style="color: #9b8fe8">O</strong> inteiro?
-                Ele é o próximo.<br /><em
-                  >(se fosse mais tímido, você veria só pedaços)</em
-                >
-              </div>
-            </div>
-          </div>
-
-          <!-- 6/7: A Chave Decodificadora -->
-          <div class="tut-content" id="ts-5">
-            <div
-              class="tut-tagline"
-              style="
-                text-align: center;
-                margin-bottom: 4px;
-                animation-delay: 0.2s;
-              "
-            >
-              <div
-                style="
-                  font-size: 1.25rem;
-                  font-weight: 700;
-                  color: var(--text);
-                  line-height: 1.3;
-                "
-              >
-                Você tem
-                <strong style="color: var(--amber-400)">🔑 uma Chave</strong>
-                por jogo.
-              </div>
-              <div
-                style="font-size: 0.85rem; color: var(--text3); margin-top: 6px"
-              >
-                Escolha uma posição — a letra é revelada.
-              </div>
-            </div>
-            <div class="tut-key-demo" id="ts5-keydemo">
-              <div class="tut-kboxes" id="ts5-kboxes"></div>
-            </div>
-            <p
-              class="tut-body"
-              id="ts5-key-hint"
-              style="
-                text-align: center;
-                color: var(--text3);
-                font-size: 0.76rem;
-                min-height: 1.4em;
-              "
-            ></p>
-            <div
-              id="ts5-key-warning"
-              style="
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                background: rgba(245, 166, 35, 0.08);
-                border: 1px solid rgba(245, 166, 35, 0.25);
-                border-radius: 10px;
-                padding: 10px 12px;
-                margin-top: 8px;
-                opacity: 0;
-                transition: opacity 0.5s ease;
-              "
-            >
-              <span style="font-size: 1rem; flex-shrink: 0">⚠️</span>
-              <p
-                style="
-                  margin: 0;
-                  font-size: 0.75rem;
-                  color: var(--text2);
-                  line-height: 1.5;
-                "
-              >
-                Usar a chave marca seu resultado com 🔑.
-              </p>
-            </div>
-          </div>
-
-          <!-- 7/7: Interação — monta BOLA -->
-          <div class="tut-content" id="ts-6">
-            <div class="tut-glyph-row">
-              <div class="tut-glyph-panel">
-                <div class="tut-glyph-label">Glifo do Dia</div>
-                <div class="tut-gstage">
-                  <div class="tut-gstack" id="ts5-daily"></div>
-                </div>
-              </div>
-              <div class="tut-glyph-panel">
-                <div class="tut-glyph-label">Seu Glifo</div>
-                <div class="tut-gstage">
-                  <div class="tut-gstack" id="ts5-yours"></div>
-                </div>
-              </div>
-            </div>
-            <div
-              class="tut-slots"
-              id="ts5-interact"
-              style="justify-content: center"
-            ></div>
-            <div
-              class="tut-tagline"
-              id="ts6-title"
-              style="text-align: center; margin-top: 2px; animation-delay: 0.3s"
-            >
-              <div
-                style="
-                  font-size: 1.25rem;
-                  font-weight: 700;
-                  color: var(--text);
-                  line-height: 1.3;
-                "
-              >
-                Forme <strong style="color: var(--amber-400)">BOLA</strong> para
-                continuar!
-              </div>
-            </div>
-            <p
-              class="tut-body"
-              id="ts5-hint"
-              style="
-                text-align: center;
-                color: var(--text3);
-                font-size: 0.76rem;
-              "
-            >
-              Clique em um slot e comece a digitar
-            </p>
-            <div
-              class="tut-summary-cards"
-              id="ts5-scards"
-              style="
-                opacity: 0;
-                transition: opacity 0.6s;
-                margin-top: 10px;
-                pointer-events: none;
-              "
-            >
-              <div class="tut-scard">
-                <div class="tut-scard-icon">🎯</div>
-                <div class="tut-scard-text">4 TENTATIVAS por jogo</div>
-              </div>
-              <div class="tut-scard">
-                <div class="tut-scard-icon">📅</div>
-                <div class="tut-scard-text">1 PALAVRA POR DIA</div>
-              </div>
-              <div class="tut-scard">
-                <div class="tut-scard-icon">🔑</div>
-                <div class="tut-scard-text">1 CHAVE para revelar uma letra</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- /.tut-panel-scroll -->
-
-        <!-- Nav — pinned outside scroll -->
-        <div class="tut-nav">
+        <div class="tut-chat-header">
+          <div class="tut-agent-avatar">✦</div>
+          <span class="tut-agent-name">Gliffo</span>
           <button
-            class="tut-skip"
-            id="tut-skip-btn"
-            onclick="tutSkipOrRestart()"
+            class="mclose"
+            onclick="closeTutorial()"
+            aria-label="Fechar tutorial"
           >
-            Pular
-          </button>
-          <button class="tut-next" id="tut-next-btn" onclick="tutNext()">
-            Próximo →
+            ✕
           </button>
         </div>
-        <div style="text-align: center; padding: 2px 0 6px">
-          <span
-            id="tut-counter"
-            style="
-              font-size: 0.62rem;
-              color: var(--text3);
-              font-family: &quot;DM Sans&quot;, sans-serif;
-            "
-            >1 / 7</span
-          >
+        <div class="tut-chat-feed" id="tut-chat-feed"></div>
+        <div class="tut-chat-choices" id="tut-chat-choices"></div>
+        <div class="tut-fake-input-wrap" id="tut-bye-input-wrap">
+          <textarea
+            class="tut-fake-input"
+            id="tut-bye-input"
+            placeholder="Manda um recado..."
+            autocomplete="off"
+            rows="1"
+            readonly
+          ></textarea>
+          <button class="tut-fake-send thinking" id="tut-bye-send">
+            &#9650;
+          </button>
         </div>
       </div>
       <!-- /.tut-panel -->
@@ -9320,6 +11444,206 @@
         <button class="dbg-close" id="dbg-close">✕</button>
       </div>
       <div class="dbg-offset" id="dbg-date-display"></div>
+      <div
+        class="dbg-row"
+        style="
+          margin-top: 10px;
+          border-top: 1px solid var(--border2);
+          padding-top: 8px;
+        "
+      >
+        <label>Tutorial</label>
+      </div>
+      <div class="dbg-btns" style="flex-wrap: wrap; gap: 4px">
+        <button id="dbg-tut-0">P.0</button>
+        <button id="dbg-tut-1">P.1</button>
+        <button id="dbg-tut-2">P.2</button>
+        <button id="dbg-tut-3">P.3</button>
+        <button id="dbg-tut-4">P.4</button>
+        <button id="dbg-tut-5">P.5</button>
+        <button id="dbg-tut-6">P.6</button>
+      </div>
     </div>
+
+    <!-- ── Easter Egg: Toast ── -->
+    <div id="eetoast"></div>
+
+    <!-- ── Easter Egg: Snake Game ── -->
+    <div id="snake-modal">
+      <div class="sm-inner">
+        <button class="sm-close" id="snake-close">✕</button>
+        <div style="font-size:0.78rem;color:var(--text3);text-align:center;">
+          Sem palavras... só cobra. 🐍<br>
+          <span style="font-size:0.7rem">Setas para mover · ESC para sair</span>
+        </div>
+        <canvas id="snake-canvas" width="200" height="200"></canvas>
+        <div id="snake-score" style="font-size:0.85rem;color:var(--text3);font-weight:600;">🍎 0</div>
+      </div>
+    </div>
+
+    <script>
+      /* ════════════════════════════════════════════
+         GLOBAL EASTER EGGS
+         ════════════════════════════════════════════ */
+
+      // ── Toast helper ──
+      function showEEToast(msg, ms) {
+        const t = document.getElementById("eetoast");
+        if (!t) return;
+        t.textContent = msg;
+        t.classList.add("show");
+        clearTimeout(t._eet);
+        t._eet = setTimeout(() => t.classList.remove("show"), ms || 5000);
+      }
+
+      // ── Snake minigame ──
+      function openSnakeGame() {
+        const modal = document.getElementById("snake-modal");
+        modal.classList.add("show");
+        const canvas = document.getElementById("snake-canvas");
+        const ctx2d = canvas.getContext("2d");
+        const CELLS = 20, CS = 10;
+        let snake, dir, food, score, loop;
+
+        function placeFood() {
+          do { food = { x: Math.floor(Math.random()*CELLS), y: Math.floor(Math.random()*CELLS) }; }
+          while (snake.some(s => s.x === food.x && s.y === food.y));
+        }
+        function resetSnake() {
+          snake = [{x:10,y:10},{x:9,y:10},{x:8,y:10}];
+          dir = {x:1,y:0};
+          score = 0;
+          document.getElementById("snake-score").textContent = "🍎 0";
+          placeFood();
+        }
+        function drawSnake() {
+          const bg = getComputedStyle(document.documentElement).getPropertyValue("--surface").trim() || "#fff";
+          ctx2d.fillStyle = bg; ctx2d.fillRect(0, 0, 200, 200);
+          ctx2d.fillStyle = "#f5a623";
+          ctx2d.fillRect(food.x*CS, food.y*CS, CS-1, CS-1);
+          snake.forEach((s, i) => {
+            ctx2d.fillStyle = i === 0 ? "#5bbfa0" : "#9b8fe8";
+            ctx2d.fillRect(s.x*CS, s.y*CS, CS-1, CS-1);
+          });
+        }
+        function tick() {
+          const h = { x: (snake[0].x+dir.x+CELLS)%CELLS, y: (snake[0].y+dir.y+CELLS)%CELLS };
+          if (snake.some(s => s.x === h.x && s.y === h.y)) {
+            clearInterval(loop);
+            ctx2d.fillStyle = "rgba(0,0,0,0.55)"; ctx2d.fillRect(0,0,200,200);
+            ctx2d.fillStyle = "#fff"; ctx2d.textAlign = "center";
+            ctx2d.font = "bold 13px monospace"; ctx2d.fillText("Game Over 💀", 100, 90);
+            ctx2d.font = "10px monospace"; ctx2d.fillText("clique para jogar de novo", 100, 112);
+            canvas.style.cursor = "pointer";
+            canvas.onclick = () => { canvas.onclick = null; canvas.style.cursor = "default"; startSnake(); };
+            return;
+          }
+          snake.unshift(h);
+          if (h.x === food.x && h.y === food.y) {
+            score++;
+            document.getElementById("snake-score").textContent = "🍎 " + score;
+            placeFood();
+          } else { snake.pop(); }
+          drawSnake();
+        }
+        function startSnake() { clearInterval(loop); resetSnake(); drawSnake(); loop = setInterval(tick, 120); }
+
+        const kh = (e) => {
+          const map = { ArrowUp:{x:0,y:-1}, ArrowDown:{x:0,y:1}, ArrowLeft:{x:-1,y:0}, ArrowRight:{x:1,y:0} };
+          if (map[e.key]) { const nd = map[e.key]; if (nd.x !== -dir.x || nd.y !== -dir.y) dir = nd; e.preventDefault(); }
+          if (e.key === "Escape") closeSnake();
+        };
+        function closeSnake() {
+          clearInterval(loop);
+          document.removeEventListener("keydown", kh);
+          modal.classList.remove("show");
+        }
+        document.addEventListener("keydown", kh);
+        document.getElementById("snake-close").onclick = closeSnake;
+        modal.addEventListener("click", (e) => { if (e.target === modal) closeSnake(); });
+        startSnake();
+      }
+
+      // ── Konami Code ──
+      (function () {
+        const SEQ = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
+        let p = 0;
+        document.addEventListener("keydown", (e) => {
+          if (e.key === SEQ[p]) {
+            p++;
+            if (p === SEQ.length) {
+              p = 0;
+              showEEToast("Você realmente tentou código de trapaça num jogo de palavras... 🤦 Respeito.");
+              document.body.classList.add("ee-konami");
+              setTimeout(() => document.body.classList.remove("ee-konami"), 3000);
+            }
+          } else {
+            p = e.key === SEQ[0] ? 1 : 0;
+          }
+        });
+      })();
+
+      // ── DevTools detector ──
+      (function () {
+        let open = false;
+        setInterval(() => {
+          const is = window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160;
+          if (is && !open) { open = true; showEEToast("Oi? Tô vendo você ali no console... pensou que eu não ia notar? 🕵️"); }
+          else if (!is) open = false;
+        }, 2500);
+      })();
+
+      // ── Idle tab title rotator ──
+      (function () {
+        const ORIG = document.title;
+        const msgs = [
+          "...você ainda tá aí? 👀",
+          "Eu fico esperando, pode deixar...",
+          "Ok. Tudo bem. Sem problema.",
+          "🦗 *som de grilo*",
+          "Ainda aqui. 😐",
+          "...vai jogar ou vai ficar aí?",
+        ];
+        let idleT = null, rotT = null, mi = 0;
+        function startRot() { mi = 0; rotT = setInterval(() => { document.title = msgs[mi++ % msgs.length]; }, 4000); }
+        function reset() { clearTimeout(idleT); clearInterval(rotT); document.title = ORIG; idleT = setTimeout(startRot, 30000); }
+        ["mousemove","keydown","click","touchstart"].forEach(ev => document.addEventListener(ev, reset, { passive: true }));
+        reset();
+      })();
+
+      // ── Logo "." → 3 cliques = Snake ──
+      (function () {
+        const dot = document.querySelector(".logo-dot");
+        if (!dot) return;
+        dot.title = "";
+        let n = 0, t = null;
+        dot.addEventListener("click", (e) => {
+          e.preventDefault(); e.stopPropagation();
+          n++; clearTimeout(t);
+          if (n >= 3) { n = 0; openSnakeGame(); }
+          else t = setTimeout(() => { n = 0; }, 1500);
+        });
+      })();
+
+      // ── Logo "foo" → 5 cliques = wobble + toast ──
+      (function () {
+        const foo = document.querySelector(".logo-foo");
+        if (!foo) return;
+        let n = 0, t = null;
+        foo.addEventListener("click", (e) => {
+          e.preventDefault(); n++; clearTimeout(t);
+          if (n >= 5) {
+            n = 0;
+            foo.classList.remove("ee-logo-run");
+            void foo.offsetWidth;
+            foo.classList.add("ee-logo-run");
+            showEEToast("Oi! Para de clicar no foo! 😤");
+            foo.addEventListener("animationend", () => foo.classList.remove("ee-logo-run"), { once: true });
+          } else {
+            t = setTimeout(() => { n = 0; }, 1500);
+          }
+        });
+      })();
+    </script>
   </body>
 </html>
