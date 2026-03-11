@@ -2731,6 +2731,48 @@
         background: #1e1535;
         border-color: #3d2a6a;
       }
+
+      /* ══════════════════════════════════════════
+   ALTO CONTRASTE (prefers-contrast: more)
+══════════════════════════════════════════ */
+      @media (prefers-contrast: more) {
+        .lbox {
+          border: 2px solid var(--surface3, #444) !important;
+        }
+        .lbox.active {
+          border: 3px solid var(--amber-400) !important;
+          outline: 2px solid var(--amber-400);
+          outline-offset: 2px;
+        }
+        .lbox.decoded {
+          border: 2px solid #fff !important;
+        }
+        .lboxes.invalid .lbox:not(.decoded) {
+          border: 3px solid #c0392b !important;
+        }
+        .kbtn {
+          border: 1px solid var(--surface3, #555) !important;
+        }
+        .kbtn.found-key {
+          border: 2px solid var(--amber-500) !important;
+        }
+        .kbtn.correct-key {
+          border: 2px solid var(--correct) !important;
+        }
+        .fbmsg {
+          border-width: 2px !important;
+          font-weight: 600;
+        }
+        .modal {
+          border: 2px solid var(--surface3, #555);
+        }
+        /* Remove blur effects that can impair readability */
+        .moverlay {
+          backdrop-filter: none !important;
+          -webkit-backdrop-filter: none !important;
+          background: rgba(0, 0, 0, 0.75) !important;
+        }
+      }
     </style>
   </head>
   <body>
@@ -2824,8 +2866,8 @@
         <div class="atts-row" id="atts-row">
           <span class="att-label">Tentativas</span>
         </div>
-        <div class="lboxes" id="lboxes"></div>
-        <div class="fbmsg" id="fbmsg"></div>
+        <div class="lboxes" id="lboxes" role="group" aria-label="Letras da tentativa atual"></div>
+        <div class="fbmsg" id="fbmsg" aria-live="polite" aria-atomic="true"></div>
         <button class="dbtn" onclick="decode()">Decodificar</button>
         <div class="history" id="history">
           <div class="hdr">
@@ -2833,7 +2875,7 @@
           </div>
           <div id="hrows"></div>
         </div>
-        <div class="keyboard" id="keyboard"></div>
+        <div class="keyboard" id="keyboard" role="group" aria-label="Teclado virtual"></div>
       </div>
     </main>
 
@@ -4998,16 +5040,21 @@
             const svg = makeSVG(WL[i], "#fff");
             if (svg) {
               svg.style.cssText = "width:65%;height:65%;";
+              svg.setAttribute("aria-hidden", "true");
               b.appendChild(svg);
             }
+            const status = G.keyPos.has(i) && !G.decoded.has(i) ? "revelada pela chave" : "confirmada";
+            b.setAttribute("aria-label", `Posição ${i + 1} — letra ${WL[i]}, ${status}`);
           } else if (G.typed[i]) {
             const svg = makeSVG(G.typed[i], s);
             if (svg) {
               svg.style.cssText = "width:65%;height:65%;";
+              svg.setAttribute("aria-hidden", "true");
               b.appendChild(svg);
             }
             if (i === G.cursor && !G.done) b.classList.add("active");
             b.style.cursor = "pointer";
+            b.setAttribute("aria-label", `Posição ${i + 1} — letra ${G.typed[i]}`);
             b.onclick = (() => {
               const idx = i;
               return () => {
@@ -5029,6 +5076,7 @@
                 return () => moveCursor(idx);
               })();
             }
+            b.setAttribute("aria-label", `Posição ${i + 1} — vazia`);
           }
           c.appendChild(b);
         }
@@ -5055,6 +5103,8 @@
             const b = document.createElement("button");
             b.className = "kbtn" + (k.length > 1 ? " wide" : "");
             b.textContent = k;
+            const kLabel = k === "⌫" ? "Apagar" : k === "↵" ? "Confirmar" : `Letra ${k}`;
+            b.setAttribute("aria-label", kLabel);
             b.onclick = () => {
               b.classList.remove("tap");
               void b.offsetWidth;
@@ -5519,10 +5569,7 @@
           }
           boxes.appendChild(b);
         }
-        document.getElementById("key-modal").classList.add("show");
-        document
-          .getElementById("key-modal")
-          .setAttribute("aria-hidden", "false");
+        openM("key-modal");
       }
 
       function useKey() {
@@ -5549,15 +5596,52 @@
       function handleOverlayClick(e, id) {
         if (e.target === e.currentTarget) closeM(id);
       }
+
+      // Focus-trap helpers for modals
+      const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+      let _modalTrapHandler = null;
+      let _modalPrevFocus = null;
+      function _installTrap(modal) {
+        _modalPrevFocus = document.activeElement;
+        const getFocusable = () => Array.from(modal.querySelectorAll(FOCUSABLE));
+        // Focus first focusable element
+        const first = getFocusable()[0];
+        if (first) first.focus();
+        _modalTrapHandler = (e) => {
+          if (e.key !== "Tab") return;
+          const els = getFocusable();
+          if (!els.length) return;
+          const fi = els[0], la = els[els.length - 1];
+          if (e.shiftKey) {
+            if (document.activeElement === fi) { e.preventDefault(); la.focus(); }
+          } else {
+            if (document.activeElement === la) { e.preventDefault(); fi.focus(); }
+          }
+        };
+        modal.addEventListener("keydown", _modalTrapHandler);
+      }
+      function _removeTrap(modal) {
+        if (_modalTrapHandler) {
+          modal.removeEventListener("keydown", _modalTrapHandler);
+          _modalTrapHandler = null;
+        }
+        if (_modalPrevFocus && typeof _modalPrevFocus.focus === "function") {
+          _modalPrevFocus.focus();
+          _modalPrevFocus = null;
+        }
+      }
+
       function closeM(id) {
         const el = document.getElementById(id);
         el.classList.remove("show");
         el.setAttribute("aria-hidden", "true");
+        _removeTrap(el.querySelector("[role='dialog']") || el);
       }
       function openM(id) {
         const el = document.getElementById(id);
         el.classList.add("show");
         el.setAttribute("aria-hidden", "false");
+        _installTrap(el.querySelector("[role='dialog']") || el);
       }
 
       // ═══════════════════════════════════════════════
@@ -5864,10 +5948,7 @@
         const wCB = document.getElementById("win-countdown-block");
         if (wCB) wCB.style.display = ARQUIVO_MODO ? "none" : "";
         if (!ARQUIVO_MODO) iniciarCountdown("win-countdown");
-        document.getElementById("win-modal").classList.add("show");
-        document
-          .getElementById("win-modal")
-          .setAttribute("aria-hidden", "false");
+        openM("win-modal");
       }
 
       function loseMod() {
@@ -5878,10 +5959,7 @@
         const lCB = document.getElementById("lose-countdown-block");
         if (lCB) lCB.style.display = ARQUIVO_MODO ? "none" : "";
         if (!ARQUIVO_MODO) iniciarCountdown("lose-countdown");
-        document.getElementById("lose-modal").classList.add("show");
-        document
-          .getElementById("lose-modal")
-          .setAttribute("aria-hidden", "false");
+        openM("lose-modal");
       }
 
       // Countdown para o próximo glifo
@@ -6558,10 +6636,7 @@
         );
         if (statsShareSection) statsShareSection.innerHTML = "";
 
-        document.getElementById("stats-modal").classList.add("show");
-        document
-          .getElementById("stats-modal")
-          .setAttribute("aria-hidden", "false");
+        openM("stats-modal");
 
         // Conquistas inline (renderiza DEPOIS de mostrar o modal)
         requestAnimationFrame(() => {
