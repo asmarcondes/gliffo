@@ -393,13 +393,13 @@ Ver **Histórico de Chats Concluídos** acima.
 
 **Mecânica Hard Mode (filosofia "leia só o glifo"):**
 
-| Mecânica | Normal | Hard |
-|---|---|---|
-| Chave Decodificadora | 1/tentativa | ❌ oculta |
-| Aviso posição repetida | ✅ texto | ❌ sem aviso |
+| Mecânica                     | Normal                   | Hard                     |
+| ---------------------------- | ------------------------ | ------------------------ |
+| Chave Decodificadora         | 1/tentativa              | ❌ oculta                |
+| Aviso posição repetida       | ✅ texto                 | ❌ sem aviso             |
 | Letras somem do Glifo do Dia | ✅ (decoded desaparecem) | ❌ glifo sempre completo |
-| Dots coloridos no histórico | ✅ cor por letra | ❌ cinza neutro |
-| Badge 🔥 no header | ❌ | ✅ |
+| Dots coloridos no histórico  | ✅ cor por letra         | ❌ cinza neutro          |
+| Badge 🔥 no header           | ❌                       | ✅                       |
 
 ---
 
