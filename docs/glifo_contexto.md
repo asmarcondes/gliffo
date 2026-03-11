@@ -375,17 +375,31 @@ Ver **Histórico de Chats Concluídos** acima.
 
 ---
 
-### 🟢 Chat N — Modo Difícil
+### ✅ Chat N — Modo Difícil
 
-**Problema:** Sem variante de dificuldade de gameplay (apenas dificuldade de vocabulário já existe via ciclo semanal).
+**Implementado em 2026-03-11.**
 
-**Itens:**
+1. ✅ Toggle "Modo Difícil 🔥" ativado no modal Configurações (era placeholder "Em breve")
+2. ✅ `let HARD_MODE = false` + `initConfig()` lê `gliffoo_config.hardMode` e chama `applyHardMode()`
+3. ✅ `toggleHardMode()` — bloqueia se partida em andamento (`G.attempts.length > 0 && !G.done`)
+4. ✅ `applyHardMode()` — esconde `#key-btn` (sem chave decodificadora)
+5. ✅ `renderDaily()` — em Hard Mode: sem fade-out, todas as camadas visíveis (decoded não somem do glifo)
+6. ✅ `buildHistory()` — dots monocromáticos (`var(--text-muted)`) em Hard Mode, sem cores por letra
+7. ✅ `calcWarns()` — bloco de aviso de posição repetida desativado em Hard Mode
+8. ✅ `buildHeaderMeta()` — badge `🔥 Difícil` no header em Hard Mode (modo normal, não arquivo)
+9. ✅ `share()` — adiciona `🔥` ao texto compartilhado em Hard Mode
+10. ✅ CSS `.hard-badge` — tom vermelho/fogo, dark e light mode
+11. ✅ `syncConfigUI()` — switch do Hard Mode sincronizado ao abrir Configurações
 
-1. Toggle "Modo Difícil" nas configurações
-2. Regra: letras confirmadas (decoded/found) devem aparecer nas tentativas seguintes
-3. Regra: avisos de `calcWarns()` desativados (sem indicação de letras eliminadas/posição errada)
-4. Persiste em localStorage (`gliffoo_hard_mode`)
-5. Badge de conquista exclusivo para vitorias em modo difícil
+**Mecânica Hard Mode (filosofia "leia só o glifo"):**
+
+| Mecânica | Normal | Hard |
+|---|---|---|
+| Chave Decodificadora | 1/tentativa | ❌ oculta |
+| Aviso posição repetida | ✅ texto | ❌ sem aviso |
+| Letras somem do Glifo do Dia | ✅ (decoded desaparecem) | ❌ glifo sempre completo |
+| Dots coloridos no histórico | ✅ cor por letra | ❌ cinza neutro |
+| Badge 🔥 no header | ❌ | ✅ |
 
 ---
 
@@ -528,24 +542,4 @@ Itens:
 
 ---
 
-### Chat N — Modo Difícil
-
-```
-Frente: implementar variante de gameplay mais desafiadora.
-
-Estado atual:
-- Dificuldade atual é apenas de vocabulário (ciclo semanal 4L→7L)
-- calcWarns() mostra avisos contextuais (letras eliminadas, posição errada conhecida)
-- Chat J (Configurações) é pré-requisito
-
-Itens:
-1. Toggle "Modo Difícil 🔥" no modal de Configurações (Chat J prerequisito)
-2. Regras:
-   a. Letras decoded (posição certa) devem aparecer na mesma posição → validar no submit
-   b. Letras found (existem mas posição errada) devem aparecer em alguma posição
-   c. calcWarns() desativado (sem avisos de "letra eliminada" ou "posição diferente")
-3. Badge "🔥 Difícil" persistente no cabeçalho durante partida
-4. Persiste: gliffoo_config.hardMode; não ativa no meio de uma partida em andamento
-5. Share: adiciona "🔥" ao texto compartilhado
-6. Conquista: "Ferro em Brasa" — vencer no modo difícil
-```
+### ~~Chat N~~ — ✅ Concluído (ver Histórico de Chats Concluídos acima)

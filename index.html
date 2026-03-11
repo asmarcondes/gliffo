@@ -2731,6 +2731,24 @@
         background: #1e1535;
         border-color: #3d2a6a;
       }
+      .hard-badge {
+        font-size: 0.55rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 3px 8px;
+        border-radius: 999px;
+        white-space: nowrap;
+        border: 1px solid;
+        color: #c0392b;
+        background: #fdf0ee;
+        border-color: #f1a89a;
+      }
+      [data-theme="dark"] .hard-badge {
+        color: #f08080;
+        background: #2a1312;
+        border-color: #6b2a28;
+      }
 
       /* ══════════════════════════════════════════
    ALTO CONTRASTE (prefers-contrast: more)
@@ -2866,8 +2884,18 @@
         <div class="atts-row" id="atts-row">
           <span class="att-label">Tentativas</span>
         </div>
-        <div class="lboxes" id="lboxes" role="group" aria-label="Letras da tentativa atual"></div>
-        <div class="fbmsg" id="fbmsg" aria-live="polite" aria-atomic="true"></div>
+        <div
+          class="lboxes"
+          id="lboxes"
+          role="group"
+          aria-label="Letras da tentativa atual"
+        ></div>
+        <div
+          class="fbmsg"
+          id="fbmsg"
+          aria-live="polite"
+          aria-atomic="true"
+        ></div>
         <button class="dbtn" onclick="decode()">Decodificar</button>
         <div class="history" id="history">
           <div class="hdr">
@@ -2875,7 +2903,12 @@
           </div>
           <div id="hrows"></div>
         </div>
-        <div class="keyboard" id="keyboard" role="group" aria-label="Teclado virtual"></div>
+        <div
+          class="keyboard"
+          id="keyboard"
+          role="group"
+          aria-label="Teclado virtual"
+        ></div>
       </div>
     </main>
 
@@ -3127,15 +3160,15 @@
             </div>
           </div>
           <div class="cfg-divider"></div>
-          <div class="cfg-row cfg-row-disabled">
+          <div class="cfg-row" id="cfg-hard-row" onclick="toggleHardMode()">
             <div class="cfg-row-left">
               <span class="cfg-row-icon">🔥</span>
               <div>
                 <div class="cfg-row-label">Modo Difícil</div>
-                <div class="cfg-row-sub">Em breve</div>
+                <div class="cfg-row-sub" id="cfg-hard-sub">Desativado</div>
               </div>
             </div>
-            <div class="cfg-switch">
+            <div class="cfg-switch" id="cfg-hard-switch">
               <div class="cfg-switch-thumb"></div>
             </div>
           </div>
@@ -4926,7 +4959,7 @@
         const c = document.getElementById("daily-stack");
         const s = glyphStroke();
 
-        if (revealedIndices && revealedIndices.length > 0) {
+        if (!HARD_MODE && revealedIndices && revealedIndices.length > 0) {
           // Anima fade out apenas nas letras reveladas (identificadas por data-idx)
           revealedIndices.forEach((idx) => {
             const svg = c.querySelector(`[data-idx="${idx}"]`);
@@ -4956,7 +4989,8 @@
         } else {
           c.innerHTML = "";
           for (let i = WN - 1; i >= 0; i--) {
-            if (G.decoded.has(i) || G.keyPos.has(i)) continue;
+            // Em Hard Mode: mostra todas as camadas, inclusive as já decodificadas
+            if (!HARD_MODE && (G.decoded.has(i) || G.keyPos.has(i))) continue;
             const l = WL[i];
             const color = G.found.has(l) ? colorOf[l] : s;
             const svg = makeSVG(
@@ -5043,8 +5077,14 @@
               svg.setAttribute("aria-hidden", "true");
               b.appendChild(svg);
             }
-            const status = G.keyPos.has(i) && !G.decoded.has(i) ? "revelada pela chave" : "confirmada";
-            b.setAttribute("aria-label", `Posição ${i + 1} — letra ${WL[i]}, ${status}`);
+            const status =
+              G.keyPos.has(i) && !G.decoded.has(i)
+                ? "revelada pela chave"
+                : "confirmada";
+            b.setAttribute(
+              "aria-label",
+              `Posição ${i + 1} — letra ${WL[i]}, ${status}`,
+            );
           } else if (G.typed[i]) {
             const svg = makeSVG(G.typed[i], s);
             if (svg) {
@@ -5054,7 +5094,10 @@
             }
             if (i === G.cursor && !G.done) b.classList.add("active");
             b.style.cursor = "pointer";
-            b.setAttribute("aria-label", `Posição ${i + 1} — letra ${G.typed[i]}`);
+            b.setAttribute(
+              "aria-label",
+              `Posição ${i + 1} — letra ${G.typed[i]}`,
+            );
             b.onclick = (() => {
               const idx = i;
               return () => {
@@ -5103,7 +5146,8 @@
             const b = document.createElement("button");
             b.className = "kbtn" + (k.length > 1 ? " wide" : "");
             b.textContent = k;
-            const kLabel = k === "⌫" ? "Apagar" : k === "↵" ? "Confirmar" : `Letra ${k}`;
+            const kLabel =
+              k === "⌫" ? "Apagar" : k === "↵" ? "Confirmar" : `Letra ${k}`;
             b.setAttribute("aria-label", kLabel);
             b.onclick = () => {
               b.classList.remove("tap");
@@ -5133,7 +5177,7 @@
           a.decoded.forEach((p) => {
             const d = document.createElement("div");
             d.className = "hdot";
-            d.style.background = colorOf[WL[p]];
+            d.style.background = HARD_MODE ? "var(--text-muted)" : colorOf[WL[p]];
             dc.appendChild(d);
           });
           const fc = document.createElement("div");
@@ -5141,7 +5185,7 @@
           a.found.forEach((l) => {
             const d = document.createElement("div");
             d.className = "hdot";
-            d.style.background = colorOf[l];
+            d.style.background = HARD_MODE ? "var(--text-muted)" : colorOf[l];
             fc.appendChild(d);
           });
           row.appendChild(wc);
@@ -5248,20 +5292,22 @@
       }
 
       function calcWarns() {
-        // Apenas avisa sobre letras já tentadas na mesma posição (sem conceito de "eliminada")
-        const posErrada = [];
-        for (let i = 0; i < WN; i++) {
-          const l = G.typed[i];
-          if (!l || G.decoded.has(i) || G.keyPos.has(i)) continue;
-          if (G.attempts.some((a) => a.word[i] === l && !a.decoded.includes(i)))
-            posErrada.push({ l, i });
-        }
-        if (posErrada.length > 0) {
-          const letras = [...new Set(posErrada.map(({ l }) => l))].join(", ");
-          setFb(
-            `⚠ ${letras} já ${posErrada.length > 1 ? "foram tentadas" : "foi tentada"} nessa posição`,
-            "warn",
-          );
+        if (!HARD_MODE) {
+          // Apenas avisa sobre letras já tentadas na mesma posição (sem conceito de "eliminada")
+          const posErrada = [];
+          for (let i = 0; i < WN; i++) {
+            const l = G.typed[i];
+            if (!l || G.decoded.has(i) || G.keyPos.has(i)) continue;
+            if (G.attempts.some((a) => a.word[i] === l && !a.decoded.includes(i)))
+              posErrada.push({ l, i });
+          }
+          if (posErrada.length > 0) {
+            const letras = [...new Set(posErrada.map(({ l }) => l))].join(", ");
+            setFb(
+              `⚠ ${letras} já ${posErrada.length > 1 ? "foram tentadas" : "foi tentada"} nessa posição`,
+              "warn",
+            );
+          }
         }
 
         // Validação quando todos os campos preenchidos
@@ -5325,7 +5371,10 @@
         const guess = full.join("");
         // Easter egg: digitar o nome do jogo
         if (guess === "GLIFFO") {
-          setFb("Isso não é uma palavra... mas aprecio a autoestima. 🐊", "err");
+          setFb(
+            "Isso não é uma palavra... mas aprecio a autoestima. 🐊",
+            "err",
+          );
           haptic(80);
           return;
         }
@@ -5598,12 +5647,14 @@
       }
 
       // Focus-trap helpers for modals
-      const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+      const FOCUSABLE =
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
       let _modalTrapHandler = null;
       let _modalPrevFocus = null;
       function _installTrap(modal) {
         _modalPrevFocus = document.activeElement;
-        const getFocusable = () => Array.from(modal.querySelectorAll(FOCUSABLE));
+        const getFocusable = () =>
+          Array.from(modal.querySelectorAll(FOCUSABLE));
         // Focus first focusable element
         const first = getFocusable()[0];
         if (first) first.focus();
@@ -5611,11 +5662,18 @@
           if (e.key !== "Tab") return;
           const els = getFocusable();
           if (!els.length) return;
-          const fi = els[0], la = els[els.length - 1];
+          const fi = els[0],
+            la = els[els.length - 1];
           if (e.shiftKey) {
-            if (document.activeElement === fi) { e.preventDefault(); la.focus(); }
+            if (document.activeElement === fi) {
+              e.preventDefault();
+              la.focus();
+            }
           } else {
-            if (document.activeElement === la) { e.preventDefault(); fi.focus(); }
+            if (document.activeElement === la) {
+              e.preventDefault();
+              fi.focus();
+            }
           }
         };
         modal.addEventListener("keydown", _modalTrapHandler);
@@ -6034,7 +6092,7 @@
         const s2 = carregarStats();
         const titulo = getTituloStreak(s2.streakAtual);
         const lines = [
-          `joguei glif.foo #${n}${arqTag} — ${resultado}`,
+          `joguei glif.foo #${n}${arqTag}${HARD_MODE ? " 🔥" : ""} — ${resultado}`,
           `${titulo.emoji} ${titulo.nome}`,
           "",
         ];
@@ -6413,6 +6471,7 @@
 
       // ── Configurações ──
       const CONFIG_KEY = "gliffoo_config";
+      let HARD_MODE = false;
       function loadConfig() {
         try {
           return JSON.parse(localStorage.getItem(CONFIG_KEY)) || {};
@@ -6432,6 +6491,25 @@
         if (sw) sw.classList.toggle("on", isDark);
         if (sub) sub.textContent = isDark ? "Ativado" : "Desativado";
         if (icon) icon.textContent = isDark ? "🌙" : "☀️";
+        const hardSw = document.getElementById("cfg-hard-switch");
+        const hardSub = document.getElementById("cfg-hard-sub");
+        if (hardSw) hardSw.classList.toggle("on", HARD_MODE);
+        if (hardSub) hardSub.textContent = HARD_MODE ? "Ativado" : "Desativado";
+      }
+      function applyHardMode() {
+        const btn = document.getElementById("key-btn");
+        if (btn) btn.style.display = HARD_MODE ? "none" : "";
+      }
+      function toggleHardMode() {
+        if (G.attempts.length > 0 && !G.done) {
+          setFb("Não é possível mudar o Modo Difícil durante uma partida.", "warn");
+          return;
+        }
+        HARD_MODE = !HARD_MODE;
+        saveConfig({ hardMode: HARD_MODE });
+        syncConfigUI();
+        applyHardMode();
+        buildHeaderMeta();
       }
       function openConfig() {
         syncConfigUI();
@@ -6440,6 +6518,8 @@
       function initConfig() {
         const c = loadConfig();
         if (c.theme) document.documentElement.dataset.theme = c.theme;
+        HARD_MODE = !!c.hardMode;
+        applyHardMode();
         if (Date.now() < BETA_END_DATE) {
           const badge = document.getElementById("ea-badge");
           if (badge) badge.style.display = "inline-block";
@@ -7381,7 +7461,8 @@
         } else {
           meta.innerHTML = `
     <span class="header-date">${dataFmt}</span>
-    <span class="dif-badge ${nivel}">${label}</span>`;
+    <span class="dif-badge ${nivel}">${label}</span>${HARD_MODE ? `
+    <span class="hard-badge">\ud83d\udd25 Difícil</span>` : ""}`;
         }
       }
       buildHeaderMeta();
@@ -8297,7 +8378,8 @@
 
         // ── Helpers reutilizados nos desfechos ───────────────────────────
         function buildSummaryCards(card) {
-          card.style.cssText += "background:transparent;border:none;padding:4px 0;";
+          card.style.cssText +=
+            "background:transparent;border:none;padding:4px 0;";
           const scards = document.createElement("div");
           scards.className = "tut-summary-cards";
           scards.innerHTML =
@@ -8306,26 +8388,41 @@
             '<div class="tut-scard"><div class="tut-scard-icon">\uD83D\uDD11</div><div class="tut-scard-text">1 CHAVE por tentativa para revelar uma letra</div></div>';
           card.appendChild(scards);
         }
-        function chatFinale(afterWin, cardsDelay, btnDelay, verDeNovoMsgOverride) {
+        function chatFinale(
+          afterWin,
+          cardsDelay,
+          btnDelay,
+          verDeNovoMsgOverride,
+        ) {
           chatCard(buildSummaryCards, cardsDelay);
           tDelay(() => {
             if (token.cancelled) return;
-            const verDeNovoMsg = verDeNovoMsgOverride ||
+            const verDeNovoMsg =
+              verDeNovoMsgOverride ||
               (afterWin
                 ? "Você gabaritou e ainda quer ver de novo?! \uD83E\uDD26"
                 : "Você não vai com a minha cara? \uD83D\uDE24");
-            chatChoices([
-              { label: "Jogar agora! \uD83C\uDFAE", onClick: () => closeTutorial() },
-              {
-                label: "Ver de novo \uD83D\uDD01",
-                secondary: true,
-                onClick: () => {
-                  tClear();
-                  chatMsg(verDeNovoMsg, 0);
-                  tDelay(() => { closeTutorial(); setTimeout(() => openTutorial(), 400); }, 1800);
+            chatChoices(
+              [
+                {
+                  label: "Jogar agora! \uD83C\uDFAE",
+                  onClick: () => closeTutorial(),
                 },
-              },
-            ], 0);
+                {
+                  label: "Ver de novo \uD83D\uDD01",
+                  secondary: true,
+                  onClick: () => {
+                    tClear();
+                    chatMsg(verDeNovoMsg, 0);
+                    tDelay(() => {
+                      closeTutorial();
+                      setTimeout(() => openTutorial(), 400);
+                    }, 1800);
+                  },
+                },
+              ],
+              0,
+            );
           }, btnDelay);
         }
 
@@ -8613,7 +8710,10 @@
             });
 
             const allIn1 = 1400 + TWL.length * 180;
-            chatMsg("Para entender melhor... Vamos juntar as letras!", allIn1 + 400);
+            chatMsg(
+              "Para entender melhor... Vamos juntar as letras!",
+              allIn1 + 400,
+            );
 
             tDelay(() => {
               if (token.cancelled) return;
@@ -8626,7 +8726,12 @@
                       scrollFeed();
                       newToken();
                       chatChoices(
-                        [{ label: "Entendi! \u2192", onClick: () => tutNext() }],
+                        [
+                          {
+                            label: "Entendi! \u2192",
+                            onClick: () => tutNext(),
+                          },
+                        ],
                         600,
                       );
                       return;
@@ -8856,8 +8961,10 @@
                                                   () => {
                                                     replayCount++;
                                                     if (replayCount >= 3) {
-                                                      replayBtn.innerHTML = "\uD83D\uDE2C";
-                                                      replayBtn.title = "T\u00e1, pode parar...";
+                                                      replayBtn.innerHTML =
+                                                        "\uD83D\uDE2C";
+                                                      replayBtn.title =
+                                                        "T\u00e1, pode parar...";
                                                     }
                                                     runPhases();
                                                   },
@@ -8954,10 +9061,16 @@
                                                         btn.addEventListener(
                                                           "mouseenter",
                                                           () => {
-                                                            if (replayCount >= 3)
-                                                              btn.textContent = "Vai logo, vai! \uD83D\uDE24";
-                                                            else if (replayCount >= 1)
-                                                              btn.textContent = "Caraca, voc\u00ea \u00e9 um g\u00eanio!";
+                                                            if (
+                                                              replayCount >= 3
+                                                            )
+                                                              btn.textContent =
+                                                                "Vai logo, vai! \uD83D\uDE24";
+                                                            else if (
+                                                              replayCount >= 1
+                                                            )
+                                                              btn.textContent =
+                                                                "Caraca, voc\u00ea \u00e9 um g\u00eanio!";
                                                           },
                                                         );
                                                         btn.addEventListener(
@@ -9182,12 +9295,19 @@
                   });
                   // Easter egg: clicar no painel enquanto o banana boy anda
                   let bbClicked = false;
-                  panel.addEventListener("click", function _bbClick() {
-                    if (bbClicked) return;
-                    bbClicked = true;
-                    panel.removeEventListener("click", _bbClick);
-                    chatMsg("Ei! O menino s\u00f3 passa, n\u00e3o morde! \uD83C\uDF4C", 0);
-                  }, { once: true });
+                  panel.addEventListener(
+                    "click",
+                    function _bbClick() {
+                      if (bbClicked) return;
+                      bbClicked = true;
+                      panel.removeEventListener("click", _bbClick);
+                      chatMsg(
+                        "Ei! O menino s\u00f3 passa, n\u00e3o morde! \uD83C\uDF4C",
+                        0,
+                      );
+                    },
+                    { once: true },
+                  );
                   const panelW = panel.offsetWidth || 480;
                   const DIST = panelW + BB_W;
                   const T_WALK = 7500;
@@ -9294,7 +9414,8 @@
                         el.style.borderColor = "var(--border2)";
                         const sv = makeSVG(l, tStroke());
                         if (sv) {
-                          sv.style.cssText = "width:65%;height:65%;opacity:0.5;";
+                          sv.style.cssText =
+                            "width:65%;height:65%;opacity:0.5;";
                           el.appendChild(sv);
                         }
                       }
@@ -9475,15 +9596,27 @@
                           ? `Sério?! Você disse que estava confuso... e ainda errou! Isso é talento. 😂`
                           : `Quase! Era <strong>ARCO</strong> — as letras eram as mesmas, mas a ordem importa! 😄`;
                         chatMsg(zoada, 300);
-                        chatMsg(`A palavra do dia é <strong>ARCO</strong>. Óbvio, né? 😏`, 1400);
-                        chatMsg(`Mas agora você sabe como funciona! Bora jogar? 🎮`, 2400);
+                        chatMsg(
+                          `A palavra do dia é <strong>ARCO</strong>. Óbvio, né? 😏`,
+                          1400,
+                        );
+                        chatMsg(
+                          `Mas agora você sabe como funciona! Bora jogar? 🎮`,
+                          2400,
+                        );
                         const caroMsg = cameFromBirra
                           ? "Depois de toda aquela birra... errou CARO... e ainda quer revisar?! \uD83D\uDE2D"
                           : "Você não vai com a minha cara? \uD83D\uDE24";
                         chatFinale(false, 2900, 3400, caroMsg);
                       } else {
-                        chatMsg(`Hmm... nem era uma das opções! 😅 Era <strong>ARCO</strong>.`, 300);
-                        chatMsg(`Mas agora você sabe como funciona! Bora jogar? 🎮`, 1500);
+                        chatMsg(
+                          `Hmm... nem era uma das opções! 😅 Era <strong>ARCO</strong>.`,
+                          300,
+                        );
+                        chatMsg(
+                          `Mas agora você sabe como funciona! Bora jogar? 🎮`,
+                          1500,
+                        );
                         chatFinale(false, 2000, 2500);
                       }
                     };
@@ -9494,7 +9627,10 @@
                       tutInteractReady = false;
                       if (confirmBtn.parentNode) confirmBtn.remove();
                       confetti(feed);
-                      chatMsg(`Isso aí! 🎉 Era <strong>ARCO</strong>! Você conseguiu!`, 300);
+                      chatMsg(
+                        `Isso aí! 🎉 Era <strong>ARCO</strong>! Você conseguiu!`,
+                        300,
+                      );
                       chatMsg(`Mandou bem! Agora você sabe jogar. 🏆`, 1400);
                       chatFinale(true, 1900, 2500);
                     };
@@ -10897,37 +11033,50 @@
         function eePlayBoing() {
           try {
             const A = new (window.AudioContext || window.webkitAudioContext)();
-            const o = A.createOscillator(), g = A.createGain();
-            o.connect(g); g.connect(A.destination);
+            const o = A.createOscillator(),
+              g = A.createGain();
+            o.connect(g);
+            g.connect(A.destination);
             o.type = "sine";
             o.frequency.setValueAtTime(520, A.currentTime);
             o.frequency.exponentialRampToValueAtTime(900, A.currentTime + 0.09);
             g.gain.setValueAtTime(0.25, A.currentTime);
             g.gain.exponentialRampToValueAtTime(0.001, A.currentTime + 0.5);
-            o.start(); o.stop(A.currentTime + 0.5);
+            o.start();
+            o.stop(A.currentTime + 0.5);
           } catch (e2) {}
         }
         function eePlayTrombone() {
           try {
             const A = new (window.AudioContext || window.webkitAudioContext)();
-            const o = A.createOscillator(), g = A.createGain();
-            o.connect(g); g.connect(A.destination);
+            const o = A.createOscillator(),
+              g = A.createGain();
+            o.connect(g);
+            g.connect(A.destination);
             o.type = "sawtooth";
             o.frequency.setValueAtTime(380, A.currentTime);
             o.frequency.exponentialRampToValueAtTime(200, A.currentTime + 0.7);
             g.gain.setValueAtTime(0.18, A.currentTime);
             g.gain.exponentialRampToValueAtTime(0.001, A.currentTime + 0.7);
-            o.start(); o.stop(A.currentTime + 0.7);
+            o.start();
+            o.stop(A.currentTime + 0.7);
           } catch (e2) {}
         }
         function eeCanvasConfetti() {
-          const fire = () => window.confetti({
-            particleCount: 130, spread: 80, origin: { y: 0.65 },
-            colors: ["#f5a623","#9b8fe8","#5bbfa0","#e87a6b","#60a5fa"]
-          });
-          if (window.confetti) { fire(); return; }
+          const fire = () =>
+            window.confetti({
+              particleCount: 130,
+              spread: 80,
+              origin: { y: 0.65 },
+              colors: ["#f5a623", "#9b8fe8", "#5bbfa0", "#e87a6b", "#60a5fa"],
+            });
+          if (window.confetti) {
+            fire();
+            return;
+          }
           const sc = document.createElement("script");
-          sc.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js";
+          sc.src =
+            "https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js";
           sc.onload = fire;
           document.head.appendChild(sc);
         }
@@ -11413,43 +11562,103 @@
         }
       }
       /* ── Easter Eggs ── */
-      @keyframes eeHueRotate { from { filter: hue-rotate(0deg); } to { filter: hue-rotate(360deg); } }
-      .ee-konami { animation: eeHueRotate 0.5s linear infinite; }
-      @keyframes eeLogoRun {
-        0%,100% { transform: translateX(0) rotate(0deg); }
-        20% { transform: translateX(-7px) rotate(-4deg); }
-        55% { transform: translateX(8px) rotate(3deg); }
-        80% { transform: translateX(-3px) rotate(-2deg); }
+      @keyframes eeHueRotate {
+        from {
+          filter: hue-rotate(0deg);
+        }
+        to {
+          filter: hue-rotate(360deg);
+        }
       }
-      .ee-logo-run { display: inline-block; animation: eeLogoRun 0.45s ease; }
+      .ee-konami {
+        animation: eeHueRotate 0.5s linear infinite;
+      }
+      @keyframes eeLogoRun {
+        0%,
+        100% {
+          transform: translateX(0) rotate(0deg);
+        }
+        20% {
+          transform: translateX(-7px) rotate(-4deg);
+        }
+        55% {
+          transform: translateX(8px) rotate(3deg);
+        }
+        80% {
+          transform: translateX(-3px) rotate(-2deg);
+        }
+      }
+      .ee-logo-run {
+        display: inline-block;
+        animation: eeLogoRun 0.45s ease;
+      }
       #eetoast {
-        position: fixed; bottom: 28px; left: 50%;
+        position: fixed;
+        bottom: 28px;
+        left: 50%;
         transform: translateX(-50%) translateY(80px);
-        background: var(--surface); color: var(--text);
-        padding: 10px 20px; border-radius: 14px;
-        font-size: 0.84rem; line-height: 1.45;
-        box-shadow: 0 4px 22px rgba(0,0,0,0.28);
-        z-index: 10999; opacity: 0;
-        transition: opacity 0.3s, transform 0.3s;
-        pointer-events: none; max-width: 90vw; text-align: center;
+        background: var(--surface);
+        color: var(--text);
+        padding: 10px 20px;
+        border-radius: 14px;
+        font-size: 0.84rem;
+        line-height: 1.45;
+        box-shadow: 0 4px 22px rgba(0, 0, 0, 0.28);
+        z-index: 10999;
+        opacity: 0;
+        transition:
+          opacity 0.3s,
+          transform 0.3s;
+        pointer-events: none;
+        max-width: 90vw;
+        text-align: center;
         border: 1px solid var(--surface2);
       }
-      #eetoast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+      #eetoast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
       #snake-modal {
-        position: fixed; inset: 0; z-index: 11000;
-        background: rgba(0,0,0,0.72); display: flex;
-        align-items: center; justify-content: center;
-        opacity: 0; pointer-events: none; transition: opacity 0.25s;
+        position: fixed;
+        inset: 0;
+        z-index: 11000;
+        background: rgba(0, 0, 0, 0.72);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s;
       }
-      #snake-modal.show { opacity: 1; pointer-events: auto; }
+      #snake-modal.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
       .sm-inner {
-        background: var(--surface); border-radius: 18px;
-        padding: 18px 18px 14px; display: flex;
-        flex-direction: column; align-items: center; gap: 10px;
-        box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+        background: var(--surface);
+        border-radius: 18px;
+        padding: 18px 18px 14px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
       }
-      #snake-canvas { border: 2px solid var(--surface2); border-radius: 8px; image-rendering: pixelated; }
-      .sm-close { align-self: flex-end; background: none; border: none; cursor: pointer; color: var(--text3); font-size: 1.2rem; line-height: 1; padding: 0; }
+      #snake-canvas {
+        border: 2px solid var(--surface2);
+        border-radius: 8px;
+        image-rendering: pixelated;
+      }
+      .sm-close {
+        align-self: flex-end;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text3);
+        font-size: 1.2rem;
+        line-height: 1;
+        padding: 0;
+      }
     </style>
 
     <!-- ══ TUTORIAL ══ -->
@@ -11547,12 +11756,21 @@
     <div id="snake-modal">
       <div class="sm-inner">
         <button class="sm-close" id="snake-close">✕</button>
-        <div style="font-size:0.78rem;color:var(--text3);text-align:center;">
-          Sem palavras... só cobra. 🐍<br>
-          <span style="font-size:0.7rem">Setas para mover · ESC para sair</span>
+        <div
+          style="font-size: 0.78rem; color: var(--text3); text-align: center"
+        >
+          Sem palavras... só cobra. 🐍<br />
+          <span style="font-size: 0.7rem"
+            >Setas para mover · ESC para sair</span
+          >
         </div>
         <canvas id="snake-canvas" width="200" height="200"></canvas>
-        <div id="snake-score" style="font-size:0.85rem;color:var(--text3);font-weight:600;">🍎 0</div>
+        <div
+          id="snake-score"
+          style="font-size: 0.85rem; color: var(--text3); font-weight: 600"
+        >
+          🍎 0
+        </div>
       </div>
     </div>
 
@@ -11577,40 +11795,64 @@
         modal.classList.add("show");
         const canvas = document.getElementById("snake-canvas");
         const ctx2d = canvas.getContext("2d");
-        const CELLS = 20, CS = 10;
+        const CELLS = 20,
+          CS = 10;
         let snake, dir, food, score, loop;
 
         function placeFood() {
-          do { food = { x: Math.floor(Math.random()*CELLS), y: Math.floor(Math.random()*CELLS) }; }
-          while (snake.some(s => s.x === food.x && s.y === food.y));
+          do {
+            food = {
+              x: Math.floor(Math.random() * CELLS),
+              y: Math.floor(Math.random() * CELLS),
+            };
+          } while (snake.some((s) => s.x === food.x && s.y === food.y));
         }
         function resetSnake() {
-          snake = [{x:10,y:10},{x:9,y:10},{x:8,y:10}];
-          dir = {x:1,y:0};
+          snake = [
+            { x: 10, y: 10 },
+            { x: 9, y: 10 },
+            { x: 8, y: 10 },
+          ];
+          dir = { x: 1, y: 0 };
           score = 0;
           document.getElementById("snake-score").textContent = "🍎 0";
           placeFood();
         }
         function drawSnake() {
-          const bg = getComputedStyle(document.documentElement).getPropertyValue("--surface").trim() || "#fff";
-          ctx2d.fillStyle = bg; ctx2d.fillRect(0, 0, 200, 200);
+          const bg =
+            getComputedStyle(document.documentElement)
+              .getPropertyValue("--surface")
+              .trim() || "#fff";
+          ctx2d.fillStyle = bg;
+          ctx2d.fillRect(0, 0, 200, 200);
           ctx2d.fillStyle = "#f5a623";
-          ctx2d.fillRect(food.x*CS, food.y*CS, CS-1, CS-1);
+          ctx2d.fillRect(food.x * CS, food.y * CS, CS - 1, CS - 1);
           snake.forEach((s, i) => {
             ctx2d.fillStyle = i === 0 ? "#5bbfa0" : "#9b8fe8";
-            ctx2d.fillRect(s.x*CS, s.y*CS, CS-1, CS-1);
+            ctx2d.fillRect(s.x * CS, s.y * CS, CS - 1, CS - 1);
           });
         }
         function tick() {
-          const h = { x: (snake[0].x+dir.x+CELLS)%CELLS, y: (snake[0].y+dir.y+CELLS)%CELLS };
-          if (snake.some(s => s.x === h.x && s.y === h.y)) {
+          const h = {
+            x: (snake[0].x + dir.x + CELLS) % CELLS,
+            y: (snake[0].y + dir.y + CELLS) % CELLS,
+          };
+          if (snake.some((s) => s.x === h.x && s.y === h.y)) {
             clearInterval(loop);
-            ctx2d.fillStyle = "rgba(0,0,0,0.55)"; ctx2d.fillRect(0,0,200,200);
-            ctx2d.fillStyle = "#fff"; ctx2d.textAlign = "center";
-            ctx2d.font = "bold 13px monospace"; ctx2d.fillText("Game Over 💀", 100, 90);
-            ctx2d.font = "10px monospace"; ctx2d.fillText("clique para jogar de novo", 100, 112);
+            ctx2d.fillStyle = "rgba(0,0,0,0.55)";
+            ctx2d.fillRect(0, 0, 200, 200);
+            ctx2d.fillStyle = "#fff";
+            ctx2d.textAlign = "center";
+            ctx2d.font = "bold 13px monospace";
+            ctx2d.fillText("Game Over 💀", 100, 90);
+            ctx2d.font = "10px monospace";
+            ctx2d.fillText("clique para jogar de novo", 100, 112);
             canvas.style.cursor = "pointer";
-            canvas.onclick = () => { canvas.onclick = null; canvas.style.cursor = "default"; startSnake(); };
+            canvas.onclick = () => {
+              canvas.onclick = null;
+              canvas.style.cursor = "default";
+              startSnake();
+            };
             return;
           }
           snake.unshift(h);
@@ -11618,14 +11860,30 @@
             score++;
             document.getElementById("snake-score").textContent = "🍎 " + score;
             placeFood();
-          } else { snake.pop(); }
+          } else {
+            snake.pop();
+          }
           drawSnake();
         }
-        function startSnake() { clearInterval(loop); resetSnake(); drawSnake(); loop = setInterval(tick, 120); }
+        function startSnake() {
+          clearInterval(loop);
+          resetSnake();
+          drawSnake();
+          loop = setInterval(tick, 120);
+        }
 
         const kh = (e) => {
-          const map = { ArrowUp:{x:0,y:-1}, ArrowDown:{x:0,y:1}, ArrowLeft:{x:-1,y:0}, ArrowRight:{x:1,y:0} };
-          if (map[e.key]) { const nd = map[e.key]; if (nd.x !== -dir.x || nd.y !== -dir.y) dir = nd; e.preventDefault(); }
+          const map = {
+            ArrowUp: { x: 0, y: -1 },
+            ArrowDown: { x: 0, y: 1 },
+            ArrowLeft: { x: -1, y: 0 },
+            ArrowRight: { x: 1, y: 0 },
+          };
+          if (map[e.key]) {
+            const nd = map[e.key];
+            if (nd.x !== -dir.x || nd.y !== -dir.y) dir = nd;
+            e.preventDefault();
+          }
           if (e.key === "Escape") closeSnake();
         };
         function closeSnake() {
@@ -11635,22 +11893,40 @@
         }
         document.addEventListener("keydown", kh);
         document.getElementById("snake-close").onclick = closeSnake;
-        modal.addEventListener("click", (e) => { if (e.target === modal) closeSnake(); });
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) closeSnake();
+        });
         startSnake();
       }
 
       // ── Konami Code ──
       (function () {
-        const SEQ = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
+        const SEQ = [
+          "ArrowUp",
+          "ArrowUp",
+          "ArrowDown",
+          "ArrowDown",
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowLeft",
+          "ArrowRight",
+          "b",
+          "a",
+        ];
         let p = 0;
         document.addEventListener("keydown", (e) => {
           if (e.key === SEQ[p]) {
             p++;
             if (p === SEQ.length) {
               p = 0;
-              showEEToast("Você realmente tentou código de trapaça num jogo de palavras... 🤦 Respeito.");
+              showEEToast(
+                "Você realmente tentou código de trapaça num jogo de palavras... 🤦 Respeito.",
+              );
               document.body.classList.add("ee-konami");
-              setTimeout(() => document.body.classList.remove("ee-konami"), 3000);
+              setTimeout(
+                () => document.body.classList.remove("ee-konami"),
+                3000,
+              );
             }
           } else {
             p = e.key === SEQ[0] ? 1 : 0;
@@ -11662,9 +11938,15 @@
       (function () {
         let open = false;
         setInterval(() => {
-          const is = window.outerWidth - window.innerWidth > 160 || window.outerHeight - window.innerHeight > 160;
-          if (is && !open) { open = true; showEEToast("Oi? Tô vendo você ali no console... pensou que eu não ia notar? 🕵️"); }
-          else if (!is) open = false;
+          const is =
+            window.outerWidth - window.innerWidth > 160 ||
+            window.outerHeight - window.innerHeight > 160;
+          if (is && !open) {
+            open = true;
+            showEEToast(
+              "Oi? Tô vendo você ali no console... pensou que eu não ia notar? 🕵️",
+            );
+          } else if (!is) open = false;
         }, 2500);
       })();
 
@@ -11679,10 +11961,24 @@
           "Ainda aqui. 😐",
           "...vai jogar ou vai ficar aí?",
         ];
-        let idleT = null, rotT = null, mi = 0;
-        function startRot() { mi = 0; rotT = setInterval(() => { document.title = msgs[mi++ % msgs.length]; }, 4000); }
-        function reset() { clearTimeout(idleT); clearInterval(rotT); document.title = ORIG; idleT = setTimeout(startRot, 30000); }
-        ["mousemove","keydown","click","touchstart"].forEach(ev => document.addEventListener(ev, reset, { passive: true }));
+        let idleT = null,
+          rotT = null,
+          mi = 0;
+        function startRot() {
+          mi = 0;
+          rotT = setInterval(() => {
+            document.title = msgs[mi++ % msgs.length];
+          }, 4000);
+        }
+        function reset() {
+          clearTimeout(idleT);
+          clearInterval(rotT);
+          document.title = ORIG;
+          idleT = setTimeout(startRot, 30000);
+        }
+        ["mousemove", "keydown", "click", "touchstart"].forEach((ev) =>
+          document.addEventListener(ev, reset, { passive: true }),
+        );
         reset();
       })();
 
@@ -11691,12 +11987,20 @@
         const dot = document.querySelector(".logo-dot");
         if (!dot) return;
         dot.title = "";
-        let n = 0, t = null;
+        let n = 0,
+          t = null;
         dot.addEventListener("click", (e) => {
-          e.preventDefault(); e.stopPropagation();
-          n++; clearTimeout(t);
-          if (n >= 3) { n = 0; openSnakeGame(); }
-          else t = setTimeout(() => { n = 0; }, 1500);
+          e.preventDefault();
+          e.stopPropagation();
+          n++;
+          clearTimeout(t);
+          if (n >= 3) {
+            n = 0;
+            openSnakeGame();
+          } else
+            t = setTimeout(() => {
+              n = 0;
+            }, 1500);
         });
       })();
 
@@ -11704,18 +12008,27 @@
       (function () {
         const foo = document.querySelector(".logo-foo");
         if (!foo) return;
-        let n = 0, t = null;
+        let n = 0,
+          t = null;
         foo.addEventListener("click", (e) => {
-          e.preventDefault(); n++; clearTimeout(t);
+          e.preventDefault();
+          n++;
+          clearTimeout(t);
           if (n >= 5) {
             n = 0;
             foo.classList.remove("ee-logo-run");
             void foo.offsetWidth;
             foo.classList.add("ee-logo-run");
             showEEToast("Oi! Para de clicar no foo! 😤");
-            foo.addEventListener("animationend", () => foo.classList.remove("ee-logo-run"), { once: true });
+            foo.addEventListener(
+              "animationend",
+              () => foo.classList.remove("ee-logo-run"),
+              { once: true },
+            );
           } else {
-            t = setTimeout(() => { n = 0; }, 1500);
+            t = setTimeout(() => {
+              n = 0;
+            }, 1500);
           }
         });
       })();
