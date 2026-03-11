@@ -1,0 +1,1209 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Gliffo Arena ⚔️</title>
+    <meta name="description" content="Gliffo Arena — modo multiplayer em tempo real. Dois times decodificam glifos em turnos." />
+    <meta name="theme-color" content="#f5a623" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Supabase JS client (UMD) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { overscroll-behavior: none; height: 100%; }
+
+      /* ─── SCROLLBAR ─────────────────────────────────────────── */
+      ::-webkit-scrollbar { width: 6px; height: 6px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: #e8940a; border-radius: 99px; }
+      * { scrollbar-width: thin; scrollbar-color: #e8940a transparent; }
+
+      /* ─── TOKENS ─────────────────────────────────────────────── */
+      :root {
+        --amber-400: #f5a623;
+        --amber-500: #e8940a;
+        --amber-600: #c97d08;
+        --quartz:    #7c8cff;
+        --quartz-hi: #9da8ff;
+        --quartz-lo: #5a69db;
+        --correct:   #4a9d6f;
+      }
+
+      [data-theme="dark"] {
+        --bg:       #141210;
+        --bg2:      #1a1714;
+        --surface:  #1e1b18;
+        --surface2: #252118;
+        --surface3: #2c271f;
+        --border:   #302b22;
+        --border2:  #3a342a;
+        --text:     #f0ebe4;
+        --text2:    #9a9080;
+        --text3:    #5a5248;
+        --shadow:   rgba(0,0,0,.5);
+      }
+      [data-theme="light"] {
+        --bg:       #faf8f4;
+        --bg2:      #f5f1eb;
+        --surface:  #ffffff;
+        --surface2: #f5f1ea;
+        --surface3: #edeae2;
+        --border:   #e0d8cc;
+        --border2:  #ebe4d8;
+        --text:     #1c1814;
+        --text2:    #7a7060;
+        --text3:    #aaa090;
+        --shadow:   rgba(0,0,0,.1);
+      }
+
+      /* ─── BASE ───────────────────────────────────────────────── */
+      body {
+        font-family: "DM Sans", system-ui, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      /* ─── VIEWS ──────────────────────────────────────────────── */
+      .view {
+        display: none;
+        width: 100%;
+        max-width: 480px;
+        padding: 1.5rem 1rem env(safe-area-inset-bottom, 1rem);
+        flex-direction: column;
+        gap: 1.25rem;
+        min-height: 100dvh;
+      }
+      .view.active { display: flex; }
+
+      /* ─── THEME TOGGLE ───────────────────────────────────────── */
+      .theme-btn {
+        position: fixed; top: 1rem; right: 1rem;
+        background: var(--surface2); border: 1px solid var(--border);
+        border-radius: 50%; width: 36px; height: 36px;
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer; font-size: 18px; color: var(--text2);
+        transition: background .2s; z-index: 100;
+      }
+      .theme-btn:hover { background: var(--surface3); }
+
+      /* ─── WELCOME ────────────────────────────────────────────── */
+      .welcome-logo {
+        margin-top: 2.5rem;
+        font-family: "DM Serif Display", serif;
+        font-size: 2.5rem;
+        color: var(--text);
+        text-align: center;
+        line-height: 1.1;
+      }
+      .welcome-logo .accent { color: var(--amber-400); }
+      .welcome-sub {
+        text-align: center;
+        color: var(--text2);
+        font-size: .9rem;
+        line-height: 1.5;
+      }
+
+      /* ─── FORM ELEMENTS ──────────────────────────────────────── */
+      .field-label {
+        display: block;
+        font-size: .75rem; font-weight: 600;
+        color: var(--text3); text-transform: uppercase; letter-spacing: .05em;
+        margin-bottom: .4rem;
+      }
+      input[type="text"] {
+        width: 100%;
+        background: var(--surface2); border: 1.5px solid var(--border2);
+        border-radius: 10px; padding: .75rem 1rem;
+        color: var(--text); font-family: "DM Sans", sans-serif; font-size: 1rem;
+        outline: none; transition: border-color .2s;
+      }
+      input[type="text"]::placeholder { color: var(--text3); }
+      input[type="text"]:focus { border-color: var(--amber-400); }
+      input[type="text"].code-input {
+        text-transform: uppercase; letter-spacing: .15em; font-size: 1.3rem; text-align: center;
+      }
+
+      /* ─── BUTTONS ────────────────────────────────────────────── */
+      .btn {
+        display: flex; align-items: center; justify-content: center; gap: .5rem;
+        border: none; border-radius: 12px; padding: .8rem 1.5rem;
+        font-family: "DM Sans", sans-serif; font-size: 1rem; font-weight: 600;
+        cursor: pointer; transition: opacity .15s, transform .1s;
+        line-height: 1;
+      }
+      .btn:active:not(:disabled) { transform: scale(.97); }
+      .btn:disabled { opacity: .4; cursor: not-allowed; }
+      .btn-primary  { background: var(--amber-400); color: #1c1008; }
+      .btn-primary:hover:not(:disabled) { background: var(--amber-500); }
+      .btn-secondary { background: var(--surface2); color: var(--text); border: 1.5px solid var(--border2); }
+      .btn-secondary:hover:not(:disabled) { background: var(--surface3); }
+      .btn-quartz   { background: var(--quartz); color: #fff; }
+      .btn-quartz:hover:not(:disabled) { background: var(--quartz-lo); }
+      .btn-ghost    { background: transparent; color: var(--text3); border: 1.5px solid var(--border); font-size: .875rem; }
+      .btn-ghost:hover:not(:disabled) { color: var(--text2); background: var(--surface2); }
+      .btn-sm       { padding: .45rem .85rem; font-size: .8rem; border-radius: 8px; }
+      .btn-danger   { background: transparent; color: #e87a6b; border: 1.5px solid rgba(200,60,40,.3); }
+      .btn-danger:hover:not(:disabled) { background: rgba(200,60,40,.08); }
+
+      /* ─── JOIN FORM ───────────────────────────────────────────── */
+      .join-form {
+        display: none; flex-direction: column; gap: .75rem;
+        background: var(--surface2); border: 1.5px solid var(--border2);
+        border-radius: 14px; padding: 1rem;
+      }
+      .join-form.open { display: flex; }
+
+      /* ─── LOBBY HEADER ───────────────────────────────────────── */
+      .lobby-header {
+        display: flex; align-items: center; gap: .75rem;
+      }
+      .back-btn {
+        background: none; border: none; cursor: pointer;
+        color: var(--text2); font-size: 1.3rem; padding: .3rem .5rem;
+        border-radius: 8px; transition: color .2s, background .2s; line-height: 1;
+      }
+      .back-btn:hover { color: var(--text); background: var(--surface2); }
+
+      .room-code-badge {
+        flex: 1; display: flex; align-items: center; gap: .5rem;
+      }
+      .room-code-text {
+        font-family: "DM Serif Display", serif;
+        font-size: 1.6rem; color: var(--amber-400); letter-spacing: .08em;
+      }
+      .icon-btn {
+        background: none; border: none; cursor: pointer;
+        color: var(--text2); font-size: 1.1rem; padding: .2rem .35rem;
+        border-radius: 6px; transition: color .2s, background .2s;
+      }
+      .icon-btn:hover { color: var(--amber-400); background: var(--surface3); }
+
+      .status-badge {
+        font-size: .7rem; font-weight: 600; padding: .25rem .6rem;
+        border-radius: 99px; background: var(--surface3); color: var(--text2);
+        text-transform: uppercase; letter-spacing: .05em;
+      }
+      .status-badge.lobby   { background: #152215; color: #5bbfa0; }
+      .status-badge.playing { background: #1e1828; color: var(--quartz-hi); }
+
+      /* ─── SHARE ROW ──────────────────────────────────────────── */
+      .share-row {
+        display: flex; align-items: center; gap: .6rem;
+        background: var(--surface2); border: 1.5px solid var(--border);
+        border-radius: 10px; padding: .55rem .85rem;
+      }
+      .share-url {
+        flex: 1; font-size: .78rem; color: var(--text2);
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+
+      /* ─── TEAMS GRID ─────────────────────────────────────────── */
+      .teams-grid {
+        display: grid; grid-template-columns: 1fr 1fr; gap: .75rem;
+      }
+      .team-panel {
+        background: var(--surface); border: 2px solid var(--border);
+        border-radius: 14px; padding: .875rem;
+        display: flex; flex-direction: column; gap: .6rem;
+        transition: border-color .25s, box-shadow .25s;
+      }
+      .team-panel.mine {
+        border-color: var(--team-color);
+        box-shadow: 0 0 0 1px var(--team-color), 0 4px 20px rgba(0,0,0,.2);
+      }
+      .team-header {
+        display: flex; align-items: center; gap: .5rem;
+        font-weight: 600; font-size: .92rem;
+      }
+      .team-dot {
+        width: 11px; height: 11px; border-radius: 50%;
+        background: var(--team-color); flex-shrink: 0;
+      }
+      .team-count {
+        margin-left: auto; font-size: .72rem;
+        color: var(--text3); font-weight: 400;
+      }
+      /* team color vars */
+      .team-amber  { --team-color: var(--amber-400); }
+      .team-quartz { --team-color: var(--quartz); }
+
+      .player-list {
+        display: flex; flex-direction: column; gap: .35rem; min-height: 2.5rem;
+      }
+      .player-item {
+        display: flex; align-items: center; gap: .45rem; font-size: .83rem;
+      }
+      .player-avatar {
+        width: 22px; height: 22px; border-radius: 50%;
+        background: var(--team-color); color: #fff;
+        font-size: .6rem; font-weight: 700;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+      }
+      .player-name {
+        flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        color: var(--text);
+      }
+      .player-name em { color: var(--text3); font-style: normal; font-size: .72rem; }
+      .player-name .crown { font-size: .75rem; }
+      .online-dot {
+        width: 7px; height: 7px; border-radius: 50%;
+        background: var(--correct); flex-shrink: 0;
+        transition: background .3s;
+      }
+      .online-dot.offline { background: var(--border2); }
+
+      .empty-list { color: var(--text3); font-size: .78rem; padding: .15rem 0; }
+
+      /* ─── SPEC ROW ───────────────────────────────────────────── */
+      .spec-row { text-align: center; }
+      .spec-link {
+        background: none; border: none; cursor: pointer;
+        color: var(--text3); font-size: .82rem; font-family: "DM Sans", sans-serif;
+        text-decoration: underline; padding: .2rem;
+        transition: color .2s;
+      }
+      .spec-link:hover { color: var(--text2); }
+      .spec-link.active-spec { color: var(--text); font-weight: 500; }
+
+      /* ─── CONFIG SECTION ─────────────────────────────────────── */
+      .config-section {
+        background: var(--surface2); border: 1.5px solid var(--border);
+        border-radius: 14px; padding: 1rem;
+        display: flex; flex-direction: column; gap: .85rem;
+      }
+      .section-title {
+        font-size: .72rem; font-weight: 600; color: var(--text3);
+        text-transform: uppercase; letter-spacing: .06em;
+      }
+      .config-row {
+        display: flex; align-items: center; gap: .5rem;
+      }
+      .config-label { font-size: .875rem; color: var(--text2); flex: 1; }
+
+      /* pill radio */
+      .pill-group { display: flex; gap: .3rem; }
+      .pill {
+        background: var(--surface3); border: 1.5px solid var(--border2);
+        border-radius: 99px; padding: .28rem .6rem;
+        font-size: .78rem; font-weight: 500; cursor: pointer;
+        color: var(--text2); transition: all .15s; font-family: "DM Sans", sans-serif;
+        line-height: 1.4;
+      }
+      .pill.active {
+        background: var(--amber-400); border-color: var(--amber-500); color: #1c1008;
+      }
+      .pill:hover:not(.active) { border-color: var(--text3); color: var(--text); }
+
+      /* toggle */
+      .toggle-row { display: flex; align-items: center; gap: .75rem; }
+      .toggle { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+      .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+      .toggle-track {
+        position: absolute; inset: 0;
+        background: var(--surface3); border: 1.5px solid var(--border2);
+        border-radius: 99px; cursor: pointer; transition: background .2s, border-color .2s;
+      }
+      .toggle-track::before {
+        content: '';
+        position: absolute; width: 16px; height: 16px; border-radius: 50%;
+        background: var(--text3); top: 2px; left: 2px;
+        transition: transform .2s, background .2s;
+      }
+      .toggle input:checked ~ .toggle-track { background: var(--amber-400); border-color: var(--amber-500); }
+      .toggle input:checked ~ .toggle-track::before { transform: translateX(18px); background: #fff; }
+      .toggle-label { font-size: .875rem; color: var(--text); flex: 1; }
+
+      .config-divider { height: 1px; background: var(--border); }
+
+      /* ─── WAITING / INFO MESSAGES ────────────────────────────── */
+      .info-msg {
+        text-align: center; color: var(--text2);
+        font-size: .85rem; line-height: 1.5;
+        padding: .5rem 0;
+      }
+
+      /* ─── START SECTION ──────────────────────────────────────── */
+      .start-section { margin-top: auto; padding-top: .5rem; }
+      .start-btn {
+        width: 100%; padding: 1rem; font-size: 1.1rem; border-radius: 14px;
+        background: linear-gradient(135deg, var(--amber-400) 0%, var(--amber-500) 100%);
+        color: #1c1008; font-weight: 700; letter-spacing: .03em;
+        box-shadow: 0 4px 24px rgba(245,166,35,.3);
+      }
+      .start-btn:disabled {
+        background: var(--surface3); color: var(--text3); box-shadow: none;
+        background-image: none;
+      }
+      .start-hint {
+        text-align: center; font-size: .78rem;
+        color: var(--text3); margin-top: .5rem;
+      }
+
+      /* ─── GAME VIEW (stub) ───────────────────────────────────── */
+      #view-game {
+        align-items: center; justify-content: center;
+        gap: 1rem; text-align: center;
+      }
+      #view-game h2 {
+        font-family: "DM Serif Display", serif;
+        font-size: 2rem; color: var(--amber-400);
+      }
+      #view-game p { color: var(--text2); line-height: 1.5; }
+      #view-game .note { font-size: .8rem; color: var(--text3); }
+
+      /* ─── TOASTS ─────────────────────────────────────────────── */
+      .toast {
+        position: fixed; bottom: 1.5rem; left: 50%;
+        transform: translateX(-50%) translateY(0);
+        background: var(--surface2); border: 1.5px solid var(--border2);
+        border-radius: 10px; padding: .65rem 1.2rem;
+        font-size: .875rem; color: var(--text);
+        box-shadow: 0 4px 16px var(--shadow);
+        z-index: 1000; white-space: nowrap;
+        animation: fadeup .22s ease;
+        pointer-events: none;
+      }
+      .toast-error   { border-color: #c0392b; color: #e87a6b; }
+      .toast-success { border-color: var(--amber-400); color: var(--amber-400); }
+      @keyframes fadeup {
+        from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+        to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+      }
+
+      /* ─── SPINNER ────────────────────────────────────────────── */
+      .spinner {
+        display: inline-block;
+        width: 18px; height: 18px;
+        border: 2.5px solid rgba(255,255,255,.25);
+        border-top-color: currentColor; border-radius: 50%;
+        animation: spin .7s linear infinite;
+        vertical-align: middle;
+      }
+      .spinner-dark { border-color: rgba(0,0,0,.15); border-top-color: #1c1008; }
+      @keyframes spin { to { transform: rotate(360deg); } }
+
+      /* ─── LOADING STATE ──────────────────────────────────────── */
+      .loading-overlay {
+        display: none; position: fixed; inset: 0;
+        background: var(--bg); z-index: 200;
+        flex-direction: column; align-items: center; justify-content: center;
+        gap: 1rem;
+      }
+      .loading-overlay.active { display: flex; }
+      .loading-overlay p { color: var(--text2); font-size: .9rem; }
+    </style>
+  </head>
+
+  <body>
+    <button class="theme-btn" id="theme-btn" title="Alternar tema" aria-label="Alternar tema">🌙</button>
+
+    <!-- ─── LOADING OVERLAY ─────────────────────────────────── -->
+    <div class="loading-overlay" id="loading-overlay" aria-live="polite">
+      <div class="spinner" style="width:32px;height:32px;border-width:3px;color:var(--amber-400)"></div>
+      <p id="loading-msg">Entrando na sala…</p>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         VIEW: WELCOME
+    ════════════════════════════════════════════════════════ -->
+    <div id="view-welcome" class="view active" role="main">
+      <div class="welcome-logo" aria-label="Gliffo Arena">
+        ⚔️ <span class="accent">Gliffo</span> Arena
+      </div>
+      <p class="welcome-sub">
+        Modo multiplayer em tempo real.<br>
+        Dois times, um glifo — quem decodifica primeiro?
+      </p>
+
+      <div>
+        <label class="field-label" for="nick-input">Seu apelido</label>
+        <input
+          type="text" id="nick-input"
+          placeholder="Como te chamam?" maxlength="20"
+          autocomplete="off" autocorrect="off" autocapitalize="words"
+          spellcheck="false"
+        />
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:.75rem">
+        <button class="btn btn-primary" id="btn-criar">✦ Criar Sala</button>
+        <button class="btn btn-secondary" id="btn-entrar-toggle">Entrar numa Sala →</button>
+      </div>
+
+      <!-- join form (revealed on click or by URL param) -->
+      <div class="join-form" id="join-form">
+        <div>
+          <label class="field-label" for="code-input">Código da sala</label>
+          <input
+            type="text" class="code-input" id="code-input"
+            placeholder="GLIF47" maxlength="6"
+            autocomplete="off" autocorrect="off" autocapitalize="characters"
+            spellcheck="false"
+          />
+        </div>
+        <button class="btn btn-primary" id="btn-entrar">Entrar →</button>
+        <button class="btn btn-ghost btn-sm" id="btn-entrar-cancel" style="margin-top:-.25rem">Cancelar</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         VIEW: LOBBY
+    ════════════════════════════════════════════════════════ -->
+    <div id="view-lobby" class="view" role="main" aria-live="polite">
+
+      <!-- Header -->
+      <div class="lobby-header">
+        <button class="back-btn" id="btn-back" title="Sair da sala" aria-label="Sair da sala">←</button>
+        <div class="room-code-badge">
+          <span class="room-code-text" id="lbl-code">GLIF00</span>
+          <button class="icon-btn" id="btn-copy-code" title="Copiar código" aria-label="Copiar código">📋</button>
+          <span class="status-badge lobby" id="lbl-status">lobby</span>
+        </div>
+      </div>
+
+      <!-- Share link -->
+      <div class="share-row">
+        <span class="share-url" id="share-url">…</span>
+        <button class="btn btn-secondary btn-sm" id="btn-share">🔗 Copiar</button>
+      </div>
+
+      <!-- Teams -->
+      <div class="teams-grid">
+        <!-- Team A: Âmbar -->
+        <div class="team-panel team-amber" id="panel-a">
+          <div class="team-header">
+            <span class="team-dot"></span>
+            <span>Âmbar</span>
+            <span class="team-count" id="count-a">0</span>
+          </div>
+          <div class="player-list" id="list-a"></div>
+          <button class="btn btn-primary btn-sm" id="btn-join-a">🟠 Entrar</button>
+        </div>
+
+        <!-- Team B: Quartzo -->
+        <div class="team-panel team-quartz" id="panel-b">
+          <div class="team-header">
+            <span class="team-dot"></span>
+            <span>Quartzo</span>
+            <span class="team-count" id="count-b">0</span>
+          </div>
+          <div class="player-list" id="list-b"></div>
+          <button class="btn btn-quartz btn-sm" id="btn-join-b">🔵 Entrar</button>
+        </div>
+      </div>
+
+      <div class="spec-row">
+        <button class="spec-link" id="btn-spec">👁 Assistir como espectador</button>
+      </div>
+
+      <!-- Config (host only) -->
+      <div class="config-section" id="config-section" style="display:none">
+        <p class="section-title">⚙️ Configurações</p>
+
+        <div class="config-row">
+          <span class="config-label">⏱ Fase proposta</span>
+          <div class="pill-group" id="pills-propose">
+            <button class="pill" data-v="30">30s</button>
+            <button class="pill active" data-v="45">45s</button>
+            <button class="pill" data-v="60">60s</button>
+          </div>
+        </div>
+
+        <div class="config-row">
+          <span class="config-label">🗳 Fase votação</span>
+          <div class="pill-group" id="pills-vote">
+            <button class="pill" data-v="15">15s</button>
+            <button class="pill active" data-v="20">20s</button>
+            <button class="pill" data-v="30">30s</button>
+          </div>
+        </div>
+
+        <div class="config-divider"></div>
+
+        <div class="toggle-row">
+          <label class="toggle" aria-label="Power-ups">
+            <input type="checkbox" id="toggle-powerups" checked />
+            <span class="toggle-track"></span>
+          </label>
+          <span class="toggle-label">Power-ups habilitados ⚡</span>
+        </div>
+
+        <div class="toggle-row">
+          <label class="toggle" aria-label="Falha regride nível">
+            <input type="checkbox" id="toggle-regress" />
+            <span class="toggle-track"></span>
+          </label>
+          <span class="toggle-label">Falha regride nível</span>
+        </div>
+
+        <div class="config-row">
+          <span class="config-label">🔵 Compensação Time B</span>
+          <div class="pill-group" id="pills-comp">
+            <button class="pill active" data-v="none">Nenhuma</button>
+            <button class="pill" data-v="attempt">+Tent.</button>
+            <button class="pill" data-v="time">+15s</button>
+          </div>
+        </div>
+
+        <div class="config-divider"></div>
+
+        <button class="btn btn-ghost btn-sm" id="btn-randomize" style="align-self:flex-start">
+          🎲 Randomizar times
+        </button>
+      </div>
+
+      <!-- Info para não-host -->
+      <div class="info-msg" id="info-msg" style="display:none">
+        Aguardando o host iniciar a partida…
+      </div>
+
+      <!-- Iniciar (host only) -->
+      <div class="start-section" id="start-section" style="display:none">
+        <button class="btn start-btn" id="btn-start" disabled>🎮 Iniciar Partida</button>
+        <p class="start-hint" id="start-hint">Aguardando jogadores em cada time…</p>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         VIEW: GAME (stub — Chat R)
+    ════════════════════════════════════════════════════════ -->
+    <div id="view-game" class="view" role="main">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;text-align:center">
+        <h2 style="font-family:'DM Serif Display',serif;font-size:2rem;color:var(--amber-400)">⚔️ Partida Iniciada!</h2>
+        <p style="color:var(--text2)">O código da sala está ativo.<br>O engine de jogo está sendo implementado.</p>
+        <p class="note" style="font-size:.78rem;color:var(--text3)">Chat R — Fase de votação e glifos em breve.</p>
+        <button class="btn btn-secondary" id="btn-game-back" style="margin-top:1rem">← Voltar ao lobby</button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         SCRIPT
+    ════════════════════════════════════════════════════════ -->
+    <script>
+      // ── Supabase config ──────────────────────────────────────
+      // TODO: cole sua anon key pública aqui.
+      // Dashboard → Settings → API → Project API keys → anon public
+      const SUPA_URL = 'https://ppssfweuotjgcfejdznn.supabase.co';
+      const SUPA_KEY = 'COLE_SUA_ANON_KEY_AQUI';
+
+      const sb = supabase.createClient(SUPA_URL, SUPA_KEY, {
+        realtime: { params: { eventsPerSecond: 10 } },
+      });
+
+      // ── Player identity (uuid persistido no localStorage) ────
+      const PLAYER_ID = (() => {
+        let id = localStorage.getItem('gliffo_aid');
+        if (!id) { id = crypto.randomUUID(); localStorage.setItem('gliffo_aid', id); }
+        return id;
+      })();
+
+      // ── State ─────────────────────────────────────────────────
+      const S = {
+        nick:       localStorage.getItem('gliffo_nick') || '',
+        roomId:     null,
+        roomCode:   null,
+        room:       null,
+        players:    [],
+        onlineIds:  new Set(),
+        isHost:     false,
+        myTeam:     null,   // 'A' | 'B' | 'spec'
+        channel:    null,
+        busy:       false,
+      };
+
+      // ─────────────────────────────────────────────────────────
+      // THEME
+      // ─────────────────────────────────────────────────────────
+      const themeBtn = document.getElementById('theme-btn');
+      function applyTheme(t) {
+        document.documentElement.setAttribute('data-theme', t);
+        themeBtn.textContent = t === 'dark' ? '☀️' : '🌙';
+        localStorage.setItem('gliffo_theme', t);
+      }
+      applyTheme(localStorage.getItem('gliffo_theme') || 'dark');
+      themeBtn.addEventListener('click', () => {
+        applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+      });
+
+      // ─────────────────────────────────────────────────────────
+      // UTILS
+      // ─────────────────────────────────────────────────────────
+      function showView(id) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById(id)?.classList.add('active');
+      }
+
+      function toast(msg, type = 'info') {
+        // Remove existing toasts
+        document.querySelectorAll('.toast').forEach(t => t.remove());
+        const el = document.createElement('div');
+        el.className = `toast toast-${type}`;
+        el.textContent = msg;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 3200);
+      }
+
+      function setLoading(show, msg = 'Aguarde…') {
+        const ov = document.getElementById('loading-overlay');
+        document.getElementById('loading-msg').textContent = msg;
+        ov.classList.toggle('active', show);
+      }
+
+      // Gera código de sala: GLIF + 2 chars (sem I/O/0/1 confusos)
+      function genCode() {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        return 'GLIF'
+          + chars[Math.floor(Math.random() * chars.length)]
+          + chars[Math.floor(Math.random() * chars.length)];
+      }
+
+      function initials(name) {
+        return name.trim().slice(0, 2).toUpperCase();
+      }
+
+      function escHtml(s) {
+        return String(s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function shareUrl(code) {
+        return `${location.origin}${location.pathname}?sala=${code}`;
+      }
+
+      // ─────────────────────────────────────────────────────────
+      // WELCOME SCREEN INIT
+      // ─────────────────────────────────────────────────────────
+      const nickInput  = document.getElementById('nick-input');
+      const joinForm   = document.getElementById('join-form');
+      const codeInput  = document.getElementById('code-input');
+
+      // Pré-preenche apelido se já salvo
+      if (S.nick) nickInput.value = S.nick;
+
+      // Checa parâmetro ?sala=CODIGO na URL
+      const urlSala = new URLSearchParams(location.search).get('sala');
+      if (urlSala) {
+        joinForm.classList.add('open');
+        codeInput.value = urlSala.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+        // Auto-join se apelido já conhecido
+        if (S.nick) {
+          window.addEventListener('load', () => {
+            setTimeout(() => doJoin(), 300);
+          });
+        }
+      }
+
+      document.getElementById('btn-entrar-toggle').addEventListener('click', () => {
+        joinForm.classList.add('open');
+        codeInput.focus();
+      });
+      document.getElementById('btn-entrar-cancel').addEventListener('click', () => {
+        joinForm.classList.remove('open');
+      });
+
+      codeInput.addEventListener('input', () => {
+        codeInput.value = codeInput.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+      });
+      codeInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') doJoin();
+      });
+
+      function getNick() {
+        const n = nickInput.value.trim();
+        if (!n)      { toast('Escolha um apelido primeiro', 'error'); nickInput.focus(); return null; }
+        if (n.length < 2) { toast('Apelido muito curto (mín. 2 letras)', 'error'); nickInput.focus(); return null; }
+        localStorage.setItem('gliffo_nick', n);
+        S.nick = n;
+        return n;
+      }
+
+      document.getElementById('btn-criar').addEventListener('click', async () => {
+        const nick = getNick(); if (!nick) return;
+        await createRoom(nick);
+      });
+      document.getElementById('btn-entrar').addEventListener('click', doJoin);
+
+      function doJoin() {
+        const nick = getNick(); if (!nick) return;
+        const code = codeInput.value.trim().toUpperCase();
+        if (code.length !== 6) { toast('Código deve ter 6 caracteres', 'error'); codeInput.focus(); return; }
+        joinRoom(code, nick);
+      }
+
+      // ─────────────────────────────────────────────────────────
+      // CREATE ROOM
+      // ─────────────────────────────────────────────────────────
+      async function createRoom(nick) {
+        if (S.busy) return;
+        S.busy = true;
+        setLoading(true, 'Criando sala…');
+        try {
+          // Tenta inserir com código único (retry em colisão)
+          let room = null;
+          for (let attempt = 0; attempt < 5; attempt++) {
+            const code = genCode();
+            const { data, error } = await sb
+              .from('arena_rooms')
+              .insert({ code, host_id: PLAYER_ID })
+              .select()
+              .single();
+            if (!error) { room = data; break; }
+            if (error.code !== '23505') throw error; // não é unique violation
+          }
+          if (!room) throw new Error('Não foi possível criar sala única. Tente novamente.');
+
+          // Insere o host como jogador do Time A
+          const { error: pErr } = await sb.from('arena_players').insert({
+            id:        PLAYER_ID,
+            room_id:   room.id,
+            nickname:  nick,
+            team:      'A',
+            is_host:   true,
+          });
+          if (pErr) throw pErr;
+
+          // Remove ?sala= da URL atual (sem reload)
+          history.replaceState({}, '', location.pathname);
+
+          await enterLobby(room, 'A', true);
+        } catch (err) {
+          console.error(err);
+          toast(err.message || 'Erro ao criar sala', 'error');
+        } finally {
+          setLoading(false);
+          S.busy = false;
+        }
+      }
+
+      // ─────────────────────────────────────────────────────────
+      // JOIN ROOM
+      // ─────────────────────────────────────────────────────────
+      async function joinRoom(code, nick) {
+        if (S.busy) return;
+        S.busy = true;
+        setLoading(true, 'Entrando na sala…');
+        try {
+          // Busca sala pelo código
+          const { data: room, error: rErr } = await sb
+            .from('arena_rooms')
+            .select('*')
+            .eq('code', code)
+            .single();
+          if (rErr || !room) throw new Error('Sala não encontrada. Verifique o código.');
+          if (room.status === 'finished') throw new Error('Esta partida já terminou.');
+
+          // Verifica se já está na sala (reconexão)
+          const { data: existing } = await sb
+            .from('arena_players')
+            .select('team, is_host')
+            .eq('id', PLAYER_ID)
+            .eq('room_id', room.id)
+            .maybeSingle();
+
+          let myTeam = 'A';
+          let isHost = false;
+
+          if (existing) {
+            // Reconexão
+            myTeam = existing.team;
+            isHost = existing.is_host;
+            await sb.from('arena_players')
+              .update({ online: true, nickname: nick })
+              .eq('id', PLAYER_ID)
+              .eq('room_id', room.id);
+          } else {
+            if (room.status === 'playing') {
+              throw new Error('A partida já está em andamento. Aguarde a próxima rodada ou entre como espectador.');
+            }
+            // Escolhe time com menos jogadores automaticamente
+            const { data: existing_players } = await sb
+              .from('arena_players')
+              .select('team')
+              .eq('room_id', room.id)
+              .neq('team', 'spec');
+            const countA = (existing_players || []).filter(p => p.team === 'A').length;
+            const countB = (existing_players || []).filter(p => p.team === 'B').length;
+            myTeam = countB < countA ? 'B' : 'A';
+
+            const { error: pErr } = await sb.from('arena_players').insert({
+              id:       PLAYER_ID,
+              room_id:  room.id,
+              nickname: nick,
+              team:     myTeam,
+              is_host:  false,
+            });
+            if (pErr) throw pErr;
+          }
+
+          await enterLobby(room, myTeam, isHost);
+        } catch (err) {
+          console.error(err);
+          toast(err.message || 'Erro ao entrar na sala', 'error');
+        } finally {
+          setLoading(false);
+          S.busy = false;
+        }
+      }
+
+      // ─────────────────────────────────────────────────────────
+      // ENTER LOBBY
+      // ─────────────────────────────────────────────────────────
+      async function enterLobby(room, myTeam, isHost) {
+        S.roomId   = room.id;
+        S.roomCode = room.code;
+        S.room     = room;
+        S.myTeam   = myTeam;
+        S.isHost   = isHost;
+
+        const { data: players } = await sb
+          .from('arena_players')
+          .select('*')
+          .eq('room_id', room.id);
+        S.players = players || [];
+
+        showView('view-lobby');
+        renderLobby();
+        subscribeRoom(room.id);
+      }
+
+      // ─────────────────────────────────────────────────────────
+      // REALTIME SUBSCRIPTION
+      // ─────────────────────────────────────────────────────────
+      function subscribeRoom(roomId) {
+        if (S.channel) { sb.removeChannel(S.channel); S.channel = null; }
+
+        S.channel = sb.channel(`arena:${roomId}`, {
+          config: { presence: { key: PLAYER_ID } },
+        });
+
+        // Presence → online dots
+        S.channel.on('presence', { event: 'sync' }, () => {
+          const state = S.channel.presenceState();
+          S.onlineIds = new Set(Object.keys(state));
+          renderPlayerLists();
+        });
+
+        // Postgres Changes: arena_players
+        S.channel.on('postgres_changes', {
+          event:  '*',
+          schema: 'public',
+          table:  'arena_players',
+          filter: `room_id=eq.${roomId}`,
+        }, async () => {
+          const { data } = await sb.from('arena_players').select('*').eq('room_id', roomId);
+          S.players = data || [];
+          renderPlayerLists();
+          updateStartBtn();
+        });
+
+        // Postgres Changes: arena_rooms (config + status)
+        S.channel.on('postgres_changes', {
+          event:  'UPDATE',
+          schema: 'public',
+          table:  'arena_rooms',
+          filter: `id=eq.${roomId}`,
+        }, ({ new: newRoom }) => {
+          S.room = newRoom;
+          if (newRoom.status === 'playing') { handleGameStart(); return; }
+          renderConfig();
+          updateStartBtn();
+        });
+
+        // Subscribe e rastreia presença
+        S.channel.subscribe(async (status) => {
+          if (status === 'SUBSCRIBED') {
+            await S.channel.track({ nickname: S.nick, team: S.myTeam });
+          }
+        });
+      }
+
+      // ─────────────────────────────────────────────────────────
+      // RENDER LOBBY
+      // ─────────────────────────────────────────────────────────
+      function renderLobby() {
+        // Código + status
+        document.getElementById('lbl-code').textContent = S.roomCode;
+        const badge = document.getElementById('lbl-status');
+        const st = S.room?.status || 'lobby';
+        badge.textContent = st;
+        badge.className = `status-badge ${st}`;
+
+        // URL de convite
+        const url = shareUrl(S.roomCode);
+        document.getElementById('share-url').textContent = url;
+
+        // Host vs não-host
+        document.getElementById('config-section').style.display = S.isHost ? '' : 'none';
+        document.getElementById('start-section').style.display  = S.isHost ? '' : 'none';
+        document.getElementById('info-msg').style.display       = S.isHost ? 'none' : '';
+
+        renderPlayerLists();
+        if (S.isHost) renderConfig();
+        updateStartBtn();
+      }
+
+      function renderPlayerLists() {
+        const teamA = S.players.filter(p => p.team === 'A');
+        const teamB = S.players.filter(p => p.team === 'B');
+
+        document.getElementById('count-a').textContent = teamA.length;
+        document.getElementById('count-b').textContent = teamB.length;
+
+        renderList('list-a', teamA, 'var(--amber-400)');
+        renderList('list-b', teamB, 'var(--quartz)');
+
+        // Destaca painel do meu time
+        document.getElementById('panel-a').classList.toggle('mine', S.myTeam === 'A');
+        document.getElementById('panel-b').classList.toggle('mine', S.myTeam === 'B');
+
+        // Botões de troca de time
+        document.getElementById('btn-join-a').style.display = S.myTeam === 'A' ? 'none' : '';
+        document.getElementById('btn-join-b').style.display = S.myTeam === 'B' ? 'none' : '';
+
+        // Espectador
+        const specBtn = document.getElementById('btn-spec');
+        if (S.myTeam === 'spec') {
+          specBtn.classList.add('active-spec');
+          specBtn.textContent = '👁 Espectador (clique para trocar de time)';
+        } else {
+          specBtn.classList.remove('active-spec');
+          specBtn.textContent = '👁 Assistir como espectador';
+        }
+      }
+
+      function renderList(elId, players, color) {
+        const el = document.getElementById(elId);
+        if (!players.length) {
+          el.innerHTML = '<span class="empty-list">Nenhum jogador</span>';
+          return;
+        }
+        el.innerHTML = players.map(p => {
+          const isMe     = p.id === PLAYER_ID;
+          const isOnline = S.onlineIds.has(p.id) || isMe;
+          return `
+            <div class="player-item">
+              <div class="player-avatar" style="background:${color}" aria-hidden="true">${initials(p.nickname)}</div>
+              <span class="player-name">
+                ${escHtml(p.nickname)}
+                ${isMe ? '<em>(você)</em>' : ''}
+                ${p.is_host ? '<span class="crown" title="Host da sala">👑</span>' : ''}
+              </span>
+              <span class="online-dot ${isOnline ? '' : 'offline'}" title="${isOnline ? 'online' : 'offline'}" aria-label="${isOnline ? 'online' : 'offline'}"></span>
+            </div>`;
+        }).join('');
+      }
+
+      function renderConfig() {
+        if (!S.isHost || !S.room) return;
+        const cfg = S.room.config || {};
+        setPills('pills-propose', cfg.timer_propose  ?? 45);
+        setPills('pills-vote',    cfg.timer_vote     ?? 20);
+        setPills('pills-comp',    cfg.compensation   ?? 'none');
+        const pu = document.getElementById('toggle-powerups');
+        const rg = document.getElementById('toggle-regress');
+        if (pu) pu.checked = cfg.powerups !== false;
+        if (rg) rg.checked = !!cfg.regress;
+      }
+
+      function setPills(groupId, value) {
+        document.getElementById(groupId)?.querySelectorAll('.pill').forEach(p => {
+          p.classList.toggle('active', String(p.dataset.v) === String(value));
+        });
+      }
+
+      function updateStartBtn() {
+        if (!S.isHost) return;
+        const a = S.players.filter(p => p.team === 'A').length;
+        const b = S.players.filter(p => p.team === 'B').length;
+        const ok = a >= 1 && b >= 1;
+        const btn  = document.getElementById('btn-start');
+        const hint = document.getElementById('start-hint');
+        btn.disabled = !ok;
+        if (ok) {
+          hint.textContent = `${a} vs ${b} — tudo pronto!`;
+        } else {
+          const falta = [a < 1 && 'Time Âmbar', b < 1 && 'Time Quartzo'].filter(Boolean).join(' e ');
+          hint.textContent = `Aguardando: ${falta}`;
+        }
+      }
+
+      // ─────────────────────────────────────────────────────────
+      // CONFIG CONTROLS (host only)
+      // ─────────────────────────────────────────────────────────
+      async function updateConfig(patch) {
+        if (!S.isHost || !S.room) return;
+        const newCfg = { ...(S.room.config || {}), ...patch };
+        const { error } = await sb.from('arena_rooms').update({ config: newCfg }).eq('id', S.roomId);
+        if (error) { toast('Erro ao salvar configuração', 'error'); return; }
+        S.room = { ...S.room, config: newCfg };
+      }
+
+      // Pill groups
+      document.getElementById('pills-propose').addEventListener('click', e => {
+        if (!e.target.classList.contains('pill') || !S.isHost) return;
+        const v = Number(e.target.dataset.v);
+        updateConfig({ timer_propose: v });
+        setPills('pills-propose', v);
+      });
+      document.getElementById('pills-vote').addEventListener('click', e => {
+        if (!e.target.classList.contains('pill') || !S.isHost) return;
+        const v = Number(e.target.dataset.v);
+        updateConfig({ timer_vote: v });
+        setPills('pills-vote', v);
+      });
+      document.getElementById('pills-comp').addEventListener('click', e => {
+        if (!e.target.classList.contains('pill') || !S.isHost) return;
+        const v = e.target.dataset.v;
+        updateConfig({ compensation: v });
+        setPills('pills-comp', v);
+      });
+
+      document.getElementById('toggle-powerups').addEventListener('change', function () {
+        updateConfig({ powerups: this.checked });
+      });
+      document.getElementById('toggle-regress').addEventListener('change', function () {
+        updateConfig({ regress: this.checked });
+      });
+
+      // Randomizar times
+      document.getElementById('btn-randomize').addEventListener('click', async () => {
+        if (!S.isHost) return;
+        const active = S.players.filter(p => p.team !== 'spec');
+        if (!active.length) { toast('Nenhum jogador para randomizar', 'error'); return; }
+        const shuffled = [...active].sort(() => Math.random() - .5);
+        for (let i = 0; i < shuffled.length; i++) {
+          const team = i % 2 === 0 ? 'A' : 'B';
+          await sb.from('arena_players')
+            .update({ team })
+            .eq('id', shuffled[i].id)
+            .eq('room_id', S.roomId);
+          // Atualiza localmente para aviso imediato
+          const idx = S.players.findIndex(p => p.id === shuffled[i].id);
+          if (idx !== -1) S.players[idx].team = team;
+          if (shuffled[i].id === PLAYER_ID) {
+            S.myTeam = team;
+            await S.channel?.track({ nickname: S.nick, team });
+          }
+        }
+        renderPlayerLists();
+        updateStartBtn();
+        toast('Times randomizados! 🎲', 'success');
+      });
+
+      // ─────────────────────────────────────────────────────────
+      // TROCAR DE TIME
+      // ─────────────────────────────────────────────────────────
+      async function switchTeam(team) {
+        if (S.myTeam === team) return;
+        const { error } = await sb.from('arena_players')
+          .update({ team })
+          .eq('id', PLAYER_ID)
+          .eq('room_id', S.roomId);
+        if (error) { toast('Erro ao trocar de time', 'error'); return; }
+        S.myTeam = team;
+        // Atualiza presença com novo time
+        await S.channel?.track({ nickname: S.nick, team });
+      }
+
+      document.getElementById('btn-join-a').addEventListener('click', () => switchTeam('A'));
+      document.getElementById('btn-join-b').addEventListener('click', () => switchTeam('B'));
+      document.getElementById('btn-spec').addEventListener('click', async () => {
+        if (S.myTeam === 'spec') return;
+        await switchTeam('spec');
+      });
+
+      // ─────────────────────────────────────────────────────────
+      // COPIAR
+      // ─────────────────────────────────────────────────────────
+      document.getElementById('btn-copy-code').addEventListener('click', () => {
+        navigator.clipboard.writeText(S.roomCode)
+          .then(() => toast('Código copiado! 📋', 'success'))
+          .catch(() => toast('Não foi possível copiar', 'error'));
+      });
+      document.getElementById('btn-share').addEventListener('click', () => {
+        const url = shareUrl(S.roomCode);
+        navigator.clipboard.writeText(url)
+          .then(() => toast('Link copiado! 🔗', 'success'))
+          .catch(() => toast('Não foi possível copiar', 'error'));
+      });
+
+      // ─────────────────────────────────────────────────────────
+      // INICIAR PARTIDA
+      // ─────────────────────────────────────────────────────────
+      document.getElementById('btn-start').addEventListener('click', async () => {
+        if (!S.isHost || S.busy) return;
+        S.busy = true;
+        const btn = document.getElementById('btn-start');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner spinner-dark"></span>';
+        const { error } = await sb.from('arena_rooms')
+          .update({ status: 'playing', turn_number: 1 })
+          .eq('id', S.roomId);
+        if (error) {
+          toast('Erro ao iniciar partida', 'error');
+          btn.innerHTML = '🎮 Iniciar Partida';
+          btn.disabled = false;
+        }
+        // Os outros jogadores recebem o UPDATE via Realtime e navegam automaticamente
+        S.busy = false;
+      });
+
+      function handleGameStart() {
+        showView('view-game');
+      }
+
+      // ─────────────────────────────────────────────────────────
+      // SAIR / VOLTAR
+      // ─────────────────────────────────────────────────────────
+      document.getElementById('btn-back').addEventListener('click', async () => {
+        if (!confirm('Sair da sala?')) return;
+        await leaveRoom();
+        showView('view-welcome');
+      });
+
+      document.getElementById('btn-game-back').addEventListener('click', () => {
+        showView('view-lobby');
+        renderLobby();
+      });
+
+      async function leaveRoom() {
+        if (S.channel) {
+          await sb.removeChannel(S.channel);
+          S.channel = null;
+        }
+        if (S.roomId) {
+          // Marca offline (best-effort)
+          await sb.from('arena_players')
+            .update({ online: false })
+            .eq('id', PLAYER_ID)
+            .eq('room_id', S.roomId)
+            .then(() => {}).catch(() => {});
+        }
+        S.roomId = null; S.roomCode = null;
+        S.room   = null; S.players  = [];
+        S.isHost = false; S.myTeam  = null;
+      }
+
+      // Marca offline ao fechar a aba (melhor esforço via channel close)
+      window.addEventListener('pagehide', () => {
+        if (S.channel) sb.removeChannel(S.channel);
+      });
+    </script>
+  </body>
+</html>
