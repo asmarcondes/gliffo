@@ -185,6 +185,7 @@
           color 0.25s;
         -webkit-font-smoothing: antialiased;
         overscroll-behavior: none;
+        overflow-x: hidden;
       }
 
       /* ══════════════════════════════════════════
@@ -194,14 +195,22 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 10px;
-        padding: 0 2rem;
+        gap: 6px;
+        padding: 0 1rem;
         height: 58px;
         border-bottom: 1px solid var(--border);
         background: var(--surface);
         position: sticky;
         top: 0;
         z-index: 20;
+        overflow: hidden; /* evita que conteúdo do header cause scroll lateral */
+      }
+
+      @media (min-width: 480px) {
+        header {
+          padding: 0 1.5rem;
+          gap: 10px;
+        }
       }
 
       @media (min-width: 768px) {
@@ -248,8 +257,9 @@
         align-items: center;
         gap: 7px;
         flex: 1;
+        min-width: 0;
         justify-content: center;
-        padding: 0 8px;
+        padding: 0 4px;
       }
       .header-date {
         font-size: 0.65rem;
@@ -257,6 +267,11 @@
         color: var(--text3);
         letter-spacing: 0.04em;
         white-space: nowrap;
+      }
+      @media (max-width: 400px) {
+        .header-date {
+          display: none;
+        }
       }
       .dif-badge {
         font-size: 0.55rem;
@@ -311,7 +326,8 @@
 
       .hbtns {
         display: flex;
-        gap: 2px;
+        gap: 0;
+        flex-shrink: 0;
       }
       .hbtn {
         width: 36px;
@@ -1674,8 +1690,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 10px;
+        padding: 8px;
         aspect-ratio: 1;
+        max-height: 160px; /* evita painéis muito altos em mobile */
       }
       .tut-gstack {
         position: relative;
@@ -1696,11 +1713,11 @@
         border: 1px solid var(--border);
         border-radius: 12px;
         overflow: hidden;
-        width: 240px;
+        width: min(240px, 80%);
         margin: 0 auto;
       }
       .tut-glyph-single .tut-gstage {
-        max-height: 220px;
+        max-height: 160px;
       }
 
       /* Alphabet grid */
@@ -1727,7 +1744,7 @@
         height: 68%;
       }
       .tut-alpha-lbl {
-        font-size: 0.48rem;
+        font-size: 0.62rem;
         font-weight: 600;
         color: var(--text3);
         line-height: 1;
@@ -1798,6 +1815,41 @@
       }
       .tut-slot.correct {
         border-color: transparent;
+      }
+
+      /* tutorial virtual keyboard (touch devices only) */
+      .tut-kbd {
+        display: none;
+        flex-wrap: wrap;
+        gap: 6px;
+        justify-content: center;
+        margin-top: 10px;
+      }
+      @media (hover: none) and (pointer: coarse) {
+        .tut-kbd {
+          display: flex;
+        }
+      }
+      .tut-kbd-btn {
+        min-width: 44px;
+        height: 44px;
+        border-radius: 8px;
+        border: 1.5px solid var(--border2);
+        background: var(--surface2);
+        color: var(--text);
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-tap-highlight-color: transparent;
+        user-select: none;
+        transition: background 0.1s;
+      }
+      .tut-kbd-btn:active {
+        background: var(--border);
       }
 
       /* Nav buttons */
@@ -9620,6 +9672,38 @@
                     confirmBtn.textContent = "Confirmar ↵";
                     wrap.appendChild(confirmBtn);
 
+                    const kbd = document.createElement("div");
+                    kbd.id = "tut-kbd";
+                    kbd.className = "tut-kbd";
+                    [...new Set(iWord.split(""))].forEach((letter) => {
+                      const btn = document.createElement("button");
+                      btn.className = "tut-kbd-btn";
+                      btn.type = "button";
+                      btn.textContent = letter;
+                      btn.addEventListener("touchstart", (e) => {
+                        e.preventDefault();
+                        tutKeyHandler?.({
+                          key: letter,
+                          preventDefault: () => {},
+                        });
+                      });
+                      kbd.appendChild(btn);
+                    });
+                    const bksp = document.createElement("button");
+                    bksp.className = "tut-kbd-btn";
+                    bksp.type = "button";
+                    bksp.textContent = "⌫";
+                    bksp.style.minWidth = "52px";
+                    bksp.addEventListener("touchstart", (e) => {
+                      e.preventDefault();
+                      tutKeyHandler?.({
+                        key: "Backspace",
+                        preventDefault: () => {},
+                      });
+                    });
+                    kbd.appendChild(bksp);
+                    wrap.appendChild(kbd);
+
                     feed.appendChild(wrap);
                     requestAnimationFrame(() =>
                       requestAnimationFrame(() => {
@@ -9635,6 +9719,7 @@
                       removeTutKeyHandler();
                       tutInteractReady = false;
                       if (confirmBtn.parentNode) confirmBtn.remove();
+                      document.getElementById("tut-kbd")?.remove();
                       if (typed === "CARO") {
                         const zoada = cameFromBirra
                           ? `Sério?! Você disse que estava confuso... e ainda errou! Isso é talento. 😂`
@@ -9670,6 +9755,7 @@
                     onTutSolved = () => {
                       tutInteractReady = false;
                       if (confirmBtn.parentNode) confirmBtn.remove();
+                      document.getElementById("tut-kbd")?.remove();
                       confetti(feed);
                       chatMsg(
                         `Isso aí! 🎉 Era <strong>ARCO</strong>! Você conseguiu!`,
@@ -11338,13 +11424,14 @@
         transform: none;
       }
       .tut-choice-btn {
-        padding: 9px 16px;
+        padding: 12px 16px;
+        min-height: 44px;
         background: var(--amber-400);
         color: #1a1410;
         border: none;
         border-radius: 12px 0 12px 12px;
         font-family: "DM Sans", sans-serif;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
         font-weight: 600;
         cursor: pointer;
         line-height: 1.3;
@@ -11353,6 +11440,7 @@
           background 0.15s,
           opacity 0.15s;
         width: 100%;
+        -webkit-tap-highlight-color: transparent;
       }
       .tut-choice-btn:hover {
         background: var(--amber-500);
@@ -11362,6 +11450,7 @@
         color: var(--text3);
         border: 1px solid var(--border2);
         border-radius: 12px 0 12px 12px;
+        min-height: 44px;
       }
       .tut-choice-btn.secondary:hover {
         border-color: var(--border);
@@ -11508,7 +11597,7 @@
         background: var(--surface2);
         border: 1px solid var(--border);
         border-radius: 12px;
-        padding: 12px;
+        padding: 10px;
         opacity: 0;
         transform: translateY(6px);
         transition:
@@ -11518,6 +11607,21 @@
       .tut-chat-card.show {
         opacity: 1;
         transform: none;
+      }
+      /* Telas muito curtas (landscape mobile): reduz painéis de glifo */
+      @media (max-height: 500px) {
+        .tut-gstage {
+          max-height: 100px;
+          padding: 5px;
+        }
+        .tut-glyph-single .tut-gstage {
+          max-height: 100px;
+        }
+        .tut-bubble-left,
+        .tut-bubble-right {
+          font-size: 0.8rem;
+          padding: 7px 11px;
+        }
       }
       .tut-chat-choices {
         display: none;
