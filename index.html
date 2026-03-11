@@ -5029,6 +5029,9 @@
       let ARQUIVO_PUZZLENUM = null;
       let ARQUIVO_DATA = null;
 
+      // ─── Animações UI ────────────────────────────────
+      let _kbStaggered = false; // stagger do teclado só na primeira build
+
       function glyphStroke() {
         return (
           getComputedStyle(document.documentElement)
@@ -5244,6 +5247,23 @@
           });
           kb.appendChild(row);
         });
+        // Stagger de entrada — só na primeira renderização (carregamento inicial)
+        if (!_kbStaggered && typeof anime !== "undefined") {
+          _kbStaggered = true;
+          const btns = kb.querySelectorAll(".kbtn");
+          btns.forEach((b) => {
+            b.style.opacity = "0";
+          });
+          anime({
+            targets: btns,
+            opacity: [0, 1],
+            translateY: [10, 0],
+            scale: [0.82, 1],
+            duration: 280,
+            delay: anime.stagger(18),
+            easing: "easeOutBack",
+          });
+        }
       }
 
       function buildHistory() {
@@ -5579,6 +5599,22 @@
                 }
                 slot.style.transition = `transform ${FLIP_MS / 2}ms ease-out`;
                 slot.style.transform = "scaleY(1)";
+                // Pop overshoot nos slots acertados (corretos) — desfaz a transition antes de animar
+                if (res === "correct" && typeof anime !== "undefined") {
+                  setTimeout(
+                    () => {
+                      slot.style.transition = "";
+                      slot.style.transform = "";
+                      anime({
+                        targets: slot,
+                        scale: [1.11, 1],
+                        duration: 250,
+                        easing: "easeOutElastic(1, 0.45)",
+                      });
+                    },
+                    FLIP_MS / 2 + 20,
+                  );
+                }
               }, FLIP_MS / 2);
             }, delay);
           })(slot, i, res);
