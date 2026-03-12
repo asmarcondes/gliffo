@@ -2941,6 +2941,73 @@
           background: rgba(0, 0, 0, 0.75) !important;
         }
       }
+
+      /* ══════════════════════════════════════════
+   MOBILE UX — teclado fixo + área rolável
+   Aplicado apenas em viewports mobile (< 768px)
+══════════════════════════════════════════ */
+      @media (max-width: 767px) {
+        /* Viewport contido — remove scroll global */
+        html, body {
+          height: 100%;
+        }
+        body {
+          display: flex;
+          flex-direction: column;
+          height: 100dvh;
+          overflow: hidden;
+        }
+
+        /* Header: não cresce */
+        header {
+          flex-shrink: 0;
+        }
+
+        /* Main rola internamente */
+        main {
+          flex: 1;
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+          min-height: 0;
+          /* Recua o conteúdo para baixo do teclado fixo */
+          padding-bottom: calc(var(--kb-h, 190px) + env(safe-area-inset-bottom, 0px));
+        }
+
+        /* Glyphs colam no topo ao rolar */
+        .glyphs-row {
+          position: sticky;
+          top: 0;
+          z-index: 5;
+          background: var(--bg);
+          padding-top: 10px;
+          padding-bottom: 6px;
+          margin-bottom: 0;
+        }
+
+        /* Histórico com scroll interno — não cresce indefinidamente */
+        .history {
+          max-height: 116px;
+          overflow-y: auto;
+        }
+
+        /* Teclado fixo no rodapé */
+        .keyboard {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          z-index: 100;
+          background: var(--bg);
+          border-top: 1px solid var(--border);
+          padding: 8px 4px calc(8px + env(safe-area-inset-bottom, 0px)) 4px;
+          box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.18);
+        }
+
+        /* Footer: inacessível com body overflow:hidden — ocultar */
+        .site-footer {
+          display: none;
+        }
+      }
     </style>
   </head>
   <body>
@@ -2965,7 +3032,12 @@
           </svg>
           <span class="key-dot show" id="key-dot"></span>
         </button>
-        <button class="hbtn" id="hbtn-arquivo" title="Arquivo de Puzzles" onclick="openArquivo()">
+        <button
+          class="hbtn"
+          id="hbtn-arquivo"
+          title="Arquivo de Puzzles"
+          onclick="openArquivo()"
+        >
           <svg viewBox="0 0 24 24">
             <rect x="3" y="4" width="18" height="18" rx="2" />
             <path d="M16 2v4M8 2v4M3 10h18" />
@@ -2979,7 +3051,12 @@
             <rect x="17" y="3" width="4" height="18" rx="1" />
           </svg>
         </button>
-        <button class="hbtn" id="hbtn-ajuda" title="Ajuda" onclick="openTutorial()">
+        <button
+          class="hbtn"
+          id="hbtn-ajuda"
+          title="Ajuda"
+          onclick="openTutorial()"
+        >
           <svg viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="9" />
             <path d="M9.5 9a2.5 2.5 0 015 0c0 2-2.5 2.5-2.5 4" />
@@ -3325,7 +3402,13 @@
           <div id="cfg-ea-section"></div>
           <!-- Atalhos para mobile (Arquivo e Ajuda ficam ocultos no header) -->
           <div class="cfg-divider cfg-mobile-only"></div>
-          <div class="cfg-row cfg-mobile-only" onclick="closeM('config-modal'); openArquivo()">
+          <div
+            class="cfg-row cfg-mobile-only"
+            onclick="
+              closeM('config-modal');
+              openArquivo();
+            "
+          >
             <div class="cfg-row-left">
               <span class="cfg-row-icon">📅</span>
               <div>
@@ -3333,9 +3416,27 @@
                 <div class="cfg-row-sub">Ver puzzles anteriores</div>
               </div>
             </div>
-            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text3);flex-shrink:0"><path d="M9 18l6-6-6-6"/></svg>
+            <svg
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              stroke="currentColor"
+              fill="none"
+              stroke-width="1.75"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              style="color: var(--text3); flex-shrink: 0"
+            >
+              <path d="M9 18l6-6-6-6" />
+            </svg>
           </div>
-          <div class="cfg-row cfg-mobile-only" onclick="closeM('config-modal'); openTutorial()">
+          <div
+            class="cfg-row cfg-mobile-only"
+            onclick="
+              closeM('config-modal');
+              openTutorial();
+            "
+          >
             <div class="cfg-row-left">
               <span class="cfg-row-icon">❓</span>
               <div>
@@ -3343,7 +3444,19 @@
                 <div class="cfg-row-sub">Ver como jogar</div>
               </div>
             </div>
-            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text3);flex-shrink:0"><path d="M9 18l6-6-6-6"/></svg>
+            <svg
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              stroke="currentColor"
+              fill="none"
+              stroke-width="1.75"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              style="color: var(--text3); flex-shrink: 0"
+            >
+              <path d="M9 18l6-6-6-6" />
+            </svg>
           </div>
         </div>
       </div>
@@ -5251,7 +5364,8 @@
             if (G.keyPos.has(i) && !G.decoded.has(i)) b.classList.add("kused");
             const svg = makeSVG(WL[i], HARD_MODE ? s : "#fff");
             if (svg) {
-              svg.style.cssText = "width:65%;height:65%;" + (HARD_MODE ? "opacity:0.55;" : "");
+              svg.style.cssText =
+                "width:65%;height:65%;" + (HARD_MODE ? "opacity:0.55;" : "");
               svg.setAttribute("aria-hidden", "true");
               b.appendChild(svg);
             }
@@ -5354,6 +5468,13 @@
             easing: "easeOutBack",
           });
         }
+        // Atualiza --kb-h para padding-bottom correto no mobile
+        requestAnimationFrame(() => {
+          document.documentElement.style.setProperty(
+            "--kb-h",
+            kb.offsetHeight + "px"
+          );
+        });
       }
 
       function buildHistory() {
@@ -8890,13 +9011,11 @@
 
                   // Wrapper transparente — só SVG, sem fundo nem extrusão
                   const wrapOuter = document.createElement("div");
-                  wrapOuter.style.cssText =
-                    `width:${TILE_SZ}px;height:${TILE_SZ}px;display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;opacity:0;transition:opacity 0.3s;`;
+                  wrapOuter.style.cssText = `width:${TILE_SZ}px;height:${TILE_SZ}px;display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;opacity:0;transition:opacity 0.3s;`;
 
                   const svg = makeSVG(l, tStroke());
                   if (svg) {
-                    svg.style.cssText =
-                      `width:${TILE_SZ}px;height:${TILE_SZ}px;flex-shrink:0;transition:opacity 0.2s;`;
+                    svg.style.cssText = `width:${TILE_SZ}px;height:${TILE_SZ}px;flex-shrink:0;transition:opacity 0.2s;`;
                     wrapOuter.appendChild(svg);
                   }
                   const tl = null; // sem label
@@ -9067,8 +9186,7 @@
                                       // ── SPLIT
                                       setTimeout(() => {
                                         if (!cardRef) return;
-                                        wordRow.style.cssText =
-                                          `position:relative;width:${TILE_SZ}px;height:${TILE_SZ}px;transform-style:preserve-3d;`;
+                                        wordRow.style.cssText = `position:relative;width:${TILE_SZ}px;height:${TILE_SZ}px;transform-style:preserve-3d;`;
                                         tileWrappers.forEach((w) => {
                                           w.style.position = "absolute";
                                           w.style.top = "0";
@@ -9083,8 +9201,7 @@
                                         const splitRow =
                                           document.createElement("div");
                                         activeSplitRow = splitRow;
-                                        splitRow.style.cssText =
-                                          `position:relative;display:flex;justify-content:center;align-items:center;width:100%;height:${TILE_SZ}px;`;
+                                        splitRow.style.cssText = `position:relative;display:flex;justify-content:center;align-items:center;width:100%;height:${TILE_SZ}px;`;
 
                                         const leftCol =
                                           document.createElement("div");
@@ -9099,13 +9216,11 @@
                                           "position:absolute;display:flex;align-items:center;";
                                         const rightStack =
                                           document.createElement("div");
-                                        rightStack.style.cssText =
-                                          `position:relative;width:${TILE_SZ}px;height:${TILE_SZ}px;`;
+                                        rightStack.style.cssText = `position:relative;width:${TILE_SZ}px;height:${TILE_SZ}px;`;
                                         tileData.forEach(({ letter }) => {
                                           const s = makeSVG(letter, tStroke());
                                           if (s) {
-                                            s.style.cssText =
-                                              `width:${TILE_SZ}px;height:${TILE_SZ}px;position:absolute;top:0;left:0;`;
+                                            s.style.cssText = `width:${TILE_SZ}px;height:${TILE_SZ}px;position:absolute;top:0;left:0;`;
                                             rightStack.appendChild(s);
                                           }
                                         });
@@ -9595,20 +9710,23 @@
               // Animate letters into slots one by one with tap bounce
               let decodingEl = null;
               letters2.forEach((l, i) => {
-                tDelay(() => {
-                  if (token.cancelled || !slEl2) return;
-                  const slot = slEl2.children[i];
-                  if (!slot) return;
-                  const sv = makeSVG(l, tStroke());
-                  if (sv) {
-                    sv.style.cssText = "width:65%;height:65%;";
-                    slot.appendChild(sv);
-                  }
-                  slot.classList.remove("tap");
-                  void slot.offsetWidth;
-                  slot.classList.add("tap");
-                  scrollFeed();
-                }, 500 + i * 170);
+                tDelay(
+                  () => {
+                    if (token.cancelled || !slEl2) return;
+                    const slot = slEl2.children[i];
+                    if (!slot) return;
+                    const sv = makeSVG(l, tStroke());
+                    if (sv) {
+                      sv.style.cssText = "width:65%;height:65%;";
+                      slot.appendChild(sv);
+                    }
+                    slot.classList.remove("tap");
+                    void slot.offsetWidth;
+                    slot.classList.add("tap");
+                    scrollFeed();
+                  },
+                  500 + i * 170,
+                );
               });
 
               // Show "Decodificando..." typing indicator after last letter lands
@@ -9618,7 +9736,8 @@
                 if (!feed) return;
                 decodingEl = document.createElement("div");
                 decodingEl.className = "tut-typing";
-                decodingEl.innerHTML = "<span></span><span></span><span></span>";
+                decodingEl.innerHTML =
+                  "<span></span><span></span><span></span>";
                 feed.appendChild(decodingEl);
                 requestAnimationFrame(() =>
                   requestAnimationFrame(() => {
@@ -9631,7 +9750,8 @@
               // Animate slots revealing result
               tDelay(() => {
                 if (token.cancelled || !slEl2) return;
-                if (decodingEl && decodingEl.parentNode) decodingEl.parentNode.removeChild(decodingEl);
+                if (decodingEl && decodingEl.parentNode)
+                  decodingEl.parentNode.removeChild(decodingEl);
                 const slots2 = [...slEl2.children];
                 letters2.forEach((l, i) => {
                   const status = wSlots2[word][i];
@@ -11010,9 +11130,13 @@
         const kd = document.getElementById("key-dot");
         if (kd) kd.classList.toggle("show", !G.keyUsed);
 
-        ["win-modal", "lose-modal", "key-modal", "stats-modal", "config-modal"].forEach(
-          (id) => closeM(id),
-        );
+        [
+          "win-modal",
+          "lose-modal",
+          "key-modal",
+          "stats-modal",
+          "config-modal",
+        ].forEach((id) => closeM(id));
 
         buildAtts();
         buildBoxes();
