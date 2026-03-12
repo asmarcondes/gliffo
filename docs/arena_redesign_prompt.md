@@ -150,13 +150,17 @@ Ambos os glifos ficam **sempre visíveis** na tela central lado a lado, mesmo se
 **Layout da fase:**
 
 ```
-[Glifo da Rodada — destaque]     [mini-preview: seu glifo enquanto digita]
+┌──── GLIFO DA RODADA ────┐    ┌──── SEU GLIFO (live) ───┐
+│                         │    │                          │
+│  [glifo neutro --glyph] │    │  [glifo da sua proposta, │
+│  (o da palavra secreta) │    │   também em --glyph,     │
+│                         │    │   montando em tempo real] │
+│  ● ● ● ●  (N slots)     │    │  _ _ _ _  (slots da sua  │
+│                         │    │           proposta)       │
+└─────────────────────────┘    └──────────────────────────┘
+                 ↑ compara os dois!
 
-[slots: __ __ __ __ ]  ← caixinhas mostrando qtd de letras
-
-[input de texto — grande, centralizado]
-   └─ conforme digita, os slots preenchem com a letra
-   └─ um mini-glifo ao lado mostra o glifo da palavra digitada em tempo real
+[ input  grande  e  centralizado  — foco  automático ]
 
 [ENVIAR PROPOSTA]
 
@@ -164,40 +168,71 @@ Ambos os glifos ficam **sempre visíveis** na tela central lado a lado, mesmo se
 ✓ Machado   ⋯ Joana   ✓ Pedro (capitão 👑)
 ```
 
-**Mecânica do input:**
-- O campo de texto é **grande e central** — toca o teclado nativo no mobile
-- Conforme o jogador digita, os `slots` preenchem com as letras digitadas (estilo `lbox` do jogo solo — caixinha com a letra em SVG)
-- Ao lado (ou abaixo em mobile) um **mini-glifo live**: mostra o glifo formado pela palavra digitada até agora, em tempo real. Esse glifo é mostrado em cor neutra (--glyph), apenas esboçando a forma — não é o glifo-alvo
-- Qualquer membro do time pode enviar uma proposta
-- A proposta é enviada quando clica em "Enviar Proposta" ou aperta Enter
-- Após enviar: o `input` some, aparece "✔ Proposta enviada! Aguardando…"
+**Mecânica do input (crítica — igual ao single player):**
+
+O coração da fase Propose é a comparação em tempo real entre o glifo-alvo e o glifo que o jogador está compondo:
+
+1. **Glifo da rodada** (esquerda/topo): sempre visível, em `--glyph` neutro (branco). É o glifo que o time precisa decifrar. As camadas já reveladas de tentativas anteriores refletem o estado atual.
+
+2. **Glifo live da proposta** (direita/baixo): começa **vazio**. Conforme o jogador digita letra a letra:
+   - Cada letra digitada **adiciona** a camada SVG correspondente ao glifo de preview, em `--glyph` (neutro)
+   - Se apagar uma letra: a camada SVG da última letra **desaparece** imediatamente
+   - O glifo se constrói e desconstrói em tempo real, sincronizado com o cursor do input
+   - O tamanho do card de preview é **idêntico** ao do glifo da rodada — para comparação visual direta
+   - Abaixo do preview: slots `lbox` preenchem com a letra (SVG da letra em miniatura, cor neutra)
+
+3. **Inspiração no single player**: no modo solo, o jogador tem o glifo-alvo de um lado e digita palavras para tentar decodificar. A Arena replica exatamente essa sensação — mas agora o jogador compõe uma *sugestão* para votar coletivamente.
+
+4. Ao **enviar a proposta**: o preview do glifo congela, o input some, aparece `✔ Proposta enviada! Aguardando…`. O glifo da proposta congelado **permanece visível** para o próprio jogador até a fase de votação começar.
+
 - O **capitão da rodada** tem badge especial 👑 — no tie de votos, a proposta do capitão vence
+- Qualquer membro do time pode propor
+- Enter = enviar
 
 ### 6.3 VOTE — Votação
 Quando todos enviaram (ou o timer expirou):
 
 **Layout:**
 ```
-[Glifo da Rodada — visível, menor, canto superior]
+┌─────── GLIFO DA RODADA ────────────────────────────────────────────┐
+│  [glifo neutro, estado atual — letras já descobertas refletidas]   │
+│  tamanho médio, sempre visível no topo durante toda a votação      │
+└────────────────────────────────────────────────────────────────────┘
 
-[cards de proposta em grid]
-┌─────────┐  ┌─────────┐  ┌─────────┐
-│  CAMPO  │  │  MANTO  │  │  MONTE  │
-│ mini-gl │  │ mini-gl │  │ mini-gl │
-│ 👤 3    │  │ 👤 1    │  │ 👤 0   │
-└─────────┘  └─────────┘  └─────────┘
-  ↑ meu voto (pulsante)
+[cards de proposta em grid — cada card mostra o GLIFO da palavra]
+
+┌───────────────┐  ┌───────────────┐  ┌───────────────┐
+│   [GLIFO de   │  │   [GLIFO de   │  │   [GLIFO de   │
+│    CAMPO]     │  │    MANTO]     │  │    MONTE]     │
+│               │  │               │  │               │
+│    CAMPO      │  │    MANTO      │  │    MONTE      │
+│  por Machado  │  │  por Joana    │  │  por Pedro 👑 │
+│   👤 👤 👤   │  │   👤          │  │               │
+│    3 votos    │  │   1 voto      │  │   0 votos     │
+└───────────────┘  └───────────────┘  └───────────────┘
+     ↑ meu voto (border pulsante na cor do time)
 ```
 
-- Cada card de proposta mostra: **palavra** grande, **mini-glifo** da palavra proposta (neutro), **contagem de votos** (número de avatars ou contagem), e quem propôs
-- **Clique no card = voto imediato** — não precisa confirmar
-- **Mudar voto**: clicar em outro card deseleciona o anterior (sem recarregar)
-- O card com **meu voto** fica com border pulsante (`cursorPulse`) na cor do time
-- Se `votos_ocultos` (power-up do adversário): só vê `?` no lugar dos números de voto
+**Por que mostrar o glifo de cada proposta?**
+O votante precisa **comparar visualmente**: o glifo-alvo (topo da tela) vs. o glifo de cada proposta (nos cards). A palavra sozinha não é suficiente — o glifo da proposta pode parecer mais ou menos com o da rodada, e essa é a informação que importa para votar.
 
-**Todo mundo vota** — não só o time ativo. O time adversário vota para "ajudar" ou "atrapalhar" (mas o resultado conta apenas os votos do time ativo? — ou média total? Use votação aberta a todos, conta apenas o time da rodada).
+**Especificação dos cards de votação:**
+- **Tamanho:** o glifo dentro do card ocupa o card inteiro (ou ~75% com padding)
+- **Cor:** `--glyph` neutro — NÃO usa as cores `--gcN`. O objetivo é comparar formas, não cores
+- **Palavra escrita** abaixo do glifo, em fonte grande e bold
+- **Nome do proponente** menor, abaixo da palavra, com badge 👑 se capitão
+- **Contagem de votos**: avatares circulares empilhados (até 3) + número. Ex: `👤👤+5`
+- **Clique no card = voto imediato**, borda acende na cor do time com animação `cursorPulse`
+- **Mudar voto**: clique em outro card — borda anterior apaga, nova acende
+- Se `votos_ocultos` (power-up adversário): contador mostra `?` para o time adversário
+- Minha própria proposta pode receber meu voto normalmente
+- O glifo no card **é idêntico ao que aparecia no preview** durante o Propose — reforça a coerência
 
-Em mobile: cards empilhados em coluna.
+**Animação de transição Propose → Vote:**
+- As propostas enviadas (que estavam como `✔ Enviado`) "voam" para seus cards
+- Cards entram com `slideUp` + `fadeIn` escalonados (50ms de delay entre cada um)
+
+**Todo mundo vota** — time ativo e adversário. Resultado conta apenas votos do time da rodada.
 
 ### 6.4 DECODE — Envio para decodificar
 Após o timer de votação expirar (ou host avançar):
@@ -257,9 +292,13 @@ Todos os eventos devem aparecer na tela **sem recarregar**:
 ### Micro-interações obrigatórias
 | Ação | Animação |
 |------|----------|
-| Enviar proposta | `checkmark` slide + `scale(1.05)` no item da lista |
-| Votar | Card selecionado `scale(1.04)` + border pulsa |
+| Digitar letra no input | Camada SVG aparece no glifo-preview (`fadeIn` 80ms) + slot preenche |
+| Apagar letra no input | Camada SVG some do glifo-preview (`fadeOut` 80ms) + slot esvazia |
+| Enviar proposta | `checkmark` slide + `scale(1.05)` no item da lista; preview congela |
+| Transição Propose→Vote | Propostas "voam" para os cards: `slideUp` + `fadeIn` escalonados |
+| Votar | Card selecionado `scale(1.04)` + border pulsa na cor do time |
 | Mudar voto | Deselect com `scale(0.97)`, select novo com `scale(1.04)` |
+| Card vencedor revelado | `scale(1.1)` + `glow` na cor do time; outros cards `opacity:0.3` |
 | Acerto (letra certa) | Camada SVG no glifo `fadeOut(200ms)` |
 | Letra presente | Camada SVG `colorPulse(400ms)` → permanece colorida |
 | Power-up ativo | Badge do power-up na tela com `slideDown` + descrição |
@@ -268,6 +307,51 @@ Todos os eventos devem aparecer na tela **sem recarregar**:
 | Jogador entra | Linha no painel `slideIn` de cima |
 | Jogador sai | Linha fica `opacity:0.4`, ponto online apaga |
 | Vencedor revelado | Confete + banner `scaleIn` |
+
+### Implementação: Glifo Live (input → preview)
+
+Este é o componente mais importante da fase Propose. Pseudocódigo de referência:
+
+```js
+// Input handler — dispara a cada keystroke
+inputEl.addEventListener("input", () => {
+  const word = inputEl.value.toUpperCase().replace(/[^A-Z]/g, "");
+  renderLiveGlyph(word, liveGlyphContainer);
+  renderLiveSlots(word, liveSlotsContainer);
+});
+
+// Monta o glifo da proposta em tempo real
+function renderLiveGlyph(word, container) {
+  container.innerHTML = "";
+  const letters = word.split("");
+  // MESMA lógica do tStackEl do index.html:
+  // all letters overlapping at position: absolute; top:0; left:0; width:100%; height:100%
+  // cor: --glyph (neutro) — NÃO usa --gcN aqui
+  for (let i = letters.length - 1; i >= 0; i--) {
+    const svg = makeSVG(letters[i], "var(--glyph)", "position:absolute;top:0;left:0;width:100%;height:100%;");
+    if (svg) container.appendChild(svg);
+  }
+}
+
+// Preenche os slots letra a letra
+function renderLiveSlots(word, container) {
+  const slots = container.querySelectorAll(".word-slot");
+  slots.forEach((slot, i) => {
+    slot.innerHTML = "";
+    if (word[i]) {
+      const svg = makeSVG(word[i], "var(--text2)", "width:65%;height:65%;");
+      if (svg) slot.appendChild(svg);
+      slot.classList.add("filled");
+    } else {
+      slot.classList.remove("filled");
+    }
+  });
+}
+```
+
+**Nota:** os slots do preview devem ser **da largura da proposta digitada**, não da palavra-alvo. Ou seja: se o jogador digitou 3 letras, 3 slots aparecem preenchidos, os demais ficam vazios/ocultos.
+
+**Sincronismo na votação:** o glifo que aparece no card de votação é construído com a mesma função `renderLiveGlyph(proposta.word, cardGlyphEl)` — garantindo que o votante vê exatamente o mesmo desenho que o proponente viu no preview ao digitar.
 
 ### Power-ups
 Disponíveis durante a fase PROPOSE ou entre turnos:
