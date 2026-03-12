@@ -5101,7 +5101,6 @@
         attempts: [],
         decoded: new Set(),
         found: new Set(),
-        elim: new Set(),
         keyUsed: false,
         keyPos: new Set(),
         done: false,
@@ -5244,11 +5243,15 @@
           const isDecoded = G.decoded.has(i) || G.keyPos.has(i);
           if (isDecoded) {
             b.classList.add("decoded");
-            b.style.background = colorOf[WL[i]];
+            if (HARD_MODE) {
+              b.style.background = "var(--surface2)";
+            } else {
+              b.style.background = colorOf[WL[i]];
+            }
             if (G.keyPos.has(i) && !G.decoded.has(i)) b.classList.add("kused");
-            const svg = makeSVG(WL[i], "#fff");
+            const svg = makeSVG(WL[i], HARD_MODE ? s : "#fff");
             if (svg) {
-              svg.style.cssText = "width:65%;height:65%;";
+              svg.style.cssText = "width:65%;height:65%;" + (HARD_MODE ? "opacity:0.55;" : "");
               svg.setAttribute("aria-hidden", "true");
               b.appendChild(svg);
             }
@@ -5452,7 +5455,7 @@
             }
           }
           document.getElementById("lboxes").classList.remove("invalid");
-          if (apagou) recalcWarns();
+          if (apagou) calcWarns();
           else setFb("", "");
           refresh();
           return;
@@ -5513,26 +5516,16 @@
         if (full.every((x) => x)) {
           const guess = full.join("");
           if (!dicionarioValido(guess)) {
-            const msg =
-              WN === 5
-                ? "Palavra não encontrada no dicionário."
-                : "Não reconhecida — dicionário limitado para " +
-                  WN +
-                  " letras.";
-            setFb(msg, "err");
+            setFb("Palavra não encontrada no dicionário.", "err");
             document.getElementById("lboxes").classList.add("invalid");
           } else {
             document.getElementById("lboxes").classList.remove("invalid");
-            if (partes.length === 0) setFb("", "");
+            if (posErrada.length === 0) setFb("", "");
           }
         } else {
           document.getElementById("lboxes").classList.remove("invalid");
-          if (partes.length === 0) setFb("", "");
+          if (posErrada.length === 0) setFb("", "");
         }
-      }
-
-      function recalcWarns() {
-        calcWarns();
       }
 
       function haptic(pattern) {
@@ -5576,11 +5569,7 @@
         }
         // Validação de dicionário
         if (!dicionarioValido(guess)) {
-          const msg =
-            WN === 5
-              ? "Palavra não encontrada no dicionário."
-              : "Não reconhecida — dicionário limitado para " + WN + " letras.";
-          setFb(msg, "err");
+          setFb("Palavra não encontrada no dicionário.", "err");
           haptic(80);
           const lb = document.getElementById("lboxes");
           lb.classList.add("invalid");
@@ -5599,8 +5588,7 @@
         document.getElementById("lboxes").classList.remove("invalid");
         const dec = [],
           fnd = [],
-          fndPos = [],
-          eli = [];
+          fndPos = [];
 
         // Two-pass para tratar duplicatas corretamente (igual ao Wordle)
         // 1ª passagem: posições exatas
@@ -5619,10 +5607,6 @@
             fnd.push(l);
             fndPos.push(i); // posição correta para share
             estoque[idx] = null; // consumido — não pode ser usado de novo
-          } else if (!WL.includes(l)) {
-            // só elimina letras verdadeiramente ausentes da palavra
-            // (excedentes de duplicatas NÃO vão para elim)
-            eli.push(l);
           }
         });
         // Resultado por posição para a animação de flip
@@ -5714,7 +5698,6 @@
           G._flipping = false;
           dec.forEach((p) => G.decoded.add(p));
           fnd.forEach((l) => G.found.add(l));
-          eli.forEach((l) => G.elim.add(l));
           G.attempts.push({
             word: guess,
             decoded: dec,
@@ -5871,6 +5854,12 @@
         const first = getFocusable()[0];
         if (first) first.focus();
         _modalTrapHandler = (e) => {
+          if (e.key === "Escape") {
+            e.preventDefault();
+            const overlay = modal.closest(".moverlay") || modal;
+            if (overlay.id) closeM(overlay.id);
+            return;
+          }
           if (e.key !== "Tab") return;
           const els = getFocusable();
           if (!els.length) return;
@@ -6055,11 +6044,10 @@
       // PERSISTÊNCIA DIÁRIA
       // ═══════════════════════════════════════════════
       function dataHoje() {
-        return new Date(
-          new Date().toLocaleString("en-US", { timeZone: "America/Sao_Paulo" }),
-        )
-          .toISOString()
-          .slice(0, 10); // "YYYY-MM-DD"
+        // en-CA produz YYYY-MM-DD nativamente, sem risco de timezone flip
+        return new Intl.DateTimeFormat("en-CA", {
+          timeZone: "America/Sao_Paulo",
+        }).format(new Date());
       }
 
       function numeroPuzzle() {
@@ -6171,7 +6159,6 @@
           attempts: G.attempts,
           decoded: [...G.decoded],
           found: [...G.found],
-          elim: [...G.elim],
           keyPos: [...G.keyPos],
           done: G.done,
           won: G.won,
@@ -6191,7 +6178,6 @@
           G.attempts = data.attempts || [];
           G.decoded = new Set(data.decoded || []);
           G.found = new Set(data.found || []);
-          G.elim = new Set(data.elim || []);
           G.keyPos = new Set(data.keyPos || []);
           G.done = data.done || false;
           G.won = data.won || false;
@@ -10558,7 +10544,6 @@
         G.attempts = [];
         G.decoded = new Set();
         G.found = new Set();
-        G.elim = new Set();
         G.keyUsed = false;
         G.keyPos = new Set();
         G.done = false;
@@ -10944,7 +10929,6 @@
         G.attempts = [];
         G.decoded = new Set();
         G.found = new Set();
-        G.elim = new Set();
         G.keyUsed = false;
         G.keyPos = new Set();
         G.done = false;
@@ -11012,7 +10996,6 @@
         G.attempts = [];
         G.decoded = new Set();
         G.found = new Set();
-        G.elim = new Set();
         G.keyUsed = false;
         G.keyPos = new Set();
         G.done = false;
@@ -11027,19 +11010,9 @@
         const kd = document.getElementById("key-dot");
         if (kd) kd.classList.toggle("show", !G.keyUsed);
 
-        [
-          "win-modal",
-          "lose-modal",
-          "key-modal",
-          "stats-modal",
-          "config-modal",
-        ].forEach((id) => {
-          const el = document.getElementById(id);
-          if (el) {
-            el.classList.remove("show");
-            el.setAttribute("aria-hidden", "true");
-          }
-        });
+        ["win-modal", "lose-modal", "key-modal", "stats-modal", "config-modal"].forEach(
+          (id) => closeM(id),
+        );
 
         buildAtts();
         buildBoxes();
@@ -11067,7 +11040,6 @@
           attempts: G.attempts.length,
           decoded: [...G.decoded],
           found: [...G.found],
-          elim: [...G.elim],
           keyPos: [...G.keyPos],
           done: G.done,
           won: G.won,
@@ -11089,7 +11061,6 @@
           G.attempts = data.attHistory || [];
           G.decoded = new Set(data.decoded || []);
           G.found = new Set(data.found || []);
-          G.elim = new Set(data.elim || []);
           G.keyPos = new Set(data.keyPos || []);
           G.done = data.done || false;
           G.won = data.won || false;
@@ -11170,7 +11141,6 @@
           G.attempts = [];
           G.decoded = new Set();
           G.found = new Set();
-          G.elim = new Set();
           G.keyUsed = false;
           G.keyPos = new Set();
           G.done = false;
