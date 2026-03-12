@@ -923,6 +923,20 @@
         letter-spacing: 0.1em;
         color: var(--text);
       }
+      .word-slots {
+        display: flex;
+        gap: 5px;
+        justify-content: center;
+        margin: 0.4rem auto 0;
+      }
+      .word-slot {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        border: 1.5px solid var(--border2);
+        background: var(--surface2);
+        flex-shrink: 0;
+      }
       .feedback-slots {
         display: flex;
         gap: 6px;
@@ -3074,6 +3088,9 @@
             Observe o glifo — escreva sua proposta${captainBadge}
           </div>
           <div id="glyph-box" class="glyph-wrap" style="margin:0.25rem auto 0"></div>
+          <div class="word-slots">
+            ${myWord ? myWord.split("").map(() => `<div class="word-slot"></div>`).join("") : ""}
+          </div>
           <div class="proposal-input-area">
             ${
               !G_proposalSubmitted
