@@ -1500,6 +1500,9 @@
           transform: translateX(-24px);
         }
       }
+      /* ── Progressive chunk reveal ── */
+      .tut-chunk { display: inline; opacity: 0; transition: opacity 0.18s ease-out; }
+      .tut-chunk.show { opacity: 1; }
       .shake {
         animation: shake 0.3s ease;
       }
@@ -7825,6 +7828,8 @@
       let tutStep = 0;
       let tutTimers = [];
       let currentActionToken = null;
+      let _chatLastAt = 0;    // timestamp when last chatMsg bubble was shown
+      let _chatLastReadMs = 0; // estimated read time for that message
       let _byeToken = null;
       let onTutSolved = null;
       let onTutGiveUp = null;
@@ -7833,6 +7838,8 @@
         tutTimers.forEach(clearTimeout);
         tutTimers = [];
         tStopProgress();
+        _chatLastAt = 0;
+        _chatLastReadMs = 0;
       }
       function tStartProgress(durationMs) {
         const btn = document.getElementById("tut-next-btn");
@@ -8353,6 +8360,55 @@
           if (feed) feed.scrollTop = feed.scrollHeight;
         });
       }
+      // Estimates how long a message takes to read (extra delay before next message).
+      // Returns 0–1000ms proportional to text length beyond a 30-char baseline.
+      function readDelay(html) {
+        const len = html.replace(/<[^>]+>/g, "").length;
+        return Math.max(0, Math.min(len * 20 - 600, 1000));
+      }
+
+      // Splits the text content of `el` into 2–4 visible chunks that reveal
+      // sequentially every 230ms, giving a "streaming" reading feel.
+      // Operates on innerHTML so inline HTML tags (strong, a, s…) are preserved.
+      function revealInChunks(el) {
+        const text = el.textContent || "";
+        const words = text.trim().split(/\s+/).filter(Boolean);
+        if (words.length <= 3) return; // short message — show immediately
+        const n = Math.max(2, Math.min(4, Math.ceil(words.length / 6)));
+        const breakAt = new Set();
+        const wpc = Math.ceil(words.length / n);
+        for (let i = wpc; i < words.length; i += wpc) {
+          if (breakAt.size < n - 1) breakAt.add(i);
+        }
+        // Walk raw innerHTML char-by-char; insert span boundaries between words
+        const raw = el.innerHTML;
+        let result = '<span class="tut-chunk">';
+        let inTag = false, inWord = false, wordIdx = 0;
+        for (let i = 0; i < raw.length; i++) {
+          const c = raw[i];
+          if (c === "<") { inTag = true; result += c; continue; }
+          if (c === ">") { inTag = false; result += c; continue; }
+          if (inTag) { result += c; continue; }
+          const isSpace = c === " " || c === "\n" || c === "\t";
+          if (!isSpace && !inWord) {
+            inWord = true;
+            if (breakAt.has(wordIdx)) {
+              result += '</span><span class="tut-chunk">';
+            }
+          } else if (isSpace && inWord) {
+            inWord = false;
+            wordIdx++;
+          }
+          result += c;
+        }
+        result += "</span>";
+        el.innerHTML = result;
+        el.querySelectorAll(".tut-chunk").forEach((s, i) => {
+          const t = setTimeout(() => s.classList.add("show"), i * 230);
+          tutTimers.push(t);
+        });
+      }
+
       // Shows typing indicator at `showDelay`, then atomically replaces it with a message bubble at `msgDelay`.
       // Returns the indicator id so callers can optionally replace it manually (pass msgHtml=null to skip).
       function chatTypingThenMsg(id, showDelay, msgHtml, msgDelay, token) {
@@ -8391,6 +8447,7 @@
               requestAnimationFrame(() => {
                 div.classList.add("show");
                 scrollFeed();
+                revealInChunks(div);
               }),
             );
           }, msgDelay);
@@ -8401,16 +8458,29 @@
           if (currentActionToken && currentActionToken.cancelled) return;
           const feed = document.getElementById("tut-chat-feed");
           if (!feed) return;
-          const div = document.createElement("div");
-          div.className = "tut-bubble-left";
-          div.innerHTML = html;
-          feed.appendChild(div);
-          requestAnimationFrame(() =>
-            requestAnimationFrame(() => {
-              div.classList.add("show");
-              scrollFeed();
-            }),
-          );
+          // Extra wait if previous message was long and the user may not have finished reading
+          const extra = Math.max(0, (_chatLastAt + _chatLastReadMs) - Date.now());
+          const doShow = () => {
+            _chatLastAt = Date.now();
+            _chatLastReadMs = readDelay(html);
+            const div = document.createElement("div");
+            div.className = "tut-bubble-left";
+            div.innerHTML = html;
+            feed.appendChild(div);
+            requestAnimationFrame(() =>
+              requestAnimationFrame(() => {
+                div.classList.add("show");
+                scrollFeed();
+                revealInChunks(div);
+              }),
+            );
+          };
+          if (extra > 50) {
+            const t = setTimeout(doShow, extra);
+            tutTimers.push(t);
+          } else {
+            doShow();
+          }
         }, delay);
       }
       // Insere bolha do usuário de forma síncrona (não depende de token)
