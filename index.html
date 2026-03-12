@@ -1549,6 +1549,9 @@
       .kbtn.tap {
         animation: kbtnTap 0.14s ease;
       }
+      .tut-slot.tap {
+        animation: kbtnTap 0.14s ease;
+      }
       @keyframes decodedEntry {
         from {
           transform: scaleY(0);
@@ -9475,7 +9478,7 @@
               const stackAfter2 = glStack2();
               const colorAfter2 = glColor2();
 
-              const nextDelay2 = 3300;
+              const nextDelay2 = 4300;
 
               // Banana boy walks right→left on the very first guess (fires bbMidCb near end)
               let bbMidCb = null;
@@ -9572,14 +9575,10 @@
                 slEl2 = document.createElement("div");
                 slEl2.className = "tut-slots";
                 slEl2.style.justifyContent = "center";
-                letters2.forEach((l) => {
+                letters2.forEach(() => {
                   const el = document.createElement("div");
                   el.className = "tut-slot";
-                  const sv = makeSVG(l, tStroke());
-                  if (sv) {
-                    sv.style.cssText = "width:65%;height:65%;";
-                    el.appendChild(sv);
-                  }
+                  // letters animated in one-by-one after card appears
                   slEl2.appendChild(el);
                 });
                 card.appendChild(slEl2);
@@ -9607,9 +9606,46 @@
                 tStackEl(wSt2, letters2, () => tStroke());
               }, 500);
 
+              // Animate letters into slots one by one with tap bounce
+              let decodingEl = null;
+              letters2.forEach((l, i) => {
+                tDelay(() => {
+                  if (token.cancelled || !slEl2) return;
+                  const slot = slEl2.children[i];
+                  if (!slot) return;
+                  const sv = makeSVG(l, tStroke());
+                  if (sv) {
+                    sv.style.cssText = "width:65%;height:65%;";
+                    slot.appendChild(sv);
+                  }
+                  slot.classList.remove("tap");
+                  void slot.offsetWidth;
+                  slot.classList.add("tap");
+                  scrollFeed();
+                }, 500 + i * 170);
+              });
+
+              // Show "Decodificando..." typing indicator after last letter lands
+              tDelay(() => {
+                if (token.cancelled) return;
+                const feed = document.getElementById("tut-chat-feed");
+                if (!feed) return;
+                decodingEl = document.createElement("div");
+                decodingEl.className = "tut-typing";
+                decodingEl.innerHTML = "<span></span><span></span><span></span>";
+                feed.appendChild(decodingEl);
+                requestAnimationFrame(() =>
+                  requestAnimationFrame(() => {
+                    decodingEl.classList.add("show");
+                    scrollFeed();
+                  }),
+                );
+              }, 1100);
+
               // Animate slots revealing result
               tDelay(() => {
                 if (token.cancelled || !slEl2) return;
+                if (decodingEl && decodingEl.parentNode) decodingEl.parentNode.removeChild(decodingEl);
                 const slots2 = [...slEl2.children];
                 letters2.forEach((l, i) => {
                   const status = wSlots2[word][i];
@@ -9644,10 +9680,10 @@
                     }, 190);
                   }, i * 200);
                 });
-              }, 800);
+              }, 1800);
 
               // Update glyph after all slots have finished flipping
-              // Slots: start 800ms + i*200ms offset + 380ms flip = last done ~1780ms
+              // Slots: start 1800ms + i*200ms offset + 380ms flip = last done ~2780ms
               tDelay(() => {
                 if (token.cancelled) return;
                 if (isP2) {
@@ -9686,7 +9722,7 @@
                   tStackEl(gSt2, stackAfter2, colorAfter2);
                   tStackEl(wSt2, letters2, () => tStroke());
                 }
-              }, 1900);
+              }, 2900);
 
               tDelay(() => {
                 if (token.cancelled || !hEl2) return;
@@ -9716,7 +9752,7 @@
                     );
                   }, 1500); // stop 300ms before Quaaase
                 }
-              }, 2000);
+              }, 3000);
 
               if (isP2) {
                 // Explain O locking, then player confirms before CARO curiosity
@@ -10015,7 +10051,7 @@
               } else {
                 chatTypingThenMsg(
                   "pre-typing",
-                  1000,
+                  1850,
                   `Quase lá! 🔎 Glifos coloridos indicam que a letra <strong>existe</strong> na palavra — mas está na posição errada.`,
                   nextDelay2 + 500,
                   token,
