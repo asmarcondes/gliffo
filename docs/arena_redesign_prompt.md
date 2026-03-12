@@ -475,4 +475,4 @@ A versão atual da arena (`arena.html`) tem problemas de layout:
 
 ---
 
-*Documento gerado em: Março 2026 — Gliffo Arena especificação de interface*
+_Documento gerado em: Março 2026 — Gliffo Arena especificação de interface_

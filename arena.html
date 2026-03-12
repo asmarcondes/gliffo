@@ -3091,7 +3091,14 @@
           </div>
           <div id="glyph-box" class="glyph-wrap" style="margin:0.25rem auto 0"></div>
           <div class="word-slots">
-            ${myWord ? myWord.split("").map(() => `<div class="word-slot"></div>`).join("") : ""}
+            ${
+              myWord
+                ? myWord
+                    .split("")
+                    .map(() => `<div class="word-slot"></div>`)
+                    .join("")
+                : ""
+            }
           </div>
           <div class="proposal-input-area">
             ${
