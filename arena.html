@@ -83,6 +83,7 @@
         --text2: #9a9080;
         --text3: #5a5248;
         --shadow: rgba(0, 0, 0, 0.5);
+        --glyph: #f0ebe4;
       }
       [data-theme="light"] {
         --bg: #faf8f4;
@@ -96,6 +97,7 @@
         --text2: #7a7060;
         --text3: #aaa090;
         --shadow: rgba(0, 0, 0, 0.1);
+        --glyph: #1c1814;
       }
 
       /* ─── BASE ───────────────────────────────────────────────── */
@@ -886,8 +888,13 @@
         animation: cardPulse 1.4s ease-in-out infinite;
       }
       @keyframes cardPulse {
-        0%, 100% { box-shadow: 0 0 0 2px rgba(245,166,35,0.15); }
-        50%       { box-shadow: 0 0 0 4px rgba(245,166,35,0.35); }
+        0%,
+        100% {
+          box-shadow: 0 0 0 2px rgba(245, 166, 35, 0.15);
+        }
+        50% {
+          box-shadow: 0 0 0 4px rgba(245, 166, 35, 0.35);
+        }
       }
       .vote-card .word {
         font-size: 1.05rem;
@@ -935,7 +942,9 @@
         font-weight: 700;
         color: var(--text3);
         letter-spacing: 0.04em;
-        transition: background 0.3s, border-color 0.3s;
+        transition:
+          background 0.3s,
+          border-color 0.3s;
         position: relative;
         overflow: hidden;
       }
@@ -1098,7 +1107,9 @@
         height: 36px;
         font-size: 1.05rem;
         cursor: pointer;
-        transition: border-color 0.15s, transform 0.1s;
+        transition:
+          border-color 0.15s,
+          transform 0.1s;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -1153,9 +1164,17 @@
         animation: confetti-fall 1.9s ease-in forwards;
       }
       @keyframes confetti-fall {
-        0%   { opacity: 1; transform: translateY(-20px) rotate(0deg) scale(1); }
-        80%  { opacity: 0.8; }
-        100% { opacity: 0; transform: translateY(75vh) rotate(540deg) scale(0.4); }
+        0% {
+          opacity: 1;
+          transform: translateY(-20px) rotate(0deg) scale(1);
+        }
+        80% {
+          opacity: 0.8;
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(75vh) rotate(540deg) scale(0.4);
+        }
       }
 
       /* ─── SPECTATOR REACTIONS ────────────────────────────────── */
@@ -1172,7 +1191,9 @@
         padding: 0.3rem 0.6rem;
         font-size: 1.1rem;
         cursor: pointer;
-        transition: transform 0.12s, border-color 0.15s;
+        transition:
+          transform 0.12s,
+          border-color 0.15s;
         line-height: 1;
       }
       .reaction-btn:hover {
@@ -1187,9 +1208,17 @@
         animation: float-up 2.2s ease forwards;
       }
       @keyframes float-up {
-        0%   { opacity: 1; transform: translateY(0) scale(1); }
-        70%  { opacity: 0.9; }
-        100% { opacity: 0; transform: translateY(-130px) scale(1.5); }
+        0% {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+        70% {
+          opacity: 0.9;
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-130px) scale(1.5);
+        }
       }
 
       /* ─── CHAT ───────────────────────────────────────────────── */
@@ -1249,7 +1278,9 @@
         z-index: 499;
         box-shadow: 0 4px 24px var(--shadow);
         overflow: hidden;
-        transition: opacity 0.15s, transform 0.15s;
+        transition:
+          opacity 0.15s,
+          transform 0.15s;
       }
       .chat-panel.hidden {
         display: none;
@@ -1336,10 +1367,19 @@
 
       /* ─── URGENCY SHAKE ─────────────────────────────────────── */
       @keyframes phase-shake {
-        0%, 100% { transform: translateX(0); }
-        20%       { transform: translateX(-6px); }
-        60%       { transform: translateX(6px); }
-        80%       { transform: translateX(-3px); }
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        20% {
+          transform: translateX(-6px);
+        }
+        60% {
+          transform: translateX(6px);
+        }
+        80% {
+          transform: translateX(-3px);
+        }
       }
       .phase-card.shaking {
         animation: phase-shake 0.4s ease;
@@ -1376,7 +1416,10 @@
     ════════════════════════════════════════════════════════ -->
     <div id="view-welcome" class="view active" role="main">
       <div class="welcome-logo" aria-label="Gliffo Arena">
-        <span class="welcome-logo-text">glif</span><span class="welcome-logo-dot">.</span><span class="welcome-logo-text">foo</span><span class="welcome-logo-tag">arena</span>
+        <span class="welcome-logo-text">glif</span
+        ><span class="welcome-logo-dot">.</span
+        ><span class="welcome-logo-text">foo</span
+        ><span class="welcome-logo-tag">arena</span>
       </div>
       <p class="welcome-sub">
         Modo multiplayer em tempo real.<br />
@@ -2413,7 +2456,12 @@
           btn.innerHTML = '<span class="spinner spinner-dark"></span>';
           const { error } = await sb
             .from("arena_rooms")
-            .update({ status: "playing", turn_number: 1, phase: "between", current_turn: "A" })
+            .update({
+              status: "playing",
+              turn_number: 1,
+              phase: "between",
+              current_turn: "A",
+            })
             .eq("id", S.roomId);
           if (error) {
             toast("Erro ao iniciar partida", "error");
@@ -2669,21 +2717,42 @@
         container.style.position = "relative";
 
         // Névoa: embaralha 2 posições de cor
-        let colorVars = ["var(--gc0)","var(--gc1)","var(--gc2)","var(--gc3)","var(--gc4)","var(--gc5)"];
+        let colorVars = [
+          "var(--gc0)",
+          "var(--gc1)",
+          "var(--gc2)",
+          "var(--gc3)",
+          "var(--gc4)",
+          "var(--gc5)",
+        ];
         if (opts.fog && letters.length >= 2) {
           const i1 = Math.floor(Math.random() * letters.length);
-          let i2 = (i1 + 1 + Math.floor(Math.random() * (letters.length - 1))) % letters.length;
+          let i2 =
+            (i1 + 1 + Math.floor(Math.random() * (letters.length - 1))) %
+            letters.length;
           [colorVars[i1], colorVars[i2]] = [colorVars[i2], colorVars[i1]];
         }
 
         // Igual ao tStackEl do index.html: todas as letras sobrepostas em top:0 left:0
+        // Cor neutra = --glyph (branco/off-white), igual ao estado inicial do index.html
+        const neutralColor =
+          getComputedStyle(document.documentElement)
+            .getPropertyValue("--glyph")
+            .trim() || "#f0ebe4";
         for (let i = letters.length - 1; i >= 0; i--) {
           const letter = letters[i];
-          const color = colorVars[i % colorVars.length];
           const isRevealed = opts.revealSlot === i;
+          // Letra revelada (power-up) ganha sua cor gc; demais ficam neutras
+          // Em modo 'revealed' (feedback) todas as letras aparecem coloridas
+          const color =
+            opts.revealed || isRevealed
+              ? colorVars[i % colorVars.length]
+              : neutralColor;
           const extraStyle =
             `position:absolute;top:10px;left:10px;width:calc(100% - 20px);height:calc(100% - 20px);` +
-            (opts.mirror ? `transform:scaleX(-1);transform-origin:center;` : "") +
+            (opts.mirror
+              ? `transform:scaleX(-1);transform-origin:center;`
+              : "") +
             (isRevealed ? `filter:drop-shadow(0 0 8px ${color});` : "");
           const svg = makeSVG(letter, color, extraStyle);
           if (svg) {
@@ -2725,16 +2794,52 @@
 
       // Catálogo de power-ups
       const POWERUP_CATALOG = {
-        nevoa:         { emoji: "🌫️", label: "Névoa",          desc: "Embaralha 2 camadas do glifo adversário (30s)" },
-        espelho:       { emoji: "🪞",  label: "Espelho",        desc: "Espelha horizontalmente o glifo adversário (30s)" },
-        relogio:       { emoji: "⏱️",  label: "Relógio",        desc: "Rouba 20s do timer adversário" },
-        votos_ocultos: { emoji: "👁️",  label: "Votos Ocultos",  desc: "Oculta contagem de votos aos adversários (1 rodada)" },
-        revelar:       { emoji: "✨",  label: "Revelar",         desc: "Revela posição de 1 letra no glifo do seu time" },
-        turbo:         { emoji: "⚡",  label: "Turbo",           desc: "+30s no seu timer" },
-        escudo:        { emoji: "🛡️",  label: "Escudo",          desc: "Bloqueia o próximo power-up aplicado pelo adversário" },
-        ultima_chance: { emoji: "🎲",  label: "Última Chance",   desc: "Abre nova fase de proposta para o mesmo glifo" },
+        nevoa: {
+          emoji: "🌫️",
+          label: "Névoa",
+          desc: "Embaralha 2 camadas do glifo adversário (30s)",
+        },
+        espelho: {
+          emoji: "🪞",
+          label: "Espelho",
+          desc: "Espelha horizontalmente o glifo adversário (30s)",
+        },
+        relogio: {
+          emoji: "⏱️",
+          label: "Relógio",
+          desc: "Rouba 20s do timer adversário",
+        },
+        votos_ocultos: {
+          emoji: "👁️",
+          label: "Votos Ocultos",
+          desc: "Oculta contagem de votos aos adversários (1 rodada)",
+        },
+        revelar: {
+          emoji: "✨",
+          label: "Revelar",
+          desc: "Revela posição de 1 letra no glifo do seu time",
+        },
+        turbo: { emoji: "⚡", label: "Turbo", desc: "+30s no seu timer" },
+        escudo: {
+          emoji: "🛡️",
+          label: "Escudo",
+          desc: "Bloqueia o próximo power-up aplicado pelo adversário",
+        },
+        ultima_chance: {
+          emoji: "🎲",
+          label: "Última Chance",
+          desc: "Abre nova fase de proposta para o mesmo glifo",
+        },
       };
-      const POWERUP_POOL = ["nevoa","espelho","relogio","votos_ocultos","revelar","turbo","escudo"];
+      const POWERUP_POOL = [
+        "nevoa",
+        "espelho",
+        "relogio",
+        "votos_ocultos",
+        "revelar",
+        "turbo",
+        "escudo",
+      ];
 
       // ─────────────────────────────────────────────────────────
       // SUBSCRIÇÕES ADICIONAIS (proposals + votes)
@@ -2943,9 +3048,12 @@
 
         // Capitão de turno
         const captain = getCaptain(turn);
-        const captainBadge = captain?.id === PLAYER_ID
-          ? `<span class="captain-badge">👑 Capitão</span>`
-          : (captain ? `<span style="font-size:0.72rem;color:var(--text3)"> (capitão: ${escHtml(captain.nickname)})</span>` : "");
+        const captainBadge =
+          captain?.id === PLAYER_ID
+            ? `<span class="captain-badge">👑 Capitão</span>`
+            : captain
+              ? `<span style="font-size:0.72rem;color:var(--text3)"> (capitão: ${escHtml(captain.nickname)})</span>`
+              : "";
 
         const submittedListHtml = myTeamPlayers
           .map((p) => {
@@ -2998,7 +3106,12 @@
 
         if (isActiveTeam && myWord) {
           const box = document.getElementById("glyph-box");
-          if (box) renderGlyph(myWord, box, { fog: G_fogActive, mirror: G_mirrorActive, revealSlot: G_revealSlot });
+          if (box)
+            renderGlyph(myWord, box, {
+              fog: G_fogActive,
+              mirror: G_mirrorActive,
+              revealSlot: G_revealSlot,
+            });
         }
 
         const propInput = document.getElementById("proposal-input");
@@ -3060,7 +3173,9 @@
         const cardsHtml = G_proposals.map((p) => {
           const vc = (G_votes[p.id] || []).length;
           const isMyV = G_myVote === p.id;
-          const vcDisplay = G_hiddenVotes ? "? votos" : `${vc} voto${vc !== 1 ? "s" : ""}`;
+          const vcDisplay = G_hiddenVotes
+            ? "? votos"
+            : `${vc} voto${vc !== 1 ? "s" : ""}`;
           return `<div class="vote-card ${isMyV ? "my-vote" : ""}" data-pid="${p.id}">
             <div class="word">${escHtml(p.word)}</div>
             <div class="proposer">${escHtml(p.nickname)}</div>
@@ -3068,13 +3183,14 @@
           </div>`;
         }).join("");
 
-        const reactionsHtml = S.myTeam === "spec"
-          ? `<div class="reaction-bar">
+        const reactionsHtml =
+          S.myTeam === "spec"
+            ? `<div class="reaction-bar">
               <button class="reaction-btn" data-emoji="🔥" title="Fogo!">🔥</button>
               <button class="reaction-btn" data-emoji="😮" title="Surpreso!">😮</button>
               <button class="reaction-btn" data-emoji="👀" title="Atenção!">👀</button>
              </div>`
-          : "";
+            : "";
 
         pc.innerHTML = `
           <div class="between-sub" style="text-align:center">
@@ -3126,13 +3242,21 @@
         // Slots estilo lbox: SVG da letra com cor de status (igual ao index.html)
         const slotsHtml = (feedback || [])
           .map((f) => {
-            const colorMap = { correct: "#fff", present: "#fff", absent: "var(--text3)" };
+            const colorMap = {
+              correct: "#fff",
+              present: "#fff",
+              absent: "var(--text3)",
+            };
             const svgColor = colorMap[f.status] || "var(--text3)";
             const letterDef = LETTERS[f.letter?.toUpperCase()];
             const svgInner = letterDef
               ? (() => {
-                  const paths = letterDef.paths.map(d => `<path d="${d}"/>`).join("");
-                  const lc = letterDef.lc || "butt", lj = letterDef.lj || "miter", ml = letterDef.ml || 4;
+                  const paths = letterDef.paths
+                    .map((d) => `<path d="${d}"/>`)
+                    .join("");
+                  const lc = letterDef.lc || "butt",
+                    lj = letterDef.lj || "miter",
+                    ml = letterDef.ml || 4;
                   return `<svg viewBox="0 0 200 200" aria-hidden="true" style="width:65%;height:65%" fill="none" stroke="${svgColor}" stroke-width="10" stroke-linecap="${lc}" stroke-linejoin="${lj}" stroke-miterlimit="${ml}"${letterDef.transform ? ` transform="${letterDef.transform}"` : ""}><g>${paths}</g></svg>`;
                 })()
               : escHtml(f.letter || "");
@@ -3175,7 +3299,7 @@
         // Renderiza o glifo da palavra alvo (para todos verem)
         if (targetWord) {
           const glBox = document.getElementById("feedback-glyph-box");
-          if (glBox) renderGlyph(targetWord, glBox);
+          if (glBox) renderGlyph(targetWord, glBox, { revealed: true });
         }
         pc.querySelectorAll(".reaction-btn").forEach((btn) => {
           btn.addEventListener("click", () => sendReact(btn.dataset.emoji));
@@ -3212,7 +3336,7 @@
           if (tA !== tB) {
             const tiebreakerWinner = tA < tB ? "Âmbar" : "Quartzo";
             banner = `🏆 ${tiebreakerWinner} vence no desempate!`;
-            sub = `Mesmo nível — critério: tempo total (Âmbar ${(tA/1000).toFixed(1)}s × Quartzo ${(tB/1000).toFixed(1)}s)`;
+            sub = `Mesmo nível — critério: tempo total (Âmbar ${(tA / 1000).toFixed(1)}s × Quartzo ${(tB / 1000).toFixed(1)}s)`;
           } else {
             banner = "🤝 Empate!";
             sub = "Ambos os times chegaram ao mesmo nível e tempo.";
@@ -3233,13 +3357,13 @@
                 <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--amber-400);margin-right:5px;vertical-align:middle"></span>Âmbar</td>
                 <td>${Math.min(room.team_a_level || 1, 7)}/7</td>
                 <td>${room.team_a_attempts || 0}</td>
-                <td>${((room.team_a_time_ms || 0)/1000).toFixed(1)}s</td>
+                <td>${((room.team_a_time_ms || 0) / 1000).toFixed(1)}s</td>
               </tr>
               <tr>
                 <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--quartz);margin-right:5px;vertical-align:middle"></span>Quartzo</td>
                 <td>${Math.min(room.team_b_level || 1, 7)}/7</td>
                 <td>${room.team_b_attempts || 0}</td>
-                <td>${((room.team_b_time_ms || 0)/1000).toFixed(1)}s</td>
+                <td>${((room.team_b_time_ms || 0) / 1000).toFixed(1)}s</td>
               </tr>
             </tbody>
           </table>
@@ -3309,9 +3433,12 @@
         G_feedbackData = null;
 
         // Sorteia a palavra — tenta edge function, fallback local
-        const level = turn === "A" ? S.room.team_a_level || 1 : S.room.team_b_level || 1;
+        const level =
+          turn === "A" ? S.room.team_a_level || 1 : S.room.team_b_level || 1;
         let chosenWord = null;
         try {
+          const ctrl = new AbortController();
+          const tId = setTimeout(() => ctrl.abort(), 5000);
           const resp = await fetch(`${SUPA_URL}/functions/v1/arena-word`, {
             method: "POST",
             headers: {
@@ -3319,7 +3446,9 @@
               Authorization: `Bearer ${SUPA_KEY}`,
             },
             body: JSON.stringify({ roomId: S.roomId, team: turn }),
+            signal: ctrl.signal,
           });
+          clearTimeout(tId);
           if (!resp.ok) throw new Error("arena-word " + resp.status);
           const data = await resp.json();
           chosenWord = data.word;
@@ -3330,12 +3459,74 @@
         // Fallback: sorteia localmente se edge function falhou
         if (!chosenWord) {
           const pool =
-            level <= 2 ? "facil" : level <= 4 ? "medio" : level <= 6 ? "dificil" : "muito_dificil";
+            level <= 2
+              ? "facil"
+              : level <= 4
+                ? "medio"
+                : level <= 6
+                  ? "dificil"
+                  : "muito_dificil";
           const lists = {
-            facil:  ["CASA","MESA","BOLA","FOGO","AMOR","VIDA","ROSA","LUPA","CAMA","LAGO","PELE","VELA","MEDO","GUIA","ILHA","DOCE","DEDO","ARTE","ERRO","FATO"],
-            medio:  ["CAMPO","CARTA","ORDEM","TERRA","SONHO","PEDRA","MONTE","CHUVA","FORCA","TEMPO","NOITE","PRAIA","FESTA","CHAVE","CAUSA"],
-            dificil:["JARDIM","CIDADE","SONETO","PRISMA","ESCUDO","FRENTE","HEROIS","MAXIMO","SANGUE"],
-            muito_dificil:["VITORIA","MEMORIA","SISTEMA","EMPRESA","FAMILIA","PALAVRA","DECISAO","CORAGEM"],
+            facil: [
+              "CASA",
+              "MESA",
+              "BOLA",
+              "FOGO",
+              "AMOR",
+              "VIDA",
+              "ROSA",
+              "LUPA",
+              "CAMA",
+              "LAGO",
+              "PELE",
+              "VELA",
+              "MEDO",
+              "GUIA",
+              "ILHA",
+              "DOCE",
+              "DEDO",
+              "ARTE",
+              "ERRO",
+              "FATO",
+            ],
+            medio: [
+              "CAMPO",
+              "CARTA",
+              "ORDEM",
+              "TERRA",
+              "SONHO",
+              "PEDRA",
+              "MONTE",
+              "CHUVA",
+              "FORCA",
+              "TEMPO",
+              "NOITE",
+              "PRAIA",
+              "FESTA",
+              "CHAVE",
+              "CAUSA",
+            ],
+            dificil: [
+              "JARDIM",
+              "CIDADE",
+              "SONETO",
+              "PRISMA",
+              "ESCUDO",
+              "FRENTE",
+              "HEROIS",
+              "MAXIMO",
+              "SANGUE",
+            ],
+            muito_dificil: [
+              "VITORIA",
+              "MEMORIA",
+              "SISTEMA",
+              "EMPRESA",
+              "FAMILIA",
+              "PALAVRA",
+              "DECISAO",
+              "CORAGEM",
+            ],
           };
           const lista = lists[pool] || lists.facil;
           chosenWord = lista[Math.floor(Math.random() * lista.length)];
@@ -3349,10 +3540,19 @@
         G_roundStartMs = Date.now();
         await sb
           .from("arena_rooms")
-          .update({ [wordField]: chosenWord, phase: "propose", phase_deadline: deadline })
+          .update({
+            [wordField]: chosenWord,
+            phase: "propose",
+            phase_deadline: deadline,
+          })
           .eq("id", S.roomId);
         // Patch local imediato para o host (não espera Realtime)
-        S.room = { ...S.room, [wordField]: chosenWord, phase: "propose", phase_deadline: deadline };
+        S.room = {
+          ...S.room,
+          [wordField]: chosenWord,
+          phase: "propose",
+          phase_deadline: deadline,
+        };
         S.busy = false;
         renderGamePhase(); // host vê o glifo imediatamente
       }
@@ -3487,15 +3687,19 @@
           const timeUsedMs = Date.now() - G_roundStartMs;
           const turn = S.room.current_turn;
           const timeField = turn === "A" ? "team_a_time_ms" : "team_b_time_ms";
-          const prev = turn === "A" ? (S.room.team_a_time_ms || 0) : (S.room.team_b_time_ms || 0);
-          await sb.from("arena_rooms")
+          const prev =
+            turn === "A"
+              ? S.room.team_a_time_ms || 0
+              : S.room.team_b_time_ms || 0;
+          await sb
+            .from("arena_rooms")
             .update({ [timeField]: prev + timeUsedMs })
             .eq("id", S.roomId);
           G_roundStartMs = 0;
         }
 
         // Ganho de power-ups (host aplica)
-        if (S.isHost && (S.room.config?.powerups !== false)) {
+        if (S.isHost && S.room.config?.powerups !== false) {
           await earnPowerUps(correct);
         }
 
@@ -3649,13 +3853,22 @@
           return;
         }
         const myTeam = S.myTeam;
-        const myPus = (myTeam === "A" ? S.room.team_a_powerups : S.room.team_b_powerups) || [];
-        const oppPus = (myTeam === "A" ? S.room.team_b_powerups : S.room.team_a_powerups) || [];
+        const myPus =
+          (myTeam === "A" ? S.room.team_a_powerups : S.room.team_b_powerups) ||
+          [];
+        const oppPus =
+          (myTeam === "A" ? S.room.team_b_powerups : S.room.team_a_powerups) ||
+          [];
 
         // Agrupa por tipo
-        const countMy = {}, countOpp = {};
-        myPus.forEach((t) => { countMy[t] = (countMy[t] || 0) + 1; });
-        oppPus.forEach((t) => { countOpp[t] = (countOpp[t] || 0) + 1; });
+        const countMy = {},
+          countOpp = {};
+        myPus.forEach((t) => {
+          countMy[t] = (countMy[t] || 0) + 1;
+        });
+        oppPus.forEach((t) => {
+          countOpp[t] = (countOpp[t] || 0) + 1;
+        });
 
         // Só pode usar durante propose ou vote, e o turno é do meu time (ou poderes próprios)
         const phase = S.room.phase;
@@ -3674,7 +3887,8 @@
             if (!cat) return;
             const cnt = countMy[t];
             // Turbo e Escudo usáveis a qualquer momento; outros só no turno do time
-            const usable = canUse && (isMyTurn || t === "turbo" || t === "escudo");
+            const usable =
+              canUse && (isMyTurn || t === "turbo" || t === "escudo");
             html += `<button class="powerup-icon-btn${G_shieldActive && t === "escudo" ? " shield-on" : ""}"
               title="${escHtml(cat.label)}: ${escHtml(cat.desc)}"
               data-pu="${t}"
@@ -3717,14 +3931,19 @@
         if (!S.isHost) return;
         const turn = S.room.current_turn;
         const field = turn === "A" ? "team_a_powerups" : "team_b_powerups";
-        const current = [...((turn === "A" ? S.room.team_a_powerups : S.room.team_b_powerups) || [])];
+        const current = [
+          ...((turn === "A"
+            ? S.room.team_a_powerups
+            : S.room.team_b_powerups) || []),
+        ];
 
         const toEarn = [];
         const cfg = S.room.config || {};
         const totalSec = cfg.timer_propose || 45;
-        const timeFractionLeft = G_roundStartMs > 0
-          ? Math.max(0, 1 - (Date.now() - G_roundStartMs) / (totalSec * 1000))
-          : 0;
+        const timeFractionLeft =
+          G_roundStartMs > 0
+            ? Math.max(0, 1 - (Date.now() - G_roundStartMs) / (totalSec * 1000))
+            : 0;
 
         if (correct) {
           toEarn.push(drawRandomPowerup());
@@ -3745,11 +3964,19 @@
 
         // Limite de 3 na fila
         const updated = [...current, ...toEarn].slice(-3);
-        await sb.from("arena_rooms").update({ [field]: updated }).eq("id", S.roomId);
+        await sb
+          .from("arena_rooms")
+          .update({ [field]: updated })
+          .eq("id", S.roomId);
 
         if (toEarn.length > 0) {
-          const earned = toEarn.map((t) => POWERUP_CATALOG[t]?.emoji || "⚡").join(" ");
-          toast(`${earned} Power-up${toEarn.length > 1 ? "s" : ""} ganho${toEarn.length > 1 ? "s" : ""}!`, "success");
+          const earned = toEarn
+            .map((t) => POWERUP_CATALOG[t]?.emoji || "⚡")
+            .join(" ");
+          toast(
+            `${earned} Power-up${toEarn.length > 1 ? "s" : ""} ganho${toEarn.length > 1 ? "s" : ""}!`,
+            "success",
+          );
         }
       }
 
@@ -3758,12 +3985,19 @@
         if (!myTeam || myTeam === "spec") return;
 
         const field = myTeam === "A" ? "team_a_powerups" : "team_b_powerups";
-        const current = [...((myTeam === "A" ? S.room.team_a_powerups : S.room.team_b_powerups) || [])];
+        const current = [
+          ...((myTeam === "A"
+            ? S.room.team_a_powerups
+            : S.room.team_b_powerups) || []),
+        ];
         const idx = current.indexOf(type);
         if (idx === -1) return;
         current.splice(idx, 1);
 
-        await sb.from("arena_rooms").update({ [field]: current }).eq("id", S.roomId);
+        await sb
+          .from("arena_rooms")
+          .update({ [field]: current })
+          .eq("id", S.roomId);
 
         S.channel?.send({
           type: "broadcast",
@@ -3794,7 +4028,10 @@
             if (affectsMe) {
               G_fogActive = true;
               renderGamePhase();
-              setTimeout(() => { G_fogActive = false; renderGamePhase(); }, 30000);
+              setTimeout(() => {
+                G_fogActive = false;
+                renderGamePhase();
+              }, 30000);
               toast("🌫️ Névoa! Suas camadas foram embaralhadas.", "error");
             }
             break;
@@ -3802,7 +4039,10 @@
             if (affectsMe) {
               G_mirrorActive = true;
               renderGamePhase();
-              setTimeout(() => { G_mirrorActive = false; renderGamePhase(); }, 30000);
+              setTimeout(() => {
+                G_mirrorActive = false;
+                renderGamePhase();
+              }, 30000);
               toast("🪞 Espelho! Glifo invertido.", "error");
             }
             break;
@@ -3810,19 +4050,31 @@
             if (affectsMe) {
               G_hiddenVotes = true;
               renderGamePhase();
-              setTimeout(() => { G_hiddenVotes = false; renderGamePhase(); }, 60000);
+              setTimeout(() => {
+                G_hiddenVotes = false;
+                renderGamePhase();
+              }, 60000);
               toast("👁️ Votos ocultos ativados!", "error");
             }
             break;
           case "revelar":
             if (!affectsMe) {
               // Revela slot aleatório do glifo do próprio time
-              const word = S.room.current_turn === "A" ? S.room.team_a_word : S.room.team_b_word;
+              const word =
+                S.room.current_turn === "A"
+                  ? S.room.team_a_word
+                  : S.room.team_b_word;
               if (word) {
                 G_revealSlot = Math.floor(Math.random() * word.length);
                 renderGamePhase();
-                setTimeout(() => { G_revealSlot = null; renderGamePhase(); }, 30000);
-                toast(`✨ Letra na posição ${G_revealSlot + 1} revelada!`, "success");
+                setTimeout(() => {
+                  G_revealSlot = null;
+                  renderGamePhase();
+                }, 30000);
+                toast(
+                  `✨ Letra na posição ${G_revealSlot + 1} revelada!`,
+                  "success",
+                );
               }
             }
             break;
@@ -3839,8 +4091,12 @@
               // O host que usou o Relógio: adversário perde 20s
               // Implementado: deadline dos adversários recua 20s
               if (S.room.phase_deadline && S.room.current_turn !== myTeam) {
-                const nd = new Date(new Date(S.room.phase_deadline).getTime() - 20000).toISOString();
-                sb.from("arena_rooms").update({ phase_deadline: nd }).eq("id", S.roomId);
+                const nd = new Date(
+                  new Date(S.room.phase_deadline).getTime() - 20000,
+                ).toISOString();
+                sb.from("arena_rooms")
+                  .update({ phase_deadline: nd })
+                  .eq("id", S.roomId);
               }
               toast("⏱️ 20s roubados do adversário!", "success");
             } else if (affectsMe) {
@@ -3851,8 +4107,12 @@
             if (S.isHost && !affectsMe) {
               // Adiciona 30s ao timer do próprio time (host na vez certa)
               if (S.room.phase_deadline && S.room.current_turn === myTeam) {
-                const nd = new Date(new Date(S.room.phase_deadline).getTime() + 30000).toISOString();
-                sb.from("arena_rooms").update({ phase_deadline: nd }).eq("id", S.roomId);
+                const nd = new Date(
+                  new Date(S.room.phase_deadline).getTime() + 30000,
+                ).toISOString();
+                sb.from("arena_rooms")
+                  .update({ phase_deadline: nd })
+                  .eq("id", S.roomId);
               }
               toast("⚡ +30s no seu timer!", "success");
             }
@@ -3861,7 +4121,9 @@
             if (S.isHost && !affectsMe) {
               const cfg = S.room.config || {};
               const timerSec = cfg.timer_propose || 45;
-              const deadline = new Date(Date.now() + timerSec * 1000).toISOString();
+              const deadline = new Date(
+                Date.now() + timerSec * 1000,
+              ).toISOString();
               G_proposals = [];
               G_votes = {};
               G_myVote = null;
@@ -3870,7 +4132,10 @@
               sb.from("arena_rooms")
                 .update({ phase: "propose", phase_deadline: deadline })
                 .eq("id", S.roomId);
-              toast("🎲 Última Chance! Nova proposta no mesmo glifo.", "success");
+              toast(
+                "🎲 Última Chance! Nova proposta no mesmo glifo.",
+                "success",
+              );
             }
             break;
         }
