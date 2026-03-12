@@ -381,6 +381,13 @@
         align-self: center;
         line-height: 1.5;
         display: none;
+        flex-shrink: 1;
+        min-width: 0;
+      }
+      @media (max-width: 479px) {
+        .early-access-badge {
+          display: none !important;
+        }
       }
       [data-theme="dark"] .early-access-badge {
         color: var(--amber-400);
@@ -594,6 +601,9 @@
       /* Tile: sem label interno, glifo usa 100% da área */
       .gpanel {
         width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: 14px;
@@ -608,6 +618,7 @@
         justify-content: center;
         padding: 10px;
         aspect-ratio: 1;
+        width: 100%;
       }
       .glyph-stack {
         position: relative;
@@ -1690,7 +1701,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 8px;
+        padding: 16px;
         aspect-ratio: 1;
         max-height: 160px; /* evita painéis muito altos em mobile */
       }
@@ -1715,9 +1726,13 @@
         overflow: hidden;
         width: min(240px, 80%);
         margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
       .tut-glyph-single .tut-gstage {
-        max-height: 160px;
+        max-height: none;
+        width: min(160px, 100%);
       }
 
       /* Alphabet grid */
@@ -8117,7 +8132,9 @@
             } else {
               hint.textContent =
                 filled === 0
-                  ? "Clique num slot e comece a digitar"
+                  ? "ontouchstart" in window
+                    ? "Toque num slot e comece a digitar"
+                    : "Clique num slot e comece a digitar"
                   : `${filled}/4 letras — forme ${iWord}`;
             }
             hint.style.color = "var(--text3)";
@@ -8446,8 +8463,8 @@
         }
         if (!noClear) {
           feed.innerHTML = "";
-          choicesEl.innerHTML = "";
         }
+        choicesEl.innerHTML = "";
 
         function makeGlyphPanel(label) {
           const panel = document.createElement("div");
@@ -8720,7 +8737,7 @@
                       700,
                     );
                     chatMsg(
-                      "S\u00F3 que aqui a resposta j\u00E1 est\u00E1 na tela, codificada como um <strong>glifo</strong>. Um pouco mais <s>chato</s> desafiador \uD83D\uDE08",
+                      "S\u00F3 que aqui a resposta j\u00E1 est\u00E1 na tela, codificada como um <strong>glifo</strong>. Um pouco mais <s>dif\u00EDcil</s> desafiador \uD83D\uDE08",
                       1500,
                     );
                     chatMsg("Deixa eu te mostrar como funciona!", 2300);
@@ -8785,11 +8802,15 @@
             const tileWrappers = []; // outer wrappers (rotateY counter)
             const tileData = []; // { wrapOuter, svgEl, letter } para colorir depois
 
+            // Tile size: 96px capped so 4 tiles + 3 gaps fit across the panel width
+            const _panelW = Math.min(480, window.innerWidth) - 64; // ~32px feed pad + 32px card pad
+            const TILE_SZ = Math.floor(Math.min(96, (_panelW - 30) / 4)); // 30 = 3 * 10px gaps
+
             chatCard((card) => {
               cardRef = card;
               card.style.overflow = "visible";
               card.style.cssText +=
-                "display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;min-height:100px;";
+                "display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;padding:22px 10px;";
 
               // Perspectiva 3D — será usado no flip
               perspWrap = document.createElement("div");
@@ -8812,12 +8833,12 @@
                   // Wrapper transparente — só SVG, sem fundo nem extrusão
                   const wrapOuter = document.createElement("div");
                   wrapOuter.style.cssText =
-                    "width:96px;height:96px;display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;opacity:0;transition:opacity 0.3s;";
+                    `width:${TILE_SZ}px;height:${TILE_SZ}px;display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;opacity:0;transition:opacity 0.3s;`;
 
                   const svg = makeSVG(l, tStroke());
                   if (svg) {
                     svg.style.cssText =
-                      "width:96px;height:96px;flex-shrink:0;transition:opacity 0.2s;";
+                      `width:${TILE_SZ}px;height:${TILE_SZ}px;flex-shrink:0;transition:opacity 0.2s;`;
                     wrapOuter.appendChild(svg);
                   }
                   const tl = null; // sem label
@@ -8890,8 +8911,8 @@
                           w.style.position = "";
                           w.style.top = "";
                           w.style.left = "";
-                          w.style.width = "96px";
-                          w.style.height = "96px";
+                          w.style.width = TILE_SZ + "px";
+                          w.style.height = TILE_SZ + "px";
                           w.style.transform = "";
                           w.style.opacity = phaseRan ? "0" : "1";
                         });
@@ -8989,13 +9010,13 @@
                                       setTimeout(() => {
                                         if (!cardRef) return;
                                         wordRow.style.cssText =
-                                          "position:relative;width:96px;height:96px;transform-style:preserve-3d;";
+                                          `position:relative;width:${TILE_SZ}px;height:${TILE_SZ}px;transform-style:preserve-3d;`;
                                         tileWrappers.forEach((w) => {
                                           w.style.position = "absolute";
                                           w.style.top = "0";
                                           w.style.left = "0";
-                                          w.style.width = "96px";
-                                          w.style.height = "96px";
+                                          w.style.width = TILE_SZ + "px";
+                                          w.style.height = TILE_SZ + "px";
                                           w.style.transform = "none";
                                         });
                                         perspWrap.style.cssText =
@@ -9005,7 +9026,7 @@
                                           document.createElement("div");
                                         activeSplitRow = splitRow;
                                         splitRow.style.cssText =
-                                          "position:relative;display:flex;justify-content:center;align-items:center;width:100%;height:96px;";
+                                          `position:relative;display:flex;justify-content:center;align-items:center;width:100%;height:${TILE_SZ}px;`;
 
                                         const leftCol =
                                           document.createElement("div");
@@ -9021,12 +9042,12 @@
                                         const rightStack =
                                           document.createElement("div");
                                         rightStack.style.cssText =
-                                          "position:relative;width:96px;height:96px;";
+                                          `position:relative;width:${TILE_SZ}px;height:${TILE_SZ}px;`;
                                         tileData.forEach(({ letter }) => {
                                           const s = makeSVG(letter, tStroke());
                                           if (s) {
                                             s.style.cssText =
-                                              "width:96px;height:96px;position:absolute;top:0;left:0;";
+                                              `width:${TILE_SZ}px;height:${TILE_SZ}px;position:absolute;top:0;left:0;`;
                                             rightStack.appendChild(s);
                                           }
                                         });
@@ -9427,19 +9448,16 @@
                   });
                   // Easter egg: clicar no painel enquanto o banana boy anda
                   let bbClicked = false;
-                  panel.addEventListener(
-                    "click",
-                    function _bbClick() {
-                      if (bbClicked) return;
-                      bbClicked = true;
-                      panel.removeEventListener("click", _bbClick);
-                      chatMsg(
-                        "Ei! O menino s\u00f3 passa, n\u00e3o morde! \uD83C\uDF4C",
-                        0,
-                      );
-                    },
-                    { once: true },
-                  );
+                  const _bbClick = () => {
+                    if (bbClicked) return;
+                    bbClicked = true;
+                    panel.removeEventListener("click", _bbClick);
+                    chatMsg(
+                      "Ei! O menino s\u00f3 passa, n\u00e3o morde! \uD83C\uDF4C",
+                      0,
+                    );
+                  };
+                  panel.addEventListener("click", _bbClick);
                   const panelW = panel.offsetWidth || 480;
                   const DIST = panelW + BB_W;
                   const T_WALK = 7500;
@@ -9454,6 +9472,7 @@
                       if (bbMidCb) bbMidCb();
                     }
                     if (t >= T_WALK) {
+                      panel.removeEventListener("click", _bbClick);
                       if (bbInst) bbInst.destroy();
                       bbDiv.remove();
                       return;
@@ -9664,160 +9683,180 @@
                     tStackEl(caroGst, ["C", "A", "R", "O"], (l) => tdOf[l]);
                     tStackEl(arcoGst, TDL, (l) => tdOf[l]);
                   }, 2100);
-                  chatMsg(
-                    `Nesse caso a <strong>Chave 🔑</strong> não ajuda — ela revela uma letra, e aqui todas já são conhecidas. Só a ordem decide. Tenta a sorte! 🔓`,
-                    3200,
-                  );
-                  // Interactive slots — user types ARCO or CARO letter by letter
                   tDelay(() => {
                     if (token.cancelled) return;
-                    iWord = "ARCO";
-                    iLetters = TDL;
-                    iColorOf = tdOf;
-                    iTyped = ["", "", "", ""];
-                    iConfirmed = new Set();
-                    iWrongCount = -999; // disable easter egg
-                    iCursor = 0;
-                    onTutGiveUp = null;
-                    tutInteractReady = true;
+                    chatChoices([
+                      {
+                        label: "Entendido — e agora? 🤔",
+                        onClick: () => {
+                          chatMsg(
+                            `Nesse caso a <strong>Chave 🔑</strong> não ajuda — ela revela uma letra, e aqui todas já são conhecidas. Só a ordem decide. Tenta a sorte! 🔓`,
+                            200,
+                          );
+                          // Interactive slots — user types ARCO or CARO letter by letter
+                          tDelay(() => {
+                            if (token.cancelled) return;
+                            iWord = "ARCO";
+                            iLetters = TDL;
+                            iColorOf = tdOf;
+                            iTyped = ["", "", "", ""];
+                            iConfirmed = new Set();
+                            iWrongCount = -999; // disable easter egg
+                            iCursor = 0;
+                            onTutGiveUp = null;
+                            tutInteractReady = true;
 
-                    const feed = document.getElementById("tut-chat-feed");
-                    if (!feed) return;
+                            const feed =
+                              document.getElementById("tut-chat-feed");
+                            if (!feed) return;
 
-                    const wrap = document.createElement("div");
-                    wrap.className = "tut-bubble-right";
+                            const wrap = document.createElement("div");
+                            wrap.className = "tut-bubble-right";
 
-                    const staticHint = document.createElement("p");
-                    staticHint.id = "ts5-hint";
-                    staticHint.style.cssText =
-                      "font-size:0.76rem;color:var(--text3);margin:0 0 8px;text-align:center;";
-                    staticHint.textContent =
-                      "ARCO ou CARO? Só a ordem certa decifra o glifo ↵";
-                    wrap.appendChild(staticHint);
+                            const staticHint = document.createElement("p");
+                            staticHint.id = "ts5-hint";
+                            staticHint.style.cssText =
+                              "font-size:0.76rem;color:var(--text3);margin:0 0 8px;text-align:center;";
+                            staticHint.textContent =
+                              "ARCO ou CARO? Só a ordem certa decifra o glifo ↵";
+                            wrap.appendChild(staticHint);
 
-                    const slotsEl = document.createElement("div");
-                    slotsEl.id = "ts5-interact";
-                    slotsEl.className = "tut-slots";
-                    slotsEl.style.justifyContent = "center";
-                    wrap.appendChild(slotsEl);
+                            const slotsEl = document.createElement("div");
+                            slotsEl.id = "ts5-interact";
+                            slotsEl.className = "tut-slots";
+                            slotsEl.style.justifyContent = "center";
+                            wrap.appendChild(slotsEl);
 
-                    const confirmBtn = document.createElement("button");
-                    confirmBtn.className = "tut-choice-btn";
-                    confirmBtn.style.cssText =
-                      "margin-top:8px;width:100%;font-size:0.82rem;padding:6px 12px;";
-                    confirmBtn.textContent = "Confirmar ↵";
-                    wrap.appendChild(confirmBtn);
+                            const confirmBtn = document.createElement("button");
+                            confirmBtn.className = "tut-choice-btn";
+                            confirmBtn.style.cssText =
+                              "margin-top:8px;width:100%;font-size:0.82rem;padding:6px 12px;";
+                            confirmBtn.textContent = "Confirmar ↵";
+                            wrap.appendChild(confirmBtn);
 
-                    const kbd = document.createElement("div");
-                    kbd.id = "tut-kbd";
-                    kbd.className = "tut-kbd";
-                    [...new Set(iWord.split(""))].forEach((letter) => {
-                      const btn = document.createElement("button");
-                      btn.className = "tut-kbd-btn";
-                      btn.type = "button";
-                      btn.textContent = letter;
-                      btn.addEventListener("touchstart", (e) => {
-                        e.preventDefault();
-                        tutKeyHandler?.({
-                          key: letter,
-                          preventDefault: () => {},
-                        });
-                      });
-                      kbd.appendChild(btn);
-                    });
-                    const bksp = document.createElement("button");
-                    bksp.className = "tut-kbd-btn";
-                    bksp.type = "button";
-                    bksp.textContent = "⌫";
-                    bksp.style.minWidth = "52px";
-                    bksp.addEventListener("touchstart", (e) => {
-                      e.preventDefault();
-                      tutKeyHandler?.({
-                        key: "Backspace",
-                        preventDefault: () => {},
-                      });
-                    });
-                    kbd.appendChild(bksp);
-                    wrap.appendChild(kbd);
+                            const kbd = document.createElement("div");
+                            kbd.id = "tut-kbd";
+                            kbd.className = "tut-kbd";
+                            [...new Set(iWord.split(""))].forEach((letter) => {
+                              const btn = document.createElement("button");
+                              btn.className = "tut-kbd-btn";
+                              btn.type = "button";
+                              btn.textContent = letter;
+                              btn.addEventListener("touchstart", (e) => {
+                                e.preventDefault();
+                                tutKeyHandler?.({
+                                  key: letter,
+                                  preventDefault: () => {},
+                                });
+                              });
+                              kbd.appendChild(btn);
+                            });
+                            const bksp = document.createElement("button");
+                            bksp.className = "tut-kbd-btn";
+                            bksp.type = "button";
+                            bksp.textContent = "⌫";
+                            bksp.style.minWidth = "52px";
+                            bksp.addEventListener("touchstart", (e) => {
+                              e.preventDefault();
+                              tutKeyHandler?.({
+                                key: "Backspace",
+                                preventDefault: () => {},
+                              });
+                            });
+                            kbd.appendChild(bksp);
+                            wrap.appendChild(kbd);
 
-                    feed.appendChild(wrap);
-                    requestAnimationFrame(() =>
-                      requestAnimationFrame(() => {
-                        wrap.classList.add("show");
-                        scrollFeed();
-                      }),
-                    );
+                            feed.appendChild(wrap);
+                            requestAnimationFrame(() =>
+                              requestAnimationFrame(() => {
+                                wrap.classList.add("show");
+                                scrollFeed();
+                              }),
+                            );
 
-                    const handleNonArco = () => {
-                      if (!iTyped.every(Boolean)) return;
-                      const typed = iTyped.join("");
-                      if (typed === "ARCO") return; // auto-handled by buildInteract
-                      removeTutKeyHandler();
-                      tutInteractReady = false;
-                      if (confirmBtn.parentNode) confirmBtn.remove();
-                      document.getElementById("tut-kbd")?.remove();
-                      if (typed === "CARO") {
-                        const zoada = cameFromBirra
-                          ? `Sério?! Você disse que estava confuso... e ainda errou! Isso é talento. 😂`
-                          : `Quase! Era <strong>ARCO</strong> — as letras eram as mesmas, mas a ordem importa! 😄`;
-                        chatMsg(zoada, 300);
-                        chatMsg(
-                          `A palavra do dia é <strong>ARCO</strong>. Óbvio, né? 😏`,
-                          1400,
-                        );
-                        chatMsg(
-                          `Mas agora você sabe como funciona! Bora jogar? 🎮`,
-                          2400,
-                        );
-                        const caroMsg = cameFromBirra
-                          ? "Depois de toda aquela birra... errou CARO... e ainda quer revisar?! \uD83D\uDE2D"
-                          : "Você não vai com a minha cara? \uD83D\uDE24";
-                        chatFinale(false, 2900, 3400, caroMsg);
-                      } else {
-                        chatMsg(
-                          `Hmm... nem era uma das opções! 😅 Era <strong>ARCO</strong>.`,
-                          300,
-                        );
-                        chatMsg(
-                          `Mas agora você sabe como funciona! Bora jogar? 🎮`,
-                          1500,
-                        );
-                        chatFinale(false, 2000, 2500);
-                      }
-                    };
+                            const handleNonArco = () => {
+                              if (!iTyped.every(Boolean)) return;
+                              const typed = iTyped.join("");
+                              if (typed === "ARCO") return; // auto-handled by buildInteract
+                              removeTutKeyHandler();
+                              tutInteractReady = false;
+                              if (confirmBtn.parentNode) confirmBtn.remove();
+                              document.getElementById("tut-kbd")?.remove();
+                              if (typed === "CARO") {
+                                const zoada = cameFromBirra
+                                  ? `Sério?! Você disse que estava confuso... e ainda errou! Isso é talento. 😂`
+                                  : `Quase! Era <strong>ARCO</strong> — as letras eram as mesmas, mas a ordem importa! 😄`;
+                                chatMsg(zoada, 300);
+                                chatMsg(
+                                  `A palavra do dia é <strong>ARCO</strong>. Óbvio, né? 😏`,
+                                  1400,
+                                );
+                                chatMsg(
+                                  `Mas agora você sabe como funciona! Bora jogar? 🎮`,
+                                  2400,
+                                );
+                                const caroMsg = cameFromBirra
+                                  ? "Depois de toda aquela birra... errou CARO... e ainda quer revisar?! \uD83D\uDE2D"
+                                  : "Você não vai com a minha cara? \uD83D\uDE24";
+                                chatFinale(false, 2900, 3400, caroMsg);
+                              } else {
+                                chatMsg(
+                                  `Hmm... nem era uma das opções! 😅 Era <strong>ARCO</strong>.`,
+                                  300,
+                                );
+                                chatMsg(
+                                  `Mas agora você sabe como funciona! Bora jogar? 🎮`,
+                                  1500,
+                                );
+                                chatFinale(false, 2000, 2500);
+                              }
+                            };
 
-                    confirmBtn.onclick = handleNonArco;
+                            confirmBtn.onclick = handleNonArco;
 
-                    onTutSolved = () => {
-                      tutInteractReady = false;
-                      if (confirmBtn.parentNode) confirmBtn.remove();
-                      document.getElementById("tut-kbd")?.remove();
-                      confetti(feed);
-                      chatMsg(
-                        `Isso aí! 🎉 Era <strong>ARCO</strong>! Você conseguiu!`,
-                        300,
-                      );
-                      chatMsg(`Mandou bem! Agora você sabe jogar. 🏆`, 1400);
-                      chatFinale(true, 1900, 2500);
-                    };
+                            onTutSolved = () => {
+                              tutInteractReady = false;
+                              if (confirmBtn.parentNode) confirmBtn.remove();
+                              document.getElementById("tut-kbd")?.remove();
+                              confetti(feed);
+                              chatMsg(
+                                `Isso aí! 🎉 Era <strong>ARCO</strong>! Você conseguiu!`,
+                                300,
+                              );
+                              chatMsg(
+                                `Mandou bem! Agora você sabe jogar. 🏆`,
+                                1400,
+                              );
+                              chatFinale(true, 1900, 2500);
+                            };
 
-                    buildInteract();
-                    installTutKeyHandler();
+                            buildInteract();
+                            installTutKeyHandler();
 
-                    // Patch: add Enter key for non-ARCO submissions
-                    const baseHandler = tutKeyHandler;
-                    document.removeEventListener("keydown", baseHandler);
-                    const caroKeyHandler = (e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        handleNonArco();
-                      } else {
-                        baseHandler(e);
-                      }
-                    };
-                    tutKeyHandler = caroKeyHandler;
-                    document.addEventListener("keydown", caroKeyHandler);
-                  }, 4500);
+                            // Patch: add Enter key for non-ARCO submissions
+                            const baseHandler = tutKeyHandler;
+                            document.removeEventListener(
+                              "keydown",
+                              baseHandler,
+                            );
+                            const caroKeyHandler = (e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                                handleNonArco();
+                              } else {
+                                baseHandler(e);
+                              }
+                            };
+                            tutKeyHandler = caroKeyHandler;
+                            document.addEventListener(
+                              "keydown",
+                              caroKeyHandler,
+                            );
+                          }, 1400);
+                        },
+                      },
+                    ]);
+                  }, 2600);
                 };
 
                 // "Birra" flow — tutorial makes a fuss before relenting
@@ -9908,7 +9947,7 @@
                 chatTypingThenMsg(
                   "pre-typing",
                   1000,
-                  `Boa pista! 🔎 Glifos coloridos indicam que a letra <strong>existe</strong> na palavra — mas está na posição errada.`,
+                  `Quase lá! 🔎 Glifos coloridos indicam que a letra <strong>existe</strong> na palavra — mas está na posição errada.`,
                   nextDelay2 + 500,
                   token,
                 );
@@ -10131,7 +10170,7 @@
                   label: "Ok, me convenceu! \uD83C\uDFA8",
                   onClick: () => {
                     tutStep = 1;
-                    renderStep(1);
+                    renderStep(1, true);
                   },
                 },
                 {
@@ -10242,7 +10281,7 @@
                   label: "Vamos! \uD83C\uDFA8",
                   onClick: () => {
                     tutStep = 1;
-                    renderStep(1);
+                    renderStep(1, true);
                   },
                 },
               ],
@@ -10253,10 +10292,13 @@
         // Override TUT.freeInput for comeback state: bajulador instead of dismiss+reask
         TUT._freeInputOverride = bajuladoCallback;
         _installHijack((typed) => TUT.freeInput(typed));
-        setTimeout(() => {
-          const inp = document.getElementById("tut-bye-input");
-          if (inp) inp.focus();
-        }, 50);
+        // Only focus the input on non-touch devices (focus on mobile opens the native keyboard)
+        if (!("ontouchstart" in window)) {
+          setTimeout(() => {
+            const inp = document.getElementById("tut-bye-input");
+            if (inp) inp.focus();
+          }, 50);
+        }
       }
 
       function tutSkipOrRestart() {
@@ -11651,7 +11693,7 @@
           padding: 5px;
         }
         .tut-glyph-single .tut-gstage {
-          max-height: 100px;
+          width: min(100px, 100%);
         }
         .tut-bubble-left,
         .tut-bubble-right {
