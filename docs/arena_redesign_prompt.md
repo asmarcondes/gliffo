@@ -1,6 +1,6 @@
-# Prompt: Gliffo Arena — Redesign da Interface
+# Prompt: Gliffo Arena — Especificação da Interface
 
-> Use este documento como especificação completa para construir a interface da **Gliffo Arena**, o modo multiplayer do jogo de palavras **Gliffo** (glif.foo). Implemente em HTML/CSS/JS puro (sem frameworks), mantendo compatibilidade com Supabase Realtime para o multiplayer.
+> Use este documento como especificação de **identidade visual e layout** para criar a interface da **Gliffo Arena**, o modo multiplayer do jogo de palavras **Gliffo** (glif.foo). O foco é a aparência, disposição e comportamento visual — não a implementação técnica do backend.
 
 ---
 
@@ -15,6 +15,7 @@
 ## 2. Identidade Visual
 
 ### Tokens de cor (CSS custom properties)
+
 ```css
 :root {
   /* Âmbar — time A e destaque principal */
@@ -26,8 +27,8 @@
   --quartz-hi: #9da8ff;
 
   /* Feedback */
-  --correct: #4a9d6f;   /* Verde — letra no lugar certo */
-  --found:   #e8940a;   /* Âmbar — letra presente, lugar errado */
+  --correct: #4a9d6f; /* Verde — letra no lugar certo */
+  --found: #e8940a; /* Âmbar — letra presente, lugar errado */
 
   /* Glyph colors — cores por letra (ordem da palavra) */
   --gc0: #f5a623; /* âmbar */
@@ -42,26 +43,28 @@
   /* --glyph: #1c1814;  light mode: tinta quase-preta */
 
   /* Superfícies (dark mode) */
-  --bg:       #141210;
-  --bg2:      #1a1714;
-  --surface:  #1e1b18;
+  --bg: #141210;
+  --bg2: #1a1714;
+  --surface: #1e1b18;
   --surface2: #252118;
   --surface3: #2c271f;
-  --border:   #302b22;
-  --border2:  #3a342a;
-  --text:     #f0ebe4;
-  --text2:    #9a9080;
-  --text3:    #5a5248;
-  --shadow:   rgba(0,0,0,0.5);
+  --border: #302b22;
+  --border2: #3a342a;
+  --text: #f0ebe4;
+  --text2: #9a9080;
+  --text3: #5a5248;
+  --shadow: rgba(0, 0, 0, 0.5);
 }
 ```
 
 ### Tipografia
+
 - **Corpo:** DM Sans (Google Fonts)
 - **Logo / títulos:** DM Serif Display
 - **Logo:** `glif.foo` — `glif` + `.` âmbar + `foo` | subscript `arena` em badge rounded
 
 ### Glifo — como é feito
+
 Cada letra da palavra é um SVG `viewBox="0 0 200 200"` (traçados `stroke`, sem `fill`). Todos os SVGs ficam **empilhados** (`position: absolute; top:0; left:0; width:100%; height:100%`), criando a ilusão de um único desenho complexo.
 
 **Estado neutro:** todos os traçados na cor `--glyph` (quase-branco).  
@@ -98,11 +101,12 @@ Cada letra da palavra é um SVG `viewBox="0 0 200 200"` (traçados `stroke`, sem
 ## 4. Painéis de Time (laterais)
 
 Cada painel contém:
+
 - **Nome do time** com emoji de cor (`🟡 Time Âmbar` / `🔵 Time Quartzo`)
 - **Lista de jogadores online** — avatar (inicial do nick) + nickname + indicador online (ponto verde pulsante)
 - **Capitão da rodada** — badge 👑 ao lado do nome
 - **Pontuação / Nível atual** — ex: "Nível 3" com barra de progresso discreta
-- **Power-ups disponíveis** — botões pill compactos com emoji e label. Clicável apenas quando é a vez do time e o joueur tem o power-up
+- **Power-ups disponíveis** — botões pill compactos com emoji e label. Clicável apenas quando é a vez do time e o jogador tem o power-up
 - **Indicador de tentativas restantes** — 4 bolinhas (●●●●), cada acerto errado esvazia uma
 
 O painel do **time ativo** (vez de decodificar) tem `outline` ou `glow` na cor do time. O outro painel fica levemente `opacity: 0.6`.
@@ -130,7 +134,9 @@ Ambos os glifos ficam **sempre visíveis** na tela central lado a lado, mesmo se
 - Abaixo dos slots: contagem de tentativas: `Tentativa 2 de 4`
 
 ### Mecânica de evolução do glifo
+
 À medida que o time erra/acerta tentativas, o glifo **se transforma** na tela para todos verem:
+
 - Letra correta (mesmo lugar): camada **desaparece** do glifo com animação `fadeOut` (200ms)
 - Letra presente (lugar errado): camada **ganha cor** `--gcN` (onde N = posição na palavra) com animação `colorPulse`
 - Letra ausente: sem mudança visual
@@ -140,11 +146,13 @@ Ambos os glifos ficam **sempre visíveis** na tela central lado a lado, mesmo se
 ## 6. Mecânica — Fases da Rodada
 
 ### 6.1 BETWEEN (tela de transição entre turnos)
+
 - Exibe qual time vai jogar
 - Countdown de 3s antes de iniciar automaticamente (ou botão do host)
 - Mostra o histórico de tentativas do turno anterior em forma de resumo
 
 ### 6.2 PROPOSE — Sugestão de palavras
+
 **Duração:** configurável (padrão 45s). Timer mostrado como barra de progresso no topo do campo central.
 
 **Layout da fase:**
@@ -179,9 +187,9 @@ O coração da fase Propose é a comparação em tempo real entre o glifo-alvo e
    - Se apagar uma letra: a camada SVG da última letra **desaparece** imediatamente
    - O glifo se constrói e desconstrói em tempo real, sincronizado com o cursor do input
    - O tamanho do card de preview é **idêntico** ao do glifo da rodada — para comparação visual direta
-   - Abaixo do preview: slots `lbox` preenchem com a letra (SVG da letra em miniatura, cor neutra)
+   - Abaixo do preview: **slots de letras** preenchem com a letra (SVG da letra em miniatura, cor neutra)
 
-3. **Inspiração no single player**: no modo solo, o jogador tem o glifo-alvo de um lado e digita palavras para tentar decodificar. A Arena replica exatamente essa sensação — mas agora o jogador compõe uma *sugestão* para votar coletivamente.
+3. **Sensação de comparação**: o jogador quer saber se o glifo que ele está compondo "parece" com o glifo-alvo. Essa comparação visual lado a lado é o coração do jogo — o previw ao vivo versus a forma-alvo.
 
 4. Ao **enviar a proposta**: o preview do glifo congela, o input some, aparece `✔ Proposta enviada! Aguardando…`. O glifo da proposta congelado **permanece visível** para o próprio jogador até a fase de votação começar.
 
@@ -190,9 +198,11 @@ O coração da fase Propose é a comparação em tempo real entre o glifo-alvo e
 - Enter = enviar
 
 ### 6.3 VOTE — Votação
+
 Quando todos enviaram (ou o timer expirou):
 
 **Layout:**
+
 ```
 ┌─────── GLIFO DA RODADA ────────────────────────────────────────────┐
 │  [glifo neutro, estado atual — letras já descobertas refletidas]   │
@@ -217,6 +227,7 @@ Quando todos enviaram (ou o timer expirou):
 O votante precisa **comparar visualmente**: o glifo-alvo (topo da tela) vs. o glifo de cada proposta (nos cards). A palavra sozinha não é suficiente — o glifo da proposta pode parecer mais ou menos com o da rodada, e essa é a informação que importa para votar.
 
 **Especificação dos cards de votação:**
+
 - **Tamanho:** o glifo dentro do card ocupa o card inteiro (ou ~75% com padding)
 - **Cor:** `--glyph` neutro — NÃO usa as cores `--gcN`. O objetivo é comparar formas, não cores
 - **Palavra escrita** abaixo do glifo, em fonte grande e bold
@@ -229,28 +240,32 @@ O votante precisa **comparar visualmente**: o glifo-alvo (topo da tela) vs. o gl
 - O glifo no card **é idêntico ao que aparecia no preview** durante o Propose — reforça a coerência
 
 **Animação de transição Propose → Vote:**
+
 - As propostas enviadas (que estavam como `✔ Enviado`) "voam" para seus cards
 - Cards entram com `slideUp` + `fadeIn` escalonados (50ms de delay entre cada um)
 
 **Todo mundo vota** — time ativo e adversário. Resultado conta apenas votos do time da rodada.
 
 ### 6.4 DECODE — Envio para decodificar
+
 Após o timer de votação expirar (ou host avançar):
+
 - A proposta vencedora (mais votos; tie → voto do capitão; sem votes → aleatório) é selecionada
 - Animação: o card vencedor escala e brilha, os outros desvanecem
-- A palavra é submetida à edge function `arena-result`
+- A palavra é avaliada e o resultado chega para todos
 - O glifo se **transforma** em tempo real (animação letra a letra):
   - Cada letra revela seu status com `flip` de 300ms
   - Corretas: camada some do glifo (fadeOut)
   - Presentes: camada ganha cor (colorPulse)
 
 ### 6.5 FEEDBACK — Resultado da tentativa
+
 ```
 ✅ Acertou! / ❌ Não foi dessa vez
 
 [glifo colorido/revelado da palavra]
 
-[slots B O L A — estilo lbox com SVG colorido de status]
+[slots B O L A — caixinhas com letra e cor de status (verde = certo, âmbar = presente, cinza = ausente)]
 
 "A palavra era: BOLA"
 
@@ -265,6 +280,7 @@ Após o timer de votação expirar (ou host avançar):
 - O time adversário vê a mesma tela mas não tem os botões de controle
 
 ### 6.6 FINISHED — Fim do jogo
+
 - Banner com time vencedor, confete
 - Placar final
 - Botões: "Revanche" / "Nova sala"
@@ -273,8 +289,10 @@ Após o timer de votação expirar (ou host avançar):
 
 ## 7. Detalhes de Interação
 
-### Real-time (Supabase Realtime)
-Todos os eventos devem aparecer na tela **sem recarregar**:
+### Comportamento visual em tempo real
+
+Todos os eventos atualizam a tela sem recarregar a página — o design deve suportar essas mudanças visuais instantâneas:
+
 - Novo jogador entra → aparece no painel lateral com animação `slideIn`
 - Proposta enviada → `✓` ao lado do nome, contador atualiza
 - Voto dado → o número no card sobe com animação `pop`
@@ -283,6 +301,7 @@ Todos os eventos devem aparecer na tela **sem recarregar**:
 - Glifo muda (letra descoberta) → animação na camada SVG afetada
 
 ### Timer
+
 - Barra de progresso horizontal no topo do campo central
 - Cor: âmbar ou quartzo (do time ativo)
 - Nos últimos 10s: pulsa vermelho (`#e87a6b`) e contador numérico aparece
@@ -290,82 +309,50 @@ Todos os eventos devem aparecer na tela **sem recarregar**:
 - Se `relogio` (power-up): barra encurta animada
 
 ### Micro-interações obrigatórias
-| Ação | Animação |
-|------|----------|
+
+| Ação                   | Animação                                                            |
+| ---------------------- | ------------------------------------------------------------------- |
 | Digitar letra no input | Camada SVG aparece no glifo-preview (`fadeIn` 80ms) + slot preenche |
-| Apagar letra no input | Camada SVG some do glifo-preview (`fadeOut` 80ms) + slot esvazia |
-| Enviar proposta | `checkmark` slide + `scale(1.05)` no item da lista; preview congela |
-| Transição Propose→Vote | Propostas "voam" para os cards: `slideUp` + `fadeIn` escalonados |
-| Votar | Card selecionado `scale(1.04)` + border pulsa na cor do time |
-| Mudar voto | Deselect com `scale(0.97)`, select novo com `scale(1.04)` |
-| Card vencedor revelado | `scale(1.1)` + `glow` na cor do time; outros cards `opacity:0.3` |
-| Acerto (letra certa) | Camada SVG no glifo `fadeOut(200ms)` |
-| Letra presente | Camada SVG `colorPulse(400ms)` → permanece colorida |
-| Power-up ativo | Badge do power-up na tela com `slideDown` + descrição |
-| Reação enviada | Emoji flutua e sobe da tela pelas bordas |
-| Timer últimos 10s | Contador numérico aparece, cor vira coral |
-| Jogador entra | Linha no painel `slideIn` de cima |
-| Jogador sai | Linha fica `opacity:0.4`, ponto online apaga |
-| Vencedor revelado | Confete + banner `scaleIn` |
+| Apagar letra no input  | Camada SVG some do glifo-preview (`fadeOut` 80ms) + slot esvazia    |
+| Enviar proposta        | `checkmark` slide + `scale(1.05)` no item da lista; preview congela |
+| Transição Propose→Vote | Propostas "voam" para os cards: `slideUp` + `fadeIn` escalonados    |
+| Votar                  | Card selecionado `scale(1.04)` + border pulsa na cor do time        |
+| Mudar voto             | Deselect com `scale(0.97)`, select novo com `scale(1.04)`           |
+| Card vencedor revelado | `scale(1.1)` + `glow` na cor do time; outros cards `opacity:0.3`    |
+| Acerto (letra certa)   | Camada SVG no glifo `fadeOut(200ms)`                                |
+| Letra presente         | Camada SVG `colorPulse(400ms)` → permanece colorida                 |
+| Power-up ativo         | Badge do power-up na tela com `slideDown` + descrição               |
+| Reação enviada         | Emoji flutua e sobe da tela pelas bordas                            |
+| Timer últimos 10s      | Contador numérico aparece, cor vira coral                           |
+| Jogador entra          | Linha no painel `slideIn` de cima                                   |
+| Jogador sai            | Linha fica `opacity:0.4`, ponto online apaga                        |
+| Vencedor revelado      | Confete + banner `scaleIn`                                          |
 
-### Implementação: Glifo Live (input → preview)
+### Glifo Live — comportamento visual esperado
 
-Este é o componente mais importante da fase Propose. Pseudocódigo de referência:
+Este é o componente visual mais importante da fase Propose:
 
-```js
-// Input handler — dispara a cada keystroke
-inputEl.addEventListener("input", () => {
-  const word = inputEl.value.toUpperCase().replace(/[^A-Z]/g, "");
-  renderLiveGlyph(word, liveGlyphContainer);
-  renderLiveSlots(word, liveSlotsContainer);
-});
-
-// Monta o glifo da proposta em tempo real
-function renderLiveGlyph(word, container) {
-  container.innerHTML = "";
-  const letters = word.split("");
-  // MESMA lógica do tStackEl do index.html:
-  // all letters overlapping at position: absolute; top:0; left:0; width:100%; height:100%
-  // cor: --glyph (neutro) — NÃO usa --gcN aqui
-  for (let i = letters.length - 1; i >= 0; i--) {
-    const svg = makeSVG(letters[i], "var(--glyph)", "position:absolute;top:0;left:0;width:100%;height:100%;");
-    if (svg) container.appendChild(svg);
-  }
-}
-
-// Preenche os slots letra a letra
-function renderLiveSlots(word, container) {
-  const slots = container.querySelectorAll(".word-slot");
-  slots.forEach((slot, i) => {
-    slot.innerHTML = "";
-    if (word[i]) {
-      const svg = makeSVG(word[i], "var(--text2)", "width:65%;height:65%;");
-      if (svg) slot.appendChild(svg);
-      slot.classList.add("filled");
-    } else {
-      slot.classList.remove("filled");
-    }
-  });
-}
-```
-
-**Nota:** os slots do preview devem ser **da largura da proposta digitada**, não da palavra-alvo. Ou seja: se o jogador digitou 3 letras, 3 slots aparecem preenchidos, os demais ficam vazios/ocultos.
-
-**Sincronismo na votação:** o glifo que aparece no card de votação é construído com a mesma função `renderLiveGlyph(proposta.word, cardGlyphEl)` — garantindo que o votante vê exatamente o mesmo desenho que o proponente viu no preview ao digitar.
+- A cada letra digitada no input: uma nova camada SVG aparece no card de preview (`fadeIn` 80ms)
+- A cada letra apagada: a última camada SVG desaparece (`fadeOut` 80ms)
+- Glifo do preview usa cor `--glyph` neutro — sem cores `--gcN`
+- Slots abaixo do preview: cada slot mostra o SVG da letra digitada (tamanho ~65% do slot), em `--text2`
+- Os slots existem apenas para as letras já digitadas (crescem com a palavra, não são fixos)
+- O glifo nos cards de votação é visualmente idêntico ao preview que o proponente viu ao digitar
 
 ### Power-ups
+
 Disponíveis durante a fase PROPOSE ou entre turnos:
 
-| Emoji | Nome | Efeito |
-|-------|------|--------|
-| 🌫️ | Névoa | Embaralha 2 camadas de cor no glifo adversário por 30s |
-| 🪞 | Espelho | Espelha horizontalmente o glifo adversário por 30s |
-| ⏱️ | Relógio | Rouba 20s do timer adversário |
-| 👁️ | Votos Ocultos | Oculta os números de voto para o adversário nesta rodada |
-| ✨ | Revelar | Revela a posição correta de 1 letra no glifo do próprio time (fica colorida) |
-| ⚡ | Turbo | +30s no timer do próprio time |
-| 🛡️ | Escudo | Bloqueia o próximo power-up adversário |
-| 🎲 | Última Chance | Abre nova rodada de propostas para o mesmo glifo (consome 1 tentativa) |
+| Emoji | Nome          | Efeito                                                                       |
+| ----- | ------------- | ---------------------------------------------------------------------------- |
+| 🌫️    | Névoa         | Embaralha 2 camadas de cor no glifo adversário por 30s                       |
+| 🪞    | Espelho       | Espelha horizontalmente o glifo adversário por 30s                           |
+| ⏱️    | Relógio       | Rouba 20s do timer adversário                                                |
+| 👁️    | Votos Ocultos | Oculta os números de voto para o adversário nesta rodada                     |
+| ✨    | Revelar       | Revela a posição correta de 1 letra no glifo do próprio time (fica colorida) |
+| ⚡    | Turbo         | +30s no timer do próprio time                                                |
+| 🛡️    | Escudo        | Bloqueia o próximo power-up adversário                                       |
+| 🎲    | Última Chance | Abre nova rodada de propostas para o mesmo glifo (consome 1 tentativa)       |
 
 Power-ups são ganhos ao acertar (mais por acerto rápido) e ao completar níveis.
 
@@ -379,10 +366,13 @@ Power-ups são ganhos ao acertar (mais por acerto rápido) e ao completar nívei
 - **Tiebreaker**: se ao fim dos turnos o placar estiver igual, o time mais rápido (tempo total de acertos) vence
 
 ### Scoreboard (footer strip)
+
 Barra horizontal sempre visível no rodapé:
+
 ```
 🟡 Âmbar   Nível 3   ●●●○   ←→   🔵 Quartzo   Nível 2   ●●●●
 ```
+
 - Bolinhas = tentativas restantes na palavra atual
 - Níveis coloridos com suas cores de time
 
@@ -391,11 +381,13 @@ Barra horizontal sempre visível no rodapé:
 ## 9. Lobby (pré-jogo)
 
 ### Tela de boas-vindas
+
 - Logo `glif.foo arena` centralizado
 - Dois botões grandes: **Criar Sala** / **Entrar em Sala**
 - Campo de nickname (salvo em localStorage)
 
 ### Sala (lobby)
+
 Layout de dois painéis (lado a lado no desktop, abas no mobile):
 
 ```
@@ -432,53 +424,7 @@ Configurações (host only):
 
 ---
 
-## 11. Backend (Supabase)
-
-### Tabelas relevantes
-```sql
-arena_rooms (
-  id uuid, code text, status text, phase text,
-  current_turn text,  -- 'A' ou 'B'
-  turn_number int,
-  team_a_word text, team_b_word text,
-  team_a_level int, team_b_level int,
-  team_a_attempts int, team_b_attempts int,
-  team_a_powerups text[], team_b_powerups text[],
-  team_a_time_ms int, team_b_time_ms int,
-  phase_deadline timestamptz,
-  config jsonb, winner text, active_fx jsonb
-)
-
-arena_players (
-  id uuid, room_id uuid, nickname text, team text,
-  is_host bool, online bool, joined_at timestamptz
-)
-
-arena_proposals (
-  id uuid, room_id uuid, turn_number int,
-  team text, player_id uuid, nickname text, word text,
-  created_at timestamptz
-)
-
-arena_votes (
-  id uuid, room_id uuid, proposal_id uuid,
-  player_id uuid, team text
-)
-```
-
-### Edge Functions
-- `arena-word`: sorteia palavra dado nível e time (pesa pelo banco curado)
-- `arena-result`: avalia guess, retorna `{feedback, correct, word}`
-
-### Realtime
-- Canal Supabase por sala: `arena:{roomId}`
-- `postgres_changes` em `arena_rooms`, `arena_players`, `arena_proposals`
-- `broadcast` para: `feedback`, `power_use`, `chat_A`, `chat_B`, `react`
-- `presence` para indicadores de online
-
----
-
-## 12. Fluxo Resumido
+## 11. Fluxo de Telas
 
 ```
 Bem-vindo → Criar/Entrar → Lobby (escolher time) → Configurar (host)
@@ -510,9 +456,10 @@ Bem-vindo → Criar/Entrar → Lobby (escolher time) → Configurar (host)
 - Sem `alert()` — usar toasts internos
 
 ### Variáveis de ambiente (hardcoded ou .env)
+
 ```js
-const SUPA_URL = "https://<project>.supabase.co"
-const SUPA_KEY = "<anon-key>"
+const SUPA_URL = "https://<project>.supabase.co";
+const SUPA_KEY = "<anon-key>";
 ```
 
 ---
@@ -520,6 +467,7 @@ const SUPA_KEY = "<anon-key>"
 ## 14. O que NÃO replicar da versão atual
 
 A versão atual da arena (`arena.html`) tem problemas de layout:
+
 - Interface em coluna única (mobile-only) — precisa virar layout de 3 colunas (Codenames)
 - Glifo aparecia colorido desde o início — deve começar neutro (branco), só ganha cor após feedback
 - Fase de proposta não mostrava mini-glifo live do que o jogador está digitando
@@ -527,4 +475,4 @@ A versão atual da arena (`arena.html`) tem problemas de layout:
 
 ---
 
-*Documento gerado em: Março 2026 — Gliffo Arena v2 redesign spec*
+*Documento gerado em: Março 2026 — Gliffo Arena especificação de interface*
