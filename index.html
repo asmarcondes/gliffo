@@ -206,6 +206,37 @@
         overflow: hidden; /* evita que conteúdo do header cause scroll lateral */
       }
 
+      /* Mobile: 2-row layout — logo+buttons on row 1, meta-badge on row 2 */
+      @media (max-width: 479px) {
+        header {
+          flex-wrap: wrap;
+          height: auto;
+          padding: 10px 1rem 0;
+          overflow: visible;
+          gap: 0;
+        }
+        .logo {
+          flex-shrink: 0;
+          padding-bottom: 10px;
+        }
+        .hbtns {
+          margin-left: auto;
+          padding-bottom: 10px;
+        }
+        .header-meta {
+          order: 3;
+          width: 100%;
+          flex: none;
+          justify-content: center;
+          padding: 6px 0 10px;
+          border-top: 1px solid var(--border);
+        }
+        .hbtn {
+          width: 40px;
+          height: 40px;
+        }
+      }
+
       @media (min-width: 480px) {
         header {
           padding: 0 1.5rem;
@@ -328,6 +359,22 @@
         display: flex;
         gap: 0;
         flex-shrink: 0;
+      }
+      /* Arquivo e Ajuda ficam ocultos no header mobile — acessíveis via Config */
+      @media (max-width: 479px) {
+        #hbtn-arquivo,
+        #hbtn-ajuda {
+          display: none;
+        }
+      }
+      /* Linhas do Config modal visíveis apenas no mobile */
+      .cfg-mobile-only {
+        display: none;
+      }
+      @media (max-width: 479px) {
+        .cfg-mobile-only {
+          display: flex;
+        }
       }
       .hbtn {
         width: 36px;
@@ -2915,7 +2962,7 @@
           </svg>
           <span class="key-dot show" id="key-dot"></span>
         </button>
-        <button class="hbtn" title="Arquivo de Puzzles" onclick="openArquivo()">
+        <button class="hbtn" id="hbtn-arquivo" title="Arquivo de Puzzles" onclick="openArquivo()">
           <svg viewBox="0 0 24 24">
             <rect x="3" y="4" width="18" height="18" rx="2" />
             <path d="M16 2v4M8 2v4M3 10h18" />
@@ -2929,7 +2976,7 @@
             <rect x="17" y="3" width="4" height="18" rx="1" />
           </svg>
         </button>
-        <button class="hbtn" title="Ajuda">
+        <button class="hbtn" id="hbtn-ajuda" title="Ajuda" onclick="openTutorial()">
           <svg viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="9" />
             <path d="M9.5 9a2.5 2.5 0 015 0c0 2-2.5 2.5-2.5 4" />
@@ -3273,6 +3320,28 @@
             </div>
           </div>
           <div id="cfg-ea-section"></div>
+          <!-- Atalhos para mobile (Arquivo e Ajuda ficam ocultos no header) -->
+          <div class="cfg-divider cfg-mobile-only"></div>
+          <div class="cfg-row cfg-mobile-only" onclick="closeM('config-modal'); openArquivo()">
+            <div class="cfg-row-left">
+              <span class="cfg-row-icon">📅</span>
+              <div>
+                <div class="cfg-row-label">Arquivo de Puzzles</div>
+                <div class="cfg-row-sub">Ver puzzles anteriores</div>
+              </div>
+            </div>
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text3);flex-shrink:0"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
+          <div class="cfg-row cfg-mobile-only" onclick="closeM('config-modal'); openTutorial()">
+            <div class="cfg-row-left">
+              <span class="cfg-row-icon">❓</span>
+              <div>
+                <div class="cfg-row-label">Tutorial / Ajuda</div>
+                <div class="cfg-row-sub">Ver como jogar</div>
+              </div>
+            </div>
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text3);flex-shrink:0"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
         </div>
       </div>
     </div>
