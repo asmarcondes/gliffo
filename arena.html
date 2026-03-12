@@ -2794,6 +2794,8 @@
       let G_timerInterval = null;
       let G_feedbackData = null; // { feedback, correct, chosenWord }
       let G_roundStartMs = 0; // timestamp quando fase propose começou (para tiebreaker)
+      let G_wordAttempts = 0; // tentativas na palavra atual (reseta quando nova palavra é sorteada)
+      const MAX_WORD_ATTEMPTS = 4; // máximo de tentativas por palavra (como no index.html)
 
       // Power-up state
       let G_shieldActive = false; // escudo ativado pelo meu time
@@ -3307,9 +3309,10 @@
           ${reactionsHtml}
           ${
             S.isHost
-              ? `
-            <button id="btn-next-turn" class="btn btn-primary" style="margin-top:0.5rem">Próximo Turno →</button>
-          `
+              ? correct || G_wordAttempts >= MAX_WORD_ATTEMPTS
+                ? `<button id="btn-next-turn" class="btn btn-primary" style="margin-top:0.5rem">Próximo Turno →</button>`
+                : `<button id="btn-retry-word" class="btn btn-primary" style="margin-top:0.5rem">↩ Tentar Novamente (${G_wordAttempts}/${MAX_WORD_ATTEMPTS})</button>
+                   <button id="btn-next-turn" class="btn btn-secondary" style="margin-top:0.25rem;font-size:0.82rem;opacity:0.7">Desistir → Próximo Turno</button>`
               : `<div class="info-msg" style="margin:0;text-align:center">Aguardando o host avançar…</div>`
           }
         `;
@@ -3324,6 +3327,9 @@
         document
           .getElementById("btn-next-turn")
           ?.addEventListener("click", doNextTurn);
+        document
+          .getElementById("btn-retry-word")
+          ?.addEventListener("click", doRetryWord);
       }
 
       // ─── FASE: FINISHED ───────────────────────────────────────
@@ -3448,6 +3454,7 @@
         G_myVote = null;
         G_proposalSubmitted = false;
         G_feedbackData = null;
+        G_wordAttempts = 0; // nova palavra, zera contador
 
         // Sorteia a palavra — tenta edge function, fallback local
         const level =
@@ -3697,6 +3704,7 @@
           await sb.from("arena_rooms").update(updates).eq("id", S.roomId);
         }
 
+        G_wordAttempts++;
         G_feedbackData = { feedback, correct, chosenWord: guessWord };
 
         // Rastreia tempo gasto neste turno para tiebreaker
@@ -3733,6 +3741,30 @@
           .eq("id", S.roomId);
         S.busy = false;
         renderGamePhase();
+      }
+
+      async function doRetryWord() {
+        if (!S.isHost || S.busy) return;
+        S.busy = true;
+        G_feedbackData = null;
+        G_proposals = [];
+        G_votes = {};
+        G_myVote = null;
+        G_proposalSubmitted = false;
+        G_fogActive = false;
+        G_mirrorActive = false;
+        G_hiddenVotes = false;
+        G_revealSlot = null;
+        // Volta para propose mantendo a mesma palavra e current_turn
+        const cfg = S.room.config || {};
+        const timerSec = cfg.timer_propose || 45;
+        const deadline = new Date(Date.now() + timerSec * 1000).toISOString();
+        G_roundStartMs = Date.now();
+        await sb
+          .from("arena_rooms")
+          .update({ phase: "propose", phase_deadline: deadline })
+          .eq("id", S.roomId);
+        S.busy = false;
       }
 
       async function doNextTurn() {
