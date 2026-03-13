@@ -1886,7 +1886,7 @@
       .tut-slot {
         flex: 1;
         max-width: 60px;
-        aspect-ratio: 1;
+        height: 60px;
         border-radius: 9px;
         border: 1.5px solid var(--border2);
         background: var(--surface2);
@@ -1898,7 +1898,7 @@
       }
       .tut-slot svg {
         width: 65%;
-        height: 65%;
+        aspect-ratio: 1;
       }
       .tut-slot.active {
         border-color: var(--amber-400);
@@ -7956,13 +7956,13 @@
             el.style.background = tcOf[l] || TC[i % 4];
             const svg = makeSVG(l, "#fff");
             if (svg) {
-              svg.style.cssText = "width:65%;height:65%;";
+              svg.style.cssText = "width:65%;aspect-ratio:1;";
               el.appendChild(svg);
             }
           } else {
             const svg = makeSVG(l, s);
             if (svg) {
-              svg.style.cssText = "width:65%;height:65%;";
+              svg.style.cssText = "width:65%;aspect-ratio:1;";
               el.appendChild(svg);
             }
           }
@@ -8274,7 +8274,7 @@
             el.style.borderColor = "transparent";
             const svg = makeSVG(l, "#fff");
             if (svg) {
-              svg.style.cssText = "width:65%;height:65%;";
+              svg.style.cssText = "width:65%;aspect-ratio:1;";
               el.appendChild(svg);
             }
           } else {
@@ -8285,7 +8285,7 @@
             if (l) {
               const svg = makeSVG(l, s);
               if (svg) {
-                svg.style.cssText = "width:65%;height:65%;";
+                svg.style.cssText = "width:65%;aspect-ratio:1;";
                 el.appendChild(svg);
               }
             }
@@ -8468,6 +8468,12 @@
           if (token && token.cancelled) return;
           const feed = document.getElementById("tut-chat-feed");
           if (!feed) return;
+          // Reuse any existing typing indicator (e.g. decodingEl from glyph phase)
+          const existing = feed.querySelector(".tut-typing:not([id])");
+          if (existing) {
+            existing.id = id;
+            return; // already visible — just tag it and move on
+          }
           const el = document.createElement("div");
           el.id = id;
           el.className = "tut-typing";
@@ -8506,19 +8512,58 @@
         }
       }
       function chatMsg(html, delay) {
+        const TYPING_LEAD = 600; // show indicator this many ms before message appears
+        let typingEl = null;
+
+        const appendTyping = (feed) => {
+          if (typingEl) return;
+          // Reuse any typing indicator already in the feed (e.g. decodingEl from glyph phase)
+          const existing = feed.querySelector(".tut-typing");
+          if (existing) {
+            typingEl = existing;
+            return;
+          }
+          typingEl = document.createElement("div");
+          typingEl.className = "tut-typing";
+          typingEl.innerHTML = "<span></span><span></span><span></span>";
+          feed.appendChild(typingEl);
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => {
+              if (typingEl) typingEl.classList.add("show");
+              scrollFeed();
+            }),
+          );
+        };
+
+        // Pre-show typing indicator TYPING_LEAD ms before the message is due
+        if (delay > TYPING_LEAD) {
+          tDelay(() => {
+            if (currentActionToken && currentActionToken.cancelled) return;
+            const feed = document.getElementById("tut-chat-feed");
+            if (feed) appendTyping(feed);
+          }, delay - TYPING_LEAD);
+        }
+
         tDelay(() => {
           if (currentActionToken && currentActionToken.cancelled) return;
           const feed = document.getElementById("tut-chat-feed");
           if (!feed) return;
           // Extra wait if previous message was long and the user may not have finished reading
           const extra = Math.max(0, _chatLastAt + _chatLastReadMs - Date.now());
+          // If we're about to wait extra and have no indicator yet, show one now
+          if (!typingEl && extra > 300) appendTyping(feed);
           const doShow = () => {
             _chatLastAt = Date.now();
             _chatLastReadMs = readDelay(html);
             const div = document.createElement("div");
             div.className = "tut-bubble-left";
             div.innerHTML = html;
-            feed.appendChild(div);
+            if (typingEl && typingEl.parentNode) {
+              feed.replaceChild(div, typingEl);
+              typingEl = null;
+            } else {
+              feed.appendChild(div);
+            }
             requestAnimationFrame(() =>
               requestAnimationFrame(() => {
                 div.classList.add("show");
@@ -8553,7 +8598,10 @@
             scrollFeed();
           }),
         );
-        if (cb) setTimeout(cb, 400);
+        if (cb) {
+          const t = setTimeout(cb, 400);
+          tutTimers.push(t); // track so tClear() can cancel on close/reopen
+        }
       }
 
       function chatUser(text, delay) {
@@ -8725,8 +8773,8 @@
       }
       function chatChoices(choices, delay) {
         tDelay(() => {
-          if (!(currentActionToken && currentActionToken.cancelled))
-            chatSetChoices(choices);
+          if (currentActionToken && currentActionToken.cancelled) return;
+          chatSetChoices(choices);
         }, delay);
       }
 
@@ -9007,15 +9055,14 @@
                   "d",
                   `M ${ex} ${ey} L ${ex + ah * Math.cos(a1)} ${ey + ah * Math.sin(a1)} M ${ex} ${ey} L ${ex + ah * Math.cos(a2)} ${ey + ah * Math.sin(a2)}`,
                 );
-                return Math.round(
-                  Math.sqrt((ex - sx) ** 2 + (ey - sy) ** 2) * 1.5,
-                );
+                return Math.round(mainPath.getTotalLength());
               }
 
               // Initial draw with animation
               const pLen = updateArrowPaths();
+              const hLen = Math.round(headPath.getTotalLength());
               mainPath.style.cssText = `stroke-dasharray:${pLen};stroke-dashoffset:${pLen};animation:ts0DrawPath 0.8s cubic-bezier(0.4,0,0.3,1) 0.05s forwards;`;
-              headPath.style.cssText = `stroke-dasharray:30;stroke-dashoffset:30;animation:ts0DrawPath 0.25s ease-out 0.75s forwards;`;
+              headPath.style.cssText = `stroke-dasharray:${hLen};stroke-dashoffset:${hLen};animation:ts0DrawPath 0.25s ease-out 0.75s forwards;`;
 
               // After animation ends, track scroll to keep arrow aligned
               setTimeout(() => {
@@ -9738,7 +9785,7 @@
                       "width:" + BB_W + "px",
                       "height:" + BB_W + "px",
                       "z-index:10",
-                      "pointer-events:none",
+                      "cursor:pointer",
                       "will-change:right",
                     ].join(";") + ";";
                   panel.style.position = "relative";
@@ -9754,25 +9801,67 @@
                       ? undefined
                       : "/animations/banana_boy.json",
                   });
-                  // Easter egg: clicar no painel enquanto o banana boy anda
-                  let bbClicked = false;
-                  const _bbClick = () => {
-                    if (bbClicked) return;
-                    bbClicked = true;
-                    panel.removeEventListener("click", _bbClick);
-                    chatMsg(
-                      "Ei! O menino s\u00f3 passa, n\u00e3o morde! \uD83C\uDF4C",
-                      0,
-                    );
-                  };
-                  panel.addEventListener("click", _bbClick);
                   const panelW = panel.offsetWidth || 480;
                   const DIST = panelW + BB_W;
                   const T_WALK = 7500;
                   const eio = (p) => -(Math.cos(Math.PI * p) - 1) / 2;
                   let t0 = null,
-                    midFired = false;
+                    midFired = false,
+                    bbStopped = false;
+                  // Easter egg: clicar na banana — ela vira e volta
+                  const _bbClick = () => {
+                    if (bbStopped) return;
+                    bbStopped = true;
+                    bbDiv.removeEventListener("click", _bbClick);
+                    bbDiv.style.cursor = "default";
+                    // Insert the easter egg bubble before the bb-typing indicator (if visible)
+                    const feed = document.getElementById("tut-chat-feed");
+                    const typingEl = document.getElementById("bb-typing");
+                    const eggBubble = document.createElement("div");
+                    eggBubble.className = "tut-bubble-left";
+                    eggBubble.textContent =
+                      "Ei! O menino só passa, não morde! 🍌";
+                    if (feed && typingEl) {
+                      feed.insertBefore(eggBubble, typingEl);
+                    } else if (feed) {
+                      feed.appendChild(eggBubble);
+                    }
+                    requestAnimationFrame(() =>
+                      requestAnimationFrame(() => {
+                        eggBubble.classList.add("show");
+                        scrollFeed();
+                      }),
+                    );
+                    if (!midFired) {
+                      midFired = true;
+                      if (bbMidCb) setTimeout(bbMidCb, 1200);
+                    }
+                    // Flip horizontally and animate back to the right
+                    bbDiv.style.transform = "scaleX(-1)";
+                    const startRight = parseFloat(bbDiv.style.right) || 0;
+                    const returnDist = startRight + BB_W; // distance back off-screen right
+                    const T_RETURN = Math.max(
+                      1200,
+                      (returnDist / DIST) * T_WALK * 0.6,
+                    );
+                    let r0 = null;
+                    const doReturn = (ts) => {
+                      if (!r0) r0 = ts;
+                      const p = Math.min((ts - r0) / T_RETURN, 1);
+                      bbDiv.style.right =
+                        (startRight - eio(p) * returnDist).toFixed(0) + "px";
+                      if (p < 1) {
+                        requestAnimationFrame(doReturn);
+                        return;
+                      }
+                      if (bbInst) bbInst.destroy();
+                      bbDiv.remove();
+                    };
+                    requestAnimationFrame(doReturn);
+                  };
+                  bbDiv.addEventListener("click", _bbClick);
                   const doFrame = (ts) => {
+                    if (bbStopped) return;
                     if (!t0) t0 = ts;
                     const t = ts - t0;
                     if (!midFired && t >= T_WALK * 0.85) {
@@ -9780,7 +9869,7 @@
                       if (bbMidCb) bbMidCb();
                     }
                     if (t >= T_WALK) {
-                      panel.removeEventListener("click", _bbClick);
+                      bbDiv.removeEventListener("click", _bbClick);
                       if (bbInst) bbInst.destroy();
                       bbDiv.remove();
                       return;
@@ -9870,7 +9959,7 @@
                     if (!slot) return;
                     const sv = makeSVG(l, tStroke());
                     if (sv) {
-                      sv.style.cssText = "width:65%;height:65%;";
+                      sv.style.cssText = "width:65%;aspect-ratio:1;";
                       slot.appendChild(sv);
                     }
                     slot.classList.remove("tap");
@@ -9878,12 +9967,7 @@
                     slot.classList.add("tap");
                     scrollFeed();
                     // Remove typing indicator when last letter lands
-                    if (
-                      i === letters2.length - 1 &&
-                      decodingEl &&
-                      decodingEl.parentNode
-                    )
-                      decodingEl.parentNode.removeChild(decodingEl);
+                    // (kept alive — chatMsg will claim the existing .tut-typing instead)
                     // Right glyph: prepend letter's SVG layer so letter[0] ends on top
                     if (wSt2) {
                       const wSvg = makeSVG(
@@ -9926,7 +10010,7 @@
                         const sv = makeSVG(l, "#fff");
                         if (sv) {
                           sv.style.cssText =
-                            "width:65%;height:65%;display:block;";
+                            "width:65%;aspect-ratio:1;display:block;";
                           el.appendChild(sv);
                         }
                       } else {
@@ -9935,7 +10019,7 @@
                         const sv = makeSVG(l, tStroke());
                         if (sv) {
                           sv.style.cssText =
-                            "width:65%;height:65%;display:block;opacity:0.5;";
+                            "width:65%;aspect-ratio:1;display:block;opacity:0.5;";
                           el.appendChild(sv);
                         }
                       }
@@ -10031,208 +10115,414 @@
 
                 // CARO comparison sequence — extracted so birra flow can also call it
                 const startCaro = (cameFromBirra) => {
-                  chatMsg(
-                    `Lembra de <strong>BOLA ≠ LOBA</strong> lá em cima? É exatamente isso aqui — mesmas letras, ordem diferente. Ficamos com 2 opções: <strong>CARO</strong> e <strong>ARCO</strong>.`,
-                    200,
+                  // Compute which letters the player discovered across both guesses
+                  const coloredSet = new Set();
+                  tried2.forEach((w) =>
+                    wFound2[w].forEach((l) => coloredSet.add(l)),
                   );
-                  chatMsg(
-                    `Mas olha a pegadinha: o glifo deles é idêntico! 😯 Ambas têm A, R, C, O — só a ordem muda.`,
-                    1200,
+                  coloredSet.delete("O"); // O is always correct/decoded after P2
+                  const coloredArr = [...coloredSet];
+                  const unknownInGlyph = ["A", "R", "C"].filter(
+                    (l) => !coloredSet.has(l),
                   );
-                  let caroGst, arcoGst;
-                  chatCard((card) => {
-                    card.style.cssText +=
-                      "display:flex;flex-direction:column;gap:10px;";
-                    const caroRow = document.createElement("div");
-                    caroRow.className = "tut-glyph-row";
-                    const { panel: cp, stack: cs } = makeGlyphPanel("CARO");
-                    caroGst = cs;
-                    const { panel: ap, stack: as_ } = makeGlyphPanel("ARCO");
-                    arcoGst = as_;
-                    caroRow.appendChild(cp);
-                    caroRow.appendChild(ap);
-                    card.appendChild(caroRow);
-                  }, 1800);
-                  // Color both glyphs identically (same ARCO colors) to show they're the same
-                  tDelay(() => {
-                    if (token.cancelled) return;
-                    tStackEl(caroGst, ["C", "A", "R", "O"], (l) => tdOf[l]);
-                    tStackEl(arcoGst, TDL, (l) => tdOf[l]);
-                  }, 2100);
-                  tDelay(() => {
-                    if (token.cancelled) return;
-                    chatChoices([
-                      {
-                        label: "Entendido — e agora? 🤔",
-                        onClick: () => {
-                          chatMsg(
-                            `Nesse caso a <strong>Chave 🔑</strong> não ajuda — ela revela uma letra, e aqui todas já são conhecidas. Só a ordem decide. Tenta a sorte! 🔓`,
-                            200,
-                          );
-                          // Interactive slots — user types ARCO or CARO letter by letter
-                          tDelay(() => {
-                            if (token.cancelled) return;
-                            iWord = "ARCO";
-                            iLetters = TDL;
-                            iColorOf = tdOf;
-                            iTyped = ["", "", "", ""];
-                            iConfirmed = new Set();
-                            iWrongCount = -999; // disable easter egg
-                            iCursor = 0;
-                            onTutGiveUp = null;
-                            tutInteractReady = true;
 
-                            const feed =
-                              document.getElementById("tut-chat-feed");
-                            if (!feed) return;
+                  // Shared BOLA ≠ LOBA → CARO/ARCO panels → "Entendido" choice.
+                  // `base` = ms delay for the first BOLA message (relative to now).
+                  const continueBolaSeq = (base) => {
+                    let caroGst, arcoGst;
+                    chatMsg(
+                      `Lembra de <strong>BOLA ≠ LOBA</strong> lá em cima? É exatamente isso aqui — mesmas letras, ordem diferente. Ficamos com 2 opções: <strong>CARO</strong> e <strong>ARCO</strong>.`,
+                      base,
+                    );
+                    chatMsg(
+                      `Mas olha a pegadinha: o glifo deles é idêntico! 😯 Ambas têm A, C, O, R — só a ordem muda.`,
+                      base + 900,
+                    );
+                    chatCard((card) => {
+                      card.style.cssText +=
+                        "display:flex;flex-direction:column;gap:10px;";
+                      const caroRow = document.createElement("div");
+                      caroRow.className = "tut-glyph-row";
+                      const { panel: cp, stack: cs } = makeGlyphPanel("CARO");
+                      caroGst = cs;
+                      const { panel: ap, stack: as_ } = makeGlyphPanel("ARCO");
+                      arcoGst = as_;
+                      caroRow.appendChild(cp);
+                      caroRow.appendChild(ap);
+                      card.appendChild(caroRow);
+                    }, base + 1500);
+                    // Color both glyphs identically (same ARCO colors) to show they're the same
+                    tDelay(() => {
+                      if (token.cancelled) return;
+                      tStackEl(caroGst, ["C", "A", "R", "O"], (l) => tdOf[l]);
+                      tStackEl(arcoGst, TDL, (l) => tdOf[l]);
+                    }, base + 1800);
+                    tDelay(() => {
+                      if (token.cancelled) return;
+                      chatChoices([
+                        {
+                          label: "Entendido — e agora? 🤔",
+                          onClick: () => {
+                            chatMsg(
+                              `Se essa palavra fosse mais difícil, você poderia usar a <strong>Chave 🔑</strong> — ela revela a letra numa posição que você escolher. Mas tenho certeza que você não precisa dela pra essa palavra ridiculamente fácil, né? 😏`,
+                              200,
+                            );
+                            let tutKeyRevealedPos = null;
+                            const launchInteractive = (delay) => {
+                              // Interactive slots — user types ARCO or CARO letter by letter
+                              tDelay(() => {
+                                if (token.cancelled) return;
+                                iWord = "ARCO";
+                                iLetters = TDL;
+                                iColorOf = tdOf;
+                                iTyped = ["", "", "", ""];
+                                iConfirmed = new Set();
+                                // O (last slot) is always decoded — pre-confirm it
+                                const oPos = TDL.length - 1;
+                                iTyped[oPos] = TDL[oPos];
+                                iConfirmed.add(oPos);
+                                if (tutKeyRevealedPos !== null) {
+                                  iTyped[tutKeyRevealedPos] =
+                                    TDL[tutKeyRevealedPos];
+                                  iConfirmed.add(tutKeyRevealedPos);
+                                }
+                                iWrongCount = -999; // disable easter egg
+                                iCursor = 0;
+                                while (
+                                  iCursor < TDL.length &&
+                                  iConfirmed.has(iCursor)
+                                )
+                                  iCursor++;
+                                onTutGiveUp = null;
+                                tutInteractReady = true;
 
-                            const wrap = document.createElement("div");
-                            wrap.className = "tut-bubble-right";
+                                const feed =
+                                  document.getElementById("tut-chat-feed");
+                                if (!feed) return;
 
-                            const staticHint = document.createElement("p");
-                            staticHint.id = "ts5-hint";
-                            staticHint.style.cssText =
-                              "font-size:0.76rem;color:var(--text3);margin:0 0 8px;text-align:center;";
-                            staticHint.textContent =
-                              "ARCO ou CARO? Só a ordem certa decifra o glifo ↵";
-                            wrap.appendChild(staticHint);
+                                const wrap = document.createElement("div");
+                                wrap.className = "tut-bubble-right";
 
-                            const slotsEl = document.createElement("div");
-                            slotsEl.id = "ts5-interact";
-                            slotsEl.className = "tut-slots";
-                            slotsEl.style.justifyContent = "center";
-                            wrap.appendChild(slotsEl);
+                                const staticHint = document.createElement("p");
+                                staticHint.id = "ts5-hint";
+                                staticHint.style.cssText =
+                                  "font-size:0.76rem;color:var(--text3);margin:0 0 8px;text-align:center;";
+                                staticHint.textContent =
+                                  "ARCO ou CARO? Só a ordem certa decifra o glifo ↵";
+                                wrap.appendChild(staticHint);
 
-                            const confirmBtn = document.createElement("button");
-                            confirmBtn.className = "tut-choice-btn";
-                            confirmBtn.style.cssText =
-                              "margin-top:8px;width:100%;font-size:0.82rem;padding:6px 12px;";
-                            confirmBtn.textContent = "Confirmar ↵";
-                            wrap.appendChild(confirmBtn);
+                                const slotsEl = document.createElement("div");
+                                slotsEl.id = "ts5-interact";
+                                slotsEl.className = "tut-slots";
+                                slotsEl.style.justifyContent = "center";
+                                wrap.appendChild(slotsEl);
 
-                            const kbd = document.createElement("div");
-                            kbd.id = "tut-kbd";
-                            kbd.className = "tut-kbd";
-                            [...new Set(iWord.split(""))].forEach((letter) => {
-                              const btn = document.createElement("button");
-                              btn.className = "tut-kbd-btn";
-                              btn.type = "button";
-                              btn.textContent = letter;
-                              btn.addEventListener("touchstart", (e) => {
-                                e.preventDefault();
-                                tutKeyHandler?.({
-                                  key: letter,
-                                  preventDefault: () => {},
+                                const confirmBtn =
+                                  document.createElement("button");
+                                confirmBtn.className = "tut-choice-btn";
+                                confirmBtn.style.cssText =
+                                  "margin-top:8px;width:100%;font-size:0.82rem;padding:6px 12px;";
+                                confirmBtn.textContent = "Confirmar ↵";
+                                wrap.appendChild(confirmBtn);
+
+                                const kbd = document.createElement("div");
+                                kbd.id = "tut-kbd";
+                                kbd.className = "tut-kbd";
+                                // Only show letters that haven't been confirmed yet
+                                const remainingLetters = [
+                                  ...new Set(
+                                    TDL.filter((_, i) => !iConfirmed.has(i)),
+                                  ),
+                                ];
+                                const fireKey = (key) =>
+                                  tutKeyHandler?.({
+                                    key,
+                                    preventDefault: () => {},
+                                  });
+                                remainingLetters.forEach((letter) => {
+                                  const btn = document.createElement("button");
+                                  btn.className = "tut-kbd-btn";
+                                  btn.type = "button";
+                                  btn.textContent = letter;
+                                  btn.addEventListener("pointerdown", (e) => {
+                                    e.preventDefault();
+                                    fireKey(letter);
+                                  });
+                                  kbd.appendChild(btn);
                                 });
-                              });
-                              kbd.appendChild(btn);
-                            });
-                            const bksp = document.createElement("button");
-                            bksp.className = "tut-kbd-btn";
-                            bksp.type = "button";
-                            bksp.textContent = "⌫";
-                            bksp.style.minWidth = "52px";
-                            bksp.addEventListener("touchstart", (e) => {
-                              e.preventDefault();
-                              tutKeyHandler?.({
-                                key: "Backspace",
-                                preventDefault: () => {},
-                              });
-                            });
-                            kbd.appendChild(bksp);
-                            wrap.appendChild(kbd);
+                                const bksp = document.createElement("button");
+                                bksp.className = "tut-kbd-btn";
+                                bksp.type = "button";
+                                bksp.textContent = "⌫";
+                                bksp.style.minWidth = "52px";
+                                bksp.addEventListener("pointerdown", (e) => {
+                                  e.preventDefault();
+                                  fireKey("Backspace");
+                                });
+                                kbd.appendChild(bksp);
+                                wrap.appendChild(kbd);
 
-                            feed.appendChild(wrap);
-                            requestAnimationFrame(() =>
-                              requestAnimationFrame(() => {
-                                wrap.classList.add("show");
-                                scrollFeed();
-                              }),
-                            );
-
-                            const handleNonArco = () => {
-                              if (!iTyped.every(Boolean)) return;
-                              const typed = iTyped.join("");
-                              if (typed === "ARCO") return; // auto-handled by buildInteract
-                              removeTutKeyHandler();
-                              tutInteractReady = false;
-                              if (confirmBtn.parentNode) confirmBtn.remove();
-                              document.getElementById("tut-kbd")?.remove();
-                              if (typed === "CARO") {
-                                const zoada = cameFromBirra
-                                  ? `Sério?! Você disse que estava confuso... e ainda errou! Isso é talento. 😂`
-                                  : `Quase! Era <strong>ARCO</strong> — as letras eram as mesmas, mas a ordem importa! 😄`;
-                                chatMsg(zoada, 300);
-                                chatMsg(
-                                  `A palavra do dia é <strong>ARCO</strong>. Óbvio, né? 😏`,
-                                  1400,
+                                feed.appendChild(wrap);
+                                requestAnimationFrame(() =>
+                                  requestAnimationFrame(() => {
+                                    wrap.classList.add("show");
+                                    scrollFeed();
+                                  }),
                                 );
-                                chatMsg(
-                                  `Mas agora você sabe como funciona! Bora jogar? 🎮`,
-                                  2400,
+
+                                const handleNonArco = () => {
+                                  if (!iTyped.every(Boolean)) return;
+                                  const typed = iTyped.join("");
+                                  if (typed === "ARCO") return; // auto-handled by buildInteract
+                                  removeTutKeyHandler();
+                                  tutInteractReady = false;
+                                  if (confirmBtn.parentNode)
+                                    confirmBtn.remove();
+                                  document.getElementById("tut-kbd")?.remove();
+                                  if (typed === "CARO") {
+                                    const zoada = cameFromBirra
+                                      ? `Sério?! Você disse que estava confuso... e ainda errou! Isso é talento. 😂`
+                                      : `Quase! Era <strong>ARCO</strong> — as letras eram as mesmas, mas a ordem importa! 😄`;
+                                    chatMsg(zoada, 300);
+                                    chatMsg(
+                                      `A palavra do dia é <strong>ARCO</strong>. Óbvio, né? 😏`,
+                                      1400,
+                                    );
+                                    chatMsg(
+                                      `Mas agora você sabe como funciona! Bora jogar? 🎮`,
+                                      2400,
+                                    );
+                                    const caroMsg = cameFromBirra
+                                      ? "Depois de toda aquela birra... errou CARO... e ainda quer revisar?! \uD83D\uDE2D"
+                                      : "Você não vai com a minha cara? \uD83D\uDE24";
+                                    chatFinale(false, 2900, 3400, caroMsg);
+                                  } else {
+                                    chatMsg(
+                                      `Hmm... nem era uma das opções! 😅 Era <strong>ARCO</strong>.`,
+                                      300,
+                                    );
+                                    chatMsg(
+                                      `Mas agora você sabe como funciona! Bora jogar? 🎮`,
+                                      1500,
+                                    );
+                                    chatFinale(false, 2000, 2500);
+                                  }
+                                };
+
+                                confirmBtn.onclick = handleNonArco;
+
+                                onTutSolved = () => {
+                                  tutInteractReady = false;
+                                  if (confirmBtn.parentNode)
+                                    confirmBtn.remove();
+                                  document.getElementById("tut-kbd")?.remove();
+                                  confetti(feed);
+                                  chatMsg(
+                                    `Isso aí! 🎉 Era <strong>ARCO</strong>! Você conseguiu!`,
+                                    300,
+                                  );
+                                  chatMsg(
+                                    `Mandou bem! Agora você sabe jogar. 🏆`,
+                                    1400,
+                                  );
+                                  chatFinale(true, 1900, 2500);
+                                };
+
+                                buildInteract();
+                                installTutKeyHandler();
+
+                                // Patch: add Enter key for non-ARCO submissions
+                                const baseHandler = tutKeyHandler;
+                                document.removeEventListener(
+                                  "keydown",
+                                  baseHandler,
                                 );
-                                const caroMsg = cameFromBirra
-                                  ? "Depois de toda aquela birra... errou CARO... e ainda quer revisar?! \uD83D\uDE2D"
-                                  : "Você não vai com a minha cara? \uD83D\uDE24";
-                                chatFinale(false, 2900, 3400, caroMsg);
-                              } else {
-                                chatMsg(
-                                  `Hmm... nem era uma das opções! 😅 Era <strong>ARCO</strong>.`,
-                                  300,
+                                const caroKeyHandler = (e) => {
+                                  if (e.key === "Enter") {
+                                    e.preventDefault();
+                                    handleNonArco();
+                                  } else {
+                                    baseHandler(e);
+                                  }
+                                };
+                                tutKeyHandler = caroKeyHandler;
+                                document.addEventListener(
+                                  "keydown",
+                                  caroKeyHandler,
                                 );
-                                chatMsg(
-                                  `Mas agora você sabe como funciona! Bora jogar? 🎮`,
-                                  1500,
-                                );
-                                chatFinale(false, 2000, 2500);
-                              }
-                            };
-
-                            confirmBtn.onclick = handleNonArco;
-
-                            onTutSolved = () => {
-                              tutInteractReady = false;
-                              if (confirmBtn.parentNode) confirmBtn.remove();
-                              document.getElementById("tut-kbd")?.remove();
-                              confetti(feed);
-                              chatMsg(
-                                `Isso aí! 🎉 Era <strong>ARCO</strong>! Você conseguiu!`,
-                                300,
-                              );
-                              chatMsg(
-                                `Mandou bem! Agora você sabe jogar. 🏆`,
-                                1400,
-                              );
-                              chatFinale(true, 1900, 2500);
-                            };
-
-                            buildInteract();
-                            installTutKeyHandler();
-
-                            // Patch: add Enter key for non-ARCO submissions
-                            const baseHandler = tutKeyHandler;
-                            document.removeEventListener(
-                              "keydown",
-                              baseHandler,
-                            );
-                            const caroKeyHandler = (e) => {
-                              if (e.key === "Enter") {
-                                e.preventDefault();
-                                handleNonArco();
-                              } else {
-                                baseHandler(e);
-                              }
-                            };
-                            tutKeyHandler = caroKeyHandler;
-                            document.addEventListener(
-                              "keydown",
-                              caroKeyHandler,
-                            );
-                          }, 1400);
+                              }, delay);
+                            }; // end launchInteractive
+                            tDelay(() => {
+                              if (token.cancelled) return;
+                              chatSetChoices([
+                                {
+                                  label: "Claro que não! 💪",
+                                  onClick: () => launchInteractive(400),
+                                },
+                                {
+                                  label: "Quero usar a Chave 🔑",
+                                  secondary: true,
+                                  onClick: () => {
+                                    chatMsg(
+                                      `Ok, mas fique sabendo que isso ficará marcado pra sempre em minha memória... 📝`,
+                                      0,
+                                    );
+                                    chatCard((card) => {
+                                      card.style.cssText += "gap:10px;";
+                                      const lbl = document.createElement("p");
+                                      lbl.style.cssText =
+                                        "margin:0 0 2px;font-size:0.78rem;color:var(--text3);text-align:center;";
+                                      lbl.textContent =
+                                        "Escolha a posição que quer revelar:";
+                                      card.appendChild(lbl);
+                                      const boxRow =
+                                        document.createElement("div");
+                                      boxRow.className = "kboxes";
+                                      boxRow.style.marginBottom = "8px";
+                                      const kboxEls = [];
+                                      let selPos = null;
+                                      let revBtn;
+                                      // O (last position) is already decoded — mark as used
+                                      const tutKeyUsed = new Set([
+                                        TDL.length - 1,
+                                      ]);
+                                      TDL.forEach((letter, pos) => {
+                                        const b = document.createElement("div");
+                                        const isUsed = tutKeyUsed.has(pos);
+                                        b.className =
+                                          "kbox" + (isUsed ? " used" : "");
+                                        if (isUsed) {
+                                          b.style.background = tdOf[letter];
+                                          b.style.borderColor = "transparent";
+                                          const svg = makeSVG(letter, "#fff");
+                                          if (svg) {
+                                            svg.style.cssText =
+                                              "width:62%;height:62%;";
+                                            b.appendChild(svg);
+                                          }
+                                        } else {
+                                          b.textContent = "?";
+                                          b.onclick = () => {
+                                            kboxEls.forEach((x) =>
+                                              x.classList.remove("sel"),
+                                            );
+                                            b.classList.add("sel");
+                                            selPos = pos;
+                                            revBtn.disabled = false;
+                                          };
+                                        }
+                                        kboxEls.push(b);
+                                        boxRow.appendChild(b);
+                                      });
+                                      card.appendChild(boxRow);
+                                      revBtn = document.createElement("button");
+                                      revBtn.className = "kuse-btn";
+                                      revBtn.disabled = true;
+                                      revBtn.textContent = "Revelar 🔑";
+                                      revBtn.onclick = () => {
+                                        if (selPos === null) return;
+                                        const letter = TDL[selPos];
+                                        const color = tdOf[letter];
+                                        kboxEls.forEach((b, i) => {
+                                          b.onclick = null;
+                                          if (i === selPos) {
+                                            b.classList.remove("sel");
+                                            b.style.background = color;
+                                            b.style.borderColor = "transparent";
+                                            b.style.cursor = "default";
+                                            b.textContent = "";
+                                            const svg = makeSVG(letter, "#fff");
+                                            if (svg) {
+                                              svg.style.cssText =
+                                                "width:62%;height:62%;";
+                                              b.appendChild(svg);
+                                            }
+                                          } else {
+                                            b.style.opacity = "0.3";
+                                            b.style.cursor = "default";
+                                          }
+                                        });
+                                        revBtn.disabled = true;
+                                        revBtn.style.opacity = "0.5";
+                                        tutKeyRevealedPos = selPos;
+                                        launchInteractive(900);
+                                      };
+                                      card.appendChild(revBtn);
+                                    }, 1000);
+                                  },
+                                },
+                              ]);
+                            }, 1200);
+                          },
                         },
-                      },
-                    ]);
-                  }, 2600);
+                      ]);
+                    }, base + 2300);
+                  }; // end continueBolaSeq
+
+                  if (coloredArr.length === 3) {
+                    chatMsg(
+                      `O glifo ficou com 3 letras — e <strong>todas estão coloridas</strong>! ✨ Você descobriu que <strong>A</strong>, <strong>C</strong> e <strong>R</strong> existem na palavra, e <strong>O</strong> está na posição certa.`,
+                      200,
+                    );
+                    continueBolaSeq(1200);
+                  } else if (unknownInGlyph.length === 1) {
+                    const [miss] = unknownInGlyph;
+                    const found2Str = coloredArr
+                      .map((l) => `<strong>${l}</strong>`)
+                      .join(" e ");
+                    // Keep a reference to the bubble so "Eu descobri?" can redact it
+                    let introBubble = null;
+                    const introHtmlVisible = `Temos <strong>2 letras coloridas</strong> no glifo — você descobriu que ${found2Str} existem na palavra, e <strong>O</strong> está no lugar certo. Falta o <strong>${miss}</strong>... mas entre nós: ele também está lá 🤫.`;
+                    const introHtmlMasked = `Temos <strong>2 letras coloridas</strong> no glifo — você descobriu que <strong>◆</strong> e <strong>◆</strong> existem na palavra, e <strong>O</strong> está no lugar certo. Falta o <strong>◆</strong>... mas entre nós: ele também está lá 🤫.`;
+                    tDelay(() => {
+                      if (token.cancelled) return;
+                      const feed = document.getElementById("tut-chat-feed");
+                      if (!feed) return;
+                      introBubble = document.createElement("div");
+                      introBubble.className = "tut-bubble-left";
+                      introBubble.innerHTML = introHtmlVisible;
+                      feed.appendChild(introBubble);
+                      requestAnimationFrame(() =>
+                        requestAnimationFrame(() => {
+                          introBubble.classList.add("show");
+                          scrollFeed();
+                        }),
+                      );
+                    }, 200);
+                    tDelay(() => {
+                      if (token.cancelled) return;
+                      chatSetChoices([
+                        {
+                          label: "Ok",
+                          onClick: () => continueBolaSeq(300),
+                        },
+                        {
+                          label: "Eu descobri? 🔍",
+                          secondary: true,
+                          onClick: () => {
+                            // Redact the letters in the existing bubble
+                            if (introBubble)
+                              introBubble.innerHTML = introHtmlMasked;
+                            chatMsg(
+                              `Sim... VOCÊ! Sem ajuda, eu não disse NADA 🙊`,
+                              300,
+                            );
+                            tDelay(() => {
+                              if (token.cancelled) return;
+                              continueBolaSeq(200);
+                            }, 1800);
+                          },
+                        },
+                      ]);
+                    }, 1200);
+                  } else {
+                    const [l1] = coloredArr;
+                    chatMsg(
+                      `Só conseguimos <strong>1 letra colorida</strong> — sabemos que <strong>${l1}</strong> existe na palavra, e <strong>O</strong> está no lugar certo. Com um spoilerim: <strong>C</strong> e <strong>R</strong> também estão lá! 🤫 Ou seja: <strong>A, C, O</strong> e <strong>R</strong>.<br><br>No jogo de verdade não revelamos qual é a letra colorida — você precisa descobrir olhando o glifo: às vezes ela fica no topo da pilha (bem óbvio!), às vezes aparecem só alguns traços coloridos lá no fundo. 🎨`,
+                      200,
+                    );
+                    continueBolaSeq(1200);
+                  }
                 };
 
                 // "Birra" flow — tutorial makes a fuss before relenting
@@ -10312,6 +10602,7 @@
                     },
                     {
                       label: "Estou confuso ainda... 😵",
+                      secondary: true,
                       onClick: () => {
                         birraRound1();
                       },
@@ -10339,7 +10630,8 @@
                   const indicator = document.getElementById("bb-typing");
                   const div = document.createElement("div");
                   div.className = "tut-bubble-left";
-                  div.innerHTML = `Agora com essa pista, tenta de novo! Use as letras na posição certa. 💡`;
+                  const p1FoundCount = wFound2[word].length;
+                  div.innerHTML = `Temos <strong>${p1FoundCount}</strong> letra${p1FoundCount !== 1 ? "s" : ""} colorida${p1FoundCount !== 1 ? "s" : ""} no glifo — o jogo não vai te dizer qual é: vai ter que descobrir. 🕵️`;
                   if (feed && indicator) {
                     feed.replaceChild(div, indicator);
                   } else if (feed) {
@@ -10353,12 +10645,16 @@
                   );
                   tDelay(() => {
                     if (token.cancelled) return;
-                    chatSetChoices(
-                      WORDS2_P2.map((w) => ({
-                        label: w,
-                        onClick: () => runGuess2(w),
-                      })),
-                    );
+                    chatMsg(`Vamos tentar outra palavra! 🔄`, 0);
+                    tDelay(() => {
+                      if (token.cancelled) return;
+                      chatSetChoices(
+                        WORDS2_P2.map((w) => ({
+                          label: w,
+                          onClick: () => runGuess2(w),
+                        })),
+                      );
+                    }, 900);
                   }, 1000);
                 };
                 if (num2 === 1) {
@@ -10558,8 +10854,8 @@
               1800,
             );
             tDelay(() => {
-              if (!(currentActionToken && currentActionToken.cancelled))
-                showByeInput();
+              if (currentActionToken && currentActionToken.cancelled) return;
+              showByeInput();
             }, 2600);
           }
 
@@ -10816,6 +11112,11 @@
         document.getElementById("tutorial-overlay").classList.add("hidden");
 
         // 2b. Limpa o chat para próxima abertura
+        const _oldArrow = document.getElementById("ts0-arrow-overlay");
+        if (_oldArrow) {
+          if (_oldArrow._cleanup) _oldArrow._cleanup();
+          _oldArrow.remove();
+        }
         const feed = document.getElementById("tut-chat-feed");
         const choices = document.getElementById("tut-chat-choices");
         if (feed) feed.innerHTML = "";
