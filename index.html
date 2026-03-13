@@ -784,6 +784,9 @@
         background: rgba(245, 166, 35, 0.08);
         box-shadow: 0 0 0 2.5px rgba(245, 166, 35, 0.35);
       }
+      .lbox.shake-slot.active {
+        animation: none;
+      }
       .lbox.decoded {
         border-color: transparent;
       }
@@ -913,6 +916,19 @@
         padding: 6px 12px;
         border-top: 1px solid var(--border);
         align-items: center;
+      }
+      .hrow-new {
+        animation: hrowSlideIn 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+      }
+      @keyframes hrowSlideIn {
+        from {
+          transform: translateY(-110%);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
       }
       .hw {
         font-size: 0.72rem;
@@ -1745,6 +1761,8 @@
         border: 1px solid var(--border);
         border-radius: 12px;
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
       }
       .tut-glyph-label {
         text-align: center;
@@ -1761,8 +1779,7 @@
         align-items: center;
         justify-content: center;
         padding: 16px;
-        aspect-ratio: 1;
-        max-height: 160px; /* evita painéis muito altos em mobile */
+        flex: 1;
       }
       .tut-gstack {
         position: relative;
@@ -5484,40 +5501,51 @@
         });
       }
 
+      function _makeHrow(a, animate) {
+        const row = document.createElement("div");
+        row.className = "hrow" + (animate ? " hrow-new" : "");
+        const wc = document.createElement("div");
+        wc.className = "hw";
+        wc.textContent = a.word;
+        const dc = document.createElement("div");
+        dc.className = "dcell";
+        a.decoded.forEach((p) => {
+          const d = document.createElement("div");
+          d.className = "hdot";
+          d.style.background = HARD_MODE ? "var(--text-muted)" : colorOf[WL[p]];
+          dc.appendChild(d);
+        });
+        const fc = document.createElement("div");
+        fc.className = "dcell";
+        a.found.forEach((l) => {
+          const d = document.createElement("div");
+          d.className = "hdot";
+          d.style.background = HARD_MODE ? "var(--text-muted)" : colorOf[l];
+          fc.appendChild(d);
+        });
+        row.appendChild(wc);
+        row.appendChild(dc);
+        row.appendChild(fc);
+        return row;
+      }
+
       function buildHistory() {
         if (!G.attempts.length) return;
         document.getElementById("history").style.display = "block";
         const rows = document.getElementById("hrows");
         rows.innerHTML = "";
         [...G.attempts].reverse().forEach((a) => {
-          const row = document.createElement("div");
-          row.className = "hrow fadein";
-          const wc = document.createElement("div");
-          wc.className = "hw";
-          wc.textContent = a.word;
-          const dc = document.createElement("div");
-          dc.className = "dcell";
-          a.decoded.forEach((p) => {
-            const d = document.createElement("div");
-            d.className = "hdot";
-            d.style.background = HARD_MODE
-              ? "var(--text-muted)"
-              : colorOf[WL[p]];
-            dc.appendChild(d);
-          });
-          const fc = document.createElement("div");
-          fc.className = "dcell";
-          a.found.forEach((l) => {
-            const d = document.createElement("div");
-            d.className = "hdot";
-            d.style.background = HARD_MODE ? "var(--text-muted)" : colorOf[l];
-            fc.appendChild(d);
-          });
-          row.appendChild(wc);
-          row.appendChild(dc);
-          row.appendChild(fc);
-          rows.appendChild(row);
+          rows.appendChild(_makeHrow(a, false));
         });
+      }
+
+      function prependHistoryRow(attempt) {
+        const histEl = document.getElementById("history");
+        const rows = document.getElementById("hrows");
+        histEl.style.display = "block";
+        const row = _makeHrow(attempt, true);
+        rows.insertBefore(row, rows.firstChild);
+        setTimeout(() => row.classList.remove("hrow-new"), 400);
       }
 
       function refresh() {
@@ -5755,10 +5783,17 @@
           }
         });
 
+        // Mostrar histórico existente antes de iniciar o flip
+        if (G.attempts.length) buildHistory();
+
         // Flip reveal — cada slot gira individualmente esquerda→direita
         const FLIP_MS = 380,
           STAGGER_MS = 120;
         G._flipping = true;
+        // Remove cursor indicator during flip animation
+        document
+          .querySelectorAll("#lboxes .lbox.active")
+          .forEach((el) => el.classList.remove("active"));
         const flipGen = ++G._flipGen;
         const flipSlots = document.getElementById("lboxes").children;
         const stroke = glyphStroke();
@@ -5892,7 +5927,7 @@
           }
           renderDaily(dec);
           renderYours();
-          buildHistory();
+          prependHistoryRow(G.attempts[G.attempts.length - 1]);
           buildAtts();
           buildKB();
         }, totalFlip);
@@ -8722,12 +8757,12 @@
           }
         }
 
-        const old = document.getElementById("ts0-arrow-overlay");
-        if (old) {
-          if (old._cleanup) old._cleanup();
-          old.remove();
-        }
         if (!noClear) {
+          const old = document.getElementById("ts0-arrow-overlay");
+          if (old) {
+            if (old._cleanup) old._cleanup();
+            old.remove();
+          }
           feed.innerHTML = "";
         }
         choicesEl.innerHTML = "";
@@ -9098,11 +9133,11 @@
 
                   // Wrapper transparente — só SVG, sem fundo nem extrusão
                   const wrapOuter = document.createElement("div");
-                  wrapOuter.style.cssText = `width:${TILE_SZ}px;height:${TILE_SZ}px;display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;opacity:0;transition:opacity 0.3s;`;
+                  wrapOuter.style.cssText = `width:${TILE_SZ}px;height:${TILE_SZ}px;display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;`;
 
                   const svg = makeSVG(l, tStroke());
                   if (svg) {
-                    svg.style.cssText = `width:${TILE_SZ}px;height:${TILE_SZ}px;flex-shrink:0;transition:opacity 0.2s;`;
+                    svg.style.cssText = `width:${TILE_SZ}px;height:${TILE_SZ}px;flex-shrink:0;`;
                     wrapOuter.appendChild(svg);
                   }
                   const tl = null; // sem label
@@ -9115,18 +9150,31 @@
                     letter: l,
                   });
                   wordRow.appendChild(wrapOuter);
+                  // Entrada fluída: surge de cima com pop de escala
+                  anime.set(wrapOuter, {
+                    opacity: 0,
+                    translateY: -14,
+                    scale: 0.65,
+                  });
                   requestAnimationFrame(() =>
                     requestAnimationFrame(() => {
-                      wrapOuter.style.opacity = "1";
+                      anime({
+                        targets: wrapOuter,
+                        opacity: 1,
+                        translateY: 0,
+                        scale: 1,
+                        duration: 480,
+                        easing: "easeOutBack",
+                      });
                     }),
                   );
                   scrollFeed();
                 },
-                1400 + i * 180,
+                1400 + i * 320,
               );
             });
 
-            const allIn1 = 1400 + TWL.length * 180;
+            const allIn1 = 1400 + TWL.length * 320;
             chatMsg(
               "Para entender melhor... Vamos juntar as letras!",
               allIn1 + 400,
@@ -9319,7 +9367,7 @@
                                         replayBtn.innerHTML = "&#8635;";
                                         replayBtn.title = "Repetir animação";
                                         replayBtn.style.cssText =
-                                          "position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:26px;height:26px;border:1px solid var(--border);background:var(--surface);color:var(--text3);border-radius:50%;font-size:0.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;z-index:10;transition:background 0.2s,color 0.2s;opacity:0;pointer-events:none;";
+                                          "position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:34px;height:34px;border:1px solid var(--border);background:var(--surface);color:var(--text3);border-radius:50%;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;z-index:10;transition:background 0.2s,color 0.2s;opacity:0;pointer-events:none;";
                                         splitRow.appendChild(replayBtn);
                                         splitRow.appendChild(rightCol);
                                         splitRow.appendChild(leftCol);
@@ -9772,7 +9820,7 @@
                 card.appendChild(slEl2);
                 hEl2 = document.createElement("div");
                 hEl2.style.cssText =
-                  "border:1px solid var(--border);border-radius:10px;overflow:hidden;";
+                  "border:1px solid var(--border);border-radius:10px;overflow:hidden;opacity:0;transition:opacity 0.4s;";
                 const hHdr = document.createElement("div");
                 hHdr.className = "hdr";
                 hHdr.innerHTML =
@@ -9787,36 +9835,14 @@
                 card.appendChild(hEl2);
               }, 400);
 
-              // Show glyph before-state + guessed word (uncolored)
+              // Show daily glyph before-state; right glyph builds incrementally
               tDelay(() => {
                 if (token.cancelled) return;
                 tStackEl(gSt2, stackBefore2, colorBefore2);
-                tStackEl(wSt2, letters2, () => tStroke());
               }, 500);
 
-              // Animate letters into slots one by one with tap bounce
+              // Show typing indicator alongside the card (signals typing is coming)
               let decodingEl = null;
-              letters2.forEach((l, i) => {
-                tDelay(
-                  () => {
-                    if (token.cancelled || !slEl2) return;
-                    const slot = slEl2.children[i];
-                    if (!slot) return;
-                    const sv = makeSVG(l, tStroke());
-                    if (sv) {
-                      sv.style.cssText = "width:65%;height:65%;";
-                      slot.appendChild(sv);
-                    }
-                    slot.classList.remove("tap");
-                    void slot.offsetWidth;
-                    slot.classList.add("tap");
-                    scrollFeed();
-                  },
-                  500 + i * 170,
-                );
-              });
-
-              // Show "Decodificando..." typing indicator after last letter lands
               tDelay(() => {
                 if (token.cancelled) return;
                 const feed = document.getElementById("tut-chat-feed");
@@ -9832,51 +9858,104 @@
                     scrollFeed();
                   }),
                 );
-              }, 1100);
+              }, 600);
 
-              // Animate slots revealing result
+              // Animate letters into slots one by one; each letter also grows the right glyph
+              letters2.forEach((l, i) => {
+                tDelay(
+                  () => {
+                    if (token.cancelled || !slEl2) return;
+                    // Slot: add letter with pop animation
+                    const slot = slEl2.children[i];
+                    if (!slot) return;
+                    const sv = makeSVG(l, tStroke());
+                    if (sv) {
+                      sv.style.cssText = "width:65%;height:65%;";
+                      slot.appendChild(sv);
+                    }
+                    slot.classList.remove("tap");
+                    void slot.offsetWidth;
+                    slot.classList.add("tap");
+                    scrollFeed();
+                    // Remove typing indicator when last letter lands
+                    if (
+                      i === letters2.length - 1 &&
+                      decodingEl &&
+                      decodingEl.parentNode
+                    )
+                      decodingEl.parentNode.removeChild(decodingEl);
+                    // Right glyph: prepend letter's SVG layer so letter[0] ends on top
+                    if (wSt2) {
+                      const wSvg = makeSVG(
+                        l,
+                        tStroke(),
+                        "position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;transition:opacity 0.3s;",
+                      );
+                      if (wSvg) {
+                        wSt2.insertBefore(wSvg, wSt2.firstChild);
+                        requestAnimationFrame(() =>
+                          requestAnimationFrame(() => {
+                            wSvg.style.opacity = "1";
+                          }),
+                        );
+                      }
+                    }
+                  },
+                  1100 + i * 350,
+                );
+              });
+
+              // Animate slots revealing result + update right glyph per letter
               tDelay(() => {
                 if (token.cancelled || !slEl2) return;
-                if (decodingEl && decodingEl.parentNode)
-                  decodingEl.parentNode.removeChild(decodingEl);
                 const slots2 = [...slEl2.children];
                 letters2.forEach((l, i) => {
                   const status = wSlots2[word][i];
                   setTimeout(() => {
                     const el = slots2[i];
                     if (!el) return;
+                    // Slot flip in
                     el.style.transition = "transform 0.19s ease-in";
                     el.style.transform = "scaleY(0)";
                     setTimeout(() => {
+                      // Slot reveal
                       el.innerHTML = "";
                       if (status === "correct") {
                         el.style.background = tdOf[l];
                         el.style.borderColor = "transparent";
                         const sv = makeSVG(l, "#fff");
                         if (sv) {
-                          sv.style.cssText = "width:65%;height:65%;";
+                          sv.style.cssText =
+                            "width:65%;height:65%;display:block;";
                           el.appendChild(sv);
                         }
                       } else {
-                        // "found" and "miss" look the same: dimmed glyph on surface
                         el.style.background = "var(--surface2)";
                         el.style.borderColor = "var(--border2)";
                         const sv = makeSVG(l, tStroke());
                         if (sv) {
                           sv.style.cssText =
-                            "width:65%;height:65%;opacity:0.5;";
+                            "width:65%;height:65%;display:block;opacity:0.5;";
                           el.appendChild(sv);
                         }
                       }
+                      void el.offsetWidth; // force reflow so flip-back transition fires
                       el.style.transition = "transform 0.19s ease-out";
                       el.style.transform = "scaleY(1)";
+                      // Right glyph: fade all letters out as slots reveal
+                      const wSvgIdx = letters2.length - 1 - i;
+                      const wSvgEl = wSt2 && wSt2.children[wSvgIdx];
+                      if (wSvgEl) {
+                        wSvgEl.style.transition = "opacity 0.3s";
+                        wSvgEl.style.opacity = "0";
+                      }
                     }, 190);
                   }, i * 200);
                 });
-              }, 1800);
+              }, 3100);
 
               // Update glyph after all slots have finished flipping
-              // Slots: start 1800ms + i*200ms offset + 380ms flip = last done ~2780ms
+              // Slots: start 3100ms + i*200ms offset + 380ms flip = last done ~4080ms
               tDelay(() => {
                 if (token.cancelled) return;
                 if (isP2) {
@@ -9892,7 +9971,6 @@
                   }
                   tDelay(() => {
                     tStackEl(gSt2, stackAfter2, colorAfter2);
-                    tStackEl(wSt2, letters2, () => tStroke());
                     // Ghost O — dashed pulsing outline where O used to be
                     const ghostSvg = makeSVG(
                       "O",
@@ -9913,12 +9991,12 @@
                 } else {
                   // Phase 1 word: glyph gains found color
                   tStackEl(gSt2, stackAfter2, colorAfter2);
-                  tStackEl(wSt2, letters2, () => tStroke());
                 }
-              }, 2900);
+              }, 4300);
 
               tDelay(() => {
                 if (token.cancelled || !hEl2) return;
+                hEl2.style.opacity = "1";
                 [...hEl2.querySelectorAll(".hrow")].forEach((row, i) => {
                   row.style.transition = "opacity 0.4s";
                   setTimeout(
@@ -9945,7 +10023,7 @@
                     );
                   }, 1500); // stop 300ms before Quaaase
                 }
-              }, 3000);
+              }, 4400);
 
               if (isP2) {
                 // Explain O locking, then player confirms before CARO curiosity
@@ -10244,7 +10322,7 @@
               } else {
                 chatTypingThenMsg(
                   "pre-typing",
-                  1850,
+                  2400,
                   `Quase lá! 🔎 Glifos coloridos indicam que a letra <strong>existe</strong> na palavra — mas está na posição errada.`,
                   nextDelay2 + 500,
                   token,

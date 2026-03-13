@@ -1,0 +1,9 @@
+{
+  "name": "gliffo",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "npx live-server --port=8080 --no-browser --watch=.",
+    "start:python": "python -m http.server 8080"
+  }
+}

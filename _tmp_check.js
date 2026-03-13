@@ -1,0 +1,1 @@
+try { new Function(document.currentScript?.textContent||''); } catch(e){}
