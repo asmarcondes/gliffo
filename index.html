@@ -5861,6 +5861,9 @@
         const flipGen = ++G._flipGen;
         const flipSlots = document.getElementById("lboxes").children;
         const stroke = glyphStroke();
+        // Pré-calcula os tempos absolutos do Web Audio para cada tick
+        // (sample-accurate, sem depender de quando o callback JS executa)
+        const acNow = !AUDIO_MUTED ? _getAC().currentTime : 0;
         for (let i = 0; i < WN; i++) {
           if (G.decoded.has(i) || G.keyPos.has(i)) continue;
           const slot = flipSlots[i];
@@ -5914,7 +5917,7 @@
                 }
                 slot.style.transition = `transform ${FLIP_MS / 2}ms ease-out`;
                 slot.style.transform = "scaleY(1)";
-                eePlayFlipTick(res);
+                eePlayFlipTick(res, acNow + (delay + FLIP_MS / 2) / 1000);
                 // Pop suave nos slots corretos via CSS keyframe (sem anime.js para evitar conflito)
                 if (res === "correct") {
                   setTimeout(
@@ -12133,10 +12136,13 @@
           o.stop(A.currentTime + 0.7);
         } catch (e2) {}
       }
-      function eePlayFlipTick(result) {
+      function eePlayFlipTick(result, at) {
         if (AUDIO_MUTED) return;
         try {
           const A = _getAC();
+          // Usa tempo agendado pelo scheduler do Web Audio (sample-accurate)
+          // Se 'at' já passou (lag extremo), toca imediatamente
+          const t = Math.max(at, A.currentTime);
           const o = A.createOscillator(),
             g = A.createGain();
           o.connect(g);
@@ -12144,23 +12150,20 @@
           o.type = "sine";
           if (result === "correct") {
             // Bell curto — nota alta, prazeroso
-            o.frequency.setValueAtTime(880, A.currentTime);
-            o.frequency.exponentialRampToValueAtTime(
-              1320,
-              A.currentTime + 0.08,
-            );
-            g.gain.setValueAtTime(0.13, A.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.001, A.currentTime + 0.2);
-            o.start();
-            o.stop(A.currentTime + 0.2);
+            o.frequency.setValueAtTime(880, t);
+            o.frequency.exponentialRampToValueAtTime(1320, t + 0.08);
+            g.gain.setValueAtTime(0.13, t);
+            g.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+            o.start(t);
+            o.stop(t + 0.2);
           } else {
             // Tick neutro — click seco
-            o.frequency.setValueAtTime(600, A.currentTime);
-            o.frequency.exponentialRampToValueAtTime(320, A.currentTime + 0.03);
-            g.gain.setValueAtTime(0.06, A.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.001, A.currentTime + 0.05);
-            o.start();
-            o.stop(A.currentTime + 0.05);
+            o.frequency.setValueAtTime(600, t);
+            o.frequency.exponentialRampToValueAtTime(320, t + 0.03);
+            g.gain.setValueAtTime(0.06, t);
+            g.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+            o.start(t);
+            o.stop(t + 0.05);
           }
         } catch (e2) {}
       }
