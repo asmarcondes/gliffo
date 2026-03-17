@@ -5391,7 +5391,10 @@
             s,
             "position:absolute;top:0;left:0;width:100%;height:100%;",
           );
-          if (svg) c.appendChild(svg);
+          if (svg) {
+            svg.setAttribute("data-idx", i);
+            c.appendChild(svg);
+          }
         }
       }
 
@@ -5874,6 +5877,13 @@
               slot.style.willChange = "transform";
               slot.style.transition = `transform ${FLIP_MS / 2}ms ease-in`;
               slot.style.transform = "scaleY(0)";
+              // Fade-out da camada correspondente em "Seu Glifo" em sincronia com o flip
+              const ys = document.getElementById("your-stack");
+              const ysvg = ys && ys.querySelector(`[data-idx="${i}"]`);
+              if (ysvg) {
+                ysvg.style.transition = `opacity ${FLIP_MS / 2}ms ease-in`;
+                ysvg.style.opacity = "0";
+              }
               setTimeout(() => {
                 slot.innerHTML = "";
                 if (res === "correct") {
