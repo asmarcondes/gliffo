@@ -918,16 +918,31 @@
         align-items: center;
       }
       .hrow-new {
-        animation: hrowSlideIn 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+        animation:
+          hrowReveal 0.5s cubic-bezier(0.22, 1, 0.36, 1) both,
+          hrowFlash 0.9s ease-out both;
       }
-      @keyframes hrowSlideIn {
+      @keyframes hrowReveal {
         from {
-          transform: translateY(-110%);
+          clip-path: inset(0 0 100% 0);
+          transform: translateY(-6px);
           opacity: 0;
         }
         to {
+          clip-path: inset(0 0 0% 0);
           transform: translateY(0);
           opacity: 1;
+        }
+      }
+      @keyframes hrowFlash {
+        0% {
+          background-color: rgba(232, 148, 10, 0.22);
+        }
+        55% {
+          background-color: rgba(232, 148, 10, 0.07);
+        }
+        100% {
+          background-color: transparent;
         }
       }
       .hw {
@@ -1559,6 +1574,45 @@
       }
       .lbox.pop {
         animation: lboxPop 0.18s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+      }
+      @keyframes flipCorrectPop {
+        0% {
+          transform: scale(1);
+        }
+        45% {
+          transform: scale(1.09);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      .lbox.flip-correct-pop {
+        animation: flipCorrectPop 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      @keyframes slotWinPop {
+        0% {
+          transform: scale(1);
+        }
+        35% {
+          transform: scale(1.15);
+        }
+        65% {
+          transform: scale(0.95);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      @keyframes glyphReveal {
+        from {
+          clip-path: circle(0% at 50% 50%);
+        }
+        to {
+          clip-path: circle(100% at 50% 50%);
+        }
+      }
+      .glyph-stack.win-reveal {
+        animation: glyphReveal 0.42s cubic-bezier(0.34, 1.2, 0.64, 1);
       }
       @keyframes kbtnTap {
         0% {
@@ -5271,32 +5325,22 @@
         const s = glyphStroke();
 
         if (!HARD_MODE && revealedIndices && revealedIndices.length > 0) {
-          // Anima fade out apenas nas letras reveladas (identificadas por data-idx)
-          revealedIndices.forEach((idx) => {
-            const svg = c.querySelector(`[data-idx="${idx}"]`);
+          // Animação já foi disparada em sincronia com o flip — apenas reconstrói o stack
+          c.innerHTML = "";
+          for (let i = WN - 1; i >= 0; i--) {
+            if (G.decoded.has(i) || G.keyPos.has(i)) continue;
+            const l = WL[i];
+            const color = G.found.has(l) ? colorOf[l] : s;
+            const svg = makeSVG(
+              l,
+              color,
+              "position:absolute;top:0;left:0;width:100%;height:100%;",
+            );
             if (svg) {
-              svg.style.transition = "opacity 0.6s ease, filter 0.6s ease";
-              svg.style.opacity = "0";
-              svg.style.filter = "blur(6px)";
+              svg.setAttribute("data-idx", i);
+              c.appendChild(svg);
             }
-          });
-          setTimeout(() => {
-            c.innerHTML = "";
-            for (let i = WN - 1; i >= 0; i--) {
-              if (G.decoded.has(i) || G.keyPos.has(i)) continue;
-              const l = WL[i];
-              const color = G.found.has(l) ? colorOf[l] : s;
-              const svg = makeSVG(
-                l,
-                color,
-                "position:absolute;top:0;left:0;width:100%;height:100%;",
-              );
-              if (svg) {
-                svg.setAttribute("data-idx", i);
-                c.appendChild(svg);
-              }
-            }
-          }, 620);
+          }
         } else {
           c.innerHTML = "";
           for (let i = WN - 1; i >= 0; i--) {
@@ -5328,10 +5372,10 @@
           if (G.decoded.has(i) || G.keyPos.has(i)) continue;
           const l = G.typed[i];
           if (!l) continue;
-          const color = G.found.has(l) ? colorOf[l] : s;
+          // Sem dica de cor: só mostra cor quando a letra estiver na posição correta (decoded)
           const svg = makeSVG(
             l,
-            color,
+            s,
             "position:absolute;top:0;left:0;width:100%;height:100%;",
           );
           if (svg) c.appendChild(svg);
@@ -5365,7 +5409,7 @@
         }
       }
 
-      function buildBoxes() {
+      function buildBoxes(popIdx = -1) {
         const c = document.getElementById("lboxes");
         c.innerHTML = "";
         // Ajusta tamanho dos slots conforme número de letras
@@ -5438,6 +5482,17 @@
             b.setAttribute("aria-label", `Posição ${i + 1} — vazia`);
           }
           c.appendChild(b);
+          if (i === popIdx) {
+            b.animate(
+              [
+                { transform: "scale(1)" },
+                { transform: "scale(1.12)", offset: 0.35 },
+                { transform: "scale(0.94)", offset: 0.7 },
+                { transform: "scale(1)" },
+              ],
+              { duration: 180, easing: "cubic-bezier(0.36, 0.07, 0.19, 0.97)" },
+            );
+          }
         }
       }
 
@@ -5545,11 +5600,11 @@
         histEl.style.display = "block";
         const row = _makeHrow(attempt, true);
         rows.insertBefore(row, rows.firstChild);
-        setTimeout(() => row.classList.remove("hrow-new"), 400);
+        setTimeout(() => row.classList.remove("hrow-new"), 950);
       }
 
-      function refresh() {
-        buildBoxes();
+      function refresh(popIdx = -1) {
+        buildBoxes(popIdx);
         renderDaily();
         renderYours();
       }
@@ -5600,20 +5655,22 @@
             G.typed[c] = undefined;
             apagou = true;
           } else {
-            // Slot vazio → vai para o anterior (apagando se tiver letra)
-            const prev = prevCursor(c);
+            // Slot vazio → recua cursor para o anterior editável (pula decoded/keyPos)
+            let prev = c - 1;
+            while (prev >= 0 && (G.decoded.has(prev) || G.keyPos.has(prev)))
+              prev--;
             if (prev >= 0) {
+              G.cursor = prev;
               if (G.typed[prev]) {
                 G.typed[prev] = undefined;
                 apagou = true;
               }
-              G.cursor = prev;
             }
           }
           document.getElementById("lboxes").classList.remove("invalid");
+          refresh();
           if (apagou) calcWarns();
           else setFb("", "");
-          refresh();
           return;
         }
 
@@ -5632,22 +5689,15 @@
 
         G.typed[c] = k;
         G.cursor = nextCursor(c + 1);
-        refresh();
+        refresh(c);
         calcWarns();
         haptic(30);
-        // Pop animation no slot recem digitado
-        const typedSlot = document.getElementById("lboxes").children[c];
-        if (typedSlot) {
-          typedSlot.classList.remove("pop");
-          void typedSlot.offsetWidth;
-          typedSlot.classList.add("pop");
-        }
       }
 
       function calcWarns() {
+        let posErrada = [];
         if (!HARD_MODE) {
           // Apenas avisa sobre letras já tentadas na mesma posição (sem conceito de "eliminada")
-          const posErrada = [];
           for (let i = 0; i < WN; i++) {
             const l = G.typed[i];
             if (!l || G.decoded.has(i) || G.keyPos.has(i)) continue;
@@ -5804,6 +5854,7 @@
           const delay = i * STAGGER_MS;
           ((slot, i, res) => {
             setTimeout(() => {
+              slot.style.willChange = "transform";
               slot.style.transition = `transform ${FLIP_MS / 2}ms ease-in`;
               slot.style.transform = "scaleY(0)";
               setTimeout(() => {
@@ -5816,11 +5867,27 @@
                     svg.style.cssText = "width:65%;height:65%;";
                     slot.appendChild(svg);
                   }
+                  // Anima camada do Glifo do Dia em sincronia com o tile correto
+                  if (!HARD_MODE) {
+                    const dc = document.getElementById("daily-stack");
+                    const dsv = dc && dc.querySelector(`[data-idx="${i}"]`);
+                    if (dsv) {
+                      void dsv.offsetWidth;
+                      dsv.style.transition =
+                        "opacity 0.55s ease-out, transform 0.55s ease-out";
+                      dsv.style.opacity = "0";
+                      dsv.style.transform = "scale(1.3) translateY(-12px)";
+                    }
+                  }
                 } else if (res === "found") {
+                  // Sem dica de cor — mesma aparência que "miss"
                   slot.style.background = "var(--surface2)";
-                  slot.style.borderColor = colorOf[full[i]];
-                  slot.style.borderWidth = "2.5px";
-                  // Não revela a letra — o jogador deve deduzir pelo Glifo do Dia
+                  slot.style.borderColor = "var(--border2)";
+                  const svg = makeSVG(full[i], stroke);
+                  if (svg) {
+                    svg.style.cssText = "width:65%;height:65%;opacity:0.5;";
+                    slot.appendChild(svg);
+                  }
                 } else {
                   // Letra errada — slot neutro sem conceito de "eliminação"
                   slot.style.background = "var(--surface2)";
@@ -5833,20 +5900,29 @@
                 }
                 slot.style.transition = `transform ${FLIP_MS / 2}ms ease-out`;
                 slot.style.transform = "scaleY(1)";
-                // Pop overshoot nos slots acertados (corretos) — desfaz a transition antes de animar
-                if (res === "correct" && typeof anime !== "undefined") {
+                // Pop suave nos slots corretos via CSS keyframe (sem anime.js para evitar conflito)
+                if (res === "correct") {
                   setTimeout(
                     () => {
                       slot.style.transition = "";
                       slot.style.transform = "";
-                      anime({
-                        targets: slot,
-                        scale: [1.11, 1],
-                        duration: 250,
-                        easing: "easeOutElastic(1, 0.45)",
-                      });
+                      slot.style.willChange = "";
+                      void slot.offsetWidth; // força reflow limpo
+                      slot.classList.add("flip-correct-pop");
+                      slot.addEventListener(
+                        "animationend",
+                        () => slot.classList.remove("flip-correct-pop"),
+                        { once: true },
+                      );
                     },
-                    FLIP_MS / 2 + 20,
+                    FLIP_MS / 2 + 30,
+                  );
+                } else {
+                  setTimeout(
+                    () => {
+                      slot.style.willChange = "";
+                    },
+                    FLIP_MS / 2 + 50,
                   );
                 }
               }, FLIP_MS / 2);
@@ -5879,9 +5955,23 @@
             buildKB();
             salvarEstado();
             haptic([80, 60, 150]);
-            eePlayBoing();
-            eeCanvasConfetti();
-            setTimeout(() => winAnim(), 300);
+            eePlayFanfare();
+            // Stagger pop nos slots antes do overlay aparecer
+            if (typeof anime !== "undefined") {
+              anime({
+                targets: document.querySelectorAll("#lboxes .lbox"),
+                keyframes: [
+                  { scale: 1 },
+                  { scale: 1.16 },
+                  { scale: 0.94 },
+                  { scale: 1 },
+                ],
+                duration: 360,
+                delay: anime.stagger(55),
+                easing: "easeOutElastic(1, 0.5)",
+              });
+            }
+            setTimeout(() => winAnim(), 380);
             return;
           }
           if (G.attempts.length >= 4) {
@@ -6107,17 +6197,20 @@
         stage.appendChild(stack);
         overlay.appendChild(stage);
         document.body.appendChild(overlay);
-        // Fade para fundo semi-opaco
-        requestAnimationFrame(() => {
-          overlay.style.background = "rgba(0,0,0,0.72)";
-        });
+        // Fade para fundo semi-opaco — dois rAFs garantem que o browser
+        // pintou o estado inicial (transparent) antes de transicionar
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => {
+            overlay.style.background = "rgba(0,0,0,0.72)";
+          }),
+        );
 
         const Z_STEP = 32;
         const half = ((WN - 1) * Z_STEP) / 2;
         const ISO_IN = 650;
-        const ISO_HOLD = 650;
-        const ISO_OUT = 750;
-        const STAGGER = 420;
+        const ISO_HOLD = 250; // pausa no pico — reduzido
+        const ISO_OUT = 450; // colapso — mais rápido
+        const STAGGER = 300; // stagger entre layers — mais rápido
         let isoTimer = null;
         let idx = WN - 1; // começa da última letra (camada de baixo) → sobe até a primeira
 
@@ -6150,6 +6243,8 @@
           if (idx >= 0) {
             isoTimer = setTimeout(addLayer, STAGGER);
           } else {
+            // Confetti no pico — quando todas as layers chegaram
+            setTimeout(eeCanvasConfetti, ISO_IN + 60);
             // Todas as layers → pausa → colapsa
             isoTimer = setTimeout(() => {
               const layers = [...stack.querySelectorAll(".iso-layer")];
@@ -6161,14 +6256,14 @@
               });
               setTimeout(() => {
                 layers.forEach((lay) => {
-                  lay.style.transition = "opacity 0.4s ease";
+                  lay.style.transition = "opacity 0.35s ease";
                   lay.style.opacity = "1";
                 });
                 // Fade out overlay e mostra glifo no daily-stack
                 setTimeout(() => {
-                  overlay.style.transition = "opacity 0.45s ease";
+                  overlay.style.transition = "opacity 0.4s ease";
                   overlay.style.opacity = "0";
-                  // Atualiza daily-stack com glifo colorido final
+                  // Atualiza daily-stack com glifo colorido + win-glow + reveal
                   const dc = document.getElementById("daily-stack");
                   if (dc) {
                     dc.innerHTML = "";
@@ -6180,8 +6275,14 @@
                       );
                       if (s) dc.appendChild(s);
                     }
+                    dc.classList.add("win-glow", "win-reveal");
+                    dc.addEventListener(
+                      "animationend",
+                      () => dc.classList.remove("win-reveal"),
+                      { once: true },
+                    );
                   }
-                  // Coloriza seu glifo
+                  // Coloriza seu glifo + win-glow + reveal
                   yc.innerHTML = "";
                   for (let i = WN - 1; i >= 0; i--) {
                     const s = makeSVG(
@@ -6191,11 +6292,17 @@
                     );
                     if (s) yc.appendChild(s);
                   }
+                  yc.classList.add("win-glow", "win-reveal");
+                  yc.addEventListener(
+                    "animationend",
+                    () => yc.classList.remove("win-reveal"),
+                    { once: true },
+                  );
                   setTimeout(() => {
                     overlay.remove();
                     winMod();
-                  }, 480);
-                }, 500);
+                  }, 300);
+                }, 100);
               }, ISO_OUT + 60);
             }, ISO_IN + ISO_HOLD);
           }
@@ -7971,7 +8078,7 @@
       }
 
       // ── CONFETTI ──
-      function confetti(el) {
+      function tutConfetti(el) {
         const colors = ["#f5a623", "#9b8fe8", "#5bbfa0", "#e87a6b", "#60a5fa"];
         for (let i = 0; i < 22; i++) {
           const p = document.createElement("div");
@@ -8324,7 +8431,7 @@
               );
           });
           tStack("ts5-yours", iLetters, (l) => iColorOf[l], true);
-          confetti(c);
+          tutConfetti(c);
           const title6 = document.getElementById("ts6-title");
           if (title6) {
             title6.style.cssText =
@@ -10316,7 +10423,7 @@
                                   if (confirmBtn.parentNode)
                                     confirmBtn.remove();
                                   document.getElementById("tut-kbd")?.remove();
-                                  confetti(feed);
+                                  tutConfetti(feed);
                                   chatMsg(
                                     `Isso aí! 🎉 Era <strong>ARCO</strong>! Você conseguiu!`,
                                     300,
@@ -11897,63 +12004,96 @@
           safe("dbg-close", () => {
             document.getElementById("debug-panel").classList.remove("open");
           });
+          safe("dbg-clear", () => {
+            if (
+              !confirm(
+                "Apagar TODOS os dados locais (estado, estatísticas, conquistas, configurações) e recarregar?",
+              )
+            )
+              return;
+            Object.keys(localStorage)
+              .filter((k) => k.startsWith("gliffoo_"))
+              .forEach((k) => localStorage.removeItem(k));
+            location.reload();
+          });
           for (let s = 0; s <= 6; s++) {
             safe(`dbg-tut-${s}`, () => _dbgTutStep(s));
           }
         });
-
-        // ── Easter egg audio & confetti helpers (inside IIFE for decode() access) ──
-        function eePlayBoing() {
-          try {
-            const A = new (window.AudioContext || window.webkitAudioContext)();
-            const o = A.createOscillator(),
-              g = A.createGain();
-            o.connect(g);
-            g.connect(A.destination);
-            o.type = "sine";
-            o.frequency.setValueAtTime(520, A.currentTime);
-            o.frequency.exponentialRampToValueAtTime(900, A.currentTime + 0.09);
-            g.gain.setValueAtTime(0.25, A.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.001, A.currentTime + 0.5);
-            o.start();
-            o.stop(A.currentTime + 0.5);
-          } catch (e2) {}
-        }
-        function eePlayTrombone() {
-          try {
-            const A = new (window.AudioContext || window.webkitAudioContext)();
-            const o = A.createOscillator(),
-              g = A.createGain();
-            o.connect(g);
-            g.connect(A.destination);
-            o.type = "sawtooth";
-            o.frequency.setValueAtTime(380, A.currentTime);
-            o.frequency.exponentialRampToValueAtTime(200, A.currentTime + 0.7);
-            g.gain.setValueAtTime(0.18, A.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.001, A.currentTime + 0.7);
-            o.start();
-            o.stop(A.currentTime + 0.7);
-          } catch (e2) {}
-        }
-        function eeCanvasConfetti() {
-          const fire = () =>
-            window.confetti({
-              particleCount: 130,
-              spread: 80,
-              origin: { y: 0.65 },
-              colors: ["#f5a623", "#9b8fe8", "#5bbfa0", "#e87a6b", "#60a5fa"],
-            });
-          if (window.confetti) {
-            fire();
-            return;
-          }
-          const sc = document.createElement("script");
-          sc.src =
-            "https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js";
-          sc.onload = fire;
-          document.head.appendChild(sc);
-        }
       })();
+
+      // ── Easter egg audio & confetti helpers ──
+      function eePlayFanfare() {
+        try {
+          const A = new (window.AudioContext || window.webkitAudioContext)();
+          const notes = [261.6, 329.6, 392.0, 523.3]; // C E G C'
+          notes.forEach((freq, noteIdx) => {
+            setTimeout(() => {
+              const o = A.createOscillator(),
+                g = A.createGain();
+              o.connect(g);
+              g.connect(A.destination);
+              o.type = "sine";
+              o.frequency.value = freq;
+              g.gain.setValueAtTime(0, A.currentTime);
+              g.gain.linearRampToValueAtTime(0.22, A.currentTime + 0.02);
+              g.gain.exponentialRampToValueAtTime(0.001, A.currentTime + 0.38);
+              o.start();
+              o.stop(A.currentTime + 0.38);
+            }, noteIdx * 80);
+          });
+        } catch (e2) {}
+      }
+      function eePlayBoing() {
+        try {
+          const A = new (window.AudioContext || window.webkitAudioContext)();
+          const o = A.createOscillator(),
+            g = A.createGain();
+          o.connect(g);
+          g.connect(A.destination);
+          o.type = "sine";
+          o.frequency.setValueAtTime(520, A.currentTime);
+          o.frequency.exponentialRampToValueAtTime(900, A.currentTime + 0.09);
+          g.gain.setValueAtTime(0.25, A.currentTime);
+          g.gain.exponentialRampToValueAtTime(0.001, A.currentTime + 0.5);
+          o.start();
+          o.stop(A.currentTime + 0.5);
+        } catch (e2) {}
+      }
+      function eePlayTrombone() {
+        try {
+          const A = new (window.AudioContext || window.webkitAudioContext)();
+          const o = A.createOscillator(),
+            g = A.createGain();
+          o.connect(g);
+          g.connect(A.destination);
+          o.type = "sawtooth";
+          o.frequency.setValueAtTime(380, A.currentTime);
+          o.frequency.exponentialRampToValueAtTime(200, A.currentTime + 0.7);
+          g.gain.setValueAtTime(0.18, A.currentTime);
+          g.gain.exponentialRampToValueAtTime(0.001, A.currentTime + 0.7);
+          o.start();
+          o.stop(A.currentTime + 0.7);
+        } catch (e2) {}
+      }
+      function eeCanvasConfetti() {
+        const fire = () =>
+          window.confetti({
+            particleCount: 130,
+            spread: 80,
+            origin: { y: 0.65 },
+            colors: ["#f5a623", "#9b8fe8", "#5bbfa0", "#e87a6b", "#60a5fa"],
+          });
+        if (window.confetti) {
+          fire();
+          return;
+        }
+        const sc = document.createElement("script");
+        sc.src =
+          "https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js";
+        sc.onload = fire;
+        document.head.appendChild(sc);
+      }
     </script>
 
     <style>
@@ -12620,6 +12760,15 @@
       <div class="dbg-btns" style="margin-top: 6px">
         <button id="dbg-today">Hoje</button>
         <button class="dbg-close" id="dbg-close">✕</button>
+      </div>
+      <div class="dbg-btns" style="margin-top: 6px">
+        <button
+          id="dbg-clear"
+          style="background: var(--lose, #e87a6b); color: #fff; width: 100%"
+          title="Apaga todos os dados locais e recarrega"
+        >
+          🗑 Limpar dados locais
+        </button>
       </div>
       <div class="dbg-offset" id="dbg-date-display"></div>
       <div
