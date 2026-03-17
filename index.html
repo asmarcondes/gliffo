@@ -5758,6 +5758,7 @@
       // ═══════════════════════════════════════════════
       function decode() {
         if (G.done) return;
+        if (!AUDIO_MUTED) _getAC(); // aquece o contexto antes dos flips
         const full = Array.from({ length: WN }, (_, i) =>
           G.decoded.has(i) || G.keyPos.has(i) ? WL[i] : G.typed[i] || null,
         );
@@ -6983,7 +6984,8 @@
         const soundSub = document.getElementById("cfg-sound-sub");
         const soundIcon = document.getElementById("cfg-sound-icon");
         if (soundSw) soundSw.classList.toggle("on", !AUDIO_MUTED);
-        if (soundSub) soundSub.textContent = AUDIO_MUTED ? "Desativado" : "Ativado";
+        if (soundSub)
+          soundSub.textContent = AUDIO_MUTED ? "Desativado" : "Ativado";
         if (soundIcon) soundIcon.textContent = AUDIO_MUTED ? "🔇" : "🔊";
       }
       function applyHardMode() {
@@ -12051,10 +12053,18 @@
       })();
 
       // ── Easter egg audio & confetti helpers ──
+      // AudioContext singleton — evita latência de inicialização por chamada
+      let _ac = null;
+      function _getAC() {
+        if (!_ac || _ac.state === "closed")
+          _ac = new (window.AudioContext || window.webkitAudioContext)();
+        if (_ac.state === "suspended") _ac.resume();
+        return _ac;
+      }
       function eePlayFanfare() {
         if (AUDIO_MUTED) return;
         try {
-          const A = new (window.AudioContext || window.webkitAudioContext)();
+          const A = _getAC();
           // Reverb sintético: impulso de sala curta gerado por código
           const irLen = Math.floor(A.sampleRate * 0.55);
           const irBuf = A.createBuffer(1, irLen, A.sampleRate);
@@ -12063,10 +12073,13 @@
             irData[j] = (Math.random() * 2 - 1) * Math.pow(1 - j / irLen, 2.8);
           const conv = A.createConvolver();
           conv.buffer = irBuf;
-          const dry = A.createGain(); dry.gain.value = 0.72;
-          const wet = A.createGain(); wet.gain.value = 0.32;
+          const dry = A.createGain();
+          dry.gain.value = 0.72;
+          const wet = A.createGain();
+          wet.gain.value = 0.32;
           dry.connect(A.destination);
-          conv.connect(wet); wet.connect(A.destination);
+          conv.connect(wet);
+          wet.connect(A.destination);
           const notes = [261.6, 329.6, 392.0, 523.3]; // C E G C'
           notes.forEach((freq, noteIdx) => {
             setTimeout(() => {
@@ -12089,7 +12102,7 @@
       function eePlayBoing() {
         if (AUDIO_MUTED) return;
         try {
-          const A = new (window.AudioContext || window.webkitAudioContext)();
+          const A = _getAC();
           const o = A.createOscillator(),
             g = A.createGain();
           o.connect(g);
@@ -12106,7 +12119,7 @@
       function eePlayTrombone() {
         if (AUDIO_MUTED) return;
         try {
-          const A = new (window.AudioContext || window.webkitAudioContext)();
+          const A = _getAC();
           const o = A.createOscillator(),
             g = A.createGain();
           o.connect(g);
@@ -12123,24 +12136,31 @@
       function eePlayFlipTick(result) {
         if (AUDIO_MUTED) return;
         try {
-          const A = new (window.AudioContext || window.webkitAudioContext)();
-          const o = A.createOscillator(), g = A.createGain();
-          o.connect(g); g.connect(A.destination);
+          const A = _getAC();
+          const o = A.createOscillator(),
+            g = A.createGain();
+          o.connect(g);
+          g.connect(A.destination);
           o.type = "sine";
           if (result === "correct") {
             // Bell curto — nota alta, prazeroso
             o.frequency.setValueAtTime(880, A.currentTime);
-            o.frequency.exponentialRampToValueAtTime(1320, A.currentTime + 0.08);
+            o.frequency.exponentialRampToValueAtTime(
+              1320,
+              A.currentTime + 0.08,
+            );
             g.gain.setValueAtTime(0.13, A.currentTime);
-            g.gain.exponentialRampToValueAtTime(0.001, A.currentTime + 0.20);
-            o.start(); o.stop(A.currentTime + 0.20);
+            g.gain.exponentialRampToValueAtTime(0.001, A.currentTime + 0.2);
+            o.start();
+            o.stop(A.currentTime + 0.2);
           } else {
             // Tick neutro — click seco
             o.frequency.setValueAtTime(600, A.currentTime);
             o.frequency.exponentialRampToValueAtTime(320, A.currentTime + 0.03);
             g.gain.setValueAtTime(0.06, A.currentTime);
             g.gain.exponentialRampToValueAtTime(0.001, A.currentTime + 0.05);
-            o.start(); o.stop(A.currentTime + 0.05);
+            o.start();
+            o.stop(A.currentTime + 0.05);
           }
         } catch (e2) {}
       }
