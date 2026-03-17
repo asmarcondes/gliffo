@@ -3477,6 +3477,19 @@
               <div class="cfg-switch-thumb"></div>
             </div>
           </div>
+          <div class="cfg-divider"></div>
+          <div class="cfg-row" id="cfg-sound-row" onclick="toggleMuteAudio()">
+            <div class="cfg-row-left">
+              <span class="cfg-row-icon" id="cfg-sound-icon">🔊</span>
+              <div>
+                <div class="cfg-row-label">Sons</div>
+                <div class="cfg-row-sub" id="cfg-sound-sub">Ativado</div>
+              </div>
+            </div>
+            <div class="cfg-switch on" id="cfg-sound-switch">
+              <div class="cfg-switch-thumb"></div>
+            </div>
+          </div>
           <div id="cfg-ea-section"></div>
           <!-- Atalhos para mobile (Arquivo e Ajuda ficam ocultos no header) -->
           <div class="cfg-divider cfg-mobile-only"></div>
@@ -5900,6 +5913,7 @@
                 }
                 slot.style.transition = `transform ${FLIP_MS / 2}ms ease-out`;
                 slot.style.transform = "scaleY(1)";
+                eePlayFlipTick(res);
                 // Pop suave nos slots corretos via CSS keyframe (sem anime.js para evitar conflito)
                 if (res === "correct") {
                   setTimeout(
@@ -5984,6 +5998,7 @@
             buildHistory();
             buildAtts();
             salvarEstado();
+            haptic([150, 50, 150]);
             eePlayTrombone();
             setTimeout(() => loseMod(), 400);
             return;
@@ -6940,6 +6955,7 @@
       // ── Configurações ──
       const CONFIG_KEY = "gliffoo_config";
       let HARD_MODE = false;
+      let AUDIO_MUTED = false;
       function loadConfig() {
         try {
           return JSON.parse(localStorage.getItem(CONFIG_KEY)) || {};
@@ -6963,6 +6979,12 @@
         const hardSub = document.getElementById("cfg-hard-sub");
         if (hardSw) hardSw.classList.toggle("on", HARD_MODE);
         if (hardSub) hardSub.textContent = HARD_MODE ? "Ativado" : "Desativado";
+        const soundSw = document.getElementById("cfg-sound-switch");
+        const soundSub = document.getElementById("cfg-sound-sub");
+        const soundIcon = document.getElementById("cfg-sound-icon");
+        if (soundSw) soundSw.classList.toggle("on", !AUDIO_MUTED);
+        if (soundSub) soundSub.textContent = AUDIO_MUTED ? "Desativado" : "Ativado";
+        if (soundIcon) soundIcon.textContent = AUDIO_MUTED ? "🔇" : "🔊";
       }
       function applyHardMode() {
         const btn = document.getElementById("key-btn");
@@ -6982,6 +7004,11 @@
         applyHardMode();
         buildHeaderMeta();
       }
+      function toggleMuteAudio() {
+        AUDIO_MUTED = !AUDIO_MUTED;
+        saveConfig({ audioMuted: AUDIO_MUTED });
+        syncConfigUI();
+      }
       function openConfig() {
         syncConfigUI();
         openM("config-modal");
@@ -6990,6 +7017,7 @@
         const c = loadConfig();
         if (c.theme) document.documentElement.dataset.theme = c.theme;
         HARD_MODE = !!c.hardMode;
+        AUDIO_MUTED = !!c.audioMuted;
         applyHardMode();
         if (Date.now() < BETA_END_DATE) {
           const badge = document.getElementById("ea-badge");
@@ -12024,15 +12052,29 @@
 
       // ── Easter egg audio & confetti helpers ──
       function eePlayFanfare() {
+        if (AUDIO_MUTED) return;
         try {
           const A = new (window.AudioContext || window.webkitAudioContext)();
+          // Reverb sintético: impulso de sala curta gerado por código
+          const irLen = Math.floor(A.sampleRate * 0.55);
+          const irBuf = A.createBuffer(1, irLen, A.sampleRate);
+          const irData = irBuf.getChannelData(0);
+          for (let j = 0; j < irLen; j++)
+            irData[j] = (Math.random() * 2 - 1) * Math.pow(1 - j / irLen, 2.8);
+          const conv = A.createConvolver();
+          conv.buffer = irBuf;
+          const dry = A.createGain(); dry.gain.value = 0.72;
+          const wet = A.createGain(); wet.gain.value = 0.32;
+          dry.connect(A.destination);
+          conv.connect(wet); wet.connect(A.destination);
           const notes = [261.6, 329.6, 392.0, 523.3]; // C E G C'
           notes.forEach((freq, noteIdx) => {
             setTimeout(() => {
               const o = A.createOscillator(),
                 g = A.createGain();
               o.connect(g);
-              g.connect(A.destination);
+              g.connect(dry);
+              g.connect(conv);
               o.type = "sine";
               o.frequency.value = freq;
               g.gain.setValueAtTime(0, A.currentTime);
@@ -12045,6 +12087,7 @@
         } catch (e2) {}
       }
       function eePlayBoing() {
+        if (AUDIO_MUTED) return;
         try {
           const A = new (window.AudioContext || window.webkitAudioContext)();
           const o = A.createOscillator(),
@@ -12061,6 +12104,7 @@
         } catch (e2) {}
       }
       function eePlayTrombone() {
+        if (AUDIO_MUTED) return;
         try {
           const A = new (window.AudioContext || window.webkitAudioContext)();
           const o = A.createOscillator(),
@@ -12074,6 +12118,30 @@
           g.gain.exponentialRampToValueAtTime(0.001, A.currentTime + 0.7);
           o.start();
           o.stop(A.currentTime + 0.7);
+        } catch (e2) {}
+      }
+      function eePlayFlipTick(result) {
+        if (AUDIO_MUTED) return;
+        try {
+          const A = new (window.AudioContext || window.webkitAudioContext)();
+          const o = A.createOscillator(), g = A.createGain();
+          o.connect(g); g.connect(A.destination);
+          o.type = "sine";
+          if (result === "correct") {
+            // Bell curto — nota alta, prazeroso
+            o.frequency.setValueAtTime(880, A.currentTime);
+            o.frequency.exponentialRampToValueAtTime(1320, A.currentTime + 0.08);
+            g.gain.setValueAtTime(0.13, A.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.001, A.currentTime + 0.20);
+            o.start(); o.stop(A.currentTime + 0.20);
+          } else {
+            // Tick neutro — click seco
+            o.frequency.setValueAtTime(600, A.currentTime);
+            o.frequency.exponentialRampToValueAtTime(320, A.currentTime + 0.03);
+            g.gain.setValueAtTime(0.06, A.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.001, A.currentTime + 0.05);
+            o.start(); o.stop(A.currentTime + 0.05);
+          }
         } catch (e2) {}
       }
       function eeCanvasConfetti() {
