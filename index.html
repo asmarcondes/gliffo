@@ -6191,19 +6191,6 @@
       function winAnim() {
         const yc = document.getElementById("your-stack");
 
-        const stroke = glyphStroke();
-
-        // Exibe seu glifo em branco durante a animação
-        yc.innerHTML = "";
-        for (let i = WN - 1; i >= 0; i--) {
-          const gg = makeSVG(
-            WL[i],
-            stroke,
-            "position:absolute;top:0;left:0;width:100%;height:100%;",
-          );
-          if (gg) yc.appendChild(gg);
-        }
-
         // Cria overlay fixo sobre o jogo (igual ao tutorial)
         const overlay = document.createElement("div");
         overlay.style.cssText = `
