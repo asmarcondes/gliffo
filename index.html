@@ -3451,12 +3451,27 @@
         <div class="mfp-info">
           <div class="mfp-title" id="mfp-title">SomaFM</div>
           <div id="mfp-progress-wrap" class="mfp-progress-wrap" title="Ao vivo">
-            <div id="mfp-progress" class="mfp-progress-bar" style="width:100%;opacity:0.3"></div>
+            <div
+              id="mfp-progress"
+              class="mfp-progress-bar"
+              style="width: 100%; opacity: 0.3"
+            ></div>
           </div>
           <div class="mfp-credit" id="mfp-credit">
-            ♫ <a href="https://somafm.com/" target="_blank" rel="noopener noreferrer">SomaFM</a>
+            ♫
+            <a
+              href="https://somafm.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >SomaFM</a
+            >
             — rádio não-comercial, 100% independente.
-            <a href="https://somafm.com/support/" target="_blank" rel="noopener noreferrer">Apoie o SomaFM ♥</a>
+            <a
+              href="https://somafm.com/support/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Apoie o SomaFM ♥</a
+            >
           </div>
         </div>
         <button
@@ -6127,12 +6142,12 @@
           haptic(80);
           return;
         }
-        // Easter egg rádio: digitar DRONE abre Drone Zone
+        // Easter egg rádio: digitar DRONE abre Drone Zone tocando
         if (guess === "DRONE" && typeof mfpShow === "function") {
           const bar = document.getElementById("mfp-bar");
           const isOpen = bar && !bar.hasAttribute("hidden");
           if (!isOpen) {
-            window._mfpEEChannel && window._mfpEEChannel(0);
+            window._mfpEEChannel && window._mfpEEChannel(0, true);
             mfpShow();
             showEEToast("📡 Drone Zone ativado... sintonizando o cosmos.");
           } else {
@@ -6356,12 +6371,18 @@
             (function () {
               const bar = document.getElementById("mfp-bar");
               const audio = bar && window._mfpAudio ? window._mfpAudio : null;
-              const isPlaying = bar && !bar.hasAttribute("hidden") &&
+              const isPlaying =
+                bar &&
+                !bar.hasAttribute("hidden") &&
                 bar.classList.contains("show") &&
                 typeof mfpTogglePlay === "function" &&
-                window._mfpIsPlaying && window._mfpIsPlaying();
+                window._mfpIsPlaying &&
+                window._mfpIsPlaying();
               if (isPlaying) {
-                setTimeout(() => showEEToast("🌟 Vitória com trilha sonora! 🎶"), 2200);
+                setTimeout(
+                  () => showEEToast("🌟 Vitória com trilha sonora! 🎶"),
+                  2200,
+                );
               }
             })();
             // Easter egg: insomniac — vitória entre 02:00 e 03:59 (horário SP)
@@ -8433,7 +8454,11 @@
           queueAch("palindrome");
         if (won && achHasDouble(WORD)) queueAch("double_trouble");
         // ── Rádio ──
-        if (won && typeof window._mfpIsPlaying === "function" && window._mfpIsPlaying())
+        if (
+          won &&
+          typeof window._mfpIsPlaying === "function" &&
+          window._mfpIsPlaying()
+        )
           queueAch("foco_total");
       }
 
@@ -13109,15 +13134,36 @@
           _eeCornerEmoji("🐱");
         } else if (["BRUXO", "MAGIA"].includes(WORD)) {
           _eeGlyphPulse("#a855f7");
-        } else if (["RADIO", "R\u00c1DIO", "RITMO", "NOTAS", "DRONE", "MUSICA", "M\u00daSICA", "FAIXA"].includes(WORD)) {
-          // Easter egg rádio: abre player no canal Drone Zone + toast
+        } else if (
+          [
+            "RADIO",
+            "R\u00c1DIO",
+            "RITMO",
+            "NOTAS",
+            "DRONE",
+            "MUSICA",
+            "M\u00daSICA",
+            "FAIXA",
+          ].includes(WORD)
+        ) {
+          // Easter egg rádio: abre player tocando + toast
           setTimeout(() => {
             if (typeof mfpShow === "function") {
-              window._mfpEEChannel && window._mfpEEChannel();
+              window._mfpEEChannel && window._mfpEEChannel(undefined, true);
               mfpShow();
               showEEToast("🎶 Esse glifo pede uma trilha sonora!");
             }
           }, 700);
+        } else if (["NAVE", "MARTE", "ASTRO", "OVNI", "LASER"].includes(WORD)) {
+          // Easter egg espacial: abre Space Invaders + Drone Zone
+          setTimeout(() => {
+            if (typeof mfpShow === "function") {
+              window._mfpEEChannel && window._mfpEEChannel(0, true); // Drone Zone
+              mfpShow();
+            }
+            openInvadersGame();
+            showEEToast("👾 Invasão espacial detectada!");
+          }, 500);
         }
       }
       function _eeFireParticles() {
@@ -13783,6 +13829,34 @@
         border-radius: 8px;
         image-rendering: pixelated;
       }
+      /* ── Space Invaders ── */
+      #invaders-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 11000;
+        background: rgba(0, 0, 0, 0.78);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s;
+      }
+      #invaders-modal.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      #invaders-canvas {
+        border: 2px solid var(--surface2);
+        border-radius: 8px;
+        image-rendering: pixelated;
+      }
+      #invaders-score {
+        font-size: 0.82rem;
+        color: var(--text3);
+        font-weight: 600;
+        letter-spacing: 0.04em;
+      }
       .sm-close {
         align-self: flex-end;
         background: none;
@@ -13946,6 +14020,19 @@
       </div>
     </div>
 
+    <!-- ── Easter Egg: Space Invaders ── -->
+    <div id="invaders-modal">
+      <div class="sm-inner">
+        <button class="sm-close" id="invaders-close">✕</button>
+        <div style="font-size: 0.78rem; color: var(--text3); text-align: center">
+          Invasores do espaço! 👾<br />
+          <span style="font-size: 0.7rem">Setas para mover · Espaço para atirar · ESC para sair</span>
+        </div>
+        <canvas id="invaders-canvas" width="280" height="220"></canvas>
+        <div id="invaders-score">👾 0 &nbsp; ❤️ 3</div>
+      </div>
+    </div>
+
     <script>
       /* ════════════════════════════════════════════
          GLOBAL EASTER EGGS
@@ -14069,6 +14156,203 @@
           if (e.target === modal) closeSnake();
         });
         startSnake();
+      }
+
+      // ── Space Invaders minigame ──
+      function openInvadersGame() {
+        const modal = document.getElementById("invaders-modal");
+        modal.classList.add("show");
+        const canvas = document.getElementById("invaders-canvas");
+        const ctx = canvas.getContext("2d");
+        const W = canvas.width, H = canvas.height;
+        const COLS = 8, ROWS = 3;
+        const AW = 22, AH = 16, GAP_X = 6, GAP_Y = 10;
+        const PW = 28, PH = 10;
+        const ALIEN_OFF_X = 16;
+
+        let player, aliens, bullets, aBullets, score, lives;
+        let alienDir, alienSpeed, aBulletTimer, shootCD, wave;
+        let gameOver, keys;
+
+        function placeAliens() {
+          aliens = [];
+          for (let r = 0; r < ROWS; r++)
+            for (let c = 0; c < COLS; c++)
+              aliens.push({
+                x: ALIEN_OFF_X + c * (AW + GAP_X),
+                y: 20 + r * (AH + GAP_Y),
+                alive: true,
+                type: r === 0 ? 2 : r === 1 ? 1 : 0,
+              });
+        }
+
+        function reset() {
+          player = { x: W / 2 - PW / 2, y: H - 18 };
+          bullets = []; aBullets = [];
+          score = 0; lives = 3; wave = 1;
+          alienDir = 1; alienSpeed = 0.55;
+          aBulletTimer = 40; shootCD = 0;
+          gameOver = false; keys = {};
+          placeAliens();
+          updateHUD();
+        }
+
+        function updateHUD() {
+          document.getElementById("invaders-score").innerHTML =
+            "\ud83d\udc7e " + score + " &nbsp; \u2764\ufe0f " + lives;
+        }
+
+        function getCSS(v) {
+          return getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+        }
+
+        function drawAlien(a) {
+          const clr = ["#9b8fe8", "#5bbfa0", "#f5a623"][a.type];
+          const bg = getCSS("--surface") || "#1a1a2e";
+          ctx.fillStyle = clr;
+          ctx.fillRect(a.x + 3, a.y + 3, AW - 6, AH - 6);
+          ctx.fillRect(a.x + 5, a.y, 3, 4);
+          ctx.fillRect(a.x + AW - 8, a.y, 3, 4);
+          ctx.fillRect(a.x, a.y + 5, 4, 4);
+          ctx.fillRect(a.x + AW - 4, a.y + 5, 4, 4);
+          ctx.fillStyle = bg;
+          ctx.fillRect(a.x + 7, a.y + 5, 3, 3);
+          ctx.fillRect(a.x + AW - 10, a.y + 5, 3, 3);
+        }
+
+        function drawPlayer() {
+          ctx.fillStyle = "#5bbfa0";
+          ctx.fillRect(player.x + 6, player.y + 4, PW - 12, PH - 4);
+          ctx.fillRect(player.x + 11, player.y, PW - 22, 6);
+          ctx.fillRect(player.x + PW / 2 - 1, player.y - 5, 3, 7);
+        }
+
+        function tick() {
+          if (gameOver) return;
+
+          if (keys["ArrowLeft"] || keys["a"]) player.x = Math.max(0, player.x - 3);
+          if (keys["ArrowRight"] || keys["d"]) player.x = Math.min(W - PW, player.x + 3);
+
+          if ((keys[" "] || keys["ArrowUp"]) && shootCD <= 0 && bullets.length < 2) {
+            bullets.push({ x: player.x + PW / 2 - 1, y: player.y - 5 });
+            shootCD = 20;
+          }
+          if (shootCD > 0) shootCD--;
+
+          bullets = bullets.filter(b => { b.y -= 7; return b.y > -8; });
+
+          const living = aliens.filter(a => a.alive);
+          if (!living.length) {
+            wave++;
+            alienSpeed = Math.min(2.2, 0.55 + wave * 0.28);
+            placeAliens();
+            updateHUD();
+            return;
+          }
+
+          let hitEdge = false;
+          living.forEach(a => {
+            a.x += alienDir * alienSpeed;
+            if (a.x + AW >= W - 1 || a.x <= 1) hitEdge = true;
+          });
+          if (hitEdge) {
+            alienDir *= -1;
+            living.forEach(a => a.y += 12);
+          }
+
+          if (--aBulletTimer <= 0 && living.length) {
+            const s = living[Math.floor(Math.random() * living.length)];
+            aBullets.push({ x: s.x + AW / 2 - 1, y: s.y + AH });
+            aBulletTimer = Math.max(18, 45 - wave * 4);
+          }
+          aBullets = aBullets.filter(b => { b.y += 3; return b.y < H + 8; });
+
+          // Player bullets hit aliens
+          outer: for (let bi = bullets.length - 1; bi >= 0; bi--) {
+            const b = bullets[bi];
+            for (let ai = 0; ai < aliens.length; ai++) {
+              const a = aliens[ai];
+              if (!a.alive) continue;
+              if (b.x < a.x + AW && b.x + 3 > a.x && b.y < a.y + AH && b.y + 8 > a.y) {
+                a.alive = false;
+                bullets.splice(bi, 1);
+                score += (a.type + 1) * 10;
+                updateHUD();
+                continue outer;
+              }
+            }
+          }
+
+          // Alien bullets hit player
+          for (let bi = aBullets.length - 1; bi >= 0; bi--) {
+            const b = aBullets[bi];
+            if (b.x < player.x + PW && b.x + 3 > player.x && b.y < player.y + PH && b.y + 8 > player.y) {
+              aBullets.splice(bi, 1);
+              if (--lives <= 0) { gameOver = true; draw(); showGO(); return; }
+              updateHUD();
+            }
+          }
+
+          // Aliens reach player line
+          if (living.some(a => a.y + AH >= player.y - 2)) {
+            gameOver = true; draw(); showGO(); return;
+          }
+
+          draw();
+        }
+
+        function draw() {
+          const bg = getCSS("--surface") || "#1a1a2e";
+          ctx.fillStyle = bg;
+          ctx.fillRect(0, 0, W, H);
+          // Starfield
+          ctx.fillStyle = "rgba(255,255,255,0.25)";
+          for (let i = 0; i < 35; i++)
+            ctx.fillRect((i * 83 + 11) % W, (i * 47 + 3) % H, 1, 1);
+          aliens.forEach(a => { if (a.alive) drawAlien(a); });
+          drawPlayer();
+          ctx.fillStyle = "#f5a623";
+          bullets.forEach(b => ctx.fillRect(b.x, b.y, 3, 8));
+          ctx.fillStyle = "#e87a6b";
+          aBullets.forEach(b => ctx.fillRect(b.x, b.y, 3, 7));
+        }
+
+        function showGO() {
+          ctx.fillStyle = "rgba(0,0,0,0.6)";
+          ctx.fillRect(0, 0, W, H);
+          ctx.fillStyle = "#fff";
+          ctx.textAlign = "center";
+          ctx.font = "bold 13px monospace";
+          ctx.fillText("Game Over \ud83d\udc80", W / 2, H / 2 - 14);
+          ctx.font = "10px monospace";
+          ctx.fillText("Pontuação: " + score, W / 2, H / 2 + 4);
+          ctx.fillText("clique para tentar de novo", W / 2, H / 2 + 22);
+          canvas.style.cursor = "pointer";
+          canvas.onclick = () => { canvas.onclick = null; canvas.style.cursor = "default"; reset(); loop = setInterval(tick, 1000 / 50); };
+        }
+
+        let loop;
+        function start() { clearInterval(loop); reset(); loop = setInterval(tick, 1000 / 50); }
+
+        const kd = (e) => {
+          keys[e.key] = true;
+          if ([" ", "ArrowUp", "ArrowLeft", "ArrowRight"].includes(e.key)) e.preventDefault();
+          if (e.key === "Escape") close();
+        };
+        const ku = (e) => { delete keys[e.key]; };
+
+        function close() {
+          clearInterval(loop);
+          document.removeEventListener("keydown", kd);
+          document.removeEventListener("keyup", ku);
+          modal.classList.remove("show");
+        }
+
+        document.addEventListener("keydown", kd);
+        document.addEventListener("keyup", ku);
+        document.getElementById("invaders-close").onclick = close;
+        modal.addEventListener("click", (e) => { if (e.target === modal) close(); });
+        start();
       }
 
       // ── Konami Code ──
@@ -14209,21 +14493,45 @@
       (function () {
         const MFP_KEY = "gliffoo_mfp";
         const SOMA_CHANNELS = [
-          { name: "Drone Zone",     desc: "Ambient espacial",      url: "https://ice1.somafm.com/dronezone-128-mp3" },
-          { name: "Groove Salad",   desc: "Downtempo / eletrônico", url: "https://ice1.somafm.com/groovesalad-128-mp3" },
-          { name: "Space Station",  desc: "Ambient / sci-fi",      url: "https://ice1.somafm.com/spacestation-128-mp3" },
-          { name: "Suburbs of Goa", desc: "Chillout / world",      url: "https://ice1.somafm.com/suburbsofgoa-128-mp3" },
-          { name: "Sonic Universe", desc: "Jazz fusão / nu-jazz",  url: "https://ice1.somafm.com/sonicuniverse-128-mp3" },
+          {
+            name: "Drone Zone",
+            desc: "Ambient espacial",
+            url: "https://ice1.somafm.com/dronezone-128-mp3",
+          },
+          {
+            name: "Groove Salad",
+            desc: "Downtempo / eletrônico",
+            url: "https://ice1.somafm.com/groovesalad-128-mp3",
+          },
+          {
+            name: "Space Station",
+            desc: "Ambient / sci-fi",
+            url: "https://ice1.somafm.com/spacestation-128-mp3",
+          },
+          {
+            name: "Suburbs of Goa",
+            desc: "Chillout / world",
+            url: "https://ice1.somafm.com/suburbsofgoa-128-mp3",
+          },
+          {
+            name: "Sonic Universe",
+            desc: "Jazz fusão / nu-jazz",
+            url: "https://ice1.somafm.com/sonicuniverse-128-mp3",
+          },
         ];
 
         let _st = { idx: 0 };
-        let _eeClickN = 0, _eeClickT = null; // EE: 5 cliques no botão ♫
-        let _eeChSwitch = 0, _eeChT = null;  // EE: trocar canal 5x
+        let _eeClickN = 0,
+          _eeClickT = null; // EE: 5 cliques no botão ♫
+        let _eeChSwitch = 0,
+          _eeChT = null; // EE: trocar canal 5x
         const _audio = new Audio();
         _audio.preload = "none";
 
         function _save() {
-          try { localStorage.setItem(MFP_KEY, JSON.stringify(_st)); } catch {}
+          try {
+            localStorage.setItem(MFP_KEY, JSON.stringify(_st));
+          } catch {}
         }
         function _updateUI() {
           const ch = SOMA_CHANNELS[_st.idx];
@@ -14245,10 +14553,15 @@
           // EE: trocar canal 5x em 10s
           clearTimeout(_eeChT);
           _eeChSwitch++;
-          _eeChT = setTimeout(() => { _eeChSwitch = 0; }, 10000);
+          _eeChT = setTimeout(() => {
+            _eeChSwitch = 0;
+          }, 10000);
           if (_eeChSwitch >= 5) {
             _eeChSwitch = 0;
-            setTimeout(() => showEEToast("😅 Indeciso? Cada canal é bom!"), 300);
+            setTimeout(
+              () => showEEToast("😅 Indeciso? Cada canal é bom!"),
+              300,
+            );
           }
         }
         function mfpTogglePlay() {
@@ -14263,7 +14576,10 @@
           _setChannel((_st.idx + 1) % SOMA_CHANNELS.length, !_audio.paused);
         }
         function mfpPrev() {
-          _setChannel((_st.idx - 1 + SOMA_CHANNELS.length) % SOMA_CHANNELS.length, !_audio.paused);
+          _setChannel(
+            (_st.idx - 1 + SOMA_CHANNELS.length) % SOMA_CHANNELS.length,
+            !_audio.paused,
+          );
         }
         function mfpShow() {
           const bar = document.getElementById("mfp-bar");
@@ -14295,7 +14611,12 @@
         // Restore from localStorage
         try {
           const saved = JSON.parse(localStorage.getItem(MFP_KEY));
-          if (saved && Number.isInteger(saved.idx) && saved.idx >= 0 && saved.idx < SOMA_CHANNELS.length)
+          if (
+            saved &&
+            Number.isInteger(saved.idx) &&
+            saved.idx >= 0 &&
+            saved.idx < SOMA_CHANNELS.length
+          )
             _st.idx = saved.idx;
         } catch {}
 
@@ -14306,16 +14627,21 @@
         window.mfpPrev = mfpPrev;
         // Expose helpers for easter eggs
         window._mfpIsPlaying = () => !_audio.paused;
-        window._mfpEEChannel = (idx) => {
-          const i = (idx !== undefined) ? idx : Math.floor(Math.random() * SOMA_CHANNELS.length);
-          _setChannel(i, false);
+        window._mfpEEChannel = (idx, play) => {
+          const i =
+            idx !== undefined
+              ? idx
+              : Math.floor(Math.random() * SOMA_CHANNELS.length);
+          _setChannel(i, !!play);
         };
         // EE footer btn: 5 cliques em 2s → canal aleatório + toast
         document.addEventListener("click", (e) => {
           if (!e.target.closest(".footer-mfp-btn")) return;
           clearTimeout(_eeClickT);
           _eeClickN++;
-          _eeClickT = setTimeout(() => { _eeClickN = 0; }, 2000);
+          _eeClickT = setTimeout(() => {
+            _eeClickN = 0;
+          }, 2000);
           if (_eeClickN >= 5) {
             _eeClickN = 0;
             const ni = Math.floor(Math.random() * SOMA_CHANNELS.length);
