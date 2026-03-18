@@ -99,7 +99,7 @@ O jogo tem **dois** handlers do Konami code — um no bloco do jogo principal e 
 
 ### Space Invaders
 
-- **Gatilho:** Vencer com a palavra do dia sendo `NAVE`, `MARTE`, `ASTRO`, `OVNI` ou `LASER` (`eeThematicWord()`)
+- **Gatilho:** Digitar `NAVE`, `MARTE`, `ASTRO`, `OVNI` ou `LASER` no campo de tentativa (em qualquer dia)
 - **Efeito:** Abre o jogo em modal + inicia Drone Zone (SomaFM) tocando automaticamente
 - **Mecânica:**
   - Grid 8×3 de aliens em 3 tipos (amarelo/verde/roxo, pontuação diferente)

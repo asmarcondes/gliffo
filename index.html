@@ -6154,6 +6154,15 @@
             showEEToast("📡 Já tá no ar!");
           }
         }
+        // Easter egg espacial: digitar NAVE/MARTE/ASTRO/OVNI/LASER abre Space Invaders
+        if (["NAVE", "MARTE", "ASTRO", "OVNI", "LASER"].includes(guess)) {
+          if (typeof mfpShow === "function") {
+            window._mfpEEChannel && window._mfpEEChannel(0, true); // Drone Zone
+            mfpShow();
+          }
+          openInvadersGame();
+          showEEToast("👾 Invasão espacial detectada!");
+        }
         // Validação de dicionário
         if (!dicionarioValido(guess)) {
           setFb("Palavra não encontrada no dicionário.", "err");
@@ -12921,7 +12930,9 @@
               mfpShow();
             }
           });
-          safe("dbg-ee-toast", () => showEEToast("🧨 Toast de debug ativado!", 3000));
+          safe("dbg-ee-toast", () =>
+            showEEToast("🧨 Toast de debug ativado!", 3000),
+          );
         });
       })();
 
@@ -13167,15 +13178,7 @@
             }
           }, 700);
         } else if (["NAVE", "MARTE", "ASTRO", "OVNI", "LASER"].includes(WORD)) {
-          // Easter egg espacial: abre Space Invaders + Drone Zone
-          setTimeout(() => {
-            if (typeof mfpShow === "function") {
-              window._mfpEEChannel && window._mfpEEChannel(0, true); // Drone Zone
-              mfpShow();
-            }
-            openInvadersGame();
-            showEEToast("👾 Invasão espacial detectada!");
-          }, 500);
+          // Easter egg espacial: removido do eeThematicWord — gatilho está no decode()
         }
       }
       function _eeFireParticles() {
@@ -14054,9 +14057,13 @@
     <div id="invaders-modal">
       <div class="sm-inner">
         <button class="sm-close" id="invaders-close">✕</button>
-        <div style="font-size: 0.78rem; color: var(--text3); text-align: center">
+        <div
+          style="font-size: 0.78rem; color: var(--text3); text-align: center"
+        >
           Invasores do espaço! 👾<br />
-          <span style="font-size: 0.7rem">Setas para mover · Espaço para atirar · ESC para sair</span>
+          <span style="font-size: 0.7rem"
+            >Setas para mover · Espaço para atirar · ESC para sair</span
+          >
         </div>
         <canvas id="invaders-canvas" width="280" height="220"></canvas>
         <div id="invaders-score">👾 0 &nbsp; ❤️ 3</div>
@@ -14194,10 +14201,16 @@
         modal.classList.add("show");
         const canvas = document.getElementById("invaders-canvas");
         const ctx = canvas.getContext("2d");
-        const W = canvas.width, H = canvas.height;
-        const COLS = 8, ROWS = 3;
-        const AW = 22, AH = 16, GAP_X = 6, GAP_Y = 10;
-        const PW = 28, PH = 10;
+        const W = canvas.width,
+          H = canvas.height;
+        const COLS = 8,
+          ROWS = 3;
+        const AW = 22,
+          AH = 16,
+          GAP_X = 6,
+          GAP_Y = 10;
+        const PW = 28,
+          PH = 10;
         const ALIEN_OFF_X = 16;
 
         let player, aliens, bullets, aBullets, score, lives;
@@ -14218,11 +14231,17 @@
 
         function reset() {
           player = { x: W / 2 - PW / 2, y: H - 18 };
-          bullets = []; aBullets = [];
-          score = 0; lives = 3; wave = 1;
-          alienDir = 1; alienSpeed = 0.55;
-          aBulletTimer = 40; shootCD = 0;
-          gameOver = false; keys = {};
+          bullets = [];
+          aBullets = [];
+          score = 0;
+          lives = 3;
+          wave = 1;
+          alienDir = 1;
+          alienSpeed = 0.55;
+          aBulletTimer = 40;
+          shootCD = 0;
+          gameOver = false;
+          keys = {};
           placeAliens();
           updateHUD();
         }
@@ -14233,7 +14252,9 @@
         }
 
         function getCSS(v) {
-          return getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+          return getComputedStyle(document.documentElement)
+            .getPropertyValue(v)
+            .trim();
         }
 
         function drawAlien(a) {
@@ -14260,18 +14281,27 @@
         function tick() {
           if (gameOver) return;
 
-          if (keys["ArrowLeft"] || keys["a"]) player.x = Math.max(0, player.x - 3);
-          if (keys["ArrowRight"] || keys["d"]) player.x = Math.min(W - PW, player.x + 3);
+          if (keys["ArrowLeft"] || keys["a"])
+            player.x = Math.max(0, player.x - 3);
+          if (keys["ArrowRight"] || keys["d"])
+            player.x = Math.min(W - PW, player.x + 3);
 
-          if ((keys[" "] || keys["ArrowUp"]) && shootCD <= 0 && bullets.length < 2) {
+          if (
+            (keys[" "] || keys["ArrowUp"]) &&
+            shootCD <= 0 &&
+            bullets.length < 2
+          ) {
             bullets.push({ x: player.x + PW / 2 - 1, y: player.y - 5 });
             shootCD = 20;
           }
           if (shootCD > 0) shootCD--;
 
-          bullets = bullets.filter(b => { b.y -= 7; return b.y > -8; });
+          bullets = bullets.filter((b) => {
+            b.y -= 7;
+            return b.y > -8;
+          });
 
-          const living = aliens.filter(a => a.alive);
+          const living = aliens.filter((a) => a.alive);
           if (!living.length) {
             wave++;
             alienSpeed = Math.min(2.2, 0.55 + wave * 0.28);
@@ -14281,13 +14311,13 @@
           }
 
           let hitEdge = false;
-          living.forEach(a => {
+          living.forEach((a) => {
             a.x += alienDir * alienSpeed;
             if (a.x + AW >= W - 1 || a.x <= 1) hitEdge = true;
           });
           if (hitEdge) {
             alienDir *= -1;
-            living.forEach(a => a.y += 12);
+            living.forEach((a) => (a.y += 12));
           }
 
           if (--aBulletTimer <= 0 && living.length) {
@@ -14295,7 +14325,10 @@
             aBullets.push({ x: s.x + AW / 2 - 1, y: s.y + AH });
             aBulletTimer = Math.max(18, 45 - wave * 4);
           }
-          aBullets = aBullets.filter(b => { b.y += 3; return b.y < H + 8; });
+          aBullets = aBullets.filter((b) => {
+            b.y += 3;
+            return b.y < H + 8;
+          });
 
           // Player bullets hit aliens
           outer: for (let bi = bullets.length - 1; bi >= 0; bi--) {
@@ -14303,7 +14336,12 @@
             for (let ai = 0; ai < aliens.length; ai++) {
               const a = aliens[ai];
               if (!a.alive) continue;
-              if (b.x < a.x + AW && b.x + 3 > a.x && b.y < a.y + AH && b.y + 8 > a.y) {
+              if (
+                b.x < a.x + AW &&
+                b.x + 3 > a.x &&
+                b.y < a.y + AH &&
+                b.y + 8 > a.y
+              ) {
                 a.alive = false;
                 bullets.splice(bi, 1);
                 score += (a.type + 1) * 10;
@@ -14316,16 +14354,29 @@
           // Alien bullets hit player
           for (let bi = aBullets.length - 1; bi >= 0; bi--) {
             const b = aBullets[bi];
-            if (b.x < player.x + PW && b.x + 3 > player.x && b.y < player.y + PH && b.y + 8 > player.y) {
+            if (
+              b.x < player.x + PW &&
+              b.x + 3 > player.x &&
+              b.y < player.y + PH &&
+              b.y + 8 > player.y
+            ) {
               aBullets.splice(bi, 1);
-              if (--lives <= 0) { gameOver = true; draw(); showGO(); return; }
+              if (--lives <= 0) {
+                gameOver = true;
+                draw();
+                showGO();
+                return;
+              }
               updateHUD();
             }
           }
 
           // Aliens reach player line
-          if (living.some(a => a.y + AH >= player.y - 2)) {
-            gameOver = true; draw(); showGO(); return;
+          if (living.some((a) => a.y + AH >= player.y - 2)) {
+            gameOver = true;
+            draw();
+            showGO();
+            return;
           }
 
           draw();
@@ -14339,12 +14390,14 @@
           ctx.fillStyle = "rgba(255,255,255,0.25)";
           for (let i = 0; i < 35; i++)
             ctx.fillRect((i * 83 + 11) % W, (i * 47 + 3) % H, 1, 1);
-          aliens.forEach(a => { if (a.alive) drawAlien(a); });
+          aliens.forEach((a) => {
+            if (a.alive) drawAlien(a);
+          });
           drawPlayer();
           ctx.fillStyle = "#f5a623";
-          bullets.forEach(b => ctx.fillRect(b.x, b.y, 3, 8));
+          bullets.forEach((b) => ctx.fillRect(b.x, b.y, 3, 8));
           ctx.fillStyle = "#e87a6b";
-          aBullets.forEach(b => ctx.fillRect(b.x, b.y, 3, 7));
+          aBullets.forEach((b) => ctx.fillRect(b.x, b.y, 3, 7));
         }
 
         function showGO() {
@@ -14358,18 +14411,31 @@
           ctx.fillText("Pontuação: " + score, W / 2, H / 2 + 4);
           ctx.fillText("clique para tentar de novo", W / 2, H / 2 + 22);
           canvas.style.cursor = "pointer";
-          canvas.onclick = () => { canvas.onclick = null; canvas.style.cursor = "default"; reset(); loop = setInterval(tick, 1000 / 50); };
+          canvas.onclick = () => {
+            canvas.onclick = null;
+            canvas.style.cursor = "default";
+            clearInterval(loop);
+            reset();
+            loop = setInterval(tick, 1000 / 50);
+          };
         }
 
         let loop;
-        function start() { clearInterval(loop); reset(); loop = setInterval(tick, 1000 / 50); }
+        function start() {
+          clearInterval(loop);
+          reset();
+          loop = setInterval(tick, 1000 / 50);
+        }
 
         const kd = (e) => {
           keys[e.key] = true;
-          if ([" ", "ArrowUp", "ArrowLeft", "ArrowRight"].includes(e.key)) e.preventDefault();
+          if ([" ", "ArrowUp", "ArrowLeft", "ArrowRight"].includes(e.key))
+            e.preventDefault();
           if (e.key === "Escape") close();
         };
-        const ku = (e) => { delete keys[e.key]; };
+        const ku = (e) => {
+          delete keys[e.key];
+        };
 
         function close() {
           clearInterval(loop);
@@ -14381,7 +14447,9 @@
         document.addEventListener("keydown", kd);
         document.addEventListener("keyup", ku);
         document.getElementById("invaders-close").onclick = close;
-        modal.addEventListener("click", (e) => { if (e.target === modal) close(); });
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) close();
+        });
         start();
       }
 
