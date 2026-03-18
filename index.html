@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="pt-BR" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
@@ -1414,6 +1414,157 @@
         color: var(--text3);
         letter-spacing: 0.04em;
         text-align: center;
+      }
+
+      /* ── MFP PLAYER BAR ── */
+      #mfp-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 50;
+        background: var(--surface);
+        border-top: 1.5px solid var(--border2);
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.25);
+        padding: 6px 12px calc(8px + env(safe-area-inset-bottom, 0px));
+        transform: translateY(110%);
+        transition: transform 0.28s cubic-bezier(0.22, 0.61, 0.36, 1);
+      }
+      #mfp-bar.show {
+        transform: translateY(0);
+      }
+      .mfp-inner {
+        max-width: 600px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .mfp-ctrl-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text2);
+        padding: 6px;
+        border-radius: 8px;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition:
+          color 0.15s,
+          background 0.15s;
+        min-width: 28px;
+        min-height: 28px;
+      }
+      .mfp-ctrl-btn:hover {
+        color: var(--amber-400);
+        background: rgba(245, 166, 35, 0.1);
+      }
+      .mfp-ctrl-btn.active {
+        color: var(--amber-400);
+      }
+      .mfp-play-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--amber-400);
+        color: #111;
+        flex-shrink: 0;
+      }
+      .mfp-play-btn:hover {
+        background: #e8940a;
+        color: #000;
+      }
+      .mfp-info {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+      .mfp-title {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .mfp-progress-wrap {
+        width: 100%;
+        height: 3px;
+        background: var(--surface2);
+        border-radius: 2px;
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+      .mfp-progress-bar {
+        height: 100%;
+        background: var(--amber-400);
+        border-radius: 2px;
+        width: 0%;
+        transition: width 0.25s linear;
+        pointer-events: none;
+      }
+      .mfp-credit {
+        font-size: 0.58rem;
+        color: var(--text3);
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.3;
+      }
+      .mfp-credit a {
+        color: var(--amber-400);
+        text-decoration: none;
+      }
+      .mfp-credit a:hover {
+        text-decoration: underline;
+      }
+      /* Footer MFP button (desktop) */
+      .footer-mfp-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        color: var(--text3);
+        cursor: pointer;
+        transition:
+          background 0.15s,
+          color 0.15s,
+          border-color 0.15s;
+      }
+      .footer-mfp-btn:hover {
+        background: rgba(245, 166, 35, 0.1);
+        border-color: rgba(245, 166, 35, 0.3);
+        color: var(--amber-400);
+      }
+      /* Mobile: player bar below keyboard (z-index 99 < 100) */
+      @media (min-width: 768px) {
+        body.mfp-open {
+          padding-bottom: 72px;
+        }
+      }
+      @media (max-width: 767px) {
+        #mfp-bar {
+          z-index: 99;
+        }
+        body.mfp-open .keyboard {
+          bottom: 52px;
+          transition: bottom 0.28s cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+        body.mfp-open main {
+          padding-bottom: calc(
+            var(--kb-h, 190px) + 52px + env(safe-area-inset-bottom, 0px)
+          );
+        }
       }
 
       /* Countdown */
@@ -3235,12 +3386,101 @@
 
     <footer class="site-footer" aria-label="Rodapé do glif.foo">
       <div class="footer-social" id="footer-social">
-        <!-- redes sociais serão adicionadas aqui -->
+        <button
+          class="footer-mfp-btn"
+          onclick="mfpShow()"
+          aria-label="Abrir Music For Programming player"
+          title="Music For Programming"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            stroke="currentColor"
+            fill="none"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M9 18V5l12-2v13" />
+            <circle cx="6" cy="18" r="3" />
+            <circle cx="18" cy="16" r="3" />
+          </svg>
+        </button>
       </div>
       <div class="footer-copy">
         © 2026 glif.foo — Todos os direitos reservados
       </div>
     </footer>
+
+    <!-- ══ MFP PLAYER BAR ══ -->
+    <div id="mfp-bar" hidden aria-label="Music Player">
+      <div class="mfp-inner">
+        <button
+          class="mfp-ctrl-btn"
+          id="mfp-prev"
+          onclick="mfpPrev()"
+          aria-label="Anterior"
+          title="Anterior"
+        >
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path d="M6 6h2v12H6zm3.5 6 8.5 6V6z" />
+          </svg>
+        </button>
+        <button
+          class="mfp-ctrl-btn mfp-play-btn"
+          id="mfp-play"
+          onclick="mfpTogglePlay()"
+          aria-label="Play/Pause"
+        >
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <polygon points="5,3 19,12 5,21" />
+          </svg>
+        </button>
+        <button
+          class="mfp-ctrl-btn"
+          id="mfp-next"
+          onclick="mfpNext()"
+          aria-label="Próximo"
+          title="Próximo"
+        >
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path d="M6 18l8.5-6L6 6v12zM16 6h2v12h-2z" />
+          </svg>
+        </button>
+        <div class="mfp-info">
+          <div class="mfp-title" id="mfp-title">SomaFM</div>
+          <div id="mfp-progress-wrap" class="mfp-progress-wrap" title="Ao vivo">
+            <div id="mfp-progress" class="mfp-progress-bar" style="width:100%;opacity:0.3"></div>
+          </div>
+          <div class="mfp-credit" id="mfp-credit">
+            ♫ <a href="https://somafm.com/" target="_blank" rel="noopener noreferrer">SomaFM</a>
+            — rádio não-comercial, 100% independente.
+            <a href="https://somafm.com/support/" target="_blank" rel="noopener noreferrer">Apoie o SomaFM ♥</a>
+          </div>
+        </div>
+        <button
+          class="mfp-ctrl-btn"
+          onclick="mfpHide()"
+          aria-label="Fechar player"
+          title="Fechar"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            width="13"
+            height="13"
+            stroke="currentColor"
+            fill="none"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+    </div>
 
     <!-- ══ ACHIEVEMENT POPUP ══ -->
     <output id="ach-popup" aria-live="polite">
@@ -3316,7 +3556,13 @@
         <div class="sharepreview" id="win-share"></div>
         <button class="sbtn" onclick="share()">Compartilhar resultado</button>
         <div class="copied">✓ Copiado!</div>
-        <a id="win-def" class="word-def-link" target="_blank" rel="noopener noreferrer">📖 Ver definição</a>
+        <a
+          id="win-def"
+          class="word-def-link"
+          target="_blank"
+          rel="noopener noreferrer"
+          >📖 Ver definição</a
+        >
       </div>
     </div>
 
@@ -3342,7 +3588,8 @@
         </button>
         <div class="modal-title" id="lose-modal-title">Não foi dessa vez</div>
         <p class="modal-sub">A palavra era:</p>
-        <div id="lose-word"
+        <div
+          id="lose-word"
           style="
             font-family: &quot;DM Serif Display&quot;, serif;
             font-size: 2.2rem;
@@ -3352,7 +3599,13 @@
             margin: 4px 0 4px;
           "
         ></div>
-        <a id="lose-def" class="word-def-link" target="_blank" rel="noopener noreferrer">📖 Ver definição</a>
+        <a
+          id="lose-def"
+          class="word-def-link"
+          target="_blank"
+          rel="noopener noreferrer"
+          >📖 Ver definição</a
+        >
         <div class="countdown-block" id="lose-countdown-block">
           <div class="countdown-label">Próximo glifo em</div>
           <div class="countdown-timer" id="lose-countdown">--:--:--</div>
@@ -3509,15 +3762,64 @@
           </div>
           <div id="cfg-ea-section"></div>
           <div class="cfg-divider"></div>
-          <div class="cfg-row" onclick="closeM('config-modal'); startPraticaMode();">
+          <div
+            class="cfg-row"
+            onclick="
+              closeM('config-modal');
+              startPraticaMode();
+            "
+          >
             <div class="cfg-row-left">
               <span class="cfg-row-icon">🎯</span>
               <div>
                 <div class="cfg-row-label">Modo Prática</div>
-                <div class="cfg-row-sub">Palavra aleatória, sem afetar stats</div>
+                <div class="cfg-row-sub">
+                  Palavra aleatória, sem afetar stats
+                </div>
               </div>
             </div>
-            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text3);flex-shrink:0"><path d="M9 18l6-6-6-6"/></svg>
+            <svg
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              stroke="currentColor"
+              fill="none"
+              stroke-width="1.75"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              style="color: var(--text3); flex-shrink: 0"
+            >
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+          </div>
+          <div class="cfg-divider"></div>
+          <div
+            class="cfg-row"
+            onclick="
+              closeM('config-modal');
+              mfpShow();
+            "
+          >
+            <div class="cfg-row-left">
+              <span class="cfg-row-icon">🎵</span>
+              <div>
+                <div class="cfg-row-label">SomaFM</div>
+                <div class="cfg-row-sub">Rádio ambient ao vivo — 5 canais</div>
+              </div>
+            </div>
+            <svg
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              stroke="currentColor"
+              fill="none"
+              stroke-width="1.75"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              style="color: var(--text3); flex-shrink: 0"
+            >
+              <path d="M9 18l6-6-6-6" />
+            </svg>
           </div>
           <!-- Atalhos para mobile (Arquivo e Ajuda ficam ocultos no header) -->
           <div class="cfg-divider cfg-mobile-only"></div>
@@ -5825,6 +6127,18 @@
           haptic(80);
           return;
         }
+        // Easter egg rádio: digitar DRONE abre Drone Zone
+        if (guess === "DRONE" && typeof mfpShow === "function") {
+          const bar = document.getElementById("mfp-bar");
+          const isOpen = bar && !bar.hasAttribute("hidden");
+          if (!isOpen) {
+            window._mfpEEChannel && window._mfpEEChannel(0);
+            mfpShow();
+            showEEToast("📡 Drone Zone ativado... sintonizando o cosmos.");
+          } else {
+            showEEToast("📡 Já tá no ar!");
+          }
+        }
         // Validação de dicionário
         if (!dicionarioValido(guess)) {
           setFb("Palavra não encontrada no dicionário.", "err");
@@ -6038,6 +6352,18 @@
             setTimeout(() => winAnim(), 380);
             setTimeout(() => eeThematicWord(), 500);
             setTimeout(() => eePalindromeReveal(), 1800);
+            // Easter egg: vitória com música tocando
+            (function () {
+              const bar = document.getElementById("mfp-bar");
+              const audio = bar && window._mfpAudio ? window._mfpAudio : null;
+              const isPlaying = bar && !bar.hasAttribute("hidden") &&
+                bar.classList.contains("show") &&
+                typeof mfpTogglePlay === "function" &&
+                window._mfpIsPlaying && window._mfpIsPlaying();
+              if (isPlaying) {
+                setTimeout(() => showEEToast("🌟 Vitória com trilha sonora! 🎶"), 2200);
+              }
+            })();
             // Easter egg: insomniac — vitória entre 02:00 e 03:59 (horário SP)
             (function () {
               const spHour = parseInt(
@@ -6050,7 +6376,10 @@
               );
               if (spHour >= 2 && spHour < 4) {
                 setTimeout(() => {
-                  setFb("Ainda acordado às " + spHour + "h? 🌙 Vai dormir!", "ok");
+                  setFb(
+                    "Ainda acordado às " + spHour + "h? 🌙 Vai dormir!",
+                    "ok",
+                  );
                   setTimeout(() => setFb("", ""), 5000);
                 }, 2600);
               }
@@ -6811,8 +7140,8 @@
         const midCard = ARQUIVO_MODO
           ? `<div class="stat-card"><div class="stat-val">📅</div><div class="stat-lbl">Arquivo #${ARQUIVO_PUZZLENUM}</div></div>`
           : PRATICA_MODO
-          ? `<div class="stat-card"><div class="stat-val">🎯</div><div class="stat-lbl">Modo Prática</div></div>`
-          : `<div class="stat-card"><div class="stat-val">${s.streakAtual}<span style="font-size:1rem"> 🔥</span></div><div class="stat-lbl">Sequência</div></div>`;
+            ? `<div class="stat-card"><div class="stat-val">🎯</div><div class="stat-lbl">Modo Prática</div></div>`
+            : `<div class="stat-card"><div class="stat-val">${s.streakAtual}<span style="font-size:1rem"> 🔥</span></div><div class="stat-lbl">Sequência</div></div>`;
         document.getElementById("win-stats").innerHTML = `
     <div class="stat-card"><div class="stat-val">${G.attempts.length}<span style="font-size:1rem;color:var(--text3)">/4</span></div><div class="stat-lbl">Tentativas</div></div>
     ${midCard}
@@ -6823,7 +7152,8 @@
         if (wCB) wCB.style.display = noCountdown ? "none" : "";
         if (!noCountdown) iniciarCountdown("win-countdown");
         const winDef = document.getElementById("win-def");
-        if (winDef) winDef.href = `https://www.dicio.com.br/${WORD.toLowerCase()}/`;
+        if (winDef)
+          winDef.href = `https://www.dicio.com.br/${WORD.toLowerCase()}/`;
         openM("win-modal");
       }
 
@@ -6832,7 +7162,8 @@
         atualizarStats(false, 0);
         document.getElementById("lose-word").textContent = WORD;
         const loseDef = document.getElementById("lose-def");
-        if (loseDef) loseDef.href = `https://www.dicio.com.br/${WORD.toLowerCase()}/`;
+        if (loseDef)
+          loseDef.href = `https://www.dicio.com.br/${WORD.toLowerCase()}/`;
         buildShareGrid("lose-share");
         const lCB = document.getElementById("lose-countdown-block");
         const noCountdownL = ARQUIVO_MODO || PRATICA_MODO;
@@ -6908,7 +7239,11 @@
 
       function share() {
         const n = ARQUIVO_MODO ? ARQUIVO_PUZZLENUM : numeroPuzzle();
-        const arqTag = ARQUIVO_MODO ? " (arquivo)" : PRATICA_MODO ? " (prática)" : "";
+        const arqTag = ARQUIVO_MODO
+          ? " (arquivo)"
+          : PRATICA_MODO
+            ? " (prática)"
+            : "";
         const resultado = G.won ? `${G.attempts.length}/4` : "X/4";
         const s2 = carregarStats();
         const titulo = getTituloStreak(s2.streakAtual);
@@ -7908,6 +8243,18 @@
             },
           ],
         },
+        {
+          section: "Rádio",
+          palette: "teal",
+          items: [
+            {
+              id: "foco_total",
+              name: "Foco Total",
+              icon: "headphones",
+              desc: "Decodifique com a rádio tocando",
+            },
+          ],
+        },
       ];
 
       const ACH_MAP = {};
@@ -8000,6 +8347,7 @@
           sandwich: "🥪",
           palindrome: "🪞",
           double_trouble: "✌️",
+          foco_total: "🎧",
         };
         const ach = { ...ACH_MAP[id], emoji: emojiMap[id] || "🏅" };
         _achQueue.push(ach);
@@ -8084,6 +8432,9 @@
         if (G.attempts.some((a) => achIsPalindrome(a.word)))
           queueAch("palindrome");
         if (won && achHasDouble(WORD)) queueAch("double_trouble");
+        // ── Rádio ──
+        if (won && typeof window._mfpIsPlaying === "function" && window._mfpIsPlaying())
+          queueAch("foco_total");
       }
 
       // ── Helpers de conquistas ──
@@ -12204,7 +12555,10 @@
       function _purgeOldArchive(max = 60) {
         const keys = Object.keys(localStorage)
           .filter((k) => k.startsWith("gliffoo_archive_"))
-          .map((k) => ({ k, n: parseInt(k.replace("gliffoo_archive_", ""), 10) }))
+          .map((k) => ({
+            k,
+            n: parseInt(k.replace("gliffoo_archive_", ""), 10),
+          }))
           .filter((o) => !isNaN(o.n))
           .sort((a, b) => b.n - a.n);
         keys.slice(max).forEach((o) => localStorage.removeItem(o.k));
@@ -12548,7 +12902,10 @@
       document.body.addEventListener(
         "pointerdown",
         () => {
-          if (!AUDIO_MUTED) try { _getAC(); } catch (e) {}
+          if (!AUDIO_MUTED)
+            try {
+              _getAC();
+            } catch (e) {}
         },
         { once: true, passive: true },
       );
@@ -12556,9 +12913,16 @@
       // Easter egg: Konami Code → efeito arco-íris + mensagem
       (function () {
         const KONAMI = [
-          "ArrowUp","ArrowUp","ArrowDown","ArrowDown",
-          "ArrowLeft","ArrowRight","ArrowLeft","ArrowRight",
-          "b","a",
+          "ArrowUp",
+          "ArrowUp",
+          "ArrowDown",
+          "ArrowDown",
+          "ArrowLeft",
+          "ArrowRight",
+          "ArrowLeft",
+          "ArrowRight",
+          "b",
+          "a",
         ];
         let _kBuf = [];
         document.addEventListener("keydown", (e) => {
@@ -12715,17 +13079,23 @@
         // Reverse sweep (right→left) after a pause
         const delay = boxes.length * 90 + 350;
         [...boxes].reverse().forEach((b, i) => {
-          setTimeout(() => {
-            b.style.transition = "transform 0.15s ease-out, box-shadow 0.15s";
-            b.style.transform = "scale(1.22)";
-            b.style.boxShadow = "0 0 10px #9b8fe8";
-            setTimeout(() => {
-              b.style.transform = "";
-              b.style.boxShadow = "";
-            }, 200);
-          }, delay + i * 90);
+          setTimeout(
+            () => {
+              b.style.transition = "transform 0.15s ease-out, box-shadow 0.15s";
+              b.style.transform = "scale(1.22)";
+              b.style.boxShadow = "0 0 10px #9b8fe8";
+              setTimeout(() => {
+                b.style.transform = "";
+                b.style.boxShadow = "";
+              }, 200);
+            },
+            delay + i * 90,
+          );
         });
-        setTimeout(() => setFb("↔️ Palíndromo!", "ok"), delay + boxes.length * 90 + 150);
+        setTimeout(
+          () => setFb("↔️ Palíndromo!", "ok"),
+          delay + boxes.length * 90 + 150,
+        );
         setTimeout(() => setFb("", ""), delay + boxes.length * 90 + 3000);
       }
 
@@ -12739,6 +13109,15 @@
           _eeCornerEmoji("🐱");
         } else if (["BRUXO", "MAGIA"].includes(WORD)) {
           _eeGlyphPulse("#a855f7");
+        } else if (["RADIO", "R\u00c1DIO", "RITMO", "NOTAS", "DRONE", "MUSICA", "M\u00daSICA", "FAIXA"].includes(WORD)) {
+          // Easter egg rádio: abre player no canal Drone Zone + toast
+          setTimeout(() => {
+            if (typeof mfpShow === "function") {
+              window._mfpEEChannel && window._mfpEEChannel();
+              mfpShow();
+              showEEToast("🎶 Esse glifo pede uma trilha sonora!");
+            }
+          }, 700);
         }
       }
       function _eeFireParticles() {
@@ -12815,8 +13194,14 @@
         }
       }
       @keyframes eeCornerPop {
-        from { transform: scale(0) rotate(-20deg); opacity: 0; }
-        to   { transform: scale(1) rotate(0deg);   opacity: 1; }
+        from {
+          transform: scale(0) rotate(-20deg);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1) rotate(0deg);
+          opacity: 1;
+        }
       }
       .tut-result-row {
         display: flex;
@@ -13818,6 +14203,133 @@
             }, 1500);
           }
         });
+      })();
+
+      // ── SomaFM Player ──────────────────────────────────────────────────────
+      (function () {
+        const MFP_KEY = "gliffoo_mfp";
+        const SOMA_CHANNELS = [
+          { name: "Drone Zone",     desc: "Ambient espacial",      url: "https://ice1.somafm.com/dronezone-128-mp3" },
+          { name: "Groove Salad",   desc: "Downtempo / eletrônico", url: "https://ice1.somafm.com/groovesalad-128-mp3" },
+          { name: "Space Station",  desc: "Ambient / sci-fi",      url: "https://ice1.somafm.com/spacestation-128-mp3" },
+          { name: "Suburbs of Goa", desc: "Chillout / world",      url: "https://ice1.somafm.com/suburbsofgoa-128-mp3" },
+          { name: "Sonic Universe", desc: "Jazz fusão / nu-jazz",  url: "https://ice1.somafm.com/sonicuniverse-128-mp3" },
+        ];
+
+        let _st = { idx: 0 };
+        let _eeClickN = 0, _eeClickT = null; // EE: 5 cliques no botão ♫
+        let _eeChSwitch = 0, _eeChT = null;  // EE: trocar canal 5x
+        const _audio = new Audio();
+        _audio.preload = "none";
+
+        function _save() {
+          try { localStorage.setItem(MFP_KEY, JSON.stringify(_st)); } catch {}
+        }
+        function _updateUI() {
+          const ch = SOMA_CHANNELS[_st.idx];
+          const titleEl = document.getElementById("mfp-title");
+          const playBtn = document.getElementById("mfp-play");
+          if (titleEl) titleEl.textContent = ch.name + " \u2014 " + ch.desc;
+          if (playBtn)
+            playBtn.innerHTML = _audio.paused
+              ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>'
+              : '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+        }
+        function _setChannel(idx, play) {
+          _st.idx = idx;
+          _audio.src = SOMA_CHANNELS[idx].url;
+          _audio.load();
+          if (play) _audio.play().catch(() => {});
+          _updateUI();
+          _save();
+          // EE: trocar canal 5x em 10s
+          clearTimeout(_eeChT);
+          _eeChSwitch++;
+          _eeChT = setTimeout(() => { _eeChSwitch = 0; }, 10000);
+          if (_eeChSwitch >= 5) {
+            _eeChSwitch = 0;
+            setTimeout(() => showEEToast("😅 Indeciso? Cada canal é bom!"), 300);
+          }
+        }
+        function mfpTogglePlay() {
+          if (_audio.paused) {
+            if (!_audio.src) _setChannel(_st.idx, true);
+            else _audio.play().catch(() => {});
+          } else {
+            _audio.pause();
+          }
+        }
+        function mfpNext() {
+          _setChannel((_st.idx + 1) % SOMA_CHANNELS.length, !_audio.paused);
+        }
+        function mfpPrev() {
+          _setChannel((_st.idx - 1 + SOMA_CHANNELS.length) % SOMA_CHANNELS.length, !_audio.paused);
+        }
+        function mfpShow() {
+          const bar = document.getElementById("mfp-bar");
+          if (!bar) return;
+          bar.removeAttribute("hidden");
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => {
+              bar.classList.add("show");
+              document.body.classList.add("mfp-open");
+            }),
+          );
+          if (!_audio.src) _setChannel(_st.idx, false);
+          _updateUI();
+        }
+        function mfpHide() {
+          const bar = document.getElementById("mfp-bar");
+          if (!bar) return;
+          bar.classList.remove("show");
+          document.body.classList.remove("mfp-open");
+          _audio.pause();
+          setTimeout(() => bar.setAttribute("hidden", ""), 350);
+          _save();
+          _updateUI();
+        }
+
+        _audio.addEventListener("play", _updateUI);
+        _audio.addEventListener("pause", _updateUI);
+
+        // Restore from localStorage
+        try {
+          const saved = JSON.parse(localStorage.getItem(MFP_KEY));
+          if (saved && Number.isInteger(saved.idx) && saved.idx >= 0 && saved.idx < SOMA_CHANNELS.length)
+            _st.idx = saved.idx;
+        } catch {}
+
+        window.mfpShow = mfpShow;
+        window.mfpHide = mfpHide;
+        window.mfpTogglePlay = mfpTogglePlay;
+        window.mfpNext = mfpNext;
+        window.mfpPrev = mfpPrev;
+        // Expose helpers for easter eggs
+        window._mfpIsPlaying = () => !_audio.paused;
+        window._mfpEEChannel = (idx) => {
+          const i = (idx !== undefined) ? idx : Math.floor(Math.random() * SOMA_CHANNELS.length);
+          _setChannel(i, false);
+        };
+        // EE footer btn: 5 cliques em 2s → canal aleatório + toast
+        document.addEventListener("click", (e) => {
+          if (!e.target.closest(".footer-mfp-btn")) return;
+          clearTimeout(_eeClickT);
+          _eeClickN++;
+          _eeClickT = setTimeout(() => { _eeClickN = 0; }, 2000);
+          if (_eeClickN >= 5) {
+            _eeClickN = 0;
+            const ni = Math.floor(Math.random() * SOMA_CHANNELS.length);
+            _setChannel(ni, !_audio.paused);
+            mfpShow();
+            const msgs = [
+              "🎲 Canal aleatório ativado!",
+              "📡 Sintonizando o universo…",
+              "🎶 Surpresa! " + SOMA_CHANNELS[ni].name,
+            ];
+            showEEToast(msgs[Math.floor(Math.random() * msgs.length)]);
+          }
+        });
+        _updateUI();
       })();
     </script>
   </body>
