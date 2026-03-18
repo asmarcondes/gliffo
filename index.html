@@ -12910,6 +12910,18 @@
           for (let s = 0; s <= 6; s++) {
             safe(`dbg-tut-${s}`, () => _dbgTutStep(s));
           }
+          // Easter Eggs no debug
+          safe("dbg-ee-snake", () => openSnakeGame());
+          safe("dbg-ee-invaders", () => openInvadersGame());
+          safe("dbg-ee-confetti", () => eeCanvasConfetti && eeCanvasConfetti());
+          safe("dbg-ee-fire", () => _eeFireParticles && _eeFireParticles());
+          safe("dbg-ee-radio", () => {
+            if (typeof mfpShow === "function") {
+              window._mfpEEChannel && window._mfpEEChannel(undefined, true);
+              mfpShow();
+            }
+          });
+          safe("dbg-ee-toast", () => showEEToast("🧨 Toast de debug ativado!", 3000));
         });
       })();
 
@@ -13992,6 +14004,24 @@
         <button id="dbg-tut-4">P.4</button>
         <button id="dbg-tut-5">P.5</button>
         <button id="dbg-tut-6">P.6</button>
+      </div>
+      <div
+        class="dbg-row"
+        style="
+          margin-top: 10px;
+          border-top: 1px solid var(--border2);
+          padding-top: 8px;
+        "
+      >
+        <label>Easter Eggs</label>
+      </div>
+      <div class="dbg-btns" style="flex-wrap: wrap; gap: 4px">
+        <button id="dbg-ee-snake">🐍 Snake</button>
+        <button id="dbg-ee-invaders">👾 Invaders</button>
+        <button id="dbg-ee-confetti">🎉 Confete</button>
+        <button id="dbg-ee-fire">🔥 Fogo</button>
+        <button id="dbg-ee-radio">🎶 Rádio</button>
+        <button id="dbg-ee-toast">🍞 Toast</button>
       </div>
     </div>
 

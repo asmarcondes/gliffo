@@ -87,6 +87,29 @@ O jogo tem **dois** handlers do Konami code — um no bloco do jogo principal e 
 - **Controles:** Setas do teclado; fechar com Esc ou ✕
 - **Código:** IIFE logo-dot → linha ~13786
 
+---
+
+## 👾 Minigames
+
+### Snake
+
+- **Gatilho:** 3 cliques no `.` do logo (ver seção acima)
+- **Controles:** Setas ← → ↑ ↓ para mover · ESC para sair
+- **Código:** `openSnakeGame()` → linha ~14001
+
+### Space Invaders
+
+- **Gatilho:** Vencer com a palavra do dia sendo `NAVE`, `MARTE`, `ASTRO`, `OVNI` ou `LASER` (`eeThematicWord()`)
+- **Efeito:** Abre o jogo em modal + inicia Drone Zone (SomaFM) tocando automaticamente
+- **Mecânica:**
+  - Grid 8×3 de aliens em 3 tipos (amarelo/verde/roxo, pontuação diferente)
+  - Nave move com `←` `→`, atira com `Espaço` (máx 2 projéteis simultâneos)
+  - Aliens descem ao bater nas bordas; velocidade aumenta a cada onda
+  - Aliens atiram de volta com intervalo cada vez menor
+  - 3 vidas; Game Over clicável para reiniciar
+- **Controles:** ← → para mover · Espaço para atirar · ESC para sair
+- **Código:** `openInvadersGame()` → após `openSnakeGame()`
+
 ### Logo "foo" — 5 cliques → wobble
 
 - **Gatilho:** Clicar 5× no `foo` do logo em até 1,5s
