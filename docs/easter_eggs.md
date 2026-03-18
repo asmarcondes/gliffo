@@ -99,8 +99,8 @@ O jogo tem **dois** handlers do Konami code — um no bloco do jogo principal e 
 
 ### Space Invaders
 
-- **Gatilho (1ª abertura):** Digitar **qualquer uma** das palavras `NAVE`, `MARTE`, `ASTRO`, `OVNI` ou `LASER` pela primeira vez
-- **Gatilho (desbloqueio permanente):** Após digitar as **5 palavras** (em sessões diferentes) o jogo fica liberado permanentemente — cada palavra espacial que ainda não foi usada exibe um toast `📡 X/5 palavras espaciais...`
+- **Gatilho (desbloqueio):** Digitar as **5 palavras** (`NAVE`, `MARTE`, `ASTRO`, `OVNI`, `LASER`), sendo **1 por jogo** — cada nova palavra avança a coleção com um toast `📡 X/5`
+- **Após desbloqueio:** O jogo abre sempre que qualquer palavra espacial for digitada
 - **Efeito:** Abre o jogo em modal + inicia Drone Zone (SomaFM) tocando automaticamente
 - **Mecânica:**
   - Grid 8×3 de aliens em 3 tipos (amarelo/verde/roxo, pontuação diferente)
