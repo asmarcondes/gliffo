@@ -99,7 +99,8 @@ O jogo tem **dois** handlers do Konami code — um no bloco do jogo principal e 
 
 ### Space Invaders
 
-- **Gatilho:** Digitar `NAVE`, `MARTE`, `ASTRO`, `OVNI` ou `LASER` no campo de tentativa (em qualquer dia)
+- **Gatilho (1ª abertura):** Digitar **qualquer uma** das palavras `NAVE`, `MARTE`, `ASTRO`, `OVNI` ou `LASER` pela primeira vez
+- **Gatilho (desbloqueio permanente):** Após digitar as **5 palavras** (em sessões diferentes) o jogo fica liberado permanentemente — cada palavra espacial que ainda não foi usada exibe um toast `📡 X/5 palavras espaciais...`
 - **Efeito:** Abre o jogo em modal + inicia Drone Zone (SomaFM) tocando automaticamente
 - **Mecânica:**
   - Grid 8×3 de aliens em 3 tipos (amarelo/verde/roxo, pontuação diferente)
@@ -108,6 +109,9 @@ O jogo tem **dois** handlers do Konami code — um no bloco do jogo principal e 
   - Aliens atiram de volta com intervalo cada vez menor
   - 3 vidas; Game Over clicável para reiniciar
 - **Controles:** ← → para mover · Espaço para atirar · ESC para sair
+- **localStorage:**
+  - `gliffoo_ee_inv_seen` — palavras espaciais já digitadas (JSON array)
+  - `gliffoo_ee_invaders_unlocked` — desbloqueio permanente (todas as 5 digitadas)
 - **Código:** `openInvadersGame()` → após `openSnakeGame()`
 
 ### Logo "foo" — 5 cliques → wobble

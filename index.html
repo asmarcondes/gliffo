@@ -6154,14 +6154,43 @@
             showEEToast("📡 Já tá no ar!");
           }
         }
-        // Easter egg espacial: digitar NAVE/MARTE/ASTRO/OVNI/LASER abre Space Invaders
-        if (["NAVE", "MARTE", "ASTRO", "OVNI", "LASER"].includes(guess)) {
-          if (typeof mfpShow === "function") {
-            window._mfpEEChannel && window._mfpEEChannel(0, true); // Drone Zone
-            mfpShow();
+        // Easter egg espacial: digitar NAVE/MARTE/ASTRO/OVNI/LASER
+        // — 1ª vez: abre o jogo uma única vez
+        // — após digitar todas as 5: desbloqueia permanentemente (pode abrir sempre)
+        const EE_INV_WORDS = ["NAVE", "MARTE", "ASTRO", "OVNI", "LASER"];
+        if (EE_INV_WORDS.includes(guess)) {
+          const SEEN_KEY = "gliffoo_ee_inv_seen";
+          const UNLOCK_KEY = "gliffoo_ee_invaders_unlocked";
+          const unlocked = !!localStorage.getItem(UNLOCK_KEY);
+          // Rastreia palavras já usadas como gatilho
+          let seen;
+          try { seen = new Set(JSON.parse(localStorage.getItem(SEEN_KEY)) || []); }
+          catch { seen = new Set(); }
+          const wasNew = !seen.has(guess);
+          if (wasNew) {
+            seen.add(guess);
+            localStorage.setItem(SEEN_KEY, JSON.stringify([...seen]));
           }
-          openInvadersGame();
-          showEEToast("👾 Invasão espacial detectada!");
+          // Verifica se completou as 5 agora
+          const justCompleted = !unlocked && seen.size === EE_INV_WORDS.length;
+          if (justCompleted) {
+            localStorage.setItem(UNLOCK_KEY, "1");
+            showEEToast("🏆 Comandante espacial desbloqueado! O jogo é seu agora.");
+          }
+          // Abre o jogo se: desbloqueado OU é a 1ª vez que digita qualquer palavra espacial
+          const firstEver = wasNew && seen.size === 1 && !unlocked;
+          if (unlocked || firstEver) {
+            if (typeof mfpShow === "function") {
+              window._mfpEEChannel && window._mfpEEChannel(0, true);
+              mfpShow();
+            }
+            openInvadersGame();
+            if (!justCompleted) showEEToast("👾 Invasão espacial detectada!");
+          } else if (wasNew && !unlocked) {
+            // Palavras 2-4: só um toast de progresso
+            const remaining = EE_INV_WORDS.length - seen.size;
+            showEEToast("📡 " + seen.size + "/5 palavras espaciais... faltam " + remaining + "!");
+          }
         }
         // Validação de dicionário
         if (!dicionarioValido(guess)) {
@@ -12921,7 +12950,7 @@
           }
           // Easter Eggs no debug
           safe("dbg-ee-snake", () => openSnakeGame());
-          safe("dbg-ee-invaders", () => openInvadersGame());
+          safe("dbg-ee-invaders", () => { localStorage.removeItem("gliffoo_ee_invaders"); localStorage.removeItem("gliffoo_ee_inv_seen"); localStorage.removeItem("gliffoo_ee_invaders_unlocked"); openInvadersGame(); });
           safe("dbg-ee-confetti", () => eeCanvasConfetti && eeCanvasConfetti());
           safe("dbg-ee-fire", () => _eeFireParticles && _eeFireParticles());
           safe("dbg-ee-radio", () => {
