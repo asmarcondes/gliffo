@@ -5585,34 +5585,104 @@
         return 45 + avgOverlap * 35 + n * 2 - repeticoes * 5;
       }
 
-      function palavraDoDia() {
-        // Época: 2026-03-08 como dia 0 — puzzle #1
-        const EPOCA = new Date("2026-03-08T00:00:00-03:00");
+      const DAILY_WORD_URL =
+        "https://ppssfweuotjgcfejdznn.supabase.co/functions/v1/daily-word";
+
+      function baseDateSaoPaulo() {
         const hoje = new Date(
           new Date().toLocaleString("en-US", { timeZone: "America/Sao_Paulo" }),
         );
         hoje.setHours(0, 0, 0, 0);
-        const diasDesdeEpoca = Math.floor((hoje - EPOCA) / 86400000);
+        return hoje;
+      }
 
-        // Dificuldade pelo dia da semana
-        const diaSemana = hoje.getDay(); // 0=Dom
-        const nivelDif = CICLO_DIF[diaSemana];
-        const range = SCORE_RANGE[nivelDif];
+      function formatIsoDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      }
 
-        // Filtrar palavras pelo score visual E comprimento do nível
-        const candidatos = PALAVRAS[nivelDif].filter(
-          (w) =>
-            range.letras.includes(w.length) &&
-            scoreVisual(w) >= range.min &&
-            scoreVisual(w) <= range.max,
-        );
+      function puzzleInfoPorOffset(offset) {
+        const EPOCA = new Date("2026-03-08T00:00:00-03:00");
+        const alvo = new Date(baseDateSaoPaulo().getTime() + offset * 86400000);
+        const diasDesdeEpoca = Math.floor((alvo - EPOCA) / 86400000);
+        return {
+          dia: diasDesdeEpoca + 1,
+          data: alvo,
+          dateStr: formatIsoDate(alvo),
+          nivel: CICLO_DIF[alvo.getDay()],
+        };
+      }
 
-        // Fallback: usar lista completa se filtro ficar muito restrito
-        const lista = candidatos.length >= 10 ? candidatos : PALAVRAS[nivelDif];
+      async function fetchPuzzleByDate(dateStr) {
+        const url = new URL(DAILY_WORD_URL);
+        if (dateStr) url.searchParams.set("date", dateStr);
+        const resp = await fetch(url.toString(), { cache: "no-store" });
+        if (!resp.ok) throw new Error(`daily-word ${resp.status}`);
+        const data = await resp.json();
+        if (
+          !data ||
+          typeof data.word !== "string" ||
+          typeof data.date !== "string" ||
+          typeof data.nivel !== "string"
+        ) {
+          throw new Error("daily-word payload inválido");
+        }
+        return {
+          word: data.word.toUpperCase(),
+          dia: Number(data.puzzle),
+          data: new Date(`${data.date}T00:00:00-03:00`),
+          dateStr: data.date,
+          nivel: data.nivel,
+          nivelLabel: data.nivelLabel,
+        };
+      }
 
-        // Hash determinístico do dia → índice na lista
-        const idx = ((diasDesdeEpoca * 2654435761) >>> 0) % lista.length;
-        return lista[idx];
+      async function fetchPuzzleByOffset(offset) {
+        const info = puzzleInfoPorOffset(offset);
+        const puzzle = await fetchPuzzleByDate(info.dateStr);
+        return {
+          ...info,
+          ...puzzle,
+          dia: Number.isFinite(puzzle.dia) ? puzzle.dia : info.dia,
+        };
+      }
+
+      function applyPuzzleWord(word) {
+        WORD = word;
+        WL = WORD.split("");
+        WN = WL.length;
+        Object.keys(colorOf).forEach((k) => delete colorOf[k]);
+        WL.forEach((l, i) => {
+          if (!colorOf[l]) colorOf[l] = GLYPH_COLORS[i % GLYPH_COLORS.length];
+        });
+      }
+
+      function setPuzzleReady(ready) {
+        PUZZLE_READY = ready;
+        const decodeBtn = document.querySelector(".dbtn");
+        if (decodeBtn) decodeBtn.disabled = !ready;
+      }
+
+      function applyPuzzleInfo(info) {
+        CURRENT_PUZZLE = info;
+        applyPuzzleWord(info.word);
+        setPuzzleReady(true);
+      }
+
+      function showPuzzleLoadError(message) {
+        setPuzzleReady(false);
+        const daily = document.getElementById("daily-stack");
+        const yours = document.getElementById("your-stack");
+        const meta = document.getElementById("header-meta");
+        if (meta) meta.textContent = "Falha ao carregar o puzzle";
+        if (daily) {
+          daily.innerHTML =
+            '<div style="padding:1.25rem;text-align:center;color:var(--text3)">Não foi possível carregar o glifo de hoje.</div>';
+        }
+        if (yours) yours.innerHTML = "";
+        setFb(message, "err");
       }
 
       // Validação multi-tamanho: aceita palavras do banco atual + dicionário 5L
@@ -5635,9 +5705,11 @@
         return ["NAVE", "MARTE", "ASTRO", "OVNI", "LASER"].includes(word);
       }
 
-      let WORD = palavraDoDia();
-      let WL = WORD.split(""),
-        WN = WL.length;
+      let CURRENT_PUZZLE = null;
+      let PUZZLE_READY = false;
+      let WORD = "";
+      let WL = [],
+        WN = 0;
       const GLYPH_COLORS = [
         "#f5a623",
         "#9b8fe8",
@@ -5647,10 +5719,7 @@
         "#e8b45b",
         "#a0c878",
       ];
-      const colorOf = {}; // mutado pelo debug via Object.keys delete
-      WL.forEach((l, i) => {
-        if (!colorOf[l]) colorOf[l] = GLYPH_COLORS[i % GLYPH_COLORS.length];
-      });
+      const colorOf = {}; // mutado ao trocar de puzzle
 
       let G = {
         typed: [],
@@ -6012,6 +6081,7 @@
       }
 
       function handleKey(k) {
+        if (!PUZZLE_READY) return;
         if (G.done || G._flipping) return;
 
         if (k === "⌫") {
@@ -6117,6 +6187,10 @@
       // DECODE
       // ═══════════════════════════════════════════════
       function decode() {
+        if (!PUZZLE_READY) {
+          setFb("Aguarde o puzzle carregar.", "err");
+          return;
+        }
         if (G.done) return;
         if (!AUDIO_MUTED) _getAC(); // aquece o contexto antes dos flips
         const full = Array.from({ length: WN }, (_, i) =>
@@ -7082,10 +7156,7 @@
 
       function numeroPuzzle() {
         const EPOCA = new Date("2026-03-08T00:00:00-03:00");
-        const hoje = new Date(
-          new Date().toLocaleString("en-US", { timeZone: "America/Sao_Paulo" }),
-        );
-        hoje.setHours(0, 0, 0, 0);
+        const hoje = baseDateSaoPaulo();
         return Math.floor((hoje - EPOCA) / 86400000) + 1;
       }
 
@@ -8869,14 +8940,53 @@
 
       // ═══════════════════════════════════════════════
       // INIT
-      initConfig();
-      checkBetaReset();
-      carregarEstado();
-      buildAtts();
-      buildBoxes();
-      buildKB();
-      renderDaily();
-      renderYours();
+      async function bootstrapGame() {
+        initConfig();
+        checkBetaReset();
+
+        try {
+          setFb("Carregando glifo de hoje...", "");
+          const info = await fetchPuzzleByOffset(0);
+          applyPuzzleInfo(info);
+        } catch (e) {
+          console.warn("[glif] bootstrapGame erro:", e);
+          showPuzzleLoadError(
+            "Não foi possível carregar o glifo de hoje. Tente novamente em instantes.",
+          );
+          return;
+        }
+
+        carregarEstado();
+        buildAtts();
+        buildBoxes();
+        buildKB();
+        renderDaily();
+        renderYours();
+        buildHeaderMeta(CURRENT_PUZZLE ? CURRENT_PUZZLE.data : undefined);
+
+        const pParam = new URLSearchParams(location.search).get("p");
+        if (pParam) {
+          const pNum = parseInt(pParam, 10);
+          const hoje = numeroPuzzle();
+          history.replaceState(null, "", location.pathname);
+          if (!isNaN(pNum) && pNum >= 1 && pNum < hoje) {
+            await startArquivoMode(pNum - hoje);
+          }
+        }
+
+        if (WORD === "ARCO" && !ARQUIVO_MODO && !G.done) {
+          queueAch("ee_arco");
+          setTimeout(() => setFb("Essa é a palavra do tutorial… 👀", ""), 1400);
+        }
+
+        if (G.done) {
+          buildHistory();
+          setTimeout(() => {
+            if (G.won) winMod();
+            else loseMod();
+          }, 600);
+        }
+      }
 
       // Badge de data + dificuldade no header
       function buildHeaderMeta(refDate) {
@@ -8898,8 +9008,10 @@
           dificil: "Difícil",
           muito_dificil: "Muito Difícil",
         };
-        const nivel = CICLO_DIF[diaSemana];
-        const label = `${CICLO_NAMES[nivel]} · ${WN} letras`;
+        const nivel = CURRENT_PUZZLE?.nivel || CICLO_DIF[diaSemana];
+        const nivelLabel =
+          CURRENT_PUZZLE?.nivelLabel || CICLO_NAMES[nivel] || "Puzzle";
+        const label = `${nivelLabel} · ${WN} letras`;
         const meta = document.getElementById("header-meta");
         if (ARQUIVO_MODO) {
           meta.innerHTML = `
@@ -8926,34 +9038,7 @@
     }`;
         }
       }
-      buildHeaderMeta();
-      if (G.done) {
-        buildHistory();
-        // Pequeno delay para a página renderizar antes do modal
-        setTimeout(() => {
-          if (G.won) winMod();
-          else loseMod();
-        }, 600);
-      }
-
-      // URL ?p=N — abre puzzle do arquivo diretamente
-      (function () {
-        const pParam = new URLSearchParams(location.search).get("p");
-        if (!pParam) return;
-        const pNum = parseInt(pParam, 10);
-        const hoje = numeroPuzzle();
-        if (isNaN(pNum) || pNum < 1 || pNum >= hoje) return;
-        const offset = pNum - hoje; // negativo = passado
-        // Limpa o ?p= da URL sem recarregar
-        history.replaceState(null, "", location.pathname);
-        startArquivoMode(offset);
-      })();
-
-      // Easter egg: ARCO é a palavra do tutorial — mensagem de déjà vu
-      if (WORD === "ARCO" && !ARQUIVO_MODO && !G.done) {
-        queueAch("ee_arco");
-        setTimeout(() => setFb("Essa é a palavra do tutorial… 👀", ""), 1400);
-      }
+      void bootstrapGame();
 
       // ═══════════════════════════════════════════════
       // TUTORIAL v3 — 7 steps, show > tell
@@ -12317,30 +12402,7 @@
       // MODO ARQUIVO — puzzles anteriores
       // ═══════════════════════════════════════════════
       function palavraPorDia(offset) {
-        // offset relativo a hoje: 0=hoje, -1=ontem, -2=anteontem…
-        const EPOCA = new Date("2026-03-08T00:00:00-03:00");
-        const base = new Date(
-          new Date().toLocaleString("en-US", { timeZone: "America/Sao_Paulo" }),
-        );
-        base.setHours(0, 0, 0, 0);
-        const alvo = new Date(base.getTime() + offset * 86400000);
-        const diasDesdeEpoca = Math.floor((alvo - EPOCA) / 86400000);
-        const nivelDif = CICLO_DIF[alvo.getDay()];
-        const range = SCORE_RANGE[nivelDif];
-        const candidatos = PALAVRAS[nivelDif].filter(
-          (w) =>
-            range.letras.includes(w.length) &&
-            scoreVisual(w) >= range.min &&
-            scoreVisual(w) <= range.max,
-        );
-        const lista = candidatos.length >= 10 ? candidatos : PALAVRAS[nivelDif];
-        const idx = ((diasDesdeEpoca * 2654435761) >>> 0) % lista.length;
-        return {
-          word: lista[idx],
-          dia: diasDesdeEpoca + 1,
-          data: alvo,
-          nivel: nivelDif,
-        };
+        return puzzleInfoPorOffset(offset);
       }
 
       function openArquivo() {
@@ -12368,10 +12430,7 @@
         const dbgOffset = window._dbgGetOffset ? window._dbgGetOffset() : 0;
 
         // Real today (PT-BR timezone, no debug offset)
-        const todayBase = new Date(
-          new Date().toLocaleString("en-US", { timeZone: "America/Sao_Paulo" }),
-        );
-        todayBase.setHours(0, 0, 0, 0);
+        const todayBase = baseDateSaoPaulo();
         // Simulated today (debug offset applied)
         const todayActual = new Date(
           todayBase.getTime() + dbgOffset * 86400000,
@@ -12609,20 +12668,24 @@
         body.appendChild(calWrap);
       }
 
-      function startArquivoMode(offset) {
-        const info = palavraPorDia(offset);
+      async function startArquivoMode(offset) {
+        let info;
+        try {
+          setPuzzleReady(false);
+          setFb("Carregando puzzle do arquivo...", "");
+          info = await fetchPuzzleByOffset(offset);
+        } catch (e) {
+          console.warn("[glif] startArquivoMode erro:", e);
+          setPuzzleReady(true);
+          setFb("Não foi possível carregar esse puzzle do arquivo.", "err");
+          return;
+        }
+
         ARQUIVO_MODO = true;
         PRATICA_MODO = false;
         ARQUIVO_PUZZLENUM = info.dia;
         ARQUIVO_DATA = info.data;
-
-        WORD = info.word;
-        WL = WORD.split("");
-        WN = WL.length;
-        Object.keys(colorOf).forEach((k) => delete colorOf[k]);
-        WL.forEach((l, i) => {
-          if (!colorOf[l]) colorOf[l] = GLYPH_COLORS[i % GLYPH_COLORS.length];
-        });
+        applyPuzzleInfo(info);
 
         // Reset G
         G.typed = [];
@@ -12678,15 +12741,24 @@
         }
       }
 
-      function exitArquivoMode() {
+      async function exitArquivoMode() {
+        let info;
+        try {
+          setPuzzleReady(false);
+          setFb("Carregando puzzle atual...", "");
+          const offset = window._dbgGetOffset ? window._dbgGetOffset() : 0;
+          info = await fetchPuzzleByOffset(offset);
+        } catch (e) {
+          console.warn("[glif] exitArquivoMode erro:", e);
+          setPuzzleReady(true);
+          setFb("Não foi possível voltar ao puzzle atual.", "err");
+          return;
+        }
+
         ARQUIVO_MODO = false;
         ARQUIVO_PUZZLENUM = null;
         ARQUIVO_DATA = null;
-
-        WORD = palavraDoDia();
-        WL = WORD.split("");
-        WN = WL.length;
-        _recolorWord();
+        applyPuzzleInfo(info);
 
         _resetGState();
         carregarEstado();
@@ -12702,7 +12774,7 @@
         buildKB();
         renderDaily();
         renderYours();
-        buildHeaderMeta();
+        buildHeaderMeta(info.data);
         setFb("", "");
 
         if (G.done) {
@@ -12748,10 +12820,9 @@
       function startPraticaMode() {
         // Escolhe palavra aleatória de qualquer dificuldade
         const todas = Object.values(PALAVRAS).flat();
-        WORD = todas[Math.floor(Math.random() * todas.length)];
-        WL = WORD.split("");
-        WN = WL.length;
-        _recolorWord();
+        CURRENT_PUZZLE = null;
+        applyPuzzleWord(todas[Math.floor(Math.random() * todas.length)]);
+        setPuzzleReady(true);
 
         PRATICA_MODO = true;
         ARQUIVO_MODO = false;
@@ -12773,12 +12844,22 @@
         setFb("", "");
       }
 
-      function exitPraticaMode() {
+      async function exitPraticaMode() {
+        let info;
+        try {
+          setPuzzleReady(false);
+          setFb("Carregando puzzle atual...", "");
+          const offset = window._dbgGetOffset ? window._dbgGetOffset() : 0;
+          info = await fetchPuzzleByOffset(offset);
+        } catch (e) {
+          console.warn("[glif] exitPraticaMode erro:", e);
+          setPuzzleReady(true);
+          setFb("Não foi possível voltar ao puzzle atual.", "err");
+          return;
+        }
+
         PRATICA_MODO = false;
-        WORD = palavraDoDia();
-        WL = WORD.split("");
-        WN = WL.length;
-        _recolorWord();
+        applyPuzzleInfo(info);
 
         _resetGState();
         carregarEstado();
@@ -12794,7 +12875,7 @@
         buildKB();
         renderDaily();
         renderYours();
-        buildHeaderMeta();
+        buildHeaderMeta(info.data);
         setFb("", "");
 
         if (G.done) {
@@ -12884,59 +12965,25 @@
         const ATIVA_KEY = "gliffoo_debug";
 
         function palavraPorOffset(offset) {
-          const EPOCA = new Date("2026-03-08T00:00:00-03:00");
-          const base = new Date(
-            new Date().toLocaleString("en-US", {
-              timeZone: "America/Sao_Paulo",
-            }),
-          );
-          base.setHours(0, 0, 0, 0);
-          const alvo = new Date(base.getTime() + offset * 86400000);
-          const diasDesdeEpoca = Math.floor((alvo - EPOCA) / 86400000);
-          const diaSemana = alvo.getDay();
-          const nivelDif = CICLO_DIF[diaSemana];
-          const range = SCORE_RANGE[nivelDif];
-          const candidatos = PALAVRAS[nivelDif].filter(
-            (w) =>
-              range.letras.includes(w.length) &&
-              scoreVisual(w) >= range.min &&
-              scoreVisual(w) <= range.max,
-          );
-          const lista =
-            candidatos.length >= 10 ? candidatos : PALAVRAS[nivelDif];
-          const idx = ((diasDesdeEpoca * 2654435761) >>> 0) % lista.length;
-          return {
-            word: lista[idx],
-            dia: diasDesdeEpoca + 1,
-            data: alvo,
-            nivel: nivelDif,
-          };
+          return puzzleInfoPorOffset(offset);
         }
 
-        function resetParaDebug(offset) {
-          const info = palavraPorOffset(offset);
-          // Atualizar variáveis globais do jogo
-          WORD = info.word;
-          WL = WORD.split("");
-          WN = WL.length;
-          // Reconstruir colorOf
-          Object.keys(colorOf).forEach((k) => delete colorOf[k]);
-          WL.forEach((l, i) => {
-            if (!colorOf[l]) colorOf[l] = GLYPH_COLORS[i % GLYPH_COLORS.length];
-          });
-          // Zerar estado
-          G.typed = [];
+        async function resetParaDebug(offset) {
+          let info;
+          try {
+            setPuzzleReady(false);
+            setFb("Carregando puzzle...", "");
+            info = await fetchPuzzleByOffset(offset);
+          } catch (e) {
+            console.warn("[glif] resetParaDebug erro:", e);
+            setPuzzleReady(true);
+            setFb("Não foi possível carregar esse puzzle.", "err");
+            return;
+          }
+
+          applyPuzzleInfo(info);
+          _resetGState();
           G.cursor = nextCursor(0);
-          G.attempts = [];
-          G.decoded = new Set();
-          G.found = new Set();
-          G.keyUsed = false;
-          G.keyPos = new Set();
-          G.done = false;
-          G.won = false;
-          G.selKey = null;
-          G._flipping = false;
-          G._flipGen++; // invalida qualquer flip em andamento
           // Fechar modais se abertos
           [
             "win-modal",
@@ -12958,13 +13005,20 @@
           renderDaily();
           renderYours();
           buildHeaderMeta(info.data); // atualiza data + badge de dificuldade
-          atualizarPainel();
+          await atualizarPainel();
         }
 
-        function atualizarPainel() {
+        async function atualizarPainel() {
           const el = (id) => document.getElementById(id);
           if (!el("dbg-word-display")) return; // DOM ainda não pronto
-          const info = palavraPorOffset(_dbgOffset);
+          let info;
+          try {
+            info = await fetchPuzzleByOffset(_dbgOffset);
+          } catch {
+            el("dbg-word-display").textContent = "erro";
+            el("dbg-day-num").textContent = "--";
+            return;
+          }
           el("dbg-word-display").textContent = info.word;
           el("dbg-day-num").textContent = "#" + info.dia;
           const offsetLabel =
@@ -12992,7 +13046,7 @@
           console.log(
             "[glif] Modo debug ativado. Ctrl+Shift+D para desativar.",
           );
-          atualizarPainel();
+          void atualizarPainel();
         }
 
         function desativarDebug() {
@@ -13004,7 +13058,7 @@
           // Restaurar palavra do dia real
           if (_dbgOffset !== 0) {
             _dbgOffset = 0;
-            resetParaDebug(0);
+            void resetParaDebug(0);
           }
         }
 
@@ -13029,7 +13083,7 @@
         if (localStorage.getItem(ATIVA_KEY)) {
           _dbgActive = true;
           document.body.classList.add("debug-mode");
-          window.addEventListener("load", () => atualizarPainel(), {
+          window.addEventListener("load", () => void atualizarPainel(), {
             once: true,
           });
         }
@@ -13071,7 +13125,7 @@
             toggle.addEventListener("click", () => {
               const panel = document.getElementById("debug-panel");
               panel.classList.toggle("open");
-              if (panel.classList.contains("open")) atualizarPainel();
+              if (panel.classList.contains("open")) void atualizarPainel();
             });
 
           const safe = (id, fn) => {
@@ -13081,17 +13135,17 @@
           safe("dbg-prev", (e) => {
             e.currentTarget.blur();
             _dbgOffset--;
-            resetParaDebug(_dbgOffset);
+            void resetParaDebug(_dbgOffset);
           });
           safe("dbg-next", (e) => {
             e.currentTarget.blur();
             _dbgOffset++;
-            resetParaDebug(_dbgOffset);
+            void resetParaDebug(_dbgOffset);
           });
           safe("dbg-today", (e) => {
             e.currentTarget.blur();
             _dbgOffset = 0;
-            resetParaDebug(0);
+            void resetParaDebug(0);
           });
           safe("dbg-close", () => {
             document.getElementById("debug-panel").classList.remove("open");

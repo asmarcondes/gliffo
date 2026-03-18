@@ -2,8 +2,11 @@
   "name": "gliffo",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@10.6.5",
   "scripts": {
-    "start": "npx live-server --port=8080 --no-browser --watch=.",
+    "build": "node scripts/build-dist.mjs",
+    "dev": "pnpm dlx live-server --port=8080 --no-browser --watch=.",
+    "preview:dist": "pnpm dlx serve dist --listen 8080",
     "start:python": "python -m http.server 8080"
   }
 }

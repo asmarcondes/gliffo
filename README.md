@@ -20,7 +20,7 @@ Jogo diário de palavras em português. As letras da palavra do dia se empilham 
 - **Single-file:** `index.html` (~8.400 linhas) — HTML + CSS + JS, sem frameworks, sem dependências
 - SVG gerado programaticamente via `makeSVG(letter, color, style)`
 - Fontes: DM Serif Display + DM Sans (Google Fonts)
-- Backend: Supabase Edge Function (`daily-word`) + Storage público para agenda anual
+- Backend: Supabase Edge Function (`daily-word`) como fonte do puzzle diário/arquivo + agenda anual no backend
 - PWA: offline-capable via Service Worker, instalável no celular
 
 ## Estrutura
@@ -62,7 +62,7 @@ gliffo/
 | Muito difícil | 7 letras | 300 palavras |
 
 O ciclo de dificuldade segue o dia da semana (Dom=Fácil … Sáb=Muito Difícil).  
-Fonte de verdade: `data/word_bank_final.json`. O banco está duplicado em `index.html` e `supabase/functions/daily-word/index.ts` — ambos precisam ser atualizados em conjunto.
+Fonte de verdade: `data/word_bank_final.json`. O banco segue duplicado entre `index.html` e `supabase/functions/daily-word/index.ts` para prática/curadoria, mas o puzzle oficial diário/arquivo é carregado pelo cliente via Edge Function.
 
 ## Deploy
 
@@ -75,18 +75,45 @@ Funciona em qualquer host estático com HTTPS (necessário para Service Worker):
 ## Desenvolvimento local
 
 ```bash
-# Qualquer servidor HTTP local funciona para desenvolvimento.
-# O Service Worker registra em localhost sem HTTPS.
-npx serve .
-# ou
+# Com pnpm
+pnpm dev
+
+# ou sem Node tooling
 python -m http.server 8080
 ```
+
+## Build público
+
+```bash
+pnpm build
+```
+
+O build gera `dist/` com apenas os assets públicos necessários ao runtime:
+
+- `index.html`
+- `manifest.json`
+- `sw.js`
+- `og.png`
+- `icons/`
+- `animations/`
+- `data/dicionario.json`
+
+Arquivos internos como `docs/`, `supabase/`, `scripts/` e `data/words_ptbr_year.json` ficam fora do output público.
 
 Para atualizar a Edge Function no Supabase:
 
 ```bash
 supabase functions deploy daily-word
 ```
+
+## Vercel
+
+O deploy automático da Vercel via GitHub deve usar:
+
+- `Build Command`: `pnpm build`
+- `Output Directory`: `dist`
+
+O arquivo `vercel.json` já aponta para essa configuração.
 
 ## Regenerar og.png
 
