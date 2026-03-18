@@ -92,7 +92,7 @@ O input foi completamente refeito para suportar **cursor não-linear**:
 | `nextCursor(from)`                   | Próxima posição editável vazia                |
 | `prevCursor(from)`                   | Posição editável anterior                     |
 | `handleKey(k)`                       | Input de letra/backspace/enter                |
-| `calcWarns()` / `recalcWarns()`      | Avisos contextuais (elim/posição errada)      |
+| `calcWarns()`                        | Avisos contextuais (elim/posição errada)      |
 | `buildKB()`                          | Renderiza teclado virtual                     |
 | `renderDaily(revealedIndices?)`      | Atualiza Glifo do Dia (com animação opcional) |
 | `renderYours()`                      | Atualiza Seu Glifo                            |
@@ -101,25 +101,24 @@ O input foi completamente refeito para suportar **cursor não-linear**:
 | `winAnim()`                          | Animação de vitória                           |
 | `openTutorial()` / `closeTutorial()` | Controle do tutorial                          |
 
-## Tutorial (7 passos)
+## Tutorial (3 passos / chat guiado)
 
-Palavra de demonstração: **BOLA** (B=âmbar, O=lavanda, L=mint, A=coral)
+O tutorial é um chat interativo com 3 passos e ramificações por escolha do usuário.
 
-| Passo | Conteúdo                                                              |
-| ----- | --------------------------------------------------------------------- |
-| 1/7   | Glifo pulsando — "o que é isso?"                                      |
-| 2/7   | Animação ISO em loop — A→L→O→B chegando em perspectiva                |
-| 3/7   | Digita **BICO** ao vivo, Seu Gliffo se forma                          |
-| 4/7   | Feedback de **BICO**: letras eliminadas, posição errada e acerto      |
-| 5/7   | Cor única por letra + início da 2ª tentativa com **B** já confirmado  |
-| 6/7   | Chave Decodificadora em loop — revela **L** e mostra aviso com atraso |
-| 7/7   | Interação obrigatória com cursor não-linear para completar **BOLA**   |
+| Passo | Palavra | Conteúdo                                                                    |
+| ----- | ------- | --------------------------------------------------------------------------- |
+| 0     | —       | Pergunta se já jogou Termo; exibe mini-board do Termo animado               |
+| 1     | **BOLA**| Cada letra tem glifo único; animação 3D de empilhamento; BOLA ≠ LOBA       |
+| 2     | **ARCO**| Tentativas guiadas (LOTE/RUDE/POSE → RATO/CALO/VASO); O decifrado; digita ARCO |
 
-- Passo final começa com **B** e **L** já confirmados; só os slots vazios são editáveis
-- `Seu Gliffo` no passo final mostra apenas as letras digitadas pelo jogador nessa etapa
-- Ao completar **BOLA**, o título vira **"BOLA!"**, aparecem confetes e cards-resumo
-- Se o botão final for liberado, o botão da esquerda vira **Ver de novo**
-- Tem botão **Pular** / **Ver de novo** + botão **✕** (mclose) para fechar
+- Passo 0: pergunta inicial (sim/não Termo) + seta animada apontando pro board
+- Passo 1: glifos exibidos um a um em 3D, botão "Juntar" dispara animação billboard
+- Passo 2: **BOLA** é apenas demo; **ARCO** é a palavra interativa que o usuário digita
+  - Inclui O já decodificado (posição certa) + slots editáveis livre para ARCO ou CARO
+  - Chave 🔑 opcional revela uma letra antes da digitação
+- Se o usuário quiser sair → boneco triste (Lottie) anda pela tela + convite de volta
+- Ao completar ARCO: confetes + cards-resumo "4 tentativas / 1 palavra por dia / 1 chave"
+- Botão **Ver de novo** disponível no final
 - Auto-show na primeira visita (`localStorage: gliffoo_tutdone`)
 
 ## Edge Function — `daily-word`
@@ -543,3 +542,82 @@ Itens:
 ---
 
 ### ~~Chat N~~ — ✅ Concluído (ver Histórico de Chats Concluídos acima)
+
+### ✅ Chat P — Bugs, Ajustes, Features & Easter Eggs (Mar 2026)
+
+**22 itens implementados em uma única sessão.**
+
+**Bugs (5):**
+1. ✅ streak `ontemStr` timezone BRT — derivado via aritmética UTC de `dataHoje()`
+2. ✅ conquistas echo/sandwich/palindrome checam todas as tentativas (`G.attempts.some()`)
+3. ✅ `achCheckWeekend` usa timezone SP via `dataHoje()`
+4. ✅ `buildHistory(skipLast)` — linha vencedora entra animada no win path
+5. ✅ badge dificuldade usa `WN` real (ex: `"Fácil · 4 letras"`) em vez de tamanho fixo do CICLO
+
+**Ajustes (6):**
+6. ✅ share text inclui `https://glif.foo` como última linha
+7. ✅ easter egg GLIF/GLIFO/GLIFFO por tamanho (4L/5L/6L) via objeto `EE_GAME_NAMES`
+8. ✅ confetti offline: `_eeLocalConfetti()` como fallback CSS se CDN falhar
+9. ✅ hard badge usa emojis literais (`🔥`, `📅`) em vez de unicode escapes
+10. ✅ `eePlayBoing` (código morto) removido
+11. ✅ `_purgeOldArchive(max=60)` — limpeza automática de entradas `gliffoo_archive_*` antigas
+
+**Features (5):**
+12. ✅ URL `?p=N` — abre puzzle do arquivo #N diretamente, limpa URL com `history.replaceState`
+13. ✅ Modo Prática — palavra aleatória sem stats/streak; via modal Configurações (🎯)
+14. ✅ Definição da palavra — link `dicio.com.br` nos modais pós-game (win e lose)
+15. ✅ Badge puzzles especiais — #100 / #365 / #1000 com badge âmbar no header
+16. ✅ Pré-aquecer AudioContext — listener `{ once: true }` no `pointerdown` do body
+
+**Easter Eggs (5):**
+17. ✅ Palavras temáticas: FESTA/BAILE → confete duplo; FOGO/CHAMA → partículas fogo; GATO → 🐱 canto; BRUXO/MAGIA → glifo pulsa roxo
+18. ✅ ARCO déjà vu — se puzzle do dia = ARCO, exibe `"Essa é a palavra do tutorial… 👀"` após 1,4s
+19. ✅ Konami code (`↑↑↓↓←→←→BA`) → efeito hue-rotate arco-íris (2s) + mensagem `"🕹️ +30 vidas"`
+20. ✅ Palíndromo bidirecional — `eePalindromeReveal()`: varredura esquerda→direita depois direita→esquerda nos lboxes
+21. ✅ Mensagem às 2h — vitória entre 02h–03h59 SP exibe toast `"Ainda acordado às Xh? 🌙 Vai dormir!"`
+
+**Docs (1):**
+22. ✅ `glifo_contexto.md` atualizado: `recalcWarns()` removida da tabela; tutorial corrigido (BOLA=demo, ARCO=interativo); Chat P adicionado ao histórico
+
+---
+
+## 🗂️ Lista de Tarefas (Chat P — Mar 2026)
+
+> Mapeamento completo de bugs, ajustes, features e easter eggs levantados em revisão geral do jogo.
+
+### 🐛 Bugs
+
+- [x] **streak ontemStr timezone BRT** — `ontem.toISOString()` usa UTC, não SP; quebra streak entre ~21h–23h59 BRT. Fix: derivar `ontemStr` a partir de `dataHoje()` por aritmética de string, não via `toISOString()`
+- [x] **conquistas echo/sandwich/palindrome** só checam a última tentativa enviada — deveria checar todas as tentativas da partida
+- [x] **achCheckWeekend timezone** — usa `new Date()` do sistema, não de SP; inconsistente com o restante do código
+- [x] **hrow-new ausente na tentativa vencedora** — `buildHistory()` reconstrói o histórico sem animação; a última linha (a que ganhou) entra sem slide-in como as intermediárias
+- [x] **badge dificuldade mostra letras fixas do CICLO** — pode dizer "4 letras" para uma palavra de 5L quando o range inclui ambos. Fix: usar `WN` real: `"${nivel} · ${WN} letras"`
+
+### 🔧 Ajustes
+
+- [x] **share text sem URL** — adicionar `https://glif.foo` na última linha do texto copiado
+- [x] **easter egg GLIF/GLIFO/GLIFFO** — expandir para cobrir todos os tamanhos (4L/5L/6L) com mensagens diferentes; atualmente só funciona em dias de 6L
+- [x] **confetti via CDN** — `canvas-confetti` carregado de jsdelivr sob demanda; bundlar localmente ou usar o mini-confete interno (confPop) como fallback offline
+- [x] **hard badge unicode escape** — trocar `\ud83d\udd25` por `🔥` literal (inconsistente com o resto do código)
+- [x] **eePlayBoing código morto** — função definida mas nunca chamada; remover ou conectar
+- [x] **purge archive\_\* antigos** — `gliffoo_archive_N` cresce indefinidamente; implementar limpeza automática (ex: manter 60 mais recentes)
+
+### 💡 Features
+
+- [x] **URL direta `?p=N`** — abre puzzle do arquivo #N direto, sem precisar navegar pelo calendário
+- [x] **Modo Prática** — joga palavra aleatória do banco sem afetar stats/streak; acessível pelo menu de Configurações
+- [x] **Definição da palavra** — pequeno glossário no modal pós-game (hardcoded ou via campo extra no banco)
+- [x] **Badge puzzles especiais** — badge efêmero no header nos puzzles #100, #365, #1000
+- [x] **Pré-aquecer AudioContext** — mover o `_getAC()` para o primeiro `pointerdown` no body, garantindo que o contexto está pronto antes de qualquer interação
+
+### 🥚 Easter Eggs
+
+- [x] **Palavras temáticas** — FESTA/BAILE → mini confete; FOGO/CHAMA → partículas de fogo no glifo; GATO → 🐱 no canto; BRUXO/MAGIA → glifo pulsa em roxo
+- [x] **ARCO déjà vu** — se o puzzle do dia for ARCO (palavra do tutorial), exibir mensagem especial: _"Essa é a palavra do tutorial... 👀"_
+- [x] **Konami code** — ↑↑↓↓←→←→BA → activa tema visual surpresa
+- [x] **Palíndromo do dia** — se a palavra do dia for palíndromo (ARARA, ANA…), o reveal final vai e volta
+- [x] **Mensagem às 2h** — conquista `insomniac` já detecta hora; adicionar mensagem visual/toast: _"Ainda acordado? 👀"_
+
+### 📄 Docs
+
+- [x] **Atualizar glifo_contexto.md** — remover `recalcWarns()` da tabela de funções (absorvida em `calcWarns()`); corrigir tutorial: BOLA é só a 1ª palavra de demo, ARCO é a segunda (passo interativo)

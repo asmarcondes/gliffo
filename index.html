@@ -1309,6 +1309,21 @@
       .sbtn:hover {
         opacity: 0.9;
       }
+      .word-def-link {
+        display: block;
+        text-align: center;
+        font-size: 0.82rem;
+        color: var(--text3);
+        margin-top: 6px;
+        text-decoration: none;
+        opacity: 0.75;
+        transition: opacity 0.15s;
+      }
+      .word-def-link:hover {
+        opacity: 1;
+        color: var(--amber-400);
+        text-decoration: underline;
+      }
       .passport-share-btn {
         width: 100%;
         padding: 11px;
@@ -3301,6 +3316,7 @@
         <div class="sharepreview" id="win-share"></div>
         <button class="sbtn" onclick="share()">Compartilhar resultado</button>
         <div class="copied">✓ Copiado!</div>
+        <a id="win-def" class="word-def-link" target="_blank" rel="noopener noreferrer">📖 Ver definição</a>
       </div>
     </div>
 
@@ -3326,17 +3342,17 @@
         </button>
         <div class="modal-title" id="lose-modal-title">Não foi dessa vez</div>
         <p class="modal-sub">A palavra era:</p>
-        <div
-          id="lose-word"
+        <div id="lose-word"
           style="
             font-family: &quot;DM Serif Display&quot;, serif;
             font-size: 2.2rem;
             text-align: center;
             letter-spacing: 0.15em;
             color: var(--amber-400);
-            margin: 4px 0 16px;
+            margin: 4px 0 4px;
           "
         ></div>
+        <a id="lose-def" class="word-def-link" target="_blank" rel="noopener noreferrer">📖 Ver definição</a>
         <div class="countdown-block" id="lose-countdown-block">
           <div class="countdown-label">Próximo glifo em</div>
           <div class="countdown-timer" id="lose-countdown">--:--:--</div>
@@ -3492,6 +3508,17 @@
             </div>
           </div>
           <div id="cfg-ea-section"></div>
+          <div class="cfg-divider"></div>
+          <div class="cfg-row" onclick="closeM('config-modal'); startPraticaMode();">
+            <div class="cfg-row-left">
+              <span class="cfg-row-icon">🎯</span>
+              <div>
+                <div class="cfg-row-label">Modo Prática</div>
+                <div class="cfg-row-sub">Palavra aleatória, sem afetar stats</div>
+              </div>
+            </div>
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text3);flex-shrink:0"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
           <!-- Atalhos para mobile (Arquivo e Ajuda ficam ocultos no header) -->
           <div class="cfg-divider cfg-mobile-only"></div>
           <div
@@ -5320,6 +5347,9 @@
       let ARQUIVO_PUZZLENUM = null;
       let ARQUIVO_DATA = null;
 
+      // ─── Modo Prática ────────────────────────────────
+      let PRATICA_MODO = false;
+
       // ─── Animações UI ────────────────────────────────
       let _kbStaggered = false; // stagger do teclado só na primeira build
 
@@ -5601,12 +5631,13 @@
         return row;
       }
 
-      function buildHistory() {
+      function buildHistory(skipLast = false) {
         if (!G.attempts.length) return;
         document.getElementById("history").style.display = "block";
         const rows = document.getElementById("hrows");
         rows.innerHTML = "";
-        [...G.attempts].reverse().forEach((a) => {
+        const atts = skipLast ? G.attempts.slice(0, -1) : G.attempts;
+        [...atts].reverse().forEach((a) => {
           rows.appendChild(_makeHrow(a, false));
         });
       }
@@ -5782,12 +5813,15 @@
           return;
         }
         const guess = full.join("");
-        // Easter egg: digitar o nome do jogo
-        if (guess === "GLIFFO") {
-          setFb(
-            "Isso não é uma palavra... mas aprecio a autoestima. 🐊",
-            "err",
-          );
+        // Easter egg: digitar o nome do jogo (adaptado ao tamanho da palavra)
+        const EE_GAME_NAMES = { GLIF: 4, GLIFO: 5, GLIFFO: 6 };
+        const EE_GAME_MSGS = {
+          GLIF: "Isso não é uma palavra… mas tem estilo. 🐊",
+          GLIFO: "Quase o nome do jogo. Muito criativo. 🐊",
+          GLIFFO: "Isso não é uma palavra... mas aprecio a autoestima. 🐊",
+        };
+        if (guess in EE_GAME_NAMES && EE_GAME_NAMES[guess] === WN) {
+          setFb(EE_GAME_MSGS[guess], "err");
           haptic(80);
           return;
         }
@@ -5979,7 +6013,8 @@
             buildBoxes();
             renderDaily(); // sem arg: evita timer de 620ms que sobrescreveria iso
             renderYours();
-            buildHistory();
+            buildHistory(true); // skip last — prependHistoryRow adiciona com animação
+            prependHistoryRow(G.attempts[G.attempts.length - 1]);
             buildAtts();
             buildKB();
             salvarEstado();
@@ -6001,6 +6036,25 @@
               });
             }
             setTimeout(() => winAnim(), 380);
+            setTimeout(() => eeThematicWord(), 500);
+            setTimeout(() => eePalindromeReveal(), 1800);
+            // Easter egg: insomniac — vitória entre 02:00 e 03:59 (horário SP)
+            (function () {
+              const spHour = parseInt(
+                new Date().toLocaleString("en-US", {
+                  timeZone: "America/Sao_Paulo",
+                  hour: "numeric",
+                  hour12: false,
+                }),
+                10,
+              );
+              if (spHour >= 2 && spHour < 4) {
+                setTimeout(() => {
+                  setFb("Ainda acordado às " + spHour + "h? 🌙 Vai dormir!", "ok");
+                  setTimeout(() => setFb("", ""), 5000);
+                }, 2600);
+              }
+            })();
             return;
           }
           if (G.attempts.length >= 4) {
@@ -6193,7 +6247,10 @@
       let WIN_FINALE = "C"; // variações do finale: current | A | B | C | D | E
       function winAnim() {
         // Remove overlay anterior se existir (retest no debug)
-        if (_winOverlay) { _winOverlay.remove(); _winOverlay = null; }
+        if (_winOverlay) {
+          _winOverlay.remove();
+          _winOverlay = null;
+        }
         const yc = document.getElementById("your-stack");
 
         // Cria overlay fixo sobre o jogo (igual ao tutorial)
@@ -6292,21 +6349,40 @@
         if (dc) {
           dc.innerHTML = "";
           for (let i = WN - 1; i >= 0; i--) {
-            const s = makeSVG(WL[i], colorOf[WL[i]], "position:absolute;top:0;left:0;width:100%;height:100%;");
+            const s = makeSVG(
+              WL[i],
+              colorOf[WL[i]],
+              "position:absolute;top:0;left:0;width:100%;height:100%;",
+            );
             if (s) dc.appendChild(s);
           }
           dc.classList.add("win-glow", "win-reveal");
-          dc.addEventListener("animationend", () => dc.classList.remove("win-reveal"), { once: true });
+          dc.addEventListener(
+            "animationend",
+            () => dc.classList.remove("win-reveal"),
+            { once: true },
+          );
         }
         yc.innerHTML = "";
         for (let i = WN - 1; i >= 0; i--) {
-          const s = makeSVG(WL[i], colorOf[WL[i]], "position:absolute;top:0;left:0;width:100%;height:100%;");
+          const s = makeSVG(
+            WL[i],
+            colorOf[WL[i]],
+            "position:absolute;top:0;left:0;width:100%;height:100%;",
+          );
           if (s) yc.appendChild(s);
         }
         yc.classList.add("win-glow", "win-reveal");
-        yc.addEventListener("animationend", () => yc.classList.remove("win-reveal"), { once: true });
+        yc.addEventListener(
+          "animationend",
+          () => yc.classList.remove("win-reveal"),
+          { once: true },
+        );
         setTimeout(() => {
-          if (_winOverlay === overlay) { overlay.remove(); _winOverlay = null; }
+          if (_winOverlay === overlay) {
+            overlay.remove();
+            _winOverlay = null;
+          }
           winMod();
         }, 900);
       }
@@ -6315,20 +6391,25 @@
         if (_winOverlay !== overlay) return; // abortado
         const f = WIN_FINALE;
         // Troca SVGs para colorido e layers para pose flat
-        const swapFlat = () => layers.forEach((lay, li) => {
-          lay.style.transition = "none";
-          lay.style.opacity = "1";
-          lay.style.transform = "translateZ(0px) rotateX(0deg) rotateZ(0deg)";
-          lay.innerHTML = "";
-          const sv = makeSVG(WL[WN - 1 - li], colorOf[WL[WN - 1 - li]]);
-          if (sv) { sv.style.cssText = "width:90%;height:90%;"; lay.appendChild(sv); }
-        });
+        const swapFlat = () =>
+          layers.forEach((lay, li) => {
+            lay.style.transition = "none";
+            lay.style.opacity = "1";
+            lay.style.transform = "translateZ(0px) rotateX(0deg) rotateZ(0deg)";
+            lay.innerHTML = "";
+            const sv = makeSVG(WL[WN - 1 - li], colorOf[WL[WN - 1 - li]]);
+            if (sv) {
+              sv.style.cssText = "width:90%;height:90%;";
+              lay.appendChild(sv);
+            }
+          });
 
         if (f === "A") {
           // ── A: ZOOM EXPLOSÃO ──────────────────────────────────────────────────
           // Composição inteira EXPLODE em direção à câmera (scale 20×, fade),
           // depois versão colorida nasce do centro com spring vistoso.
-          stage.style.transition = "transform 550ms ease-in, opacity 450ms ease-in";
+          stage.style.transition =
+            "transform 550ms ease-in, opacity 450ms ease-in";
           stage.style.transform = "scale(20)";
           stage.style.opacity = "0";
           setTimeout(() => {
@@ -6336,14 +6417,16 @@
             stage.style.transition = "none";
             stage.style.transform = "scale(0.15)";
             stage.style.opacity = "0";
-            requestAnimationFrame(() => requestAnimationFrame(() => {
-              stage.style.transition = "transform 680ms cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s ease";
-              stage.style.transform = "scale(1)";
-              stage.style.opacity = "1";
-              setTimeout(() => _winReveal(overlay, yc), 700);
-            }));
+            requestAnimationFrame(() =>
+              requestAnimationFrame(() => {
+                stage.style.transition =
+                  "transform 680ms cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s ease";
+                stage.style.transform = "scale(1)";
+                stage.style.opacity = "1";
+                setTimeout(() => _winReveal(overlay, yc), 700);
+              }),
+            );
           }, 560);
-
         } else if (f === "B") {
           // ── B: CASCATA ────────────────────────────────────────────────────────
           // Composição ISO some, depois cards coloridos caem do topo
@@ -6354,33 +6437,45 @@
             swapFlat();
             // Posiciona todas as layers acima do viewport
             layers.forEach((lay) => {
-              lay.style.transform = "translateZ(0px) translateY(-200px) rotateX(0deg) rotateZ(0deg)";
+              lay.style.transform =
+                "translateZ(0px) translateY(-200px) rotateX(0deg) rotateZ(0deg)";
               lay.style.opacity = "0";
             });
             stage.style.transition = "none";
             stage.style.opacity = "1";
             // Cai da camada de cima (layers[WN-1]) para a de baixo (layers[0])
             [...layers].reverse().forEach((lay, ri) => {
-              setTimeout(() => {
-                lay.style.transition = "transform 440ms cubic-bezier(0.34,1.56,0.64,1), opacity 0.22s ease";
-                lay.style.transform = "translateZ(0px) translateY(0px) rotateX(0deg) rotateZ(0deg)";
-                lay.style.opacity = "1";
-              }, 60 + ri * 180);
+              setTimeout(
+                () => {
+                  lay.style.transition =
+                    "transform 440ms cubic-bezier(0.34,1.56,0.64,1), opacity 0.22s ease";
+                  lay.style.transform =
+                    "translateZ(0px) translateY(0px) rotateX(0deg) rotateZ(0deg)";
+                  lay.style.opacity = "1";
+                },
+                60 + ri * 180,
+              );
             });
-            setTimeout(() => _winReveal(overlay, yc), 60 + layers.length * 180 + 480);
+            setTimeout(
+              () => _winReveal(overlay, yc),
+              60 + layers.length * 180 + 480,
+            );
           }, 210);
-
         } else if (f === "C") {
           // ── C: RÉPLICA DO TUTORIAL ────────────────────────────────────────────
           // Começa direto com a palavra inteira (sem ISO) → stagger pop →
           // spread → billboard → converge → reset
-          if (!window.anime) { _winReveal(overlay, yc); return; }
+          if (!window.anime) {
+            _winReveal(overlay, yc);
+            return;
+          }
 
           // Fundo ainda transparent (ISO foi pulado) → escurece imediatamente
           overlay.style.transition = "none";
           overlay.style.background = "rgba(0,0,0,0.82)";
           // Neutraliza o stage (remove perspective ISO) e oculta o stack vazio
-          stage.style.cssText = "width:min(55vw,55vh,320px);aspect-ratio:1;display:flex;align-items:center;justify-content:center;";
+          stage.style.cssText =
+            "width:min(55vw,55vh,320px);aspect-ratio:1;display:flex;align-items:center;justify-content:center;";
           stack.style.cssText = "display:none;";
 
           const stageW = stage.offsetWidth || 260;
@@ -6394,35 +6489,42 @@
           perspWrap.style.cssText =
             "perspective:700px;perspective-origin:50% 50%;display:flex;justify-content:center;width:100%;overflow:visible;";
           const wordRow = document.createElement("div");
-          wordRow.style.cssText =
-            `display:flex;justify-content:center;gap:${GAP}px;transform-style:preserve-3d;will-change:transform;`;
+          wordRow.style.cssText = `display:flex;justify-content:center;gap:${GAP}px;transform-style:preserve-3d;will-change:transform;`;
           perspWrap.appendChild(wordRow);
           stage.appendChild(perspWrap);
 
           // Tiles coloridos — estado inicial = vem de cima, pequenino
           const tiles = WL.map((letter) => {
             const wrapOuter = document.createElement("div");
-            wrapOuter.style.cssText =
-              `width:${TILE_SZ}px;height:${TILE_SZ}px;display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;flex-shrink:0;`;
+            wrapOuter.style.cssText = `width:${TILE_SZ}px;height:${TILE_SZ}px;display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;flex-shrink:0;`;
             const sv = makeSVG(letter, colorOf[letter]);
-            if (sv) { sv.style.cssText = `width:${TILE_SZ}px;height:${TILE_SZ}px;`; wrapOuter.appendChild(sv); }
+            if (sv) {
+              sv.style.cssText = `width:${TILE_SZ}px;height:${TILE_SZ}px;`;
+              wrapOuter.appendChild(sv);
+            }
             wordRow.appendChild(wrapOuter);
             anime.set(wrapOuter, { opacity: 0, translateY: -14, scale: 0.65 });
             return wrapOuter;
           });
-          tiles.forEach((w, i) => { w.style.zIndex = String(N - i); });
+          tiles.forEach((w, i) => {
+            w.style.zIndex = String(N - i);
+          });
 
           // Entrada stagger pop — igual ao tutorial (easeOutBack)
           anime({
             targets: tiles,
-            opacity: 1, translateY: 0, scale: 1,
+            opacity: 1,
+            translateY: 0,
+            scale: 1,
             duration: 480,
             delay: anime.stagger(120),
             easing: "easeOutBack",
             complete: () => {
               if (_winOverlay !== overlay) return;
               const rowCenterX = wordRow.offsetWidth / 2;
-              const targetTX = tiles.map(el => rowCenterX - (el.offsetLeft + el.offsetWidth / 2));
+              const targetTX = tiles.map(
+                (el) => rowCenterX - (el.offsetLeft + el.offsetWidth / 2),
+              );
               // ── FASE 1: afasta as letras
               anime({
                 targets: tiles,
@@ -6432,22 +6534,39 @@
                 complete: () => {
                   if (_winOverlay !== overlay) return;
                   // ── FASE 2: billboard (wordRow +Y / tiles -Y simultaneamente)
-                  anime({ targets: wordRow, rotateY: 90, duration: 2200, easing: "easeInOutQuad" });
                   anime({
-                    targets: tiles, rotateY: -90, duration: 2200, easing: "easeInOutQuad",
+                    targets: wordRow,
+                    rotateY: 90,
+                    duration: 2200,
+                    easing: "easeInOutQuad",
+                  });
+                  anime({
+                    targets: tiles,
+                    rotateY: -90,
+                    duration: 2200,
+                    easing: "easeInOutQuad",
                     complete: () => {
                       if (_winOverlay !== overlay) return;
                       // ── FASE 3a: convergem ao centro
                       anime({
                         targets: tiles,
                         translateX: (el, i) => targetTX[i],
-                        duration: 900, easing: "easeInOutQuad",
+                        duration: 900,
+                        easing: "easeInOutQuad",
                         complete: () => {
                           if (_winOverlay !== overlay) return;
                           // ── FASE 3b: desfaz rotação
-                          anime({ targets: wordRow, rotateY: 0, duration: 900, easing: "easeInOutSine" });
                           anime({
-                            targets: tiles, rotateY: 0, duration: 900, easing: "easeInOutSine",
+                            targets: wordRow,
+                            rotateY: 0,
+                            duration: 900,
+                            easing: "easeInOutSine",
+                          });
+                          anime({
+                            targets: tiles,
+                            rotateY: 0,
+                            duration: 900,
+                            easing: "easeInOutSine",
                             complete: () => {
                               if (_winOverlay !== overlay) return;
                               setTimeout(() => _winReveal(overlay, yc), 200);
@@ -6461,7 +6580,6 @@
               });
             },
           });
-
         } else if (f === "D") {
           // ── D: FLASH BRANCO ───────────────────────────────────────────────────
           // Composição some rápido, tela CORTA para branco puro,
@@ -6476,19 +6594,23 @@
               stage.style.transform = "scale(0.4)";
               overlay.style.transition = "background 450ms ease-out";
               overlay.style.background = "rgba(0,0,0,0.82)";
-              stage.style.transition = "transform 650ms cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease";
+              stage.style.transition =
+                "transform 650ms cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease";
               stage.style.transform = "scale(1)";
               stage.style.opacity = "1";
               setTimeout(() => _winReveal(overlay, yc), 670);
             }, 80);
           }, 130);
-
         } else if (f === "E") {
           // ── E: COIN-FLIP (técnica do tutorial) ───────────────────────────────
           // Igual à animação "juntar as letras" do tutorial:
           // O glifo ISO gira rotateY até ficar de fio (90°, invisível),
           // troca para colors + flat, depois abre do outro lado com spring.
-          if (!window.anime) { swapFlat(); setTimeout(() => _winReveal(overlay, yc), 400); return; }
+          if (!window.anime) {
+            swapFlat();
+            setTimeout(() => _winReveal(overlay, yc), 400);
+            return;
+          }
           overlay.style.perspective = "700px";
           overlay.style.perspectiveOrigin = "50% 50%";
           // Fase 1: fecha (gira até 90° = invisível)
@@ -6514,7 +6636,6 @@
               });
             },
           });
-
         } else {
           // ── CURRENT: implosão suave original ──────────────────────────────────
           layers.forEach((lay) => {
@@ -6523,7 +6644,10 @@
             lay.style.transform = "translateZ(0px) rotateX(0deg) rotateZ(0deg)";
           });
           setTimeout(() => {
-            layers.forEach((lay) => { lay.style.transition = "opacity 0.35s ease"; lay.style.opacity = "1"; });
+            layers.forEach((lay) => {
+              lay.style.transition = "opacity 0.35s ease";
+              lay.style.opacity = "1";
+            });
             setTimeout(() => _winReveal(overlay, yc), 100);
           }, ISO_OUT + 60);
         }
@@ -6578,8 +6702,8 @@
       }
 
       function atualizarStats(won, tentativas) {
-        // Não conta no modo arquivo
-        if (ARQUIVO_MODO) return;
+        // Não conta no modo arquivo nem prática
+        if (ARQUIVO_MODO || PRATICA_MODO) return;
         // Só atualiza uma vez por puzzle (evita duplicar se modal reabrir)
         const jaContou = localStorage.getItem("gliffoo_stats_date");
         if (jaContou === dataHoje()) return;
@@ -6588,11 +6712,12 @@
         const hoje = dataHoje();
 
         // Streak: verifica se jogou ontem
-        const ontem = new Date(
-          new Date().toLocaleString("en-US", { timeZone: "America/Sao_Paulo" }),
-        );
-        ontem.setDate(ontem.getDate() - 1);
-        const ontemStr = ontem.toISOString().slice(0, 10);
+        // Deriva ontemStr a partir de dataHoje() por aritmética de string —
+        // evita bugs de timezone (toISOString converte para UTC)
+        const [hy, hm, hd] = dataHoje().split("-").map(Number);
+        const ontemStr = new Date(Date.UTC(hy, hm - 1, hd - 1))
+          .toISOString()
+          .slice(0, 10);
 
         s.jogados++;
         if (won) {
@@ -6641,6 +6766,7 @@
           salvarEstadoArquivo();
           return;
         }
+        if (PRATICA_MODO) return; // prática não persiste
         const data = {
           date: dataHoje(),
           word: WORD,
@@ -6684,6 +6810,8 @@
         const s = carregarStats();
         const midCard = ARQUIVO_MODO
           ? `<div class="stat-card"><div class="stat-val">📅</div><div class="stat-lbl">Arquivo #${ARQUIVO_PUZZLENUM}</div></div>`
+          : PRATICA_MODO
+          ? `<div class="stat-card"><div class="stat-val">🎯</div><div class="stat-lbl">Modo Prática</div></div>`
           : `<div class="stat-card"><div class="stat-val">${s.streakAtual}<span style="font-size:1rem"> 🔥</span></div><div class="stat-lbl">Sequência</div></div>`;
         document.getElementById("win-stats").innerHTML = `
     <div class="stat-card"><div class="stat-val">${G.attempts.length}<span style="font-size:1rem;color:var(--text3)">/4</span></div><div class="stat-lbl">Tentativas</div></div>
@@ -6691,8 +6819,11 @@
     <div class="stat-card"><div class="stat-val" style="font-size:1.2rem;letter-spacing:0.1em">${WORD}</div><div class="stat-lbl">Palavra</div></div>`;
         buildShareGrid("win-share");
         const wCB = document.getElementById("win-countdown-block");
-        if (wCB) wCB.style.display = ARQUIVO_MODO ? "none" : "";
-        if (!ARQUIVO_MODO) iniciarCountdown("win-countdown");
+        const noCountdown = ARQUIVO_MODO || PRATICA_MODO;
+        if (wCB) wCB.style.display = noCountdown ? "none" : "";
+        if (!noCountdown) iniciarCountdown("win-countdown");
+        const winDef = document.getElementById("win-def");
+        if (winDef) winDef.href = `https://www.dicio.com.br/${WORD.toLowerCase()}/`;
         openM("win-modal");
       }
 
@@ -6700,10 +6831,13 @@
         salvarEstado();
         atualizarStats(false, 0);
         document.getElementById("lose-word").textContent = WORD;
+        const loseDef = document.getElementById("lose-def");
+        if (loseDef) loseDef.href = `https://www.dicio.com.br/${WORD.toLowerCase()}/`;
         buildShareGrid("lose-share");
         const lCB = document.getElementById("lose-countdown-block");
-        if (lCB) lCB.style.display = ARQUIVO_MODO ? "none" : "";
-        if (!ARQUIVO_MODO) iniciarCountdown("lose-countdown");
+        const noCountdownL = ARQUIVO_MODO || PRATICA_MODO;
+        if (lCB) lCB.style.display = noCountdownL ? "none" : "";
+        if (!noCountdownL) iniciarCountdown("lose-countdown");
         openM("lose-modal");
       }
 
@@ -6774,7 +6908,7 @@
 
       function share() {
         const n = ARQUIVO_MODO ? ARQUIVO_PUZZLENUM : numeroPuzzle();
-        const arqTag = ARQUIVO_MODO ? " (arquivo)" : "";
+        const arqTag = ARQUIVO_MODO ? " (arquivo)" : PRATICA_MODO ? " (prática)" : "";
         const resultado = G.won ? `${G.attempts.length}/4` : "X/4";
         const s2 = carregarStats();
         const titulo = getTituloStreak(s2.streakAtual);
@@ -6793,6 +6927,7 @@
           lines.push(l);
         });
         lines.push("");
+        lines.push("https://glif.foo");
         navigator.clipboard?.writeText(lines.join("\n")).then(() => {
           const el = document.querySelector(".moverlay.show .copied");
           if (el) {
@@ -7934,7 +8069,9 @@
         // ── Momentos Especiais ──
         if (won && attempts === 4) queueAch("comeback_kid");
         if (won && WN === 7) queueAch("lucky_7");
-        if (guess && achIsAnagram(guess, WORD)) queueAch("echo");
+        // Checa todas as tentativas da partida (não só a última)
+        if (G.attempts.some((a) => achIsAnagram(a.word, WORD)))
+          queueAch("echo");
         if (won && achCheckWeekend()) queueAch("weekend_warrior");
 
         // ── Peculiaridades ──
@@ -7943,8 +8080,9 @@
         if (won && hour < 7) queueAch("early_bird");
         if (won && firstDec === 0 && firstFnd === 0 && attempts > 1)
           queueAch("persistent");
-        if (guess && achIsSandwich(guess)) queueAch("sandwich");
-        if (guess && achIsPalindrome(guess)) queueAch("palindrome");
+        if (G.attempts.some((a) => achIsSandwich(a.word))) queueAch("sandwich");
+        if (G.attempts.some((a) => achIsPalindrome(a.word)))
+          queueAch("palindrome");
         if (won && achHasDouble(WORD)) queueAch("double_trouble");
       }
 
@@ -8019,9 +8157,11 @@
       }
       function achCheckWeekend() {
         const k = "gliffoo_wknd_v1";
-        const now = new Date(),
-          dow = now.getDay();
-        const wk = achWeekNum(now);
+        // Usa a data de SP (não o timezone do sistema)
+        const [y, m, d] = dataHoje().split("-").map(Number);
+        const nowSP = new Date(y, m - 1, d);
+        const dow = nowSP.getDay();
+        const wk = achWeekNum(nowSP);
         try {
           const d = JSON.parse(localStorage.getItem(k)) || {};
           if (dow === 6) d[wk + "_s"] = true;
@@ -8148,27 +8288,36 @@
           .replace(".", "")
           .toUpperCase();
         const diaSemana = base.getDay();
-        const CICLO_LABELS = {
-          facil: "Fácil · 4 letras",
-          medio: "Médio · 5 letras",
-          dificil: "Difícil · 6 letras",
-          muito_dificil: "Muito Difícil · 7 letras",
+        const CICLO_NAMES = {
+          facil: "Fácil",
+          medio: "Médio",
+          dificil: "Difícil",
+          muito_dificil: "Muito Difícil",
         };
         const nivel = CICLO_DIF[diaSemana];
-        const label = CICLO_LABELS[nivel];
+        const label = `${CICLO_NAMES[nivel]} · ${WN} letras`;
         const meta = document.getElementById("header-meta");
         if (ARQUIVO_MODO) {
           meta.innerHTML = `
-    <span class="arquivo-badge">\ud83d\udcc5 Arquivo #${ARQUIVO_PUZZLENUM}</span>
+    <span class="arquivo-badge">📅 Arquivo #${ARQUIVO_PUZZLENUM}</span>
     <span class="header-date">${dataFmt}</span>
     <span class="dif-badge ${nivel}">${label}</span>`;
+        } else if (PRATICA_MODO) {
+          meta.innerHTML = `
+    <span class="arquivo-badge" style="background:var(--surface3)">🎯 Prática</span>
+    <span class="dif-badge ${nivel}">${label}</span>`;
         } else {
+          const pNum = numeroPuzzle();
+          const specialBadge = [100, 365, 1000].includes(pNum)
+            ? `<span class="arquivo-badge" style="background:var(--amber-400);color:#000">✨ Puzzle #${pNum}</span>`
+            : "";
           meta.innerHTML = `
     <span class="header-date">${dataFmt}</span>
+    ${specialBadge}
     <span class="dif-badge ${nivel}">${label}</span>${
       HARD_MODE
         ? `
-    <span class="hard-badge">\ud83d\udd25 Difícil</span>`
+    <span class="hard-badge">🔥 Difícil</span>`
         : ""
     }`;
         }
@@ -8181,6 +8330,24 @@
           if (G.won) winMod();
           else loseMod();
         }, 600);
+      }
+
+      // URL ?p=N — abre puzzle do arquivo diretamente
+      (function () {
+        const pParam = new URLSearchParams(location.search).get("p");
+        if (!pParam) return;
+        const pNum = parseInt(pParam, 10);
+        const hoje = numeroPuzzle();
+        if (isNaN(pNum) || pNum < 1 || pNum >= hoje) return;
+        const offset = pNum - hoje; // negativo = passado
+        // Limpa o ?p= da URL sem recarregar
+        history.replaceState(null, "", location.pathname);
+        startArquivoMode(offset);
+      })();
+
+      // Easter egg: ARCO é a palavra do tutorial — mensagem de déjà vu
+      if (WORD === "ARCO" && !ARQUIVO_MODO && !G.done) {
+        setTimeout(() => setFb("Essa é a palavra do tutorial… 👀", ""), 1400);
       }
 
       // ═══════════════════════════════════════════════
@@ -11581,13 +11748,14 @@
         if (!body) return;
         body.innerHTML = "";
 
-        if (ARQUIVO_MODO) {
+        if (ARQUIVO_MODO || PRATICA_MODO) {
           const btnHoje = document.createElement("button");
           btnHoje.className = "arquivo-hoje-btn";
           btnHoje.textContent = "\u2190 Voltar ao Puzzle de Hoje";
           btnHoje.onclick = () => {
             closeM("arquivo-modal");
-            exitArquivoMode();
+            if (PRATICA_MODO) exitPraticaMode();
+            else exitArquivoMode();
           };
           body.appendChild(btnHoje);
         }
@@ -11839,6 +12007,7 @@
       function startArquivoMode(offset) {
         const info = palavraPorDia(offset);
         ARQUIVO_MODO = true;
+        PRATICA_MODO = false;
         ARQUIVO_PUZZLENUM = info.dia;
         ARQUIVO_DATA = info.data;
 
@@ -11912,37 +12081,16 @@
         WORD = palavraDoDia();
         WL = WORD.split("");
         WN = WL.length;
-        Object.keys(colorOf).forEach((k) => delete colorOf[k]);
-        WL.forEach((l, i) => {
-          if (!colorOf[l]) colorOf[l] = GLYPH_COLORS[i % GLYPH_COLORS.length];
-        });
+        _recolorWord();
 
-        // Reset and restore daily state
-        G.typed = [];
-        G.attempts = [];
-        G.decoded = new Set();
-        G.found = new Set();
-        G.keyUsed = false;
-        G.keyPos = new Set();
-        G.done = false;
-        G.won = false;
-        G.selKey = null;
-        G._flipping = false;
-        G._flipGen++;
-
+        _resetGState();
         carregarEstado();
         G.cursor = nextCursor(0);
 
         const kd = document.getElementById("key-dot");
         if (kd) kd.classList.toggle("show", !G.keyUsed);
 
-        [
-          "win-modal",
-          "lose-modal",
-          "key-modal",
-          "stats-modal",
-          "config-modal",
-        ].forEach((id) => closeM(id));
+        _closeAllModals();
 
         buildAtts();
         buildBoxes();
@@ -11959,6 +12107,107 @@
             else loseMod();
           }, 600);
         }
+      }
+
+      function _resetGState() {
+        G.typed = [];
+        G.attempts = [];
+        G.decoded = new Set();
+        G.found = new Set();
+        G.keyUsed = false;
+        G.keyPos = new Set();
+        G.done = false;
+        G.won = false;
+        G.selKey = null;
+        G._flipping = false;
+        G._flipGen++;
+      }
+
+      function _recolorWord() {
+        Object.keys(colorOf).forEach((k) => delete colorOf[k]);
+        WL.forEach((l, i) => {
+          if (!colorOf[l]) colorOf[l] = GLYPH_COLORS[i % GLYPH_COLORS.length];
+        });
+      }
+
+      function _closeAllModals() {
+        [
+          "win-modal",
+          "lose-modal",
+          "key-modal",
+          "stats-modal",
+          "config-modal",
+        ].forEach((id) => closeM(id));
+      }
+
+      function startPraticaMode() {
+        // Escolhe palavra aleatória de qualquer dificuldade
+        const todas = Object.values(PALAVRAS).flat();
+        WORD = todas[Math.floor(Math.random() * todas.length)];
+        WL = WORD.split("");
+        WN = WL.length;
+        _recolorWord();
+
+        PRATICA_MODO = true;
+        ARQUIVO_MODO = false;
+
+        _resetGState();
+        G.cursor = nextCursor(0);
+
+        const kd = document.getElementById("key-dot");
+        if (kd) kd.classList.toggle("show", !G.keyUsed);
+
+        _closeAllModals();
+
+        buildAtts();
+        buildBoxes();
+        buildKB();
+        renderDaily();
+        renderYours();
+        buildHeaderMeta();
+        setFb("", "");
+      }
+
+      function exitPraticaMode() {
+        PRATICA_MODO = false;
+        WORD = palavraDoDia();
+        WL = WORD.split("");
+        WN = WL.length;
+        _recolorWord();
+
+        _resetGState();
+        carregarEstado();
+        G.cursor = nextCursor(0);
+
+        const kd = document.getElementById("key-dot");
+        if (kd) kd.classList.toggle("show", !G.keyUsed);
+
+        _closeAllModals();
+
+        buildAtts();
+        buildBoxes();
+        buildKB();
+        renderDaily();
+        renderYours();
+        buildHeaderMeta();
+        setFb("", "");
+
+        if (G.done) {
+          buildHistory();
+          setTimeout(function () {
+            if (G.won) winMod();
+            else loseMod();
+          }, 600);
+        }
+      }
+
+      function _purgeOldArchive(max = 60) {
+        const keys = Object.keys(localStorage)
+          .filter((k) => k.startsWith("gliffoo_archive_"))
+          .map((k) => ({ k, n: parseInt(k.replace("gliffoo_archive_", ""), 10) }))
+          .filter((o) => !isNaN(o.n))
+          .sort((a, b) => b.n - a.n);
+        keys.slice(max).forEach((o) => localStorage.removeItem(o.k));
       }
 
       function salvarEstadoArquivo() {
@@ -11980,6 +12229,7 @@
           "gliffoo_archive_" + ARQUIVO_PUZZLENUM,
           JSON.stringify(data),
         );
+        _purgeOldArchive();
       }
 
       function carregarEstadoArquivo(puzzleNum) {
@@ -12239,19 +12489,29 @@
             document.getElementById("debug-panel").classList.remove("open");
           });
           // Win finale selector
-          ["current","A","B","C","D","E"].forEach(v => {
+          ["current", "A", "B", "C", "D", "E"].forEach((v) => {
             safe(`dbg-fin-${v}`, () => {
               WIN_FINALE = v;
-              document.querySelectorAll(".dbg-fin-btn").forEach(b => b.classList.remove("dbg-fin-active"));
-              document.getElementById(`dbg-fin-${v}`).classList.add("dbg-fin-active");
+              document
+                .querySelectorAll(".dbg-fin-btn")
+                .forEach((b) => b.classList.remove("dbg-fin-active"));
+              document
+                .getElementById(`dbg-fin-${v}`)
+                .classList.add("dbg-fin-active");
             });
           });
           safe("dbg-fin-test", () => {
             // Remove qualquer overlay pendente antes de testar
-            if (_winOverlay) { _winOverlay.remove(); _winOverlay = null; }
+            if (_winOverlay) {
+              _winOverlay.remove();
+              _winOverlay = null;
+            }
             // Fecha modal de vitória se estiver aberto
             const wm = document.getElementById("win-modal");
-            if (wm) { wm.classList.remove("show"); wm.setAttribute("aria-hidden", "true"); }
+            if (wm) {
+              wm.classList.remove("show");
+              wm.setAttribute("aria-hidden", "true");
+            }
             G.done = G.won = true;
             G.decoded = new Set([...Array(WN).keys()]);
             winAnim();
@@ -12283,6 +12543,50 @@
         if (_ac.state === "suspended") _ac.resume();
         return _ac;
       }
+      // Pré-aquece o AudioContext na primeira interação do usuário
+      // (garante que o contexto está pronto antes do primeiro áudio)
+      document.body.addEventListener(
+        "pointerdown",
+        () => {
+          if (!AUDIO_MUTED) try { _getAC(); } catch (e) {}
+        },
+        { once: true, passive: true },
+      );
+
+      // Easter egg: Konami Code → efeito arco-íris + mensagem
+      (function () {
+        const KONAMI = [
+          "ArrowUp","ArrowUp","ArrowDown","ArrowDown",
+          "ArrowLeft","ArrowRight","ArrowLeft","ArrowRight",
+          "b","a",
+        ];
+        let _kBuf = [];
+        document.addEventListener("keydown", (e) => {
+          _kBuf.push(e.key);
+          if (_kBuf.length > KONAMI.length) _kBuf.shift();
+          if (_kBuf.join(",") === KONAMI.join(",")) {
+            _kBuf = [];
+            // Aplicar efeito arco-íris no root por 2s
+            const root = document.documentElement;
+            root.style.transition = "filter 0.3s";
+            root.style.filter = "hue-rotate(0deg)";
+            let angle = 0;
+            const step = () => {
+              angle = (angle + 6) % 360;
+              root.style.filter = `hue-rotate(${angle}deg)`;
+            };
+            const raf = setInterval(step, 16);
+            setTimeout(() => {
+              clearInterval(raf);
+              root.style.filter = "";
+              root.style.transition = "";
+            }, 2000);
+            setFb("🕹️ +30 vidas (mentira, mas valeu a tentativa)", "ok");
+            setTimeout(() => setFb("", ""), 4000);
+          }
+        });
+      })();
+
       function eePlayFanfare() {
         if (AUDIO_MUTED) return;
         try {
@@ -12319,23 +12623,6 @@
               o.stop(A.currentTime + 0.38);
             }, noteIdx * 80);
           });
-        } catch (e2) {}
-      }
-      function eePlayBoing() {
-        if (AUDIO_MUTED) return;
-        try {
-          const A = _getAC();
-          const o = A.createOscillator(),
-            g = A.createGain();
-          o.connect(g);
-          g.connect(A.destination);
-          o.type = "sine";
-          o.frequency.setValueAtTime(520, A.currentTime);
-          o.frequency.exponentialRampToValueAtTime(900, A.currentTime + 0.09);
-          g.gain.setValueAtTime(0.25, A.currentTime);
-          g.gain.exponentialRampToValueAtTime(0.001, A.currentTime + 0.5);
-          o.start();
-          o.stop(A.currentTime + 0.5);
         } catch (e2) {}
       }
       function eePlayTrombone() {
@@ -12386,6 +12673,119 @@
           }
         } catch (e2) {}
       }
+      // Fallback offline: confetti CSS puro (posição fixa, cobre a tela)
+      function _eeLocalConfetti() {
+        const colors = ["#f5a623", "#9b8fe8", "#5bbfa0", "#e87a6b", "#60a5fa"];
+        for (let i = 0; i < 80; i++) {
+          const p = document.createElement("div");
+          const size = 6 + Math.random() * 8;
+          p.style.cssText =
+            `position:fixed;width:${size}px;height:${size}px;` +
+            `background:${colors[i % colors.length]};` +
+            `border-radius:${Math.random() > 0.5 ? "50%" : "2px"};` +
+            `left:${20 + Math.random() * 60}vw;top:${58 + Math.random() * 12}vh;` +
+            `pointer-events:none;z-index:9999;` +
+            `animation:confPop ${0.8 + Math.random() * 0.6}s ease-out forwards;` +
+            `--tx:${(Math.random() - 0.5) * 280}px;` +
+            `--ty:${-80 - Math.random() * 200}px;` +
+            `animation-delay:${Math.random() * 0.35}s;`;
+          document.body.appendChild(p);
+          setTimeout(() => p.remove(), 1600);
+        }
+      }
+
+      // ── Easter eggs: palavras temáticas ──
+      // Easter egg: palíndromo — varredura bidirecional nos lboxes
+      function eePalindromeReveal() {
+        if (!achIsPalindrome(WORD)) return;
+        const boxes = [...document.querySelectorAll("#lboxes .lbox")];
+        if (!boxes.length) return;
+        // Forward sweep (left→right)
+        boxes.forEach((b, i) => {
+          setTimeout(() => {
+            b.style.transition = "transform 0.15s ease-out, box-shadow 0.15s";
+            b.style.transform = "scale(1.22)";
+            b.style.boxShadow = "0 0 10px var(--amber-400)";
+            setTimeout(() => {
+              b.style.transform = "";
+              b.style.boxShadow = "";
+            }, 200);
+          }, i * 90);
+        });
+        // Reverse sweep (right→left) after a pause
+        const delay = boxes.length * 90 + 350;
+        [...boxes].reverse().forEach((b, i) => {
+          setTimeout(() => {
+            b.style.transition = "transform 0.15s ease-out, box-shadow 0.15s";
+            b.style.transform = "scale(1.22)";
+            b.style.boxShadow = "0 0 10px #9b8fe8";
+            setTimeout(() => {
+              b.style.transform = "";
+              b.style.boxShadow = "";
+            }, 200);
+          }, delay + i * 90);
+        });
+        setTimeout(() => setFb("↔️ Palíndromo!", "ok"), delay + boxes.length * 90 + 150);
+        setTimeout(() => setFb("", ""), delay + boxes.length * 90 + 3000);
+      }
+
+      function eeThematicWord() {
+        if (["FESTA", "BAILE"].includes(WORD)) {
+          setTimeout(eeCanvasConfetti, 200);
+          setTimeout(eeCanvasConfetti, 550);
+        } else if (["FOGO", "CHAMA"].includes(WORD)) {
+          _eeFireParticles();
+        } else if (WORD === "GATO") {
+          _eeCornerEmoji("🐱");
+        } else if (["BRUXO", "MAGIA"].includes(WORD)) {
+          _eeGlyphPulse("#a855f7");
+        }
+      }
+      function _eeFireParticles() {
+        const colors = ["#ff4500", "#ff8c00", "#ffa500", "#ff6347"];
+        for (let i = 0; i < 50; i++) {
+          const p = document.createElement("div");
+          const size = 7 + Math.random() * 12;
+          p.style.cssText =
+            `position:fixed;width:${size}px;height:${size}px;` +
+            `background:${colors[Math.floor(Math.random() * colors.length)]};` +
+            `border-radius:50% 50% 50% 0;` +
+            `left:${20 + Math.random() * 60}vw;bottom:${3 + Math.random() * 10}vh;` +
+            `pointer-events:none;z-index:9999;` +
+            `animation:confPop ${0.9 + Math.random() * 0.7}s ease-out forwards;` +
+            `--tx:${(Math.random() - 0.5) * 120}px;` +
+            `--ty:${-120 - Math.random() * 200}px;` +
+            `animation-delay:${Math.random() * 0.5}s;`;
+          document.body.appendChild(p);
+          setTimeout(() => p.remove(), 1900);
+        }
+      }
+      function _eeCornerEmoji(emoji) {
+        const el = document.createElement("div");
+        el.textContent = emoji;
+        el.style.cssText =
+          `position:fixed;bottom:24px;right:24px;font-size:3rem;` +
+          `z-index:9999;pointer-events:none;` +
+          `animation:eeCornerPop 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;`;
+        document.body.appendChild(el);
+        setTimeout(() => {
+          el.style.opacity = "0";
+          el.style.transition = "opacity 0.5s";
+          setTimeout(() => el.remove(), 550);
+        }, 2800);
+      }
+      function _eeGlyphPulse(color) {
+        const layers = document.querySelectorAll("#glyph-stage .glayer");
+        layers.forEach((l) => {
+          l.style.transition = "filter 0.4s ease";
+          l.style.filter = `drop-shadow(0 0 18px ${color}) hue-rotate(200deg)`;
+          setTimeout(() => {
+            l.style.filter = "";
+            setTimeout(() => (l.style.transition = ""), 450);
+          }, 1400);
+        });
+      }
+
       function eeCanvasConfetti() {
         const fire = () =>
           window.confetti({
@@ -12402,6 +12802,7 @@
         sc.src =
           "https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js";
         sc.onload = fire;
+        sc.onerror = _eeLocalConfetti; // fallback offline
         document.head.appendChild(sc);
       }
     </script>
@@ -12412,6 +12813,10 @@
           transform: translate(var(--tx), var(--ty));
           opacity: 0;
         }
+      }
+      @keyframes eeCornerPop {
+        from { transform: scale(0) rotate(-20deg); opacity: 0; }
+        to   { transform: scale(1) rotate(0deg);   opacity: 1; }
       }
       .tut-result-row {
         display: flex;
@@ -13091,16 +13496,24 @@
       >
         <label>Win finale</label>
       </div>
-      <div class="dbg-btns" style="flex-wrap: wrap; gap: 4px" id="dbg-finale-btns">
-        <button id="dbg-fin-current" class="dbg-fin-btn dbg-fin-active">Atual</button>
+      <div
+        class="dbg-btns"
+        style="flex-wrap: wrap; gap: 4px"
+        id="dbg-finale-btns"
+      >
+        <button id="dbg-fin-current" class="dbg-fin-btn dbg-fin-active">
+          Atual
+        </button>
         <button id="dbg-fin-A" class="dbg-fin-btn">A</button>
         <button id="dbg-fin-B" class="dbg-fin-btn">B</button>
         <button id="dbg-fin-C" class="dbg-fin-btn">C</button>
         <button id="dbg-fin-D" class="dbg-fin-btn">D</button>
         <button id="dbg-fin-E" class="dbg-fin-btn">E</button>
       </div>
-      <div class="dbg-btns" style="margin-top:4px">
-        <button id="dbg-fin-test" style="background:rgba(245,166,35,0.18)">▶ Testar</button>
+      <div class="dbg-btns" style="margin-top: 4px">
+        <button id="dbg-fin-test" style="background: rgba(245, 166, 35, 0.18)">
+          ▶ Testar
+        </button>
       </div>
       <div
         class="dbg-row"
