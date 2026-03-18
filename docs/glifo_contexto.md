@@ -84,42 +84,171 @@ O input foi completamente refeito para suportar **cursor não-linear**:
 
 ## Funções Principais
 
-| Função                               | O que faz                                     |
-| ------------------------------------ | --------------------------------------------- |
-| `makeSVG(l, color, style)`           | Gera SVG de uma letra                         |
-| `buildBoxes()`                       | Renderiza slots com cursor não-linear         |
-| `moveCursor(idx)`                    | Move cursor para posição idx                  |
-| `nextCursor(from)`                   | Próxima posição editável vazia                |
-| `prevCursor(from)`                   | Posição editável anterior                     |
-| `handleKey(k)`                       | Input de letra/backspace/enter                |
-| `calcWarns()`                        | Avisos contextuais (elim/posição errada)      |
-| `buildKB()`                          | Renderiza teclado virtual                     |
-| `renderDaily(revealedIndices?)`      | Atualiza Glifo do Dia (com animação opcional) |
-| `renderYours()`                      | Atualiza Seu Glifo                            |
-| `decode()`                           | Processa tentativa, calcula feedback two-pass |
-| `useKey()`                           | Usa chave decodificadora                      |
-| `winAnim()`                          | Animação de vitória                           |
-| `openTutorial()` / `closeTutorial()` | Controle do tutorial                          |
+| Função                                      | O que faz                                                 |
+| ------------------------------------------- | --------------------------------------------------------- |
+| `makeSVG(l, color, style)`                  | Gera SVG de uma letra                                     |
+| `buildBoxes()`                              | Renderiza slots com cursor não-linear                     |
+| `moveCursor(idx)`                           | Move cursor para posição idx                              |
+| `nextCursor(from)`                          | Próxima posição editável vazia                            |
+| `prevCursor(from)`                          | Posição editável anterior                                 |
+| `handleKey(k)`                              | Input de letra/backspace/enter                            |
+| `calcWarns()`                               | Avisos contextuais (elim/posição errada)                  |
+| `buildKB()`                                 | Renderiza teclado virtual                                 |
+| `renderDaily(revealedIndices?)`             | Atualiza Glifo do Dia (com animação opcional)             |
+| `renderYours()`                             | Atualiza Seu Glifo                                        |
+| `decode()`                                  | Processa tentativa, calcula feedback two-pass             |
+| `useKey()`                                  | Usa chave decodificadora                                  |
+| `winAnim()`                                 | Animação de vitória                                       |
+| `openTutorial()` / `closeTutorial()`        | Controle do tutorial                                      |
+| `buildHeaderMeta()`                         | Reconstrói o bloco data + badges do header                |
+| `atualizarStats(won, attempts)`             | Atualiza streak/stats; no-op em arquivo/prática           |
+| `carregarEstado()` / `salvarEstado()`       | Persiste `G` no `localStorage`                            |
+| `palavraDoDia()`                            | Determina palavra via hash determinístico local           |
+| `palavraPorDia(dateStr)`                    | Palavra para qualquer data YYYY-MM-DD                     |
+| `startPraticaMode()` / `exitPraticaMode()`  | Inicia/sai do Modo Prática                                |
+| `startArquivoMode(n)` / `exitArquivoMode()` | Inicia/sai do Modo Arquivo                                |
+| `openArquivo()` / `buildArquivoList()`      | Abre modal e monta grade de calendário                    |
+| `openStats()` / `renderStats()`             | Abre modal de stats e renderiza passaporte + distribuição |
+| `share()`                                   | Gera texto de compartilhamento (emoji grid + URL)         |
+| `checkAchievements({...})`                  | Verifica e enfileira conquistas ganhas                    |
+| `queueAch(id)` / `showAchPopup(ach)`        | Fila e exibe toast de conquista                           |
+| `_purgeOldArchive(max)`                     | Remove entradas `gliffoo_archive_*` antigas               |
+| `_eeLocalConfetti()`                        | Confetti CSS local (fallback se CDN falhar)               |
+| `eePalindromeReveal()`                      | Animação bidirecional para palíndromo                     |
+| `achCheckWeekend()`                         | Verifica vitória em sáb+dom via timezone SP               |
+| `dataHoje()`                                | Data atual em string `YYYY-MM-DD` (timezone SP)           |
 
-## Tutorial (3 passos / chat guiado)
+## Tutorial (chat guiado — "TUTORIAL v3")
 
-O tutorial é um chat interativo com 3 passos e ramificações por escolha do usuário.
+O tutorial é um chat interativo (`case 0/1/2` no switch `tutStep`) com máquina de estados `TUT` e token de cancelamento `currentActionToken`.
 
-| Passo | Palavra | Conteúdo                                                                    |
-| ----- | ------- | --------------------------------------------------------------------------- |
-| 0     | —       | Pergunta se já jogou Termo; exibe mini-board do Termo animado               |
-| 1     | **BOLA**| Cada letra tem glifo único; animação 3D de empilhamento; BOLA ≠ LOBA       |
-| 2     | **ARCO**| Tentativas guiadas (LOTE/RUDE/POSE → RATO/CALO/VASO); O decifrado; digita ARCO |
+### Palavras usadas
 
-- Passo 0: pergunta inicial (sim/não Termo) + seta animada apontando pro board
-- Passo 1: glifos exibidos um a um em 3D, botão "Juntar" dispara animação billboard
-- Passo 2: **BOLA** é apenas demo; **ARCO** é a palavra interativa que o usuário digita
-  - Inclui O já decodificado (posição certa) + slots editáveis livre para ARCO ou CARO
-  - Chave 🔑 opcional revela uma letra antes da digitação
-- Se o usuário quiser sair → boneco triste (Lottie) anda pela tela + convite de volta
-- Ao completar ARCO: confetes + cards-resumo "4 tentativas / 1 palavra por dia / 1 chave"
-- Botão **Ver de novo** disponível no final
+| Constante                    | Palavra  | Uso                                           |
+| ---------------------------- | -------- | --------------------------------------------- |
+| `TW` / `TWL` / `TC` / `tcOf` | **BOLA** | Demo 3D (case 1) — apenas demonstração visual |
+| `TDL` / `tdOf`               | **ARCO** | Demo interativo (case 2) — jogador interage   |
+
+### Passos
+
+| Case | Conteúdo                                                                                                                                                                                                                                               |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 0    | Chat intro: "Bem-vindo ao Gliffo 👋" + mini-board do Termo animado (PINGO/TORSO/GOSTO) + pergunta "já jogou o Termo?" com botões Sim/Não branching                                                                                                     |
+| 1    | BOLA: tiles 3D aparecem um a um (perspectiva 700px), cada letra com seu glifo colorido; depois coin-flip collapse em glifo empilhado; chatMsg explicando que cada glifo é único                                                                        |
+| 2    | ARCO interativo: glifo misterioso do Dia aparece; tentativas demo (LOTE/RUDE/POSE → mostra letras encontradas; RATO/CALO/VASO → mostra O na posição certa); mini-histórico animado; slot O já decodificado; jogador digita A, R, C para completar ARCO |
+
+### Evento de saída
+
+- Usuário clica "Não quero" → `TUT.setState('sad_walk')` → Lottie `sad_walking` caminha pela tela → tela de comeback com bajulação + campo livre
+- Ao completar ARCO: `showByeButtons()` com "Jogar agora 🎮" (`closeTutorial()`) e "Ver de novo 🔁" (fecha + reabre)
 - Auto-show na primeira visita (`localStorage: gliffoo_tutdone`)
+- `iWord`, `iLetters`, `iColorOf`: variáveis do desafio interativo (usadas em `buildInteract`)
+
+### Variáveis e funções chave
+
+| Símbolo                             | Descrição                                                                     |
+| ----------------------------------- | ----------------------------------------------------------------------------- |
+| `tutStep`                           | Passo atual (0–2)                                                             |
+| `TUT`                               | State machine: `.state`, `.setState()`, `.freeInput()`, `._freeInputOverride` |
+| `currentActionToken`                | Token de cancelamento — qualquer `tDelay` checa `.cancelled`                  |
+| `tutTimers`                         | Array de `setTimeout` pendentes — limpos em `tClear()`                        |
+| `tDelay(fn, ms)`                    | `setTimeout` rastreado pelo `tutTimers`                                       |
+| `chatMsg(html, delay)`              | Bubble esquerda com delay                                                     |
+| `chatUser(text, delay)`             | Bubble direita (simula resposta do usuário)                                   |
+| `chatCard(buildFn, delay)`          | Card inline no feed                                                           |
+| `chatChoices(items, delay)`         | Row de botões de escolha                                                      |
+| `tStackEl(stack, letters, colorFn)` | Renderiza glifo empilhado no elemento stack                                   |
+| `buildInteract()`                   | Monta slots e teclado interativo do ARCO                                      |
+| `installTutKeyHandler()`            | Hijack de teclado durante a fase interativa                                   |
+
+## Sistema de Conquistas
+
+28 conquistas organizadas em 7 seções, renderizadas no painel "Conquistas" dentro do modal de Stats.
+
+### Seções e ids
+
+| Seção              | Paleta | IDs                                                                                              |
+| ------------------ | ------ | ------------------------------------------------------------------------------------------------ |
+| Fundadores         | teal   | `beta_tester`                                                                                    |
+| Primeiros Passos   | violet | `first_decode`, `on_a_roll`, `spread_the_word`                                                   |
+| Sequências         | orange | `streak_7`, `streak_30`, `streak_100`, `streak_365`                                              |
+| Glifos Dourados    | gold   | `golden_touch`, `golden_5`, `golden_week`, `golden_30`                                           |
+| Dedicação          | blue   | `games_10`, `games_50`, `games_100`, `games_365`, `coffee_break`, `fast_break`                   |
+| Momentos Especiais | amber  | `comeback_kid`, `echo`, `weekend_warrior`, `lucky_7`                                             |
+| Peculiaridades     | pink   | `night_owl`, `early_bird`, `insomniac`, `persistent`, `sandwich`, `palindrome`, `double_trouble` |
+
+> Seções com `hideDesc: true` (Momentos Especiais, Peculiaridades): descrição oculta em badges bloqueados
+
+### Estrutura de dados
+
+```js
+ACHIEVEMENTS; // array de seções [{section, palette, hideDesc?, items:[{id,name,icon,desc}]}]
+ACH_MAP; // {id → {id, name, icon, desc, section, palette, hideDesc}} — lookup O(1)
+ACH_TOTAL; // total de conquistas únicas
+ACH_KEY; // "gliffoo_ach_v1" — localStorage key
+BETA_END_DATE; // new Date("2026-06-01T00:00:00-03:00").getTime()
+GOLDEN_KEY; // "gliffoo_gold_v1" — {total, consec} glifos dourados
+```
+
+### Funções
+
+| Função                                                                         | Descrição                                                                        |
+| ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| `loadAch()`                                                                    | Lê `ACH_KEY` do localStorage; retorna `{id: timestamp, ...}`                     |
+| `saveAch(earned)`                                                              | Persiste objeto `earned` em `ACH_KEY`                                            |
+| `queueAch(id)`                                                                 | Verifica se já ganhou → salva → empurra para `_achQueue` → `processAchQueue()`   |
+| `processAchQueue()`                                                            | Consome a fila serial; aguarda 4,3s entre popups                                 |
+| `showAchPopup(ach)`                                                            | Exibe toast `#ach-popup` (3,8s) + mini confetti internal                         |
+| `checkAchievements({won, attempts, stats, shared, guess, firstDec, firstFnd})` | Chamada após `decode()` e após `share()` — verifica todas as conquistas cabíveis |
+| `loadGoldenStats()` / `saveGoldenStats(g)`                                     | Persiste `{total, consec}` glifos dourados em `GOLDEN_KEY`                       |
+| `bumpTimedAch(id, threshold)`                                                  | Incrementa contador de conquistas de tempo (ex: 10× antes das 10h)               |
+| `checkBetaReset()`                                                             | Verifica `BETA_END_DATE`; se expirado e ainda não feito, zera stats              |
+
+### Lógica de moedas SVG
+
+`makeCoinSVG(iconKey, p)` — gera SVG 72×72 com:
+
+- Círculo escuro/médio com raios e tracejado
+- Ícone 28×28 Lucide-style centrado em `(22,22)`
+- Ribbon com nome da conquista em `p.ribbon` color
+
+### localStorage usado pelas conquistas
+
+- `gliffoo_ach_v1` — `{id: timestamp}`
+- `gliffoo_gold_v1` — `{total: N, consec: N}`
+- `gliffoo_beta_v1` / `gliffoo_beta_reset_done`
+
+---
+
+## Modo Prática
+
+Joga uma palavra aleatória do banco sem afetar stats ou streak. Acessível pelo modal de Configurações (botão "🎯 Prática").
+
+### Variável de estado
+
+```js
+let PRATICA_MODO = false;
+```
+
+### Comportamento
+
+|                 | Prática                                                 | Normal           |
+| --------------- | ------------------------------------------------------- | ---------------- |
+| Palavra         | Aleatória de qualquer dificuldade                       | `palavraDoDia()` |
+| Stats/streak    | ❌ não afeta (`atualizarStats()` retorna imediatamente) | ✅               |
+| Persiste estado | ❌ (`carregarEstado()` retorna imediatamente)           | ✅               |
+| Header badge    | `🎯 Prática` via `buildHeaderMeta()`                    | normal           |
+| Countdown       | ❌ oculto                                               | ✅               |
+| Modal win/lose  | Sem countdown; badge 🎯                                 | com countdown    |
+
+### Funções
+
+| Função               | Descrição                                                                                    |
+| -------------------- | -------------------------------------------------------------------------------------------- |
+| `startPraticaMode()` | Pega palavra aleatória, seta `PRATICA_MODO=true`, reseta `G`, renderiza tudo                 |
+| `exitPraticaMode()`  | Seta `PRATICA_MODO=false`, restaura `palavraDoDia()`, chama `carregarEstado()`, re-renderiza |
+
+---
 
 ## Edge Function — `daily-word`
 
@@ -548,36 +677,20 @@ Itens:
 **22 itens implementados em uma única sessão.**
 
 **Bugs (5):**
+
 1. ✅ streak `ontemStr` timezone BRT — derivado via aritmética UTC de `dataHoje()`
 2. ✅ conquistas echo/sandwich/palindrome checam todas as tentativas (`G.attempts.some()`)
 3. ✅ `achCheckWeekend` usa timezone SP via `dataHoje()`
 4. ✅ `buildHistory(skipLast)` — linha vencedora entra animada no win path
 5. ✅ badge dificuldade usa `WN` real (ex: `"Fácil · 4 letras"`) em vez de tamanho fixo do CICLO
 
-**Ajustes (6):**
-6. ✅ share text inclui `https://glif.foo` como última linha
-7. ✅ easter egg GLIF/GLIFO/GLIFFO por tamanho (4L/5L/6L) via objeto `EE_GAME_NAMES`
-8. ✅ confetti offline: `_eeLocalConfetti()` como fallback CSS se CDN falhar
-9. ✅ hard badge usa emojis literais (`🔥`, `📅`) em vez de unicode escapes
-10. ✅ `eePlayBoing` (código morto) removido
-11. ✅ `_purgeOldArchive(max=60)` — limpeza automática de entradas `gliffoo_archive_*` antigas
+**Ajustes (6):** 6. ✅ share text inclui `https://glif.foo` como última linha 7. ✅ easter egg GLIF/GLIFO/GLIFFO por tamanho (4L/5L/6L) via objeto `EE_GAME_NAMES` 8. ✅ confetti offline: `_eeLocalConfetti()` como fallback CSS se CDN falhar 9. ✅ hard badge usa emojis literais (`🔥`, `📅`) em vez de unicode escapes 10. ✅ `eePlayBoing` (código morto) removido 11. ✅ `_purgeOldArchive(max=60)` — limpeza automática de entradas `gliffoo_archive_*` antigas
 
-**Features (5):**
-12. ✅ URL `?p=N` — abre puzzle do arquivo #N diretamente, limpa URL com `history.replaceState`
-13. ✅ Modo Prática — palavra aleatória sem stats/streak; via modal Configurações (🎯)
-14. ✅ Definição da palavra — link `dicio.com.br` nos modais pós-game (win e lose)
-15. ✅ Badge puzzles especiais — #100 / #365 / #1000 com badge âmbar no header
-16. ✅ Pré-aquecer AudioContext — listener `{ once: true }` no `pointerdown` do body
+**Features (5):** 12. ✅ URL `?p=N` — abre puzzle do arquivo #N diretamente, limpa URL com `history.replaceState` 13. ✅ Modo Prática — palavra aleatória sem stats/streak; via modal Configurações (🎯) 14. ✅ Definição da palavra — link `dicio.com.br` nos modais pós-game (win e lose) 15. ✅ Badge puzzles especiais — #100 / #365 / #1000 com badge âmbar no header 16. ✅ Pré-aquecer AudioContext — listener `{ once: true }` no `pointerdown` do body
 
-**Easter Eggs (5):**
-17. ✅ Palavras temáticas: FESTA/BAILE → confete duplo; FOGO/CHAMA → partículas fogo; GATO → 🐱 canto; BRUXO/MAGIA → glifo pulsa roxo
-18. ✅ ARCO déjà vu — se puzzle do dia = ARCO, exibe `"Essa é a palavra do tutorial… 👀"` após 1,4s
-19. ✅ Konami code (`↑↑↓↓←→←→BA`) → efeito hue-rotate arco-íris (2s) + mensagem `"🕹️ +30 vidas"`
-20. ✅ Palíndromo bidirecional — `eePalindromeReveal()`: varredura esquerda→direita depois direita→esquerda nos lboxes
-21. ✅ Mensagem às 2h — vitória entre 02h–03h59 SP exibe toast `"Ainda acordado às Xh? 🌙 Vai dormir!"`
+**Easter Eggs (5):** 17. ✅ Palavras temáticas: FESTA/BAILE → confete duplo; FOGO/CHAMA → partículas fogo; GATO → 🐱 canto; BRUXO/MAGIA → glifo pulsa roxo 18. ✅ ARCO déjà vu — se puzzle do dia = ARCO, exibe `"Essa é a palavra do tutorial… 👀"` após 1,4s 19. ✅ Konami code (`↑↑↓↓←→←→BA`) → efeito hue-rotate arco-íris (2s) + mensagem `"🕹️ +30 vidas"` 20. ✅ Palíndromo bidirecional — `eePalindromeReveal()`: varredura esquerda→direita depois direita→esquerda nos lboxes 21. ✅ Mensagem às 2h — vitória entre 02h–03h59 SP exibe toast `"Ainda acordado às Xh? 🌙 Vai dormir!"`
 
-**Docs (1):**
-22. ✅ `glifo_contexto.md` atualizado: `recalcWarns()` removida da tabela; tutorial corrigido (BOLA=demo, ARCO=interativo); Chat P adicionado ao histórico
+**Docs (1):** 22. ✅ `glifo_contexto.md` atualizado: `recalcWarns()` removida da tabela; tutorial corrigido (BOLA=demo, ARCO=interativo); Chat P adicionado ao histórico
 
 ---
 
