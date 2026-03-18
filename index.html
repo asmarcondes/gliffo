@@ -671,13 +671,10 @@
         position: relative;
         width: 100%;
         aspect-ratio: 1;
-        border-radius: 50%;
+        border-radius: 8px;
         transition: box-shadow 0.4s ease;
       }
       .glyph-stack.win-glow {
-        box-shadow:
-          0 0 0 6px rgba(245, 166, 35, 0.22),
-          0 0 32px 8px rgba(245, 166, 35, 0.18);
       }
       .glyph-stack svg {
         position: absolute;
@@ -2674,6 +2671,10 @@
         color: var(--text3);
         flex: 0;
         padding: 6px 10px;
+      }
+      #debug-panel button.dbg-fin-active {
+        background: rgba(245, 166, 35, 0.28);
+        font-weight: 700;
       }
       .dbg-meta {
         font-size: 0.7rem;
@@ -6188,11 +6189,16 @@
       // ═══════════════════════════════════════════════
       // WIN ANIMATION
       // ═══════════════════════════════════════════════
+      let _winOverlay = null; // singleton — garante cleanup entre testes
+      let WIN_FINALE = "C"; // variações do finale: current | A | B | C | D | E
       function winAnim() {
+        // Remove overlay anterior se existir (retest no debug)
+        if (_winOverlay) { _winOverlay.remove(); _winOverlay = null; }
         const yc = document.getElementById("your-stack");
 
         // Cria overlay fixo sobre o jogo (igual ao tutorial)
         const overlay = document.createElement("div");
+        _winOverlay = overlay;
         overlay.style.cssText = `
           position:fixed; inset:0; z-index:800;
           display:flex; align-items:center; justify-content:center;
@@ -6264,66 +6270,263 @@
             // Todas as layers → pausa → colapsa
             isoTimer = setTimeout(() => {
               const layers = [...stack.querySelectorAll(".iso-layer")];
-              layers.forEach((lay) => {
-                lay.style.transition = `opacity 0.18s ease, transform ${ISO_OUT}ms cubic-bezier(0.22,1.2,0.36,1)`;
-                lay.style.opacity = "0.06";
-                lay.style.transform =
-                  "translateZ(0px) rotateX(0deg) rotateZ(0deg)";
-              });
-              setTimeout(() => {
-                layers.forEach((lay) => {
-                  lay.style.transition = "opacity 0.35s ease";
-                  lay.style.opacity = "1";
-                });
-                // Fade out overlay e mostra glifo no daily-stack
-                setTimeout(() => {
-                  overlay.style.transition = "opacity 0.4s ease";
-                  overlay.style.opacity = "0";
-                  // Atualiza daily-stack com glifo colorido + win-glow + reveal
-                  const dc = document.getElementById("daily-stack");
-                  if (dc) {
-                    dc.innerHTML = "";
-                    for (let i = WN - 1; i >= 0; i--) {
-                      const s = makeSVG(
-                        WL[i],
-                        colorOf[WL[i]],
-                        "position:absolute;top:0;left:0;width:100%;height:100%;",
-                      );
-                      if (s) dc.appendChild(s);
-                    }
-                    dc.classList.add("win-glow", "win-reveal");
-                    dc.addEventListener(
-                      "animationend",
-                      () => dc.classList.remove("win-reveal"),
-                      { once: true },
-                    );
-                  }
-                  // Coloriza seu glifo + win-glow + reveal
-                  yc.innerHTML = "";
-                  for (let i = WN - 1; i >= 0; i--) {
-                    const s = makeSVG(
-                      WL[i],
-                      colorOf[WL[i]],
-                      "position:absolute;top:0;left:0;width:100%;height:100%;",
-                    );
-                    if (s) yc.appendChild(s);
-                  }
-                  yc.classList.add("win-glow", "win-reveal");
-                  yc.addEventListener(
-                    "animationend",
-                    () => yc.classList.remove("win-reveal"),
-                    { once: true },
-                  );
-                  setTimeout(() => {
-                    overlay.remove();
-                    winMod();
-                  }, 900);
-                }, 100);
-              }, ISO_OUT + 60);
+              _doWinFinale(stage, stack, layers, overlay, yc, ISO_OUT);
             }, ISO_IN + ISO_HOLD);
           }
         }
-        addLayer();
+        // Variação C: pula o ISO inteiro, vai direto para o finale
+        if (WIN_FINALE === "C") {
+          eeCanvasConfetti();
+          _doWinFinale(stage, stack, [], overlay, yc, ISO_OUT);
+        } else {
+          addLayer();
+        }
+      }
+
+      // ─── win finale variations ───────────────────────────────────────────
+      function _winReveal(overlay, yc) {
+        if (_winOverlay !== overlay) return; // se já foi substituído, aborta
+        overlay.style.transition = "opacity 0.4s ease";
+        overlay.style.opacity = "0";
+        const dc = document.getElementById("daily-stack");
+        if (dc) {
+          dc.innerHTML = "";
+          for (let i = WN - 1; i >= 0; i--) {
+            const s = makeSVG(WL[i], colorOf[WL[i]], "position:absolute;top:0;left:0;width:100%;height:100%;");
+            if (s) dc.appendChild(s);
+          }
+          dc.classList.add("win-glow", "win-reveal");
+          dc.addEventListener("animationend", () => dc.classList.remove("win-reveal"), { once: true });
+        }
+        yc.innerHTML = "";
+        for (let i = WN - 1; i >= 0; i--) {
+          const s = makeSVG(WL[i], colorOf[WL[i]], "position:absolute;top:0;left:0;width:100%;height:100%;");
+          if (s) yc.appendChild(s);
+        }
+        yc.classList.add("win-glow", "win-reveal");
+        yc.addEventListener("animationend", () => yc.classList.remove("win-reveal"), { once: true });
+        setTimeout(() => {
+          if (_winOverlay === overlay) { overlay.remove(); _winOverlay = null; }
+          winMod();
+        }, 900);
+      }
+
+      function _doWinFinale(stage, stack, layers, overlay, yc, ISO_OUT) {
+        if (_winOverlay !== overlay) return; // abortado
+        const f = WIN_FINALE;
+        // Troca SVGs para colorido e layers para pose flat
+        const swapFlat = () => layers.forEach((lay, li) => {
+          lay.style.transition = "none";
+          lay.style.opacity = "1";
+          lay.style.transform = "translateZ(0px) rotateX(0deg) rotateZ(0deg)";
+          lay.innerHTML = "";
+          const sv = makeSVG(WL[WN - 1 - li], colorOf[WL[WN - 1 - li]]);
+          if (sv) { sv.style.cssText = "width:90%;height:90%;"; lay.appendChild(sv); }
+        });
+
+        if (f === "A") {
+          // ── A: ZOOM EXPLOSÃO ──────────────────────────────────────────────────
+          // Composição inteira EXPLODE em direção à câmera (scale 20×, fade),
+          // depois versão colorida nasce do centro com spring vistoso.
+          stage.style.transition = "transform 550ms ease-in, opacity 450ms ease-in";
+          stage.style.transform = "scale(20)";
+          stage.style.opacity = "0";
+          setTimeout(() => {
+            swapFlat();
+            stage.style.transition = "none";
+            stage.style.transform = "scale(0.15)";
+            stage.style.opacity = "0";
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+              stage.style.transition = "transform 680ms cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s ease";
+              stage.style.transform = "scale(1)";
+              stage.style.opacity = "1";
+              setTimeout(() => _winReveal(overlay, yc), 700);
+            }));
+          }, 560);
+
+        } else if (f === "B") {
+          // ── B: CASCATA ────────────────────────────────────────────────────────
+          // Composição ISO some, depois cards coloridos caem do topo
+          // UM A UM com stagger 180ms — claramente sequencial.
+          stage.style.transition = "opacity 200ms ease-in";
+          stage.style.opacity = "0";
+          setTimeout(() => {
+            swapFlat();
+            // Posiciona todas as layers acima do viewport
+            layers.forEach((lay) => {
+              lay.style.transform = "translateZ(0px) translateY(-200px) rotateX(0deg) rotateZ(0deg)";
+              lay.style.opacity = "0";
+            });
+            stage.style.transition = "none";
+            stage.style.opacity = "1";
+            // Cai da camada de cima (layers[WN-1]) para a de baixo (layers[0])
+            [...layers].reverse().forEach((lay, ri) => {
+              setTimeout(() => {
+                lay.style.transition = "transform 440ms cubic-bezier(0.34,1.56,0.64,1), opacity 0.22s ease";
+                lay.style.transform = "translateZ(0px) translateY(0px) rotateX(0deg) rotateZ(0deg)";
+                lay.style.opacity = "1";
+              }, 60 + ri * 180);
+            });
+            setTimeout(() => _winReveal(overlay, yc), 60 + layers.length * 180 + 480);
+          }, 210);
+
+        } else if (f === "C") {
+          // ── C: RÉPLICA DO TUTORIAL ────────────────────────────────────────────
+          // Começa direto com a palavra inteira (sem ISO) → stagger pop →
+          // spread → billboard → converge → reset
+          if (!window.anime) { _winReveal(overlay, yc); return; }
+
+          // Fundo ainda transparent (ISO foi pulado) → escurece imediatamente
+          overlay.style.transition = "none";
+          overlay.style.background = "rgba(0,0,0,0.82)";
+          // Neutraliza o stage (remove perspective ISO) e oculta o stack vazio
+          stage.style.cssText = "width:min(55vw,55vh,320px);aspect-ratio:1;display:flex;align-items:center;justify-content:center;";
+          stack.style.cssText = "display:none;";
+
+          const stageW = stage.offsetWidth || 260;
+          const N = WL.length;
+          const GAP = 10;
+          // Tile fixo (~70px) independente do nº de letras — letras se espalham no spread
+          const TILE_SZ = Math.round(Math.min(stageW * 0.27, 80));
+
+          // Estrutura idêntica ao tutorial: perspWrap → wordRow → wrapOuter[]
+          const perspWrap = document.createElement("div");
+          perspWrap.style.cssText =
+            "perspective:700px;perspective-origin:50% 50%;display:flex;justify-content:center;width:100%;overflow:visible;";
+          const wordRow = document.createElement("div");
+          wordRow.style.cssText =
+            `display:flex;justify-content:center;gap:${GAP}px;transform-style:preserve-3d;will-change:transform;`;
+          perspWrap.appendChild(wordRow);
+          stage.appendChild(perspWrap);
+
+          // Tiles coloridos — estado inicial = vem de cima, pequenino
+          const tiles = WL.map((letter) => {
+            const wrapOuter = document.createElement("div");
+            wrapOuter.style.cssText =
+              `width:${TILE_SZ}px;height:${TILE_SZ}px;display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;flex-shrink:0;`;
+            const sv = makeSVG(letter, colorOf[letter]);
+            if (sv) { sv.style.cssText = `width:${TILE_SZ}px;height:${TILE_SZ}px;`; wrapOuter.appendChild(sv); }
+            wordRow.appendChild(wrapOuter);
+            anime.set(wrapOuter, { opacity: 0, translateY: -14, scale: 0.65 });
+            return wrapOuter;
+          });
+          tiles.forEach((w, i) => { w.style.zIndex = String(N - i); });
+
+          // Entrada stagger pop — igual ao tutorial (easeOutBack)
+          anime({
+            targets: tiles,
+            opacity: 1, translateY: 0, scale: 1,
+            duration: 480,
+            delay: anime.stagger(120),
+            easing: "easeOutBack",
+            complete: () => {
+              if (_winOverlay !== overlay) return;
+              const rowCenterX = wordRow.offsetWidth / 2;
+              const targetTX = tiles.map(el => rowCenterX - (el.offsetLeft + el.offsetWidth / 2));
+              // ── FASE 1: afasta as letras
+              anime({
+                targets: tiles,
+                translateX: (el, i) => (i - (N - 1) / 2) * 52,
+                duration: 700,
+                easing: "easeOutCubic",
+                complete: () => {
+                  if (_winOverlay !== overlay) return;
+                  // ── FASE 2: billboard (wordRow +Y / tiles -Y simultaneamente)
+                  anime({ targets: wordRow, rotateY: 90, duration: 2200, easing: "easeInOutQuad" });
+                  anime({
+                    targets: tiles, rotateY: -90, duration: 2200, easing: "easeInOutQuad",
+                    complete: () => {
+                      if (_winOverlay !== overlay) return;
+                      // ── FASE 3a: convergem ao centro
+                      anime({
+                        targets: tiles,
+                        translateX: (el, i) => targetTX[i],
+                        duration: 900, easing: "easeInOutQuad",
+                        complete: () => {
+                          if (_winOverlay !== overlay) return;
+                          // ── FASE 3b: desfaz rotação
+                          anime({ targets: wordRow, rotateY: 0, duration: 900, easing: "easeInOutSine" });
+                          anime({
+                            targets: tiles, rotateY: 0, duration: 900, easing: "easeInOutSine",
+                            complete: () => {
+                              if (_winOverlay !== overlay) return;
+                              setTimeout(() => _winReveal(overlay, yc), 200);
+                            },
+                          });
+                        },
+                      });
+                    },
+                  });
+                },
+              });
+            },
+          });
+
+        } else if (f === "D") {
+          // ── D: FLASH BRANCO ───────────────────────────────────────────────────
+          // Composição some rápido, tela CORTA para branco puro,
+          // versão colorida materializa com spring. Arquétipo de corte de filme.
+          stage.style.transition = "opacity 120ms ease-in";
+          stage.style.opacity = "0";
+          setTimeout(() => {
+            overlay.style.transition = "background 50ms linear";
+            overlay.style.background = "#ffffff";
+            setTimeout(() => {
+              swapFlat();
+              stage.style.transform = "scale(0.4)";
+              overlay.style.transition = "background 450ms ease-out";
+              overlay.style.background = "rgba(0,0,0,0.82)";
+              stage.style.transition = "transform 650ms cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease";
+              stage.style.transform = "scale(1)";
+              stage.style.opacity = "1";
+              setTimeout(() => _winReveal(overlay, yc), 670);
+            }, 80);
+          }, 130);
+
+        } else if (f === "E") {
+          // ── E: COIN-FLIP (técnica do tutorial) ───────────────────────────────
+          // Igual à animação "juntar as letras" do tutorial:
+          // O glifo ISO gira rotateY até ficar de fio (90°, invisível),
+          // troca para colors + flat, depois abre do outro lado com spring.
+          if (!window.anime) { swapFlat(); setTimeout(() => _winReveal(overlay, yc), 400); return; }
+          overlay.style.perspective = "700px";
+          overlay.style.perspectiveOrigin = "50% 50%";
+          // Fase 1: fecha (gira até 90° = invisível)
+          anime({
+            targets: stage,
+            rotateY: 90,
+            duration: 520,
+            easing: "easeInCubic",
+            complete: () => {
+              if (_winOverlay !== overlay) return;
+              // Na virada: troca cores e achata as layers
+              swapFlat();
+              // Fase 2: abre do outro lado com spring
+              anime({
+                targets: stage,
+                rotateY: 0,
+                duration: 700,
+                easing: "easeOutBack",
+                complete: () => {
+                  if (_winOverlay !== overlay) return;
+                  setTimeout(() => _winReveal(overlay, yc), 80);
+                },
+              });
+            },
+          });
+
+        } else {
+          // ── CURRENT: implosão suave original ──────────────────────────────────
+          layers.forEach((lay) => {
+            lay.style.transition = `opacity 0.18s ease, transform ${ISO_OUT}ms cubic-bezier(0.22,1.2,0.36,1)`;
+            lay.style.opacity = "0.06";
+            lay.style.transform = "translateZ(0px) rotateX(0deg) rotateZ(0deg)";
+          });
+          setTimeout(() => {
+            layers.forEach((lay) => { lay.style.transition = "opacity 0.35s ease"; lay.style.opacity = "1"; });
+            setTimeout(() => _winReveal(overlay, yc), 100);
+          }, ISO_OUT + 60);
+        }
       }
 
       // ═══════════════════════════════════════════════
@@ -11818,6 +12021,7 @@
       // ═══════════════════════════════════════════════
       (function initDebugMode() {
         let _dbgOffset = 0; // dias em relação a hoje (0=hoje, -1=ontem, +1=amanhã)
+        // WIN_FINALE — declarada junto a _winOverlay (escopo compartilhado)
         let _dbgActive = false;
         const ATIVA_KEY = "gliffoo_debug";
 
@@ -12033,6 +12237,24 @@
           });
           safe("dbg-close", () => {
             document.getElementById("debug-panel").classList.remove("open");
+          });
+          // Win finale selector
+          ["current","A","B","C","D","E"].forEach(v => {
+            safe(`dbg-fin-${v}`, () => {
+              WIN_FINALE = v;
+              document.querySelectorAll(".dbg-fin-btn").forEach(b => b.classList.remove("dbg-fin-active"));
+              document.getElementById(`dbg-fin-${v}`).classList.add("dbg-fin-active");
+            });
+          });
+          safe("dbg-fin-test", () => {
+            // Remove qualquer overlay pendente antes de testar
+            if (_winOverlay) { _winOverlay.remove(); _winOverlay = null; }
+            // Fecha modal de vitória se estiver aberto
+            const wm = document.getElementById("win-modal");
+            if (wm) { wm.classList.remove("show"); wm.setAttribute("aria-hidden", "true"); }
+            G.done = G.won = true;
+            G.decoded = new Set([...Array(WN).keys()]);
+            winAnim();
           });
           safe("dbg-clear", () => {
             if (
@@ -12859,6 +13081,27 @@
         </button>
       </div>
       <div class="dbg-offset" id="dbg-date-display"></div>
+      <div
+        class="dbg-row"
+        style="
+          margin-top: 10px;
+          border-top: 1px solid var(--border2);
+          padding-top: 8px;
+        "
+      >
+        <label>Win finale</label>
+      </div>
+      <div class="dbg-btns" style="flex-wrap: wrap; gap: 4px" id="dbg-finale-btns">
+        <button id="dbg-fin-current" class="dbg-fin-btn dbg-fin-active">Atual</button>
+        <button id="dbg-fin-A" class="dbg-fin-btn">A</button>
+        <button id="dbg-fin-B" class="dbg-fin-btn">B</button>
+        <button id="dbg-fin-C" class="dbg-fin-btn">C</button>
+        <button id="dbg-fin-D" class="dbg-fin-btn">D</button>
+        <button id="dbg-fin-E" class="dbg-fin-btn">E</button>
+      </div>
+      <div class="dbg-btns" style="margin-top:4px">
+        <button id="dbg-fin-test" style="background:rgba(245,166,35,0.18)">▶ Testar</button>
+      </div>
       <div
         class="dbg-row"
         style="
