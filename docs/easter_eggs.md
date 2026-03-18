@@ -2,6 +2,8 @@
 
 Catálogo completo de easter eggs implementados no jogo. Atualizar ao adicionar novos.
 
+O modal de conquistas agora rastreia 12 segredos na seção **Segredos** e os marcos da coleção na seção **Caçada**.
+
 ---
 
 ## 🎮 Interação durante o jogo
