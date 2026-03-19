@@ -27,11 +27,10 @@ Observações
 
 - O jogo usa recursos que exigem servir via HTTP (service worker, módulos, etc.), portanto abrir `index.html` via `file://` não funcionará corretamente.
 - Se preferir recarregamento automático ao salvar, use `live-server` em vez do `http-server`:
+  - Instalar globalmente: `npm i -g live-server`
+  - Rodar: `live-server --port=8080 --no-browser`
 
-	- Instalar globalmente: `npm i -g live-server`
-	- Rodar: `live-server --port=8080 --no-browser`
-
-	Ou usar sem instalar (via npx): `npx live-server --port=8080 --no-browser --watch=.`
+  Ou usar sem instalar (via npx): `npx live-server --port=8080 --no-browser --watch=.`
 
 Fluxo local da `daily-word`
 

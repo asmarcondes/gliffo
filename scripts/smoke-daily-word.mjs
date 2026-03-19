@@ -1,4 +1,6 @@
-const defaultBaseUrl = process.env.DAILY_WORD_BASE_URL ?? "http://127.0.0.1:54321/functions/v1/daily-word";
+const defaultBaseUrl =
+  process.env.DAILY_WORD_BASE_URL ??
+  "http://127.0.0.1:54321/functions/v1/daily-word";
 const targetDate = process.argv[2] ?? "2026-03-18";
 const requestUrl = new URL(defaultBaseUrl);
 
@@ -15,7 +17,12 @@ try {
 
   if (response.ok) {
     const payload = JSON.parse(rawBody);
-    const requiredStringFields = ["date", "word", "difficulty", "difficultyLabel"];
+    const requiredStringFields = [
+      "date",
+      "word",
+      "difficulty",
+      "difficultyLabel",
+    ];
 
     for (const field of requiredStringFields) {
       if (typeof payload[field] !== "string" || payload[field].length === 0) {
@@ -33,5 +40,7 @@ try {
     fail(`Smoke test falhou com status ${response.status}: ${rawBody}`);
   }
 } catch (error) {
-  fail(`Smoke test falhou ao chamar ${requestUrl.toString()}: ${error.message}`);
+  fail(
+    `Smoke test falhou ao chamar ${requestUrl.toString()}: ${error.message}`,
+  );
 }

@@ -1,4 +1,6 @@
-const baseUrl = process.env.DAILY_WORD_BASE_URL ?? "http://127.0.0.1:54321/functions/v1/daily-word";
+const baseUrl =
+  process.env.DAILY_WORD_BASE_URL ??
+  "http://127.0.0.1:54321/functions/v1/daily-word";
 
 function fail(message) {
   console.error(message);
@@ -36,9 +38,18 @@ function assert(condition, message) {
 
 try {
   const okScenario = await requestScenario({ date: "2026-03-18" });
-  assert(okScenario.response.status === 200, `Esperado 200 no cenário ok, recebido ${okScenario.response.status}`);
-  assert(typeof okScenario.payload.word === "string", "Payload 200 sem campo word");
-  assert(typeof okScenario.payload.difficulty === "string", "Payload 200 sem campo difficulty");
+  assert(
+    okScenario.response.status === 200,
+    `Esperado 200 no cenário ok, recebido ${okScenario.response.status}`,
+  );
+  assert(
+    typeof okScenario.payload.word === "string",
+    "Payload 200 sem campo word",
+  );
+  assert(
+    typeof okScenario.payload.difficulty === "string",
+    "Payload 200 sem campo difficulty",
+  );
 
   const invalidDateScenario = await requestScenario({ date: "2026-02-30" });
   assert(
@@ -46,7 +57,8 @@ try {
     `Esperado 400 para data inválida, recebido ${invalidDateScenario.response.status}`,
   );
   assert(
-    invalidDateScenario.payload?.error === "Invalid date format. Use YYYY-MM-DD",
+    invalidDateScenario.payload?.error ===
+      "Invalid date format. Use YYYY-MM-DD",
     "Mensagem inesperada para data inválida",
   );
 
@@ -61,11 +73,13 @@ try {
   );
 
   console.log("Smoke suite ok para daily-word");
-  console.log(JSON.stringify({
-    ok: okScenario.payload,
-    invalidDate: invalidDateScenario.payload,
-    notFound: notFoundScenario.payload,
-  }));
+  console.log(
+    JSON.stringify({
+      ok: okScenario.payload,
+      invalidDate: invalidDateScenario.payload,
+      notFound: notFoundScenario.payload,
+    }),
+  );
 } catch (error) {
   fail(`Smoke suite falhou: ${error.message}`);
 }
