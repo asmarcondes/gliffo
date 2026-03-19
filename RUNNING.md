@@ -32,3 +32,43 @@ Observações
 	- Rodar: `live-server --port=8080 --no-browser`
 
 	Ou usar sem instalar (via npx): `npx live-server --port=8080 --no-browser --watch=.`
+
+Fluxo local da `daily-word`
+
+1. Preparar Supabase local com migrations + seed:
+
+```
+pnpm supabase:bootstrap-local
+```
+
+2. Em outro terminal, servir a Edge Function:
+
+```
+pnpm exec supabase functions serve daily-word --env-file supabase/.env.local --no-verify-jwt
+```
+
+3. Validar o endpoint local:
+
+```
+pnpm smoke:daily-word
+```
+
+Fluxo de qualidade
+
+1. Testes unitários do backend diário:
+
+```
+pnpm test:daily-word
+```
+
+2. Smoke suite HTTP da function:
+
+```
+pnpm smoke:daily-word:suite
+```
+
+3. Build final do front:
+
+```
+pnpm build
+```

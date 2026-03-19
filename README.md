@@ -111,6 +111,13 @@ A `daily-word` usa uma camada de repositório para buscar a agenda oficial. O c�
 
 O payload público da função também está padronizado em inglês: `{ word, difficulty, difficultyLabel, puzzle, date }`.
 
+Também há dois ajustes opcionais de runtime:
+
+```bash
+PUZZLE_ALLOWED_ORIGIN=*                 # padrão atual; pode ser uma origem exata
+DAILY_WORD_CACHE_MAX_AGE_SECONDS=3600  # padrão atual para respostas 200
+```
+
 ```bash
 PUZZLE_SCHEDULE_SOURCE=embedded  # fallback local/operacional
 PUZZLE_SCHEDULE_SOURCE=database  # origem oficial atual no Supabase remoto
@@ -118,9 +125,37 @@ PUZZLE_SCHEDULE_SOURCE=database  # origem oficial atual no Supabase remoto
 
 Para servir a função localmente em modo banco, use um arquivo de ambiente como `supabase/.env.local` com `PUZZLE_SCHEDULE_SOURCE=database` e rode:
 
+Observação: o CLI ignora entradas de `--env-file` cujo nome comece com `SUPABASE_`, então o arquivo local deve usar aliases como `APP_SUPABASE_URL` e `APP_SUPABASE_SERVICE_ROLE_KEY`.
+
+Observação adicional: a Edge Function sobe em container, então `localhost`/`127.0.0.1` dentro dela não alcança a API REST do Supabase rodando no host. Para ambiente local, use `http://host.docker.internal:54321`.
+
 ```bash
 supabase functions serve daily-word --env-file supabase/.env.local --no-verify-jwt
 ```
+
+Se você reiniciar o comando enquanto já houver um runtime ativo, o Docker pode retornar conflito para o container `supabase_edge_runtime_gliffo`. Nesse caso, encerre a instância anterior antes de subir outra.
+
+Para preparar o ambiente local do zero com migrations e seed da agenda anual, rode:
+
+```bash
+pnpm supabase:bootstrap-local
+```
+
+Depois que a function estiver servindo localmente, valide o endpoint com:
+
+```bash
+pnpm test:daily-word
+pnpm smoke:daily-word
+pnpm smoke:daily-word 2026-03-18
+pnpm smoke:daily-word:suite
+```
+
+## Qualidade
+
+- Testes unitários do `daily-word`: `pnpm test:daily-word`
+- Smoke HTTP local da function: `pnpm smoke:daily-word:suite`
+- Build do site estático: `pnpm build`
+- CI GitHub Actions: roda build, testes unitários e smoke da function em modo `embedded`
 
 ## Vercel
 
