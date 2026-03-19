@@ -5611,7 +5611,7 @@
           dia: diasDesdeEpoca + 1,
           data: alvo,
           dateStr: formatIsoDate(alvo),
-          nivel: CICLO_DIF[alvo.getDay()],
+          difficulty: CICLO_DIF[alvo.getDay()],
         };
       }
 
@@ -5625,7 +5625,7 @@
           !data ||
           typeof data.word !== "string" ||
           typeof data.date !== "string" ||
-          typeof data.nivel !== "string"
+          typeof data.difficulty !== "string"
         ) {
           throw new Error("daily-word payload inválido");
         }
@@ -5634,8 +5634,8 @@
           dia: Number(data.puzzle),
           data: new Date(`${data.date}T00:00:00-03:00`),
           dateStr: data.date,
-          nivel: data.nivel,
-          nivelLabel: data.nivelLabel,
+          difficulty: data.difficulty,
+          difficultyLabel: data.difficultyLabel,
         };
       }
 
@@ -9008,20 +9008,22 @@
           dificil: "Difícil",
           muito_dificil: "Muito Difícil",
         };
-        const nivel = CURRENT_PUZZLE?.nivel || CICLO_DIF[diaSemana];
-        const nivelLabel =
-          CURRENT_PUZZLE?.nivelLabel || CICLO_NAMES[nivel] || "Puzzle";
-        const label = `${nivelLabel} · ${WN} letras`;
+        const difficulty = CURRENT_PUZZLE?.difficulty || CICLO_DIF[diaSemana];
+        const difficultyLabel =
+          CURRENT_PUZZLE?.difficultyLabel ||
+          CICLO_NAMES[difficulty] ||
+          "Puzzle";
+        const label = `${difficultyLabel} · ${WN} letras`;
         const meta = document.getElementById("header-meta");
         if (ARQUIVO_MODO) {
           meta.innerHTML = `
     <span class="arquivo-badge">📅 Arquivo #${ARQUIVO_PUZZLENUM}</span>
     <span class="header-date">${dataFmt}</span>
-    <span class="dif-badge ${nivel}">${label}</span>`;
+    <span class="dif-badge ${difficulty}">${label}</span>`;
         } else if (PRATICA_MODO) {
           meta.innerHTML = `
     <span class="arquivo-badge" style="background:var(--surface3)">🎯 Prática</span>
-    <span class="dif-badge ${nivel}">${label}</span>`;
+    <span class="dif-badge ${difficulty}">${label}</span>`;
         } else {
           const pNum = numeroPuzzle();
           const specialBadge = [100, 365, 1000].includes(pNum)
@@ -9030,7 +9032,7 @@
           meta.innerHTML = `
     <span class="header-date">${dataFmt}</span>
     ${specialBadge}
-    <span class="dif-badge ${nivel}">${label}</span>${
+    <span class="dif-badge ${difficulty}">${label}</span>${
       HARD_MODE
         ? `
     <span class="hard-badge">🔥 Difícil</span>`
@@ -13035,7 +13037,7 @@
             month: "short",
           });
           el("dbg-date-display").textContent =
-            dataStr + " · " + info.nivel.replace("_", " ");
+            dataStr + " · " + info.difficulty.replace("_", " ");
         }
 
         function ativarDebug() {

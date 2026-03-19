@@ -256,14 +256,14 @@ let PRATICA_MODO = false;
 - **Auth:** `verify_jwt: false` (pública)
 - **Versão deployada:** v5
 - **Parâmetro opcional:** `?date=YYYY-MM-DD` (debug/modo arquivo)
-- **Resposta:** `{ word, nivel, nivelLabel, puzzle, date }`
+- **Resposta:** `{ word, difficulty, difficultyLabel, puzzle, date }`
 
 ### Lógica atual
 
 ```ts
 // Época: 2026-03-08T00:00:00Z (puzzle #1 = dia de lançamento)
 // diasDesdeEpoca = (hoje - EPOCA) / 86400000
-// nivel = CICLO_DIF[hoje.getUTCDay()]
+// difficulty = CICLO_DIF[hoje.getUTCDay()]
 // idx = ((diasDesdeEpoca * 2654435761) >>> 0) % lista.length
 ```
 

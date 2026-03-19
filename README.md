@@ -42,14 +42,15 @@ gliffo/
 ├── data/
 │   ├── word_bank_final.json     (fonte de verdade do banco — 4 dificuldades)
 │   ├── dicionario.json          (38.664 palavras 4–7L para validação de tentativas)
-│   └── words_ptbr_year.json     (agenda de 365 puzzles com data + dificuldade)
+│   └── words_ptbr_year.json     (agenda local de manutenção/geração, fora do deploy público)
 ├── docs/
 │   ├── glifo_contexto.md        (contexto completo do projeto)
 │   └── resumo_banco.md
 └── supabase/
     └── functions/
         └── daily-word/
-            └── index.ts         (Edge Function — palavra do dia via agenda ou hash)
+            ├── index.ts              (Edge Function — lookup por agenda embutida, sem fallback local)
+            └── words_ptbr_year.json  (agenda anual empacotada com a função)
 ```
 
 ## Banco de palavras
@@ -62,7 +63,7 @@ gliffo/
 | Muito difícil | 7 letras | 300 palavras |
 
 O ciclo de dificuldade segue o dia da semana (Dom=Fácil … Sáb=Muito Difícil).  
-Fonte de verdade: `data/word_bank_final.json`. O banco segue duplicado entre `index.html` e `supabase/functions/daily-word/index.ts` para prática/curadoria, mas o puzzle oficial diário/arquivo é carregado pelo cliente via Edge Function.
+Fonte de verdade: `data/word_bank_final.json`. O banco segue duplicado entre `index.html` e `supabase/functions/daily-word/index.ts` para prática/curadoria, mas o puzzle oficial diário/arquivo é carregado pelo cliente via Edge Function a partir da agenda embutida no backend.
 
 ## Deploy
 
@@ -104,6 +105,21 @@ Para atualizar a Edge Function no Supabase:
 
 ```bash
 supabase functions deploy daily-word
+```
+
+A `daily-word` usa uma camada de repositório para buscar a agenda oficial. O código continua com `embedded` como fallback seguro, mas o ambiente remoto já está configurado com `PUZZLE_SCHEDULE_SOURCE=database` e lê a tabela `public.daily_schedule` com as colunas `date`, `word`, `difficulty`, `difficulty_label`, `puzzle` e `created_at`. Para desenvolvimento e rollback controlado, a origem pode ser trocada por variável de ambiente:
+
+O payload público da função também está padronizado em inglês: `{ word, difficulty, difficultyLabel, puzzle, date }`.
+
+```bash
+PUZZLE_SCHEDULE_SOURCE=embedded  # fallback local/operacional
+PUZZLE_SCHEDULE_SOURCE=database  # origem oficial atual no Supabase remoto
+```
+
+Para servir a função localmente em modo banco, use um arquivo de ambiente como `supabase/.env.local` com `PUZZLE_SCHEDULE_SOURCE=database` e rode:
+
+```bash
+supabase functions serve daily-word --env-file supabase/.env.local --no-verify-jwt
 ```
 
 ## Vercel
