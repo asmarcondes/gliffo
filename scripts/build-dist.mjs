@@ -7,7 +7,14 @@ const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, "..");
 const distDir = path.join(rootDir, "dist");
 
-const filesToCopy = ["index.html", "manifest.json", "sw.js", "og.png"];
+const filesToCopy = [
+  "index.html",
+  "app.css",
+  "app.js",
+  "manifest.json",
+  "sw.js",
+  "og.png",
+];
 const directoriesToCopy = ["animations", "icons"];
 
 async function copyFile(relativePath) {

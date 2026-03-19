@@ -6,8 +6,8 @@ Opção A — usando Node (recomendado se tiver Node.js instalado)
 2. Rode:
 
 ```
-npm install
-npm start
+pnpm install
+pnpm start
 ```
 
 3. Abra no navegador: `http://localhost:8080`
@@ -26,6 +26,8 @@ python -m http.server 8080
 Observações
 
 - O jogo usa recursos que exigem servir via HTTP (service worker, módulos, etc.), portanto abrir `index.html` via `file://` não funcionará corretamente.
+- `pnpm start` agora sobe o frontend e também a Edge Function local `daily-word`. Se a stack local do Supabase estiver parada, o comando executa `supabase start` antes de servir a função.
+- Para recriar o banco local com migrations + seed atualizado, use `pnpm start:reset`.
 - Se preferir recarregamento automático ao salvar, use `live-server` em vez do `http-server`:
   - Instalar globalmente: `npm i -g live-server`
   - Rodar: `live-server --port=8080 --no-browser`
@@ -34,19 +36,25 @@ Observações
 
 Fluxo local da `daily-word`
 
-1. Preparar Supabase local com migrations + seed:
+1. Fluxo recomendado do dia a dia:
 
 ```
-pnpm supabase:bootstrap-local
+pnpm start
 ```
 
-2. Em outro terminal, servir a Edge Function:
+2. Se precisar reconstruir a base local com migrations + seed:
 
 ```
-pnpm exec supabase functions serve daily-word --env-file supabase/.env.local --no-verify-jwt
+pnpm start:reset
 ```
 
-3. Validar o endpoint local:
+3. Se quiser servir só a function, sem subir o frontend:
+
+```
+pnpm dev:function
+```
+
+4. Validar o endpoint local:
 
 ```
 pnpm smoke:daily-word

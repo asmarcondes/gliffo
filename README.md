@@ -76,12 +76,20 @@ Funciona em qualquer host estático com HTTPS (necessário para Service Worker):
 ## Desenvolvimento local
 
 ```bash
-# Com pnpm
+# Frontend + daily-word local
+pnpm start
+
+# mesmo fluxo, mas recriando Supabase local com migrations + seed
+pnpm start:reset
+
+# equivalente explícito só do frontend
 pnpm dev
 
 # ou sem Node tooling
 python -m http.server 8080
 ```
+
+`pnpm start` agora sobe o frontend e também a Edge Function `daily-word`. Se a stack local do Supabase ainda não estiver ativa, o comando roda `supabase start` antes de iniciar a função. Quando você precisar reconstruir o banco local com migrations + seed atualizados, use `pnpm start:reset`.
 
 ## Build público
 

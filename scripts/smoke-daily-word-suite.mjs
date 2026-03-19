@@ -62,7 +62,7 @@ try {
     "Mensagem inesperada para data inválida",
   );
 
-  const notFoundScenario = await requestScenario({ date: "2099-01-01" });
+  const notFoundScenario = await requestScenario({ date: "2026-03-01" });
   assert(
     notFoundScenario.response.status === 404,
     `Esperado 404 para puzzle ausente, recebido ${notFoundScenario.response.status}`,
@@ -72,12 +72,27 @@ try {
     "Mensagem inesperada para puzzle ausente",
   );
 
+  const futureScenario = await requestScenario({ date: "2099-01-01" });
+  assert(
+    futureScenario.response.status === 425,
+    `Esperado 425 para puzzle futuro, recebido ${futureScenario.response.status}`,
+  );
+  assert(
+    futureScenario.payload?.error === "Calma. Esse glifo ainda nao saiu do forno.",
+    "Mensagem inesperada para puzzle futuro",
+  );
+  assert(
+    futureScenario.payload?.code === "FUTURE_PUZZLE",
+    "Codigo inesperado para puzzle futuro",
+  );
+
   console.log("Smoke suite ok para daily-word");
   console.log(
     JSON.stringify({
       ok: okScenario.payload,
       invalidDate: invalidDateScenario.payload,
       notFound: notFoundScenario.payload,
+      future: futureScenario.payload,
     }),
   );
 } catch (error) {

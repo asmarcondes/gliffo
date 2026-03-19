@@ -4,9 +4,12 @@
   "private": true,
   "packageManager": "pnpm@10.6.5",
   "scripts": {
+    "start": "node scripts/start-local-dev.mjs",
+    "start:reset": "node scripts/start-local-dev.mjs --reset",
     "build": "node scripts/build-dist.mjs",
     "build:daily-seed": "node scripts/build-daily-schedule-seed.mjs",
     "dev": "pnpm dlx live-server --port=8080 --no-browser --watch=.",
+    "dev:function": "pnpm exec supabase functions serve daily-word --env-file supabase/.env.local --no-verify-jwt",
     "preview:dist": "pnpm dlx serve dist --listen 8080",
     "smoke:daily-word": "node scripts/smoke-daily-word.mjs",
     "smoke:daily-word:suite": "node scripts/smoke-daily-word-suite.mjs",

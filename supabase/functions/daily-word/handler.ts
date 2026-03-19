@@ -45,6 +45,29 @@ function jsonResponse(body: unknown, init: { status: number; allowOrigin: string
   });
 }
 
+function getSaoPauloIsoDate(date: Date): string {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Sao_Paulo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+
+  const year = parts.find((part) => part.type === "year")?.value;
+  const month = parts.find((part) => part.type === "month")?.value;
+  const day = parts.find((part) => part.type === "day")?.value;
+
+  if (!year || !month || !day) {
+    throw new Error("Failed to resolve Sao Paulo date");
+  }
+
+  return `${year}-${month}-${day}`;
+}
+
+function isFutureDate(targetDate: string, todayDate: string): boolean {
+  return targetDate > todayDate;
+}
+
 export function createDailyWordHandler(options: DailyWordHandlerOptions) {
   const now = options.now ?? (() => new Date());
   const configuredAllowOrigin = options.allowOrigin ?? "*";
@@ -79,7 +102,16 @@ export function createDailyWordHandler(options: DailyWordHandlerOptions) {
       );
     }
 
-    const targetDate = queryParse.data.date ?? now().toISOString().slice(0, 10);
+    const currentDate = now();
+    const todayDate = getSaoPauloIsoDate(currentDate);
+    const targetDate = queryParse.data.date ?? todayDate;
+
+    if (isFutureDate(targetDate, todayDate)) {
+      return jsonResponse(
+        { error: "Calma. Esse glifo ainda nao saiu do forno.", code: "FUTURE_PUZZLE" },
+        { status: 425, allowOrigin },
+      );
+    }
 
     try {
       const result = await options.repository.getByDate(targetDate);

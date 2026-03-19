@@ -46,13 +46,57 @@ Deno.test("daily-word handler returns 400 for invalid date", async () => {
 Deno.test("daily-word handler returns 404 when puzzle is absent", async () => {
   const handler = createDailyWordHandler({
     repository: createRepository(async () => null),
+    now: () => new Date("2026-03-19T12:00:00Z"),
+  });
+
+  const response = await handler(new Request("https://example.test/functions/v1/daily-word?date=2026-03-01"));
+  const payload = await response.json();
+
+  assertEquals(response.status, 404);
+  assertEquals(payload.error, "Puzzle not found for date");
+});
+
+Deno.test("daily-word handler returns 425 for future date", async () => {
+  const handler = createDailyWordHandler({
+    repository: createRepository(async () => null),
+    now: () => new Date("2026-03-19T12:00:00Z"),
   });
 
   const response = await handler(new Request("https://example.test/functions/v1/daily-word?date=2099-01-01"));
   const payload = await response.json();
 
-  assertEquals(response.status, 404);
-  assertEquals(payload.error, "Puzzle not found for date");
+  assertEquals(response.status, 425);
+  assertEquals(payload.error, "Calma. Esse glifo ainda nao saiu do forno.");
+  assertEquals(payload.code, "FUTURE_PUZZLE");
+});
+
+Deno.test("daily-word handler uses Sao Paulo day boundary for future-date protection", async () => {
+  const handler = createDailyWordHandler({
+    repository: createRepository(async (dateStr) => ({
+      date: dateStr,
+      word: "ABRIR",
+      difficulty: "medio",
+      difficultyLabel: "Médio",
+      puzzle: 11,
+    })),
+    now: () => new Date("2026-03-19T02:30:00Z"),
+  });
+
+  const futureResponse = await handler(
+    new Request("https://example.test/functions/v1/daily-word?date=2026-03-19"),
+  );
+  const futurePayload = await futureResponse.json();
+
+  assertEquals(futureResponse.status, 425);
+  assertEquals(futurePayload.code, "FUTURE_PUZZLE");
+
+  const defaultResponse = await handler(
+    new Request("https://example.test/functions/v1/daily-word"),
+  );
+  const defaultPayload = await defaultResponse.json();
+
+  assertEquals(defaultResponse.status, 200);
+  assertEquals(defaultPayload.date, "2026-03-18");
 });
 
 Deno.test("daily-word handler returns 500 when repository throws", async () => {
