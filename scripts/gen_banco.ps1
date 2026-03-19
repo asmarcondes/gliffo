@@ -279,8 +279,8 @@ foreach ($lw in $lexLines) {
   # Filter: require minimum confidence (icf_moderado baseline with no penalty = 58)
   if ($conf -lt 58) { $skipped++; continue }
   
-  # Assign nivel by length
-  $nivel = switch ($len) {
+  # Assign difficulty by length
+  $difficulty = switch ($len) {
     4 { "facil" }
     5 { "medio" }
     6 { "dificil" }
@@ -292,7 +292,7 @@ foreach ($lw in $lexLines) {
     sv = $sv
     conf = $conf
     flags = $flags
-    nivel = $nivel
+    difficulty = $difficulty
     len = $len
   }
   $added++
@@ -300,12 +300,12 @@ foreach ($lw in $lexLines) {
 
 Write-Host "  Candidates added: $added, skipped: $skipped"
 
-# ── Group by nivel ─────────────────────────────────────────────
-$byNivel = @{ facil=@(); medio=@(); dificil=@(); muito_dificil=@() }
-foreach ($w in $newWords) { $byNivel[$w.nivel] += $w }
+# ── Group by difficulty ────────────────────────────────────────
+$byDifficulty = @{ facil=@(); medio=@(); dificil=@(); muito_dificil=@() }
+foreach ($w in $newWords) { $byDifficulty[$w.difficulty] += $w }
 Write-Host "  New candidates per level:"
 foreach ($n in @("facil","medio","dificil","muito_dificil")) {
-  Write-Host ("    {0,-15} {1}" -f $n, $byNivel[$n].Count)
+  Write-Host ("    {0,-15} {1}" -f $n, $byDifficulty[$n].Count)
 }
 
 # ── Recompute SV for EXISTING BANCO entries ────────────────────
@@ -343,8 +343,8 @@ if ($scriptStart -ge 0) {
     Write-Host "  Successfully parsed existing BANCO JSON"
     # Recompute SV for each word and rebuild
     $updatedBanco = @{ facil=@(); medio=@(); dificil=@(); muito_dificil=@() }
-    foreach ($nivel in @("facil","medio","dificil","muito_dificil")) {
-      $entries = $bancoObj.$nivel
+    foreach ($difficulty in @("facil","medio","dificil","muito_dificil")) {
+      $entries = $bancoObj.$difficulty
       foreach ($entry in $entries) {
         $newSv = Compute-SV $entry.w
         $updatedEntry = [PSCustomObject]@{
@@ -358,7 +358,7 @@ if ($scriptStart -ge 0) {
         $svFlag = Get-SvFlag $newSv
         if ($svFlag) { $oldFlags = $oldFlags + $svFlag }
         $updatedEntry.flags = $oldFlags
-        $updatedBanco[$nivel] += $updatedEntry
+        $updatedBanco[$difficulty] += $updatedEntry
       }
     }
     Write-Host "  Done recomputing existing entries"
@@ -373,17 +373,17 @@ Write-Host "`nBuilding final BANCO..."
 
 # Sort new candidates by conf desc within each level
 foreach ($n in @("facil","medio","dificil","muito_dificil")) {
-  $byNivel[$n] = @($byNivel[$n] | Sort-Object conf -Desc)
+  $byDifficulty[$n] = @($byDifficulty[$n] | Sort-Object conf -Desc)
 }
 
 # Build combined BANCO
 $finalBanco = @{}
-foreach ($nivel in @("facil","medio","dificil","muito_dificil")) {
-  $existing = if ($updatedBanco -and $updatedBanco[$nivel]) { @($updatedBanco[$nivel]) } else { @() }
-  $new = @($byNivel[$nivel])
+foreach ($difficulty in @("facil","medio","dificil","muito_dificil")) {
+  $existing = if ($updatedBanco -and $updatedBanco[$difficulty]) { @($updatedBanco[$difficulty]) } else { @() }
+  $new = @($byDifficulty[$difficulty])
   $combined = @($existing) + @($new)
-  $finalBanco[$nivel] = $combined
-  Write-Host ("  {0,-15} existing={1} new={2} total={3}" -f $nivel, $existing.Count, $new.Count, $combined.Count)
+  $finalBanco[$difficulty] = $combined
+  Write-Host ("  {0,-15} existing={1} new={2} total={3}" -f $difficulty, $existing.Count, $new.Count, $combined.Count)
 }
 
 # ── Serialize to JSON ──────────────────────────────────────────
@@ -395,9 +395,9 @@ function To-JsonEntry([PSCustomObject]$e) {
 }
 
 $bancoLines = @()
-foreach ($nivel in @("facil","medio","dificil","muito_dificil")) {
-  $entries = $finalBanco[$nivel] | ForEach-Object { To-JsonEntry $_ }
-  $bancoLines += '"'+$nivel+'":[' + ($entries -join ',') + ']'
+foreach ($difficulty in @("facil","medio","dificil","muito_dificil")) {
+  $entries = $finalBanco[$difficulty] | ForEach-Object { To-JsonEntry $_ }
+  $bancoLines += '"'+$difficulty+'":[' + ($entries -join ',') + ']'
 }
 $bancoJson = '{' + ($bancoLines -join ',') + '}'
 

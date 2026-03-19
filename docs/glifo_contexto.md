@@ -704,7 +704,7 @@ Itens:
 - [x] **conquistas echo/sandwich/palindrome** só checam a última tentativa enviada — deveria checar todas as tentativas da partida
 - [x] **achCheckWeekend timezone** — usa `new Date()` do sistema, não de SP; inconsistente com o restante do código
 - [x] **hrow-new ausente na tentativa vencedora** — `buildHistory()` reconstrói o histórico sem animação; a última linha (a que ganhou) entra sem slide-in como as intermediárias
-- [x] **badge dificuldade mostra letras fixas do CICLO** — pode dizer "4 letras" para uma palavra de 5L quando o range inclui ambos. Fix: usar `WN` real: `"${nivel} · ${WN} letras"`
+- [x] **badge dificuldade mostra letras fixas do CICLO** — pode dizer "4 letras" para uma palavra de 5L quando o range inclui ambos. Fix: usar `WN` real: `"${difficulty} · ${WN} letras"`
 
 ### 🔧 Ajustes
 

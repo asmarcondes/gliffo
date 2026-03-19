@@ -415,7 +415,7 @@ gliffoo_quarteto_stats       → { played, won, streak, maxStreak, dist[1..8] }
 ### Estratégia: seeds independentes por board, mesmo nível do dia
 
 ```js
-// Mesma lógica de index.html para obter (nivel, diasDesdeEpoca)
+// Mesma lógica de index.html para obter (difficulty, diasDesdeEpoca)
 // Para dueto/quarteto, N palavras do mesmo nível:
 function pickWords(lista, N, baseIdx) {
   const words = new Set();

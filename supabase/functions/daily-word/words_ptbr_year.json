@@ -1,4 +1,4 @@
-﻿{
+{
     "metadata":  {
                      "version":  3,
                      "generated":  "2026-03-08",
@@ -27,2556 +27,2556 @@
                  {
                      "date":  "2026-03-08",
                      "word":  "MESA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  1
                  },
                  {
                      "date":  "2026-03-09",
                      "word":  "SOFA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  2
                  },
                  {
                      "date":  "2026-03-10",
                      "word":  "APELO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  3
                  },
                  {
                      "date":  "2026-03-11",
                      "word":  "ORDEM",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  4
                  },
                  {
                      "date":  "2026-03-12",
                      "word":  "QUARTA",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  5
                  },
                  {
                      "date":  "2026-03-13",
                      "word":  "DESSAS",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  6
                  },
                  {
                      "date":  "2026-03-14",
                      "word":  "JUSTICA",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  7
                  },
                  {
                      "date":  "2026-03-15",
                      "word":  "TOCA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  8
                  },
                  {
                      "date":  "2026-03-16",
                      "word":  "LEIS",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  9
                  },
                  {
                      "date":  "2026-03-17",
                      "word":  "PRESA",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  10
                  },
                  {
                      "date":  "2026-03-18",
                      "word":  "ABRIR",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  11
                  },
                  {
                      "date":  "2026-03-19",
                      "word":  "FOLHAS",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  12
                  },
                  {
                      "date":  "2026-03-20",
                      "word":  "PRATOS",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  13
                  },
                  {
                      "date":  "2026-03-21",
                      "word":  "AGENCIA",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  14
                  },
                  {
                      "date":  "2026-03-22",
                      "word":  "BENS",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  15
                  },
                  {
                      "date":  "2026-03-23",
                      "word":  "GELO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  16
                  },
                  {
                      "date":  "2026-03-24",
                      "word":  "LAPIS",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  17
                  },
                  {
                      "date":  "2026-03-25",
                      "word":  "CLARO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  18
                  },
                  {
                      "date":  "2026-03-26",
                      "word":  "PEDIDO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  19
                  },
                  {
                      "date":  "2026-03-27",
                      "word":  "PEROLA",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  20
                  },
                  {
                      "date":  "2026-03-28",
                      "word":  "DURANTE",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  21
                  },
                  {
                      "date":  "2026-03-29",
                      "word":  "ROSA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  22
                  },
                  {
                      "date":  "2026-03-30",
                      "word":  "BOTA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  23
                  },
                  {
                      "date":  "2026-03-31",
                      "word":  "FELIZ",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  24
                  },
                  {
                      "date":  "2026-04-01",
                      "word":  "VELHO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  25
                  },
                  {
                      "date":  "2026-04-02",
                      "word":  "CAMPUS",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  26
                  },
                  {
                      "date":  "2026-04-03",
                      "word":  "PECADO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  27
                  },
                  {
                      "date":  "2026-04-04",
                      "word":  "SOMBRIO",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  28
                  },
                  {
                      "date":  "2026-04-05",
                      "word":  "OLHO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  29
                  },
                  {
                      "date":  "2026-04-06",
                      "word":  "UTIL",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  30
                  },
                  {
                      "date":  "2026-04-07",
                      "word":  "BISPO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  31
                  },
                  {
                      "date":  "2026-04-08",
                      "word":  "IDADE",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  32
                  },
                  {
                      "date":  "2026-04-09",
                      "word":  "EVENTO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  33
                  },
                  {
                      "date":  "2026-04-10",
                      "word":  "AFINAL",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  34
                  },
                  {
                      "date":  "2026-04-11",
                      "word":  "LAGARTA",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  35
                  },
                  {
                      "date":  "2026-04-12",
                      "word":  "TRIO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  36
                  },
                  {
                      "date":  "2026-04-13",
                      "word":  "TRES",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  37
                  },
                  {
                      "date":  "2026-04-14",
                      "word":  "APOIO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  38
                  },
                  {
                      "date":  "2026-04-15",
                      "word":  "MAIOR",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  39
                  },
                  {
                      "date":  "2026-04-16",
                      "word":  "FUNCAO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  40
                  },
                  {
                      "date":  "2026-04-17",
                      "word":  "BURACO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  41
                  },
                  {
                      "date":  "2026-04-18",
                      "word":  "ECLIPSE",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  42
                  },
                  {
                      "date":  "2026-04-19",
                      "word":  "AUTO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  43
                  },
                  {
                      "date":  "2026-04-20",
                      "word":  "MATA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  44
                  },
                  {
                      "date":  "2026-04-21",
                      "word":  "QUEDA",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  45
                  },
                  {
                      "date":  "2026-04-22",
                      "word":  "PALCO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  46
                  },
                  {
                      "date":  "2026-04-23",
                      "word":  "FECHAR",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  47
                  },
                  {
                      "date":  "2026-04-24",
                      "word":  "BELEZA",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  48
                  },
                  {
                      "date":  "2026-04-25",
                      "word":  "INFORME",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  49
                  },
                  {
                      "date":  "2026-04-26",
                      "word":  "BOLO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  50
                  },
                  {
                      "date":  "2026-04-27",
                      "word":  "SOJA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  51
                  },
                  {
                      "date":  "2026-04-28",
                      "word":  "PADRE",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  52
                  },
                  {
                      "date":  "2026-04-29",
                      "word":  "AMIGO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  53
                  },
                  {
                      "date":  "2026-04-30",
                      "word":  "AJUDAR",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  54
                  },
                  {
                      "date":  "2026-05-01",
                      "word":  "PIORES",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  55
                  },
                  {
                      "date":  "2026-05-02",
                      "word":  "ESTUDAR",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  56
                  },
                  {
                      "date":  "2026-05-03",
                      "word":  "LIXO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  57
                  },
                  {
                      "date":  "2026-05-04",
                      "word":  "ANOS",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  58
                  },
                  {
                      "date":  "2026-05-05",
                      "word":  "BEIJO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  59
                  },
                  {
                      "date":  "2026-05-06",
                      "word":  "FORMA",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  60
                  },
                  {
                      "date":  "2026-05-07",
                      "word":  "BEIJOS",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  61
                  },
                  {
                      "date":  "2026-05-08",
                      "word":  "AGOSTO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  62
                  },
                  {
                      "date":  "2026-05-09",
                      "word":  "SENADOR",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  63
                  },
                  {
                      "date":  "2026-05-10",
                      "word":  "ANEL",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  64
                  },
                  {
                      "date":  "2026-05-11",
                      "word":  "NEVE",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  65
                  },
                  {
                      "date":  "2026-05-12",
                      "word":  "PARTE",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  66
                  },
                  {
                      "date":  "2026-05-13",
                      "word":  "LEGAL",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  67
                  },
                  {
                      "date":  "2026-05-14",
                      "word":  "REGRAS",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  68
                  },
                  {
                      "date":  "2026-05-15",
                      "word":  "CRISTO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  69
                  },
                  {
                      "date":  "2026-05-16",
                      "word":  "MOMENTO",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  70
                  },
                  {
                      "date":  "2026-05-17",
                      "word":  "PESO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  71
                  },
                  {
                      "date":  "2026-05-18",
                      "word":  "FIXO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  72
                  },
                  {
                      "date":  "2026-05-19",
                      "word":  "JUSTA",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  73
                  },
                  {
                      "date":  "2026-05-20",
                      "word":  "CUSTO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  74
                  },
                  {
                      "date":  "2026-05-21",
                      "word":  "SEGURA",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  75
                  },
                  {
                      "date":  "2026-05-22",
                      "word":  "JORNAL",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  76
                  },
                  {
                      "date":  "2026-05-23",
                      "word":  "CERTEZA",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  77
                  },
                  {
                      "date":  "2026-05-24",
                      "word":  "PELE",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  78
                  },
                  {
                      "date":  "2026-05-25",
                      "word":  "ALMA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  79
                  },
                  {
                      "date":  "2026-05-26",
                      "word":  "RAZAO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  80
                  },
                  {
                      "date":  "2026-05-27",
                      "word":  "HOMEM",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  81
                  },
                  {
                      "date":  "2026-05-28",
                      "word":  "ZENITE",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  82
                  },
                  {
                      "date":  "2026-05-29",
                      "word":  "FRUTAS",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  83
                  },
                  {
                      "date":  "2026-05-30",
                      "word":  "CONSIGO",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  84
                  },
                  {
                      "date":  "2026-05-31",
                      "word":  "RAIO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  85
                  },
                  {
                      "date":  "2026-06-01",
                      "word":  "FORA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  86
                  },
                  {
                      "date":  "2026-06-02",
                      "word":  "FATOS",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  87
                  },
                  {
                      "date":  "2026-06-03",
                      "word":  "CURSO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  88
                  },
                  {
                      "date":  "2026-06-04",
                      "word":  "ESTADO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  89
                  },
                  {
                      "date":  "2026-06-05",
                      "word":  "SEGUIR",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  90
                  },
                  {
                      "date":  "2026-06-06",
                      "word":  "COZINHA",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  91
                  },
                  {
                      "date":  "2026-06-07",
                      "word":  "CAPA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  92
                  },
                  {
                      "date":  "2026-06-08",
                      "word":  "TELA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  93
                  },
                  {
                      "date":  "2026-06-09",
                      "word":  "FEBRE",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  94
                  },
                  {
                      "date":  "2026-06-10",
                      "word":  "TIRAR",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  95
                  },
                  {
                      "date":  "2026-06-11",
                      "word":  "ONIBUS",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  96
                  },
                  {
                      "date":  "2026-06-12",
                      "word":  "NUMERO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  97
                  },
                  {
                      "date":  "2026-06-13",
                      "word":  "CIZANIA",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  98
                  },
                  {
                      "date":  "2026-06-14",
                      "word":  "PAIS",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  99
                  },
                  {
                      "date":  "2026-06-15",
                      "word":  "MAUS",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  100
                  },
                  {
                      "date":  "2026-06-16",
                      "word":  "SABOR",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  101
                  },
                  {
                      "date":  "2026-06-17",
                      "word":  "CHUVA",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  102
                  },
                  {
                      "date":  "2026-06-18",
                      "word":  "ABRACO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  103
                  },
                  {
                      "date":  "2026-06-19",
                      "word":  "VOLTAR",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  104
                  },
                  {
                      "date":  "2026-06-20",
                      "word":  "MAIORES",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  105
                  },
                  {
                      "date":  "2026-06-21",
                      "word":  "GAMA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  106
                  },
                  {
                      "date":  "2026-06-22",
                      "word":  "SETE",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  107
                  },
                  {
                      "date":  "2026-06-23",
                      "word":  "GRADE",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  108
                  },
                  {
                      "date":  "2026-06-24",
                      "word":  "VISAO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  109
                  },
                  {
                      "date":  "2026-06-25",
                      "word":  "COBICA",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  110
                  },
                  {
                      "date":  "2026-06-26",
                      "word":  "EDITOR",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  111
                  },
                  {
                      "date":  "2026-06-27",
                      "word":  "PILATES",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  112
                  },
                  {
                      "date":  "2026-06-28",
                      "word":  "SECO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  113
                  },
                  {
                      "date":  "2026-06-29",
                      "word":  "DUAS",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  114
                  },
                  {
                      "date":  "2026-06-30",
                      "word":  "LESAO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  115
                  },
                  {
                      "date":  "2026-07-01",
                      "word":  "TEMPO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  116
                  },
                  {
                      "date":  "2026-07-02",
                      "word":  "PESSOA",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  117
                  },
                  {
                      "date":  "2026-07-03",
                      "word":  "FILMES",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  118
                  },
                  {
                      "date":  "2026-07-04",
                      "word":  "COLOCAR",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  119
                  },
                  {
                      "date":  "2026-07-05",
                      "word":  "TODA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  120
                  },
                  {
                      "date":  "2026-07-06",
                      "word":  "MANO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  121
                  },
                  {
                      "date":  "2026-07-07",
                      "word":  "NATAL",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  122
                  },
                  {
                      "date":  "2026-07-08",
                      "word":  "PARES",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  123
                  },
                  {
                      "date":  "2026-07-09",
                      "word":  "JUNTAS",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  124
                  },
                  {
                      "date":  "2026-07-10",
                      "word":  "VENDAS",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  125
                  },
                  {
                      "date":  "2026-07-11",
                      "word":  "FISSURA",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  126
                  },
                  {
                      "date":  "2026-07-12",
                      "word":  "LOBO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  127
                  },
                  {
                      "date":  "2026-07-13",
                      "word":  "ITEM",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  128
                  },
                  {
                      "date":  "2026-07-14",
                      "word":  "HEROI",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  129
                  },
                  {
                      "date":  "2026-07-15",
                      "word":  "MINHA",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  130
                  },
                  {
                      "date":  "2026-07-16",
                      "word":  "ENIGMA",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  131
                  },
                  {
                      "date":  "2026-07-17",
                      "word":  "COISAS",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  132
                  },
                  {
                      "date":  "2026-07-18",
                      "word":  "PROXIMO",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  133
                  },
                  {
                      "date":  "2026-07-19",
                      "word":  "CARO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  134
                  },
                  {
                      "date":  "2026-07-20",
                      "word":  "AQUI",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  135
                  },
                  {
                      "date":  "2026-07-21",
                      "word":  "FAZER",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  136
                  },
                  {
                      "date":  "2026-07-22",
                      "word":  "ATRAS",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  137
                  },
                  {
                      "date":  "2026-07-23",
                      "word":  "GRANDE",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  138
                  },
                  {
                      "date":  "2026-07-24",
                      "word":  "RUNICO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  139
                  },
                  {
                      "date":  "2026-07-25",
                      "word":  "SUJEITO",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  140
                  },
                  {
                      "date":  "2026-07-26",
                      "word":  "ALTA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  141
                  },
                  {
                      "date":  "2026-07-27",
                      "word":  "VOTO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  142
                  },
                  {
                      "date":  "2026-07-28",
                      "word":  "ACIDO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  143
                  },
                  {
                      "date":  "2026-07-29",
                      "word":  "NOITE",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  144
                  },
                  {
                      "date":  "2026-07-30",
                      "word":  "DOENCA",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  145
                  },
                  {
                      "date":  "2026-07-31",
                      "word":  "MEDICO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  146
                  },
                  {
                      "date":  "2026-08-01",
                      "word":  "DOMINGO",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  147
                  },
                  {
                      "date":  "2026-08-02",
                      "word":  "USAR",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  148
                  },
                  {
                      "date":  "2026-08-03",
                      "word":  "FIXA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  149
                  },
                  {
                      "date":  "2026-08-04",
                      "word":  "PERNA",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  150
                  },
                  {
                      "date":  "2026-08-05",
                      "word":  "CAPAZ",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  151
                  },
                  {
                      "date":  "2026-08-06",
                      "word":  "QUEIJO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  152
                  },
                  {
                      "date":  "2026-08-07",
                      "word":  "VIDEOS",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  153
                  },
                  {
                      "date":  "2026-08-08",
                      "word":  "ESTUDIO",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  154
                  },
                  {
                      "date":  "2026-08-09",
                      "word":  "OLEO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  155
                  },
                  {
                      "date":  "2026-08-10",
                      "word":  "TAXA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  156
                  },
                  {
                      "date":  "2026-08-11",
                      "word":  "APELO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  157
                  },
                  {
                      "date":  "2026-08-12",
                      "word":  "BANCO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  158
                  },
                  {
                      "date":  "2026-08-13",
                      "word":  "CANETA",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  159
                  },
                  {
                      "date":  "2026-08-14",
                      "word":  "ACERVO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  160
                  },
                  {
                      "date":  "2026-08-15",
                      "word":  "ENTRADA",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  161
                  },
                  {
                      "date":  "2026-08-16",
                      "word":  "ZERO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  162
                  },
                  {
                      "date":  "2026-08-17",
                      "word":  "BUDA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  163
                  },
                  {
                      "date":  "2026-08-18",
                      "word":  "PRESA",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  164
                  },
                  {
                      "date":  "2026-08-19",
                      "word":  "ABRIR",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  165
                  },
                  {
                      "date":  "2026-08-20",
                      "word":  "GERAIS",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  166
                  },
                  {
                      "date":  "2026-08-21",
                      "word":  "FABULA",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  167
                  },
                  {
                      "date":  "2026-08-22",
                      "word":  "TECLADO",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  168
                  },
                  {
                      "date":  "2026-08-23",
                      "word":  "BOLA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  169
                  },
                  {
                      "date":  "2026-08-24",
                      "word":  "GATA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  170
                  },
                  {
                      "date":  "2026-08-25",
                      "word":  "VELHA",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  171
                  },
                  {
                      "date":  "2026-08-26",
                      "word":  "CLARO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  172
                  },
                  {
                      "date":  "2026-08-27",
                      "word":  "CHOQUE",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  173
                  },
                  {
                      "date":  "2026-08-28",
                      "word":  "SEGURO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  174
                  },
                  {
                      "date":  "2026-08-29",
                      "word":  "DIFICIL",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  175
                  },
                  {
                      "date":  "2026-08-30",
                      "word":  "AMOR",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  176
                  },
                  {
                      "date":  "2026-08-31",
                      "word":  "EURO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  177
                  },
                  {
                      "date":  "2026-09-01",
                      "word":  "FELIZ",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  178
                  },
                  {
                      "date":  "2026-09-02",
                      "word":  "MESMA",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  179
                  },
                  {
                      "date":  "2026-09-03",
                      "word":  "JUDEUS",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  180
                  },
                  {
                      "date":  "2026-09-04",
                      "word":  "ESCALA",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  181
                  },
                  {
                      "date":  "2026-09-05",
                      "word":  "ESCOLHA",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  182
                  },
                  {
                      "date":  "2026-09-06",
                      "word":  "EIXO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  183
                  },
                  {
                      "date":  "2026-09-07",
                      "word":  "CIMA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  184
                  },
                  {
                      "date":  "2026-09-08",
                      "word":  "BISPO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  185
                  },
                  {
                      "date":  "2026-09-09",
                      "word":  "IDADE",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  186
                  },
                  {
                      "date":  "2026-09-10",
                      "word":  "MORADA",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  187
                  },
                  {
                      "date":  "2026-09-11",
                      "word":  "DESEJO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  188
                  },
                  {
                      "date":  "2026-09-12",
                      "word":  "TECNICA",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  189
                  },
                  {
                      "date":  "2026-09-13",
                      "word":  "CURA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  190
                  },
                  {
                      "date":  "2026-09-14",
                      "word":  "CAMA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  191
                  },
                  {
                      "date":  "2026-09-15",
                      "word":  "SAUDE",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  192
                  },
                  {
                      "date":  "2026-09-16",
                      "word":  "MAIOR",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  193
                  },
                  {
                      "date":  "2026-09-17",
                      "word":  "DESSAS",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  194
                  },
                  {
                      "date":  "2026-09-18",
                      "word":  "COBAIA",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  195
                  },
                  {
                      "date":  "2026-09-19",
                      "word":  "DECISAO",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  196
                  },
                  {
                      "date":  "2026-09-20",
                      "word":  "HOJE",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  197
                  },
                  {
                      "date":  "2026-09-21",
                      "word":  "FINO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  198
                  },
                  {
                      "date":  "2026-09-22",
                      "word":  "QUEDA",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  199
                  },
                  {
                      "date":  "2026-09-23",
                      "word":  "PALCO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  200
                  },
                  {
                      "date":  "2026-09-24",
                      "word":  "PRATOS",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  201
                  },
                  {
                      "date":  "2026-09-25",
                      "word":  "SANTOS",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  202
                  },
                  {
                      "date":  "2026-09-26",
                      "word":  "BRUXEDO",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  203
                  },
                  {
                      "date":  "2026-09-27",
                      "word":  "VAGA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  204
                  },
                  {
                      "date":  "2026-09-28",
                      "word":  "MAIO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  205
                  },
                  {
                      "date":  "2026-09-29",
                      "word":  "PADRE",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  206
                  },
                  {
                      "date":  "2026-09-30",
                      "word":  "AMIGO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  207
                  },
                  {
                      "date":  "2026-10-01",
                      "word":  "PEROLA",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  208
                  },
                  {
                      "date":  "2026-10-02",
                      "word":  "CONTER",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  209
                  },
                  {
                      "date":  "2026-10-03",
                      "word":  "TEMPERA",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  210
                  },
                  {
                      "date":  "2026-10-04",
                      "word":  "PISO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  211
                  },
                  {
                      "date":  "2026-10-05",
                      "word":  "REAL",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  212
                  },
                  {
                      "date":  "2026-10-06",
                      "word":  "LENHA",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  213
                  },
                  {
                      "date":  "2026-10-07",
                      "word":  "FORMA",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  214
                  },
                  {
                      "date":  "2026-10-08",
                      "word":  "PECADO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  215
                  },
                  {
                      "date":  "2026-10-09",
                      "word":  "ESPADA",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  216
                  },
                  {
                      "date":  "2026-10-10",
                      "word":  "ESPELHO",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  217
                  },
                  {
                      "date":  "2026-10-11",
                      "word":  "SECA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  218
                  },
                  {
                      "date":  "2026-10-12",
                      "word":  "MOTO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  219
                  },
                  {
                      "date":  "2026-10-13",
                      "word":  "PARTE",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  220
                  },
                  {
                      "date":  "2026-10-14",
                      "word":  "LEGAL",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  221
                  },
                  {
                      "date":  "2026-10-15",
                      "word":  "AFINAL",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  222
                  },
                  {
                      "date":  "2026-10-16",
                      "word":  "PAINEL",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  223
                  },
                  {
                      "date":  "2026-10-17",
                      "word":  "AUTORES",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  224
                  },
                  {
                      "date":  "2026-10-18",
                      "word":  "OCIO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  225
                  },
                  {
                      "date":  "2026-10-19",
                      "word":  "SOFA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  226
                  },
                  {
                      "date":  "2026-10-20",
                      "word":  "JUSTA",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  227
                  },
                  {
                      "date":  "2026-10-21",
                      "word":  "CUSTO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  228
                  },
                  {
                      "date":  "2026-10-22",
                      "word":  "BURACO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  229
                  },
                  {
                      "date":  "2026-10-23",
                      "word":  "MAXIMO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  230
                  },
                  {
                      "date":  "2026-10-24",
                      "word":  "ADULTOS",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  231
                  },
                  {
                      "date":  "2026-10-25",
                      "word":  "FOCO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  232
                  },
                  {
                      "date":  "2026-10-26",
                      "word":  "LEIS",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  233
                  },
                  {
                      "date":  "2026-10-27",
                      "word":  "DOCES",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  234
                  },
                  {
                      "date":  "2026-10-28",
                      "word":  "HOMEM",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  235
                  },
                  {
                      "date":  "2026-10-29",
                      "word":  "BELEZA",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  236
                  },
                  {
                      "date":  "2026-10-30",
                      "word":  "AMORES",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  237
                  },
                  {
                      "date":  "2026-10-31",
                      "word":  "DESFILE",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  238
                  },
                  {
                      "date":  "2026-11-01",
                      "word":  "BENS",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  239
                  },
                  {
                      "date":  "2026-11-02",
                      "word":  "JURI",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  240
                  },
                  {
                      "date":  "2026-11-03",
                      "word":  "FATOS",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  241
                  },
                  {
                      "date":  "2026-11-04",
                      "word":  "CURSO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  242
                  },
                  {
                      "date":  "2026-11-05",
                      "word":  "PIORES",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  243
                  },
                  {
                      "date":  "2026-11-06",
                      "word":  "PEDRAS",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  244
                  },
                  {
                      "date":  "2026-11-07",
                      "word":  "PADROES",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  245
                  },
                  {
                      "date":  "2026-11-08",
                      "word":  "ROSA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  246
                  },
                  {
                      "date":  "2026-11-09",
                      "word":  "BOTA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  247
                  },
                  {
                      "date":  "2026-11-10",
                      "word":  "FEBRE",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  248
                  },
                  {
                      "date":  "2026-11-11",
                      "word":  "TIRAR",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  249
                  },
                  {
                      "date":  "2026-11-12",
                      "word":  "AGOSTO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  250
                  },
                  {
                      "date":  "2026-11-13",
                      "word":  "PADRAO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  251
                  },
                  {
                      "date":  "2026-11-14",
                      "word":  "PAREDES",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  252
                  },
                  {
                      "date":  "2026-11-15",
                      "word":  "MAPA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  253
                  },
                  {
                      "date":  "2026-11-16",
                      "word":  "UTIL",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  254
                  },
                  {
                      "date":  "2026-11-17",
                      "word":  "SABOR",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  255
                  },
                  {
                      "date":  "2026-11-18",
                      "word":  "CHUVA",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  256
                  },
                  {
                      "date":  "2026-11-19",
                      "word":  "CRISTO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  257
                  },
                  {
                      "date":  "2026-11-20",
                      "word":  "PRISAO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  258
                  },
                  {
                      "date":  "2026-11-21",
                      "word":  "DUVIDAS",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  259
                  },
                  {
                      "date":  "2026-11-22",
                      "word":  "TRIO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  260
                  },
                  {
                      "date":  "2026-11-23",
                      "word":  "FRIO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  261
                  },
                  {
                      "date":  "2026-11-24",
                      "word":  "GRADE",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  262
                  },
                  {
                      "date":  "2026-11-25",
                      "word":  "VISAO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  263
                  },
                  {
                      "date":  "2026-11-26",
                      "word":  "JORNAL",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  264
                  },
                  {
                      "date":  "2026-11-27",
                      "word":  "ARTIGO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  265
                  },
                  {
                      "date":  "2026-11-28",
                      "word":  "QUARTOS",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  266
                  },
                  {
                      "date":  "2026-11-29",
                      "word":  "AUTO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  267
                  },
                  {
                      "date":  "2026-11-30",
                      "word":  "MATA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  268
                  },
                  {
                      "date":  "2026-12-01",
                      "word":  "LESAO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  269
                  },
                  {
                      "date":  "2026-12-02",
                      "word":  "TEMPO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  270
                  },
                  {
                      "date":  "2026-12-03",
                      "word":  "FRUTAS",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  271
                  },
                  {
                      "date":  "2026-12-04",
                      "word":  "EDITAR",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  272
                  },
                  {
                      "date":  "2026-12-05",
                      "word":  "MODELOS",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  273
                  },
                  {
                      "date":  "2026-12-06",
                      "word":  "CRUZ",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  274
                  },
                  {
                      "date":  "2026-12-07",
                      "word":  "SOJA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  275
                  },
                  {
                      "date":  "2026-12-08",
                      "word":  "NATAL",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  276
                  },
                  {
                      "date":  "2026-12-09",
                      "word":  "PARES",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  277
                  },
                  {
                      "date":  "2026-12-10",
                      "word":  "SEGUIR",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  278
                  },
                  {
                      "date":  "2026-12-11",
                      "word":  "SABADO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  279
                  },
                  {
                      "date":  "2026-12-12",
                      "word":  "PRODUTO",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  280
                  },
                  {
                      "date":  "2026-12-13",
                      "word":  "LIXO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  281
                  },
                  {
                      "date":  "2026-12-14",
                      "word":  "SALA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  282
                  },
                  {
                      "date":  "2026-12-15",
                      "word":  "HEROI",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  283
                  },
                  {
                      "date":  "2026-12-16",
                      "word":  "MINHA",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  284
                  },
                  {
                      "date":  "2026-12-17",
                      "word":  "NUMERO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  285
                  },
                  {
                      "date":  "2026-12-18",
                      "word":  "SOCIAL",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  286
                  },
                  {
                      "date":  "2026-12-19",
                      "word":  "MALOGRO",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  287
                  },
                  {
                      "date":  "2026-12-20",
                      "word":  "ANEL",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  288
                  },
                  {
                      "date":  "2026-12-21",
                      "word":  "ARTE",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  289
                  },
                  {
                      "date":  "2026-12-22",
                      "word":  "FAZER",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  290
                  },
                  {
                      "date":  "2026-12-23",
                      "word":  "ATRAS",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  291
                  },
                  {
                      "date":  "2026-12-24",
                      "word":  "VOLTAR",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  292
                  },
                  {
                      "date":  "2026-12-25",
                      "word":  "FISICA",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  293
                  },
                  {
                      "date":  "2026-12-26",
                      "word":  "SERVICO",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  294
                  },
                  {
                      "date":  "2026-12-27",
                      "word":  "FIEL",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  295
                  },
                  {
                      "date":  "2026-12-28",
                      "word":  "FIXO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  296
                  },
                  {
                      "date":  "2026-12-29",
                      "word":  "ACIDO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  297
                  },
                  {
                      "date":  "2026-12-30",
                      "word":  "NOITE",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  298
                  },
                  {
                      "date":  "2026-12-31",
                      "word":  "RESTIA",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  299
                  },
                  {
                      "date":  "2027-01-01",
                      "word":  "CUIDAR",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  300
                  },
                  {
                      "date":  "2027-01-02",
                      "word":  "CANFORA",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  301
                  },
                  {
                      "date":  "2027-01-03",
                      "word":  "PELE",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  302
                  },
                  {
                      "date":  "2027-01-04",
                      "word":  "SELO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  303
                  },
                  {
                      "date":  "2027-01-05",
                      "word":  "PERNA",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  304
                  },
                  {
                      "date":  "2027-01-06",
                      "word":  "CAPAZ",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  305
                  },
                  {
                      "date":  "2027-01-07",
                      "word":  "FILMES",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  306
                  },
                  {
                      "date":  "2027-01-08",
                      "word":  "DUENDE",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  307
                  },
                  {
                      "date":  "2027-01-09",
                      "word":  "PASSADO",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  308
                  },
                  {
                      "date":  "2027-01-10",
                      "word":  "RAIO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  309
                  },
                  {
                      "date":  "2027-01-11",
                      "word":  "REIS",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  310
                  },
                  {
                      "date":  "2027-01-12",
                      "word":  "APELO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  311
                  },
                  {
                      "date":  "2027-01-13",
                      "word":  "BANCO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  312
                  },
                  {
                      "date":  "2027-01-14",
                      "word":  "VENDAS",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  313
                  },
                  {
                      "date":  "2027-01-15",
                      "word":  "MAZELA",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  314
                  },
                  {
                      "date":  "2027-01-16",
                      "word":  "MORINGA",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  315
                  },
                  {
                      "date":  "2027-01-17",
                      "word":  "FRIA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  316
                  },
                  {
                      "date":  "2027-01-18",
                      "word":  "TELA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  317
                  },
                  {
                      "date":  "2027-01-19",
                      "word":  "PRESA",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  318
                  },
                  {
                      "date":  "2027-01-20",
                      "word":  "ABRIR",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  319
                  },
                  {
                      "date":  "2027-01-21",
                      "word":  "PRESSA",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  320
                  },
                  {
                      "date":  "2027-01-22",
                      "word":  "AQUILO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  321
                  },
                  {
                      "date":  "2027-01-23",
                      "word":  "VITORIA",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  322
                  },
                  {
                      "date":  "2027-01-24",
                      "word":  "PAIS",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  323
                  },
                  {
                      "date":  "2027-01-25",
                      "word":  "JATO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  324
                  },
                  {
                      "date":  "2027-01-26",
                      "word":  "VELHA",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  325
                  },
                  {
                      "date":  "2027-01-27",
                      "word":  "CLARO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  326
                  },
                  {
                      "date":  "2027-01-28",
                      "word":  "RUNICO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  327
                  },
                  {
                      "date":  "2027-01-29",
                      "word":  "CORUJA",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  328
                  },
                  {
                      "date":  "2027-01-30",
                      "word":  "EDITORA",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  329
                  },
                  {
                      "date":  "2027-01-31",
                      "word":  "GAMA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  330
                  },
                  {
                      "date":  "2027-02-01",
                      "word":  "PURA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  331
                  },
                  {
                      "date":  "2027-02-02",
                      "word":  "FELIZ",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  332
                  },
                  {
                      "date":  "2027-02-03",
                      "word":  "MESMA",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  333
                  },
                  {
                      "date":  "2027-02-04",
                      "word":  "MEDICO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  334
                  },
                  {
                      "date":  "2027-02-05",
                      "word":  "ALGUNS",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  335
                  },
                  {
                      "date":  "2027-02-06",
                      "word":  "MILITAR",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  336
                  },
                  {
                      "date":  "2027-02-07",
                      "word":  "FINA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  337
                  },
                  {
                      "date":  "2027-02-08",
                      "word":  "DUAS",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  338
                  },
                  {
                      "date":  "2027-02-09",
                      "word":  "BISPO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  339
                  },
                  {
                      "date":  "2027-02-10",
                      "word":  "IDADE",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  340
                  },
                  {
                      "date":  "2027-02-11",
                      "word":  "HEROIS",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  341
                  },
                  {
                      "date":  "2027-02-12",
                      "word":  "DEIXAR",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  342
                  },
                  {
                      "date":  "2027-02-13",
                      "word":  "GRAFICO",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  343
                  },
                  {
                      "date":  "2027-02-14",
                      "word":  "MAIO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  344
                  },
                  {
                      "date":  "2027-02-15",
                      "word":  "TOPO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  345
                  },
                  {
                      "date":  "2027-02-16",
                      "word":  "SAUDE",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  346
                  },
                  {
                      "date":  "2027-02-17",
                      "word":  "MAIOR",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  347
                  },
                  {
                      "date":  "2027-02-18",
                      "word":  "ACERVO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  348
                  },
                  {
                      "date":  "2027-02-19",
                      "word":  "FUNDOS",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  349
                  },
                  {
                      "date":  "2027-02-20",
                      "word":  "EMPREGO",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  350
                  },
                  {
                      "date":  "2027-02-21",
                      "word":  "LOBO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  351
                  },
                  {
                      "date":  "2027-02-22",
                      "word":  "SAGA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  352
                  },
                  {
                      "date":  "2027-02-23",
                      "word":  "QUEDA",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  353
                  },
                  {
                      "date":  "2027-02-24",
                      "word":  "PRAIA",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  354
                  },
                  {
                      "date":  "2027-02-25",
                      "word":  "FABULA",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  355
                  },
                  {
                      "date":  "2027-02-26",
                      "word":  "ARGILA",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  356
                  },
                  {
                      "date":  "2027-02-27",
                      "word":  "MEDICOS",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  357
                  },
                  {
                      "date":  "2027-02-28",
                      "word":  "MATO",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  358
                  },
                  {
                      "date":  "2027-03-01",
                      "word":  "AQUI",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  359
                  },
                  {
                      "date":  "2027-03-02",
                      "word":  "PADRE",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  360
                  },
                  {
                      "date":  "2027-03-03",
                      "word":  "AMIGO",
-                     "nivel":  "medio",
-                     "nivelLabel":  "Médio",
+                     "difficulty":  "medio",
+                     "difficultyLabel":  "Médio",
                      "puzzle":  361
                  },
                  {
                      "date":  "2027-03-04",
                      "word":  "DIARIO",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  362
                  },
                  {
                      "date":  "2027-03-05",
                      "word":  "PENSAR",
-                     "nivel":  "dificil",
-                     "nivelLabel":  "Difícil",
+                     "difficulty":  "dificil",
+                     "difficultyLabel":  "Difícil",
                      "puzzle":  363
                  },
                  {
                      "date":  "2027-03-06",
                      "word":  "GERACAO",
-                     "nivel":  "muito_dificil",
-                     "nivelLabel":  "Muito Difícil",
+                     "difficulty":  "muito_dificil",
+                     "difficultyLabel":  "Muito Difícil",
                      "puzzle":  364
                  },
                  {
                      "date":  "2027-03-07",
                      "word":  "SOFA",
-                     "nivel":  "facil",
-                     "nivelLabel":  "Fácil",
+                     "difficulty":  "facil",
+                     "difficultyLabel":  "Fácil",
                      "puzzle":  365
                  }
              ]
