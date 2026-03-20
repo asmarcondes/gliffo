@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.6.5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: 2.7.5
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build app
+        run: pnpm build
+
+      - name: Run daily-word unit tests
+        run: pnpm test:daily-word
+
+      - name: Start local Supabase stack
+        run: pnpm exec supabase start
+
+      - name: Start daily-word function in embedded mode
+        run: |
+          nohup pnpm exec supabase functions serve daily-word --no-verify-jwt > /tmp/daily-word.log 2>&1 &
+          echo $! > /tmp/daily-word.pid
+
+      - name: Wait for daily-word function
+        run: |
+          for i in {1..30}; do
+            status=$(curl -s -o /tmp/daily-word-response.txt -w "%{http_code}" "http://127.0.0.1:54321/functions/v1/daily-word?date=2026-03-18" || true)
+            if [ "$status" = "200" ]; then
+              exit 0
+            fi
+            sleep 2
+          done
+          cat /tmp/daily-word.log || true
+          cat /tmp/daily-word-response.txt || true
+          exit 1
+
+      - name: Run daily-word smoke suite
+        run: pnpm smoke:daily-word:suite
+
+      - name: Stop daily-word function
+        if: always()
+        run: |
+          if [ -f /tmp/daily-word.pid ]; then
+            kill $(cat /tmp/daily-word.pid) || true
+          fi

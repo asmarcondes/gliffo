@@ -197,15 +197,15 @@
         color: var(--amber-500);
       }
 
-      /* ── NIVEL TABS ──────────────────────────────────── */
-      #nivel-tabs {
+      /* ── DIFFICULTY TABS ─────────────────────────────── */
+      #difficulty-tabs {
         display: flex;
         border-bottom: 1px solid var(--border);
         background: var(--bg2);
         overflow-x: auto;
         flex-shrink: 0;
       }
-      .nivel-tab {
+      .difficulty-tab {
         padding: 10px 18px;
         border: none;
         background: transparent;
@@ -221,10 +221,10 @@
         align-items: center;
         gap: 6px;
       }
-      .nivel-tab:hover {
+      .difficulty-tab:hover {
         color: var(--text2);
       }
-      .nivel-tab.active {
+      .difficulty-tab.active {
         color: var(--amber-400);
         border-bottom-color: var(--amber-400);
       }
@@ -237,7 +237,7 @@
         padding: 1px 6px;
         letter-spacing: 0.02em;
       }
-      .nivel-tab.active .tab-badge {
+      .difficulty-tab.active .tab-badge {
         color: var(--amber-500);
         background: rgba(245, 166, 35, 0.12);
       }
@@ -921,18 +921,18 @@
       </div>
     </header>
 
-    <!-- ── NIVEL TABS ─────────────────────────────────── -->
-    <div id="nivel-tabs">
-      <button class="nivel-tab active" data-nivel="facil">
+    <!-- ── DIFFICULTY TABS ────────────────────────────── -->
+    <div id="difficulty-tabs">
+      <button class="difficulty-tab active" data-difficulty="facil">
         Fácil <span class="tab-badge" id="badge-facil">…</span>
       </button>
-      <button class="nivel-tab" data-nivel="medio">
+      <button class="difficulty-tab" data-difficulty="medio">
         Médio <span class="tab-badge" id="badge-medio">…</span>
       </button>
-      <button class="nivel-tab" data-nivel="dificil">
+      <button class="difficulty-tab" data-difficulty="dificil">
         Difícil <span class="tab-badge" id="badge-dificil">…</span>
       </button>
-      <button class="nivel-tab" data-nivel="muito_dificil">
+      <button class="difficulty-tab" data-difficulty="muito_dificil">
         Muito Difícil <span class="tab-badge" id="badge-muito_dificil">…</span>
       </button>
     </div>
@@ -965,7 +965,7 @@
           <div class="word-main">
             <div class="word-text" id="word-text">—</div>
             <div class="word-meta">
-              <span class="dif-badge" id="badge-nivel"></span>
+              <span class="dif-badge" id="badge-difficulty"></span>
               <span class="badge-sv" id="badge-sv"></span>
               <span class="badge-len" id="badge-len"></span>
             </div>
@@ -18328,13 +18328,13 @@
       }
 
       // ── Estado ───────────────────────────────────────────
-      let nivel = "facil",
+      let currentDifficulty = "facil",
         filter = "all",
         rFilter = "all",
         idx = 0;
       const decisions = {};
 
-      const NIVEL_LABELS = {
+      const DIFFICULTY_LABELS = {
         facil: "Fácil",
         medio: "Médio",
         dificil: "Difícil",
@@ -18356,7 +18356,7 @@
 
       // ── lista filtrada ────────────────────────────────────
       function getFiltered() {
-        return (BANCO[nivel] || []).filter((item) => {
+        return (BANCO[currentDifficulty] || []).filter((item) => {
           const d = decisions[item.w];
           if (filter === "pendente" && d) return false;
           if (filter === "aceitar" && d !== "aceitar") return false;
@@ -18401,10 +18401,10 @@
         // palavra
         document.getElementById("word-text").textContent = item.w;
 
-        // badge nível
-        const bn = document.getElementById("badge-nivel");
-        bn.textContent = NIVEL_LABELS[nivel];
-        bn.className = "dif-badge " + nivel;
+        // badge difficulty
+        const difficultyBadge = document.getElementById("badge-difficulty");
+        difficultyBadge.textContent = DIFFICULTY_LABELS[currentDifficulty];
+        difficultyBadge.className = "dif-badge " + currentDifficulty;
 
         // sv
         const svEl = document.getElementById("badge-sv");
@@ -18478,7 +18478,7 @@
         const grid = document.getElementById("word-grid");
         grid.innerHTML = "";
 
-        (BANCO[nivel] || [])
+        (BANCO[currentDifficulty] || [])
           .filter((item) => {
             const d = decisions[item.w];
             if (rFilter === "pendente" && d) return false;
@@ -18530,7 +18530,7 @@
           const pR = ((recusados / total) * 100).toFixed(1);
           el.innerHTML += `<div class="stat-card">
       <div class="stat-head">
-        <span class="stat-name dif-badge ${n}">${NIVEL_LABELS[n]}</span>
+        <span class="stat-name dif-badge ${n}">${DIFFICULTY_LABELS[n]}</span>
         <span class="stat-total">${total} palavras</span>
       </div>
       <div class="stat-nums">
@@ -18600,7 +18600,7 @@
             const a = lst.filter((x) => decisions[x.w] === "aceitar").length;
             const r = lst.filter((x) => decisions[x.w] === "recusar").length;
             const p = lst.length - a - r;
-            return `<span><b class="dif-badge ${n}" style="font-size:.6rem">${NIVEL_LABELS[n]}</b> ${a}✓ ${r}✕ ${p}⏳</span>`;
+            return `<span><b class="dif-badge ${n}" style="font-size:.6rem">${DIFFICULTY_LABELS[n]}</b> ${a}✓ ${r}✕ ${p}⏳</span>`;
           })
           .join("");
       }
@@ -18625,15 +18625,18 @@
           b.addEventListener("click", () => switchView(b.dataset.view)),
         );
 
-      // ── nivel tabs ────────────────────────────────────────
-      document.querySelectorAll(".nivel-tab").forEach((tab) => {
+      // ── difficulty tabs ───────────────────────────────────
+      document.querySelectorAll(".difficulty-tab").forEach((tab) => {
         tab.addEventListener("click", () => {
-          nivel = tab.dataset.nivel;
+          currentDifficulty = tab.dataset.difficulty;
           idx = 0;
           document
-            .querySelectorAll(".nivel-tab")
+            .querySelectorAll(".difficulty-tab")
             .forEach((t) =>
-              t.classList.toggle("active", t.dataset.nivel === nivel),
+              t.classList.toggle(
+                "active",
+                t.dataset.difficulty === currentDifficulty,
+              ),
             );
           const active = document.querySelector("main > div:not(.hidden)");
           const v = active ? active.id.replace("view-", "") : "curar";

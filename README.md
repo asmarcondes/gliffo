@@ -20,7 +20,7 @@ Jogo diário de palavras em português. As letras da palavra do dia se empilham 
 - **Single-file:** `index.html` (~8.400 linhas) — HTML + CSS + JS, sem frameworks, sem dependências
 - SVG gerado programaticamente via `makeSVG(letter, color, style)`
 - Fontes: DM Serif Display + DM Sans (Google Fonts)
-- Backend: Supabase Edge Function (`daily-word`) + Storage público para agenda anual
+- Backend: Supabase Edge Function (`daily-word`) como fonte do puzzle diário/arquivo + agenda anual no backend
 - PWA: offline-capable via Service Worker, instalável no celular
 
 ## Estrutura
@@ -42,14 +42,15 @@ gliffo/
 ├── data/
 │   ├── word_bank_final.json     (fonte de verdade do banco — 4 dificuldades)
 │   ├── dicionario.json          (38.664 palavras 4–7L para validação de tentativas)
-│   └── words_ptbr_year.json     (agenda de 365 puzzles com data + dificuldade)
+│   └── words_ptbr_year.json     (agenda local de manutenção/geração, fora do deploy público)
 ├── docs/
 │   ├── glifo_contexto.md        (contexto completo do projeto)
 │   └── resumo_banco.md
 └── supabase/
     └── functions/
         └── daily-word/
-            └── index.ts         (Edge Function — palavra do dia via agenda ou hash)
+            ├── index.ts              (Edge Function — lookup por agenda embutida, sem fallback local)
+            └── words_ptbr_year.json  (agenda anual empacotada com a função)
 ```
 
 ## Banco de palavras
@@ -62,7 +63,7 @@ gliffo/
 | Muito difícil | 7 letras | 300 palavras |
 
 O ciclo de dificuldade segue o dia da semana (Dom=Fácil … Sáb=Muito Difícil).  
-Fonte de verdade: `data/word_bank_final.json`. O banco está duplicado em `index.html` e `supabase/functions/daily-word/index.ts` — ambos precisam ser atualizados em conjunto.
+Fonte de verdade: `data/word_bank_final.json`. O banco segue duplicado entre `index.html` e `supabase/functions/daily-word/index.ts` para prática/curadoria, mas o puzzle oficial diário/arquivo é carregado pelo cliente via Edge Function a partir da agenda embutida no backend.
 
 ## Deploy
 
@@ -75,18 +76,103 @@ Funciona em qualquer host estático com HTTPS (necessário para Service Worker):
 ## Desenvolvimento local
 
 ```bash
-# Qualquer servidor HTTP local funciona para desenvolvimento.
-# O Service Worker registra em localhost sem HTTPS.
-npx serve .
-# ou
+# Frontend + daily-word local
+pnpm start
+
+# mesmo fluxo, mas recriando Supabase local com migrations + seed
+pnpm start:reset
+
+# equivalente explícito só do frontend
+pnpm dev
+
+# ou sem Node tooling
 python -m http.server 8080
 ```
+
+`pnpm start` agora sobe o frontend e também a Edge Function `daily-word`. Se a stack local do Supabase ainda não estiver ativa, o comando roda `supabase start` antes de iniciar a função. Quando você precisar reconstruir o banco local com migrations + seed atualizados, use `pnpm start:reset`.
+
+## Build público
+
+```bash
+pnpm build
+```
+
+O build gera `dist/` com apenas os assets públicos necessários ao runtime:
+
+- `index.html`
+- `manifest.json`
+- `sw.js`
+- `og.png`
+- `icons/`
+- `animations/`
+- `data/dicionario.json`
+
+Arquivos internos como `docs/`, `supabase/`, `scripts/` e `data/words_ptbr_year.json` ficam fora do output público.
 
 Para atualizar a Edge Function no Supabase:
 
 ```bash
 supabase functions deploy daily-word
 ```
+
+A `daily-word` usa uma camada de repositório para buscar a agenda oficial. O código continua com `embedded` como fallback seguro, mas o ambiente remoto já está configurado com `PUZZLE_SCHEDULE_SOURCE=database` e lê a tabela `public.daily_schedule` com as colunas `date`, `word`, `difficulty`, `difficulty_label`, `puzzle` e `created_at`. Para desenvolvimento e rollback controlado, a origem pode ser trocada por variável de ambiente:
+
+O payload público da função também está padronizado em inglês: `{ word, difficulty, difficultyLabel, puzzle, date }`.
+
+Também há dois ajustes opcionais de runtime:
+
+```bash
+PUZZLE_ALLOWED_ORIGIN=*                 # padrão atual; pode ser uma origem exata
+DAILY_WORD_CACHE_MAX_AGE_SECONDS=3600  # padrão atual para respostas 200
+```
+
+```bash
+PUZZLE_SCHEDULE_SOURCE=embedded  # fallback local/operacional
+PUZZLE_SCHEDULE_SOURCE=database  # origem oficial atual no Supabase remoto
+```
+
+Para servir a função localmente em modo banco, use um arquivo de ambiente como `supabase/.env.local` com `PUZZLE_SCHEDULE_SOURCE=database` e rode:
+
+Observação: o CLI ignora entradas de `--env-file` cujo nome comece com `SUPABASE_`, então o arquivo local deve usar aliases como `APP_SUPABASE_URL` e `APP_SUPABASE_SERVICE_ROLE_KEY`.
+
+Observação adicional: a Edge Function sobe em container, então `localhost`/`127.0.0.1` dentro dela não alcança a API REST do Supabase rodando no host. Para ambiente local, use `http://host.docker.internal:54321`.
+
+```bash
+supabase functions serve daily-word --env-file supabase/.env.local --no-verify-jwt
+```
+
+Se você reiniciar o comando enquanto já houver um runtime ativo, o Docker pode retornar conflito para o container `supabase_edge_runtime_gliffo`. Nesse caso, encerre a instância anterior antes de subir outra.
+
+Para preparar o ambiente local do zero com migrations e seed da agenda anual, rode:
+
+```bash
+pnpm supabase:bootstrap-local
+```
+
+Depois que a function estiver servindo localmente, valide o endpoint com:
+
+```bash
+pnpm test:daily-word
+pnpm smoke:daily-word
+pnpm smoke:daily-word 2026-03-18
+pnpm smoke:daily-word:suite
+```
+
+## Qualidade
+
+- Testes unitários do `daily-word`: `pnpm test:daily-word`
+- Smoke HTTP local da function: `pnpm smoke:daily-word:suite`
+- Build do site estático: `pnpm build`
+- CI GitHub Actions: roda build, testes unitários e smoke da function em modo `embedded`
+
+## Vercel
+
+O deploy automático da Vercel via GitHub deve usar:
+
+- `Build Command`: `pnpm build`
+- `Output Directory`: `dist`
+
+O arquivo `vercel.json` já aponta para essa configuração.
 
 ## Regenerar og.png
 

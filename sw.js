@@ -2,16 +2,33 @@
 // Estratégia: cache-first para assets estáticos, network-first para o HTML
 // Versão do cache: incrementar ao fazer deploy com mudanças
 
-const CACHE_STATIC = "glifo-static-v3";
+const CACHE_STATIC = "glifo-static-v4";
 
 // Assets que sempre ficam em cache (fontes, ícones, dicionário)
 const PRECACHE = [
   "/",
+  "/index.html",
+  "/app.css",
+  "/app.js",
   "/manifest.json",
   "/data/dicionario.json",
   "/icons/icon-192.png",
   "/icons/icon-512.png",
 ];
+
+const NETWORK_FIRST_PATHS = new Set([
+  "/",
+  "/index.html",
+  "/app.css",
+  "/app.js",
+  "/manifest.json",
+]);
+
+function isNetworkFirstAsset(request, url) {
+  return (
+    request.destination === "document" || NETWORK_FIRST_PATHS.has(url.pathname)
+  );
+}
 
 // ── INSTALL: pré-cacheia assets essenciais ──
 self.addEventListener("install", (event) => {
@@ -19,7 +36,7 @@ self.addEventListener("install", (event) => {
     caches
       .open(CACHE_STATIC)
       .then((cache) => cache.addAll(PRECACHE))
-      .then(() => self.skipWaiting()),
+      .then(() => globalThis.skipWaiting()),
   );
 });
 
@@ -33,7 +50,7 @@ self.addEventListener("activate", (event) => {
           keys.filter((k) => k !== CACHE_STATIC).map((k) => caches.delete(k)),
         ),
       )
-      .then(() => self.clients.claim()),
+      .then(() => globalThis.clients.claim()),
   );
 });
 
@@ -41,6 +58,10 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);
+
+  if (request.method !== "GET") {
+    return;
+  }
 
   // Só intercepta requisições do próprio domínio
   if (url.origin !== location.origin) {
@@ -51,8 +72,8 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // HTML principal: network-first (garante palavra do dia atualizada)
-  if (request.destination === "document") {
+  // Shell do app: network-first para reduzir risco de JS/CSS stale em deploys
+  if (isNetworkFirstAsset(request, url)) {
     event.respondWith(networkFirst(request));
     return;
   }

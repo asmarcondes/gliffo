@@ -17,7 +17,7 @@ $PALAVRAS = @{
 
 # CICLO_DIF indexado pelo dia da semana .NET (0=Dom, 1=Seg, etc.)
 $CICLO_DIF = @("facil","facil","medio","medio","dificil","dificil","muito_dificil")
-$NIVEL_LABELS = @{
+$DIFFICULTY_LABELS = @{
     facil         = "F" + [char]0x00e1 + "cil"          # Fácil
     medio         = "M" + [char]0x00e9 + "dio"          # Médio
     dificil       = "Dif" + [char]0x00ed + "cil"        # Difícil
@@ -39,8 +39,8 @@ for ($i = 0; $i -lt $totalDias; $i++) {
     $d = $start.AddDays($i)
     $diasDesdeEpoca = [int]($d - $EPOCA).TotalDays
     $diaSemana = [int]$d.DayOfWeek   # 0=Dom..6=Sab (igual ao JS getUTCDay)
-    $nivel = $CICLO_DIF[$diaSemana]
-    $lista = $PALAVRAS[$nivel]
+    $difficulty = $CICLO_DIF[$diaSemana]
+    $lista = $PALAVRAS[$difficulty]
 
     # Mesmo hash do index.html: ((diasDesdeEpoca * 2654435761) >>> 0) % lista.length
     # -band 0xFFFFFFFFL simula o '>>> 0' do JS (trunca para 32-bit unsigned)
@@ -52,11 +52,11 @@ for ($i = 0; $i -lt $totalDias; $i++) {
     $prevWord = $word
 
     $days.Add([PSCustomObject]@{
-        date       = $d.ToString("yyyy-MM-dd")
-        word       = $word
-        nivel      = $nivel
-        nivelLabel = $NIVEL_LABELS[$nivel]
-        puzzle     = $diasDesdeEpoca + 1
+        date            = $d.ToString("yyyy-MM-dd")
+        word            = $word
+        difficulty      = $difficulty
+        difficultyLabel = $DIFFICULTY_LABELS[$difficulty]
+        puzzle          = $diasDesdeEpoca + 1
     })
 }
 
@@ -93,4 +93,4 @@ Write-Host "Salvo em: $outPath ($size KB)"
 
 # Mostra amostra
 Write-Host "--- Proximos 7 dias ---"
-$days[0..6] | Select-Object date,word,nivel,puzzle | Format-Table -AutoSize
+$days[0..6] | Select-Object date,word,difficulty,puzzle | Format-Table -AutoSize
