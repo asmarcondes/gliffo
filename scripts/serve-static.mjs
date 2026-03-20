@@ -24,7 +24,9 @@ const MIME_TYPES = new Map([
 
 function resolvePath(requestUrl) {
   const url = new URL(requestUrl, `http://127.0.0.1:${PORT}`);
-  const pathname = decodeURIComponent(url.pathname === "/" ? "/index.html" : url.pathname);
+  const pathname = decodeURIComponent(
+    url.pathname === "/" ? "/index.html" : url.pathname,
+  );
   const normalized = path.normalize(path.join(ROOT_DIR, pathname));
 
   if (!normalized.startsWith(ROOT_DIR)) {

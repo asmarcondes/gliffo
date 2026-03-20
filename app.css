@@ -978,6 +978,7 @@
         background: var(--surface);
         border: 1px solid var(--border);
           margin: 0;
+        color: var(--text);
         border-radius: 20px 20px 0 0;
         padding: 20px 16px 24px;
         padding-bottom: max(24px, env(safe-area-inset-bottom));
@@ -1072,8 +1073,10 @@
       .modal-title {
         font-family: "DM Serif Display", serif;
         font-size: 1.2rem;
+        color: var(--text);
         margin-bottom: 6px;
         line-height: 1.2;
+        padding-right: 52px;
       }
       .modal-sub {
         font-size: 0.78rem;
@@ -1081,13 +1084,14 @@
         line-height: 1.5;
         margin-bottom: 16px;
         font-weight: 400;
+        padding-right: 52px;
       }
       .mclose {
         position: absolute;
         top: 14px;
         right: 14px;
         background: var(--surface2);
-        border: none;
+        border: 1px solid var(--border);
         color: var(--text3);
         cursor: pointer;
         font-size: 0.85rem;
@@ -1099,9 +1103,16 @@
         border-radius: 50%;
         transition: background 0.15s;
         -webkit-tap-highlight-color: transparent;
+        outline: none;
+        z-index: 2;
       }
       .mclose:hover {
         background: var(--border2);
+      }
+      .mclose:focus-visible {
+        outline: 2px solid rgba(245, 166, 35, 0.8);
+        outline-offset: 2px;
+        box-shadow: 0 0 0 4px rgba(245, 166, 35, 0.18);
       }
 
       /* Key modal boxes */
@@ -1173,7 +1184,7 @@
       /* Stats */
       .stats-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 8px;
         margin-bottom: 16px;
       }
@@ -1182,12 +1193,16 @@
         border-radius: 10px;
         padding: 10px 6px;
         text-align: center;
+        min-width: 0;
       }
       .stat-val {
         font-family: "DM Serif Display", serif;
         font-size: 1.8rem;
         line-height: 1;
         color: var(--amber-400);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
       .stat-lbl {
         font-size: 0.58rem;
@@ -1196,6 +1211,35 @@
         margin-top: 4px;
         text-transform: uppercase;
         letter-spacing: 0.08em;
+        line-height: 1.25;
+      }
+      @media (max-width: 520px) {
+        .modal-title {
+          font-size: 1.08rem;
+          padding-right: 48px;
+        }
+        .modal-sub {
+          padding-right: 48px;
+        }
+        .mclose {
+          top: 12px;
+          right: 12px;
+          width: 34px;
+          height: 34px;
+        }
+        .stats-grid {
+          gap: 6px;
+        }
+        .stat-card {
+          padding: 9px 4px;
+        }
+        .stat-val {
+          font-size: 1.55rem;
+        }
+        .stat-lbl {
+          font-size: 0.54rem;
+          letter-spacing: 0.06em;
+        }
       }
 
       /* Share preview */
@@ -3753,7 +3797,7 @@
         inset: 0;
         z-index: 11000;
         background: rgba(0, 0, 0, 0.72);
-        display: flex;
+        display: none;
         align-items: center;
         justify-content: center;
         opacity: 0;
@@ -3761,6 +3805,7 @@
         transition: opacity 0.25s;
       }
       #snake-modal.show {
+        display: flex;
         opacity: 1;
         pointer-events: auto;
       }
@@ -3784,7 +3829,7 @@
         inset: 0;
         z-index: 11000;
         background: rgba(0, 0, 0, 0.78);
-        display: flex;
+        display: none;
         align-items: center;
         justify-content: center;
         opacity: 0;
@@ -3792,6 +3837,7 @@
         transition: opacity 0.25s;
       }
       #invaders-modal.show {
+        display: flex;
         opacity: 1;
         pointer-events: auto;
       }

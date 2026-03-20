@@ -78,7 +78,8 @@ try {
     `Esperado 425 para puzzle futuro, recebido ${futureScenario.response.status}`,
   );
   assert(
-    futureScenario.payload?.error === "Calma. Esse glifo ainda nao saiu do forno.",
+    futureScenario.payload?.error ===
+      "Calma. Esse glifo ainda nao saiu do forno.",
     "Mensagem inesperada para puzzle futuro",
   );
   assert(

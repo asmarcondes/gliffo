@@ -8,11 +8,17 @@ const RESET = process.argv.includes("--reset");
 const children = new Set();
 let shuttingDown = false;
 
+function isDeviceGuardBlockMessage(message) {
+  return /device guard|bloqueado pela pol.tica|blocked by .*device guard/i.test(
+    message,
+  );
+}
+
 function log(message) {
   console.log(`[local-dev] ${message}`);
 }
 
-function prefixStream(stream, prefix, target) {
+function prefixStream(stream, prefix, target, onLine) {
   let buffer = "";
 
   stream.on("data", (chunk) => {
@@ -23,6 +29,7 @@ function prefixStream(stream, prefix, target) {
     for (const line of lines) {
       if (line.length > 0) {
         target.write(`[${prefix}] ${line}\n`);
+        onLine?.(line);
       }
     }
   });
@@ -30,6 +37,7 @@ function prefixStream(stream, prefix, target) {
   stream.on("end", () => {
     if (buffer.length > 0) {
       target.write(`[${prefix}] ${buffer}\n`);
+      onLine?.(buffer);
     }
   });
 }
@@ -55,20 +63,34 @@ function spawnPnpm(args, options = {}) {
   };
   const child =
     process.platform === "win32"
-      ? spawn(process.env.ComSpec ?? "cmd.exe", [
-          "/d",
-          "/s",
-          "/c",
-          [PNPM_BIN, ...args].map(quoteWindowsArg).join(" "),
-        ], baseOptions)
+      ? spawn(
+          process.env.ComSpec ?? "cmd.exe",
+          [
+            "/d",
+            "/s",
+            "/c",
+            [PNPM_BIN, ...args].map(quoteWindowsArg).join(" "),
+          ],
+          baseOptions,
+        )
       : spawn(PNPM_BIN, args, baseOptions);
 
   if (child.stdout) {
-    prefixStream(child.stdout, options.label ?? args[0], process.stdout);
+    prefixStream(
+      child.stdout,
+      options.label ?? args[0],
+      process.stdout,
+      options.onLine,
+    );
   }
 
   if (child.stderr) {
-    prefixStream(child.stderr, options.label ?? args[0], process.stderr);
+    prefixStream(
+      child.stderr,
+      options.label ?? args[0],
+      process.stderr,
+      options.onLine,
+    );
   }
 
   return child;
@@ -126,7 +148,7 @@ async function ensureSupabase() {
   }
 
   log("Subindo stack local do Supabase...");
-  await runStep("supabase", ["exec", "supabase", "start"]);
+  await runStep("supabase", ["supabase", "start"]);
 }
 
 async function waitForDailyWordReady(timeoutMs = 20000) {
@@ -152,6 +174,93 @@ async function waitForDailyWordReady(timeoutMs = 20000) {
     }
 
     await new Promise((resolve) => setTimeout(resolve, 500));
+  }
+
+  throw new Error("daily-word não respondeu 200 dentro do tempo esperado");
+}
+
+function startDailyWordService() {
+  const state = {
+    output: [],
+    deviceGuardBlocked: false,
+  };
+  const child = startService(
+    "daily-word",
+    [
+      "supabase",
+      "functions",
+      "serve",
+      "daily-word",
+      "--env-file",
+      "supabase/.env.local",
+      "--no-verify-jwt",
+    ],
+    {
+      tolerateExit: (code, signal) => {
+        if (signal) {
+          return false;
+        }
+
+        return code === 1 && state.deviceGuardBlocked;
+      },
+      onLine: (line) => {
+        state.output.push(line);
+        if (isDeviceGuardBlockMessage(line)) {
+          state.deviceGuardBlocked = true;
+        }
+      },
+      onToleratedExit: () => {
+        log(
+          "Device Guard bloqueou o Supabase CLI local; continuando sem a daily-word local.",
+        );
+      },
+    },
+  );
+
+  return { child, state };
+}
+
+async function waitForDailyWordStartup(service, timeoutMs = 20000) {
+  const startedAt = Date.now();
+
+  while (Date.now() - startedAt < timeoutMs) {
+    if (service.state.deviceGuardBlocked) {
+      return { mode: "fallback" };
+    }
+
+    if (service.child.exitCode !== null) {
+      if (service.state.deviceGuardBlocked) {
+        return { mode: "fallback" };
+      }
+
+      throw new Error(
+        `daily-word falhou ao iniciar (código ${service.child.exitCode}).`,
+      );
+    }
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 1500);
+
+    try {
+      const response = await fetch(DAILY_WORD_HEALTH_URL, {
+        method: "GET",
+        signal: controller.signal,
+      });
+
+      if (response.ok) {
+        return { mode: "ready" };
+      }
+    } catch {
+      // Keep polling until the runtime is ready or we detect a tolerated block.
+    } finally {
+      clearTimeout(timeout);
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
+
+  if (service.state.deviceGuardBlocked) {
+    return { mode: "fallback" };
   }
 
   throw new Error("daily-word não respondeu 200 dentro do tempo esperado");
@@ -193,7 +302,7 @@ function shutdown(exitCode = 0) {
   }, 100);
 }
 
-function startService(label, args) {
+function startService(label, args, options = {}) {
   const child =
     label === "web"
       ? spawn(process.execPath, ["scripts/serve-static.mjs"], {
@@ -202,15 +311,15 @@ function startService(label, args) {
           shell: false,
           stdio: ["ignore", "pipe", "pipe"],
         })
-      : spawnPnpm(args, { label });
+      : spawnPnpm(args, { label, onLine: options.onLine });
 
   if (label === "web") {
     if (child.stdout) {
-      prefixStream(child.stdout, label, process.stdout);
+      prefixStream(child.stdout, label, process.stdout, options.onLine);
     }
 
     if (child.stderr) {
-      prefixStream(child.stderr, label, process.stderr);
+      prefixStream(child.stderr, label, process.stderr, options.onLine);
     }
   }
 
@@ -226,6 +335,11 @@ function startService(label, args) {
     const exitReason = signal ?? `codigo ${code}`;
 
     if (shuttingDown) {
+      return;
+    }
+
+    if (options.tolerateExit?.(code, signal)) {
+      options.onToleratedExit?.(code, signal);
       return;
     }
 
@@ -249,19 +363,14 @@ try {
   await ensureSupabase();
 
   log("Subindo daily-word local...");
-  startService("daily-word", [
-    "exec",
-    "supabase",
-    "functions",
-    "serve",
-    "daily-word",
-    "--env-file",
-    "supabase/.env.local",
-    "--no-verify-jwt",
-  ]);
+  const dailyWordService = startDailyWordService();
 
   log("Aguardando daily-word ficar pronta...");
-  await waitForDailyWordReady();
+  const dailyWordStartup = await waitForDailyWordStartup(dailyWordService);
+
+  if (dailyWordStartup.mode === "fallback") {
+    log("Frontend seguirá com fallback local para o puzzle do dia.");
+  }
 
   log("Subindo frontend local...");
   startService("web", []);
