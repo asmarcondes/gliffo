@@ -16,7 +16,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Noto+Serif:ital,wght@0,400;0,700;1,400;1,700&family=Manrope:wght@200;400;500;600;800&display=swap"
       rel="stylesheet"
     />
     <!-- Supabase JS client v2 (local, evita bloqueio de CDN pelo Edge) -->
@@ -148,44 +148,281 @@
         background: var(--surface3);
       }
 
-      /* ─── WELCOME ────────────────────────────────────────────── */
-      .welcome-logo {
-        margin-top: 2.5rem;
+      /* ─── WELCOME REDESIGN ─────────────────────────────────── */
+      #view-welcome {
+        max-width: 100% !important;
+        padding: 0 !important;
+        gap: 0 !important;
+        min-height: 100dvh;
+        background: #0d0d0d;
+        position: relative;
+        overflow: hidden;
+        justify-content: center;
+        align-items: center;
+      }
+      .vw-bg {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+      }
+      .vw-radial {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          ellipse at 50% 58%,
+          rgba(245, 166, 35, 0.07) 0%,
+          transparent 55%
+        );
+      }
+      .vw-glyph-mark {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: min(560px, 88vw);
+        height: min(560px, 88vw);
+        opacity: 0.055;
+        color: #e5e2e1;
+        animation: vwSlowSpin 120s linear infinite;
+      }
+      @keyframes vwSlowSpin {
+        to {
+          transform: translate(-50%, -50%) rotate(360deg);
+        }
+      }
+      .vw-frag {
+        position: absolute;
+        font-family: "Noto Serif", serif;
+        font-style: italic;
+        color: #e5e2e1;
+        opacity: 0.04;
+        user-select: none;
+        animation: vwFloat var(--dur, 20s) ease-in-out infinite;
+        animation-delay: var(--del, 0s);
+      }
+      @keyframes vwFloat {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-14px);
+        }
+      }
+      .vw-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.25rem;
+        width: 100%;
+        max-width: 420px;
+        padding: 2rem 1.25rem 3rem;
+      }
+      .vw-logo {
         display: flex;
         align-items: baseline;
-        justify-content: center;
-        gap: 3px;
-        text-decoration: none;
-        color: inherit;
+        gap: 10px;
+        margin-top: 1.5rem;
       }
-      .welcome-logo-text {
-        font-family: "DM Serif Display", serif;
-        font-size: 2.2rem;
+      .vw-logo-text {
+        font-family: "Noto Serif", serif;
+        font-style: italic;
+        font-weight: 700;
+        font-size: clamp(2.4rem, 7vw, 3.2rem);
+        letter-spacing: -0.02em;
+        color: #e5e2e1;
         line-height: 1;
-        letter-spacing: -0.01em;
-        color: var(--text);
       }
-      .welcome-logo-dot {
-        font-family: "DM Serif Display", serif;
-        font-size: 2.2rem;
+      .vw-logo-text .dot {
         color: var(--amber-400);
-        line-height: 1;
       }
-      .welcome-logo-tag {
+      .vw-arena-badge {
         font-family: "DM Sans", sans-serif;
-        font-size: 0.78rem;
-        font-weight: 300;
-        color: var(--text3);
-        letter-spacing: 0.01em;
-        margin-left: 2px;
+        font-size: 0.6rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        background: var(--amber-400);
+        color: #452b00;
+        padding: 2px 7px 3px;
+        border-radius: 3px;
         align-self: center;
       }
-      .welcome-sub {
+      .vw-sub {
+        font-family: "Noto Serif", serif;
+        font-style: italic;
+        color: #9f8e7a;
+        font-size: 0.92rem;
         text-align: center;
-        color: var(--text2);
-        font-size: 0.9rem;
         line-height: 1.5;
+        margin-top: -0.25rem;
       }
+      .vw-card {
+        width: 100%;
+        background: rgba(20, 20, 20, 0.4);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 4px;
+        padding: 2.5rem 2rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .vw-field {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 0.2rem;
+      }
+      .vw-label {
+        font-family: "Manrope", sans-serif;
+        font-size: 0.65rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #9f8e7a;
+        margin-bottom: 0.5rem;
+      }
+      .vw-input {
+        background: transparent !important;
+        border: none !important;
+        border-bottom: 1px solid rgba(82, 69, 52, 0.4) !important;
+        border-radius: 0 !important;
+        padding: 0.5rem 0 0.6rem !important;
+        font-family: "Manrope", sans-serif !important;
+        font-size: 0.92rem !important;
+        color: #e5e2e1 !important;
+        letter-spacing: 0.04em;
+        box-shadow: none !important;
+        width: 100%;
+      }
+      .vw-input::placeholder {
+        color: rgba(159, 142, 122, 0.35) !important;
+        font-style: italic;
+      }
+      .vw-input:focus {
+        border-bottom-color: var(--amber-400) !important;
+        box-shadow: 0 1px 0 var(--amber-400) !important;
+        outline: none !important;
+      }
+      .vw-btn-primary {
+        background: linear-gradient(45deg, #ffc880, #f5a623) !important;
+        color: #452b00 !important;
+        font-family: "Manrope", sans-serif !important;
+        font-size: 0.75rem !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.12em !important;
+        text-transform: uppercase;
+        border: none !important;
+        border-radius: 2px !important;
+        padding: 0.85rem !important;
+        width: 100%;
+        cursor: pointer;
+        transition:
+          opacity 0.2s,
+          transform 0.15s;
+      }
+      .vw-btn-primary:hover:not(:disabled) {
+        opacity: 0.88 !important;
+        transform: translateY(-1px) !important;
+      }
+      .vw-btn-secondary {
+        background: rgba(255, 255, 255, 0.05) !important;
+        color: #e5e2e1 !important;
+        font-family: "Manrope", sans-serif !important;
+        font-size: 0.75rem !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.12em !important;
+        text-transform: uppercase;
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        border-radius: 2px !important;
+        padding: 0.85rem !important;
+        width: 100%;
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          border-color 0.2s;
+      }
+      .vw-btn-secondary:hover:not(:disabled) {
+        background: rgba(53, 53, 52, 0.8) !important;
+        border-color: rgba(82, 69, 52, 0.5) !important;
+      }
+      .vw-teams {
+        display: flex;
+        justify-content: space-between;
+        padding-top: 0.25rem;
+      }
+      .vw-team {
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.6rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        padding-left: 7px;
+        position: relative;
+      }
+      .vw-team::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        border-radius: 1px;
+      }
+      .vw-team.amber {
+        color: #a3a3a3;
+      }
+      .vw-team.amber::before {
+        background: var(--amber-400);
+      }
+      .vw-team.quartz {
+        color: #a3a3a3;
+      }
+      .vw-team.quartz::before {
+        background: var(--quartz);
+      }
+
+      /* ─── LOBBY LOGO (two-line, like the reference) ──────── */
+      .lobby-logo-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.15rem;
+        padding-top: 0.5rem;
+      }
+      .lobby-logo-main {
+        font-family: "DM Serif Display", serif;
+        font-size: 2.8rem;
+        letter-spacing: -0.01em;
+        line-height: 1;
+        color: var(--text);
+      }
+      .lobby-logo-main .dot {
+        color: var(--amber-400);
+      }
+      .lobby-logo-arena {
+        font-family: "DM Sans", sans-serif;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        color: var(--amber-400);
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .lobby-logo-sub {
+        font-size: 0.82rem;
+        color: var(--text2);
+        margin-top: 0.2rem;
+        text-align: center;
+      }
+      /* .welcome-sub replaced by .vw-sub */
 
       /* ─── FORM ELEMENTS ──────────────────────────────────────── */
       .field-label {
@@ -425,9 +662,16 @@
       .team-header {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        font-weight: 600;
-        font-size: 0.92rem;
+        gap: 0.4rem;
+        font-weight: 700;
+        font-size: 1rem;
+        letter-spacing: 0.01em;
+      }
+      .team-amber .team-header {
+        color: var(--amber-400);
+      }
+      .team-quartz .team-header {
+        color: var(--quartz);
       }
       .team-dot {
         width: 11px;
@@ -442,7 +686,6 @@
         color: var(--text3);
         font-weight: 400;
       }
-      /* team color vars */
       .team-amber {
         --team-color: var(--amber-400);
       }
@@ -461,6 +704,9 @@
         align-items: center;
         gap: 0.45rem;
         font-size: 0.83rem;
+        background: var(--surface2);
+        border-radius: 8px;
+        padding: 5px 7px;
       }
       .player-avatar {
         width: 22px;
@@ -506,6 +752,75 @@
         color: var(--text3);
         font-size: 0.78rem;
         padding: 0.15rem 0;
+      }
+
+      /* ─── LOBBY CODE CENTERPIECE ─────────────────────────── */
+      .lobby-topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+      }
+      .lobby-code-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        padding: 0.75rem 0 0.25rem;
+      }
+      .lobby-code-label {
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text3);
+      }
+      .lobby-code-big {
+        font-family: "DM Serif Display", serif;
+        font-size: 2.2rem;
+        letter-spacing: 0.18em;
+        color: var(--amber-400);
+        cursor: pointer;
+        padding: 8px 24px;
+        border-radius: 12px;
+        border: 1.5px dashed var(--border2);
+        background: none;
+        transition: all 0.2s;
+        line-height: 1;
+      }
+      .lobby-code-big:hover {
+        background: var(--surface);
+        border-color: var(--amber-400);
+        letter-spacing: 0.26em;
+      }
+      .lobby-code-sub {
+        font-size: 10px;
+        color: var(--text3);
+      }
+      .share-link-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        justify-content: center;
+        margin-top: -4px;
+      }
+
+      /* ─── TEAM PANEL HOVER GLOW ──────────────────────────── */
+      .team-amber:not(.mine):hover {
+        border-color: rgba(245, 166, 35, 0.3);
+      }
+      .team-quartz:not(.mine):hover {
+        border-color: rgba(124, 140, 255, 0.3);
+      }
+
+      /* ─── PLAYER STATUS SUBLINE ──────────────────────────── */
+      .player-info-col {
+        flex: 1;
+        min-width: 0;
+      }
+      .player-status-lbl {
+        font-size: 10px;
+        color: var(--text3);
       }
 
       /* ─── SPEC ROW ───────────────────────────────────────────── */
@@ -690,6 +1005,367 @@
         margin-top: 0.5rem;
       }
 
+      /* ─── LOBBY REDESIGN (Stitch) ─────────────────────────── */
+      #view-lobby {
+        max-width: 100% !important;
+        padding: 0 !important;
+        gap: 0 !important;
+        min-height: 100dvh;
+        background: #0d0d0d;
+        position: relative;
+        overflow: hidden;
+        justify-content: flex-start;
+        align-items: flex-start;
+      }
+      .lob-back {
+        position: absolute;
+        top: 1.25rem;
+        left: 1.5rem;
+        z-index: 2;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #a3a3a3;
+        font-family: "Manrope", sans-serif;
+        font-size: 0.65rem;
+        font-weight: 600;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        transition: color 0.2s;
+        padding: 0.25rem 0;
+      }
+      .lob-back:hover {
+        color: #e5e2e1;
+      }
+      .lob-layout {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        width: 100%;
+        padding: 4.5rem 1.25rem 3rem;
+      }
+      @media (min-width: 860px) {
+        .lob-layout {
+          flex-direction: row;
+          align-items: flex-start;
+          padding: 3.5rem 3rem 3rem;
+          gap: 3rem;
+        }
+        .lob-left {
+          flex: 0 0 58%;
+        }
+        .lob-right {
+          flex: 1;
+        }
+      }
+      .lob-left {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      .lob-right {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      .lob-logo {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+      }
+      .lob-logo-text {
+        font-family: "Noto Serif", serif;
+        font-style: italic;
+        font-weight: 700;
+        font-size: clamp(1.9rem, 4.5vw, 2.8rem);
+        letter-spacing: -0.02em;
+        color: #e5e2e1;
+        line-height: 1;
+      }
+      .lob-logo-text .dot {
+        color: var(--amber-400);
+      }
+      .lob-arena-badge {
+        font-family: "Manrope", sans-serif;
+        font-size: 0.58rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        background: var(--amber-400);
+        color: #452b00;
+        padding: 2px 7px 3px;
+        border-radius: 2px;
+        align-self: center;
+      }
+      .lob-status-badge {
+        font-family: "Manrope", sans-serif;
+        font-size: 0.55rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        background: rgba(91, 191, 160, 0.12);
+        color: #5bbfa0;
+        padding: 2px 6px 3px;
+        border-radius: 2px;
+        align-self: center;
+      }
+      /* TEAMS GLASS CARD */
+      .lob-teams-card {
+        background: rgba(20, 20, 20, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        display: flex;
+        flex-direction: row;
+      }
+      .lob-team {
+        flex: 1;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        min-height: 260px;
+      }
+      .lob-team + .lob-team {
+        border-left: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .lob-team-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-family: "Manrope", sans-serif;
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        padding-left: 0.7rem;
+        position: relative;
+        margin-bottom: 0.5rem;
+      }
+      .lob-team-header::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        border-radius: 1px;
+      }
+      .lob-team-header.amber {
+        color: var(--amber-400);
+      }
+      .lob-team-header.amber::before {
+        background: var(--amber-400);
+      }
+      .lob-team-header.quartz {
+        color: var(--quartz);
+      }
+      .lob-team-header.quartz::before {
+        background: var(--quartz);
+      }
+      .lob-join-btn {
+        margin-top: auto;
+        width: 100%;
+        padding: 0.8rem !important;
+        font-family: "Manrope", sans-serif !important;
+        font-size: 0.68rem !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.18em !important;
+        text-transform: uppercase;
+        border-radius: 0 !important;
+        transition: opacity 0.2s !important;
+      }
+      .lob-join-amber {
+        background: linear-gradient(45deg, #ffc880, #f5a623) !important;
+        color: #452b00 !important;
+        border: none !important;
+      }
+      .lob-join-amber:hover:not(:disabled) {
+        opacity: 0.88 !important;
+      }
+      .lob-join-quartz {
+        background: rgba(255, 255, 255, 0.05) !important;
+        color: #e5e2e1 !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      }
+      .lob-join-quartz:hover:not(:disabled) {
+        background: rgba(255, 255, 255, 0.1) !important;
+      }
+      /* CODE SECTION */
+      .lob-code-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 1rem 0 0.25rem;
+      }
+      .lob-code-label {
+        font-family: "Manrope", sans-serif;
+        font-size: 0.55rem;
+        font-weight: 700;
+        letter-spacing: 0.7em;
+        text-transform: uppercase;
+        color: #a3a3a3;
+      }
+      .lob-code-display {
+        font-family: "Noto Serif", serif;
+        font-style: italic;
+        font-weight: 700;
+        font-size: clamp(2.8rem, 7vw, 4.5rem);
+        letter-spacing: 0.04em;
+        color: var(--amber-400);
+        filter: drop-shadow(0 0 12px rgba(245, 166, 35, 0.28));
+        background: none;
+        border: none;
+        cursor: pointer;
+        line-height: 1;
+        transition: filter 0.2s;
+        text-align: center;
+        padding: 0;
+      }
+      .lob-code-display:hover {
+        filter: drop-shadow(0 0 22px rgba(245, 166, 35, 0.5));
+      }
+      .lob-code-hint {
+        font-family: "Manrope", sans-serif;
+        font-size: 0.6rem;
+        letter-spacing: 0.1em;
+        color: #a3a3a3;
+        opacity: 0.6;
+      }
+      /* CONFIG CARD override */
+      .lob-config-card {
+        background: rgba(20, 20, 20, 0.4) !important;
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        border-radius: 0 !important;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+      .lob-config-title {
+        font-family: "Manrope", sans-serif;
+        font-size: 0.6rem;
+        font-weight: 700;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: rgba(229, 226, 225, 0.45);
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      /* START BUTTON override */
+      .lob-start-btn {
+        background: linear-gradient(
+          45deg,
+          rgba(255, 200, 128, 0.35),
+          rgba(245, 166, 35, 0.35)
+        ) !important;
+        color: rgba(229, 226, 225, 0.3) !important;
+        border-radius: 0 !important;
+        letter-spacing: 0.25em !important;
+        text-transform: uppercase;
+        font-family: "Manrope", sans-serif !important;
+        font-size: 0.72rem !important;
+        font-weight: 700 !important;
+        border: none !important;
+        cursor: not-allowed !important;
+      }
+      .lob-start-btn:not(:disabled) {
+        background: linear-gradient(45deg, #ffc880, #f5a623) !important;
+        color: #452b00 !important;
+        cursor: pointer !important;
+      }
+      .lob-start-hint {
+        text-align: center;
+        font-size: 0.6rem;
+        letter-spacing: 0.1em;
+        color: #a3a3a3;
+        opacity: 0.6;
+        font-style: italic;
+        margin-top: 0.5rem;
+      }
+
+      /* ─── DEBUG BAR ───────────────────────────────────────────── */
+      #debug-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 9999;
+        background: rgba(10, 10, 10, 0.92);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid rgba(245, 166, 35, 0.3);
+        display: none;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.4rem 1rem;
+        flex-wrap: wrap;
+      }
+      #debug-bar.open {
+        display: flex;
+      }
+      .dbg-label {
+        font-family: "Manrope", monospace;
+        font-size: 0.58rem;
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--amber-400);
+        margin-right: 0.25rem;
+      }
+      .dbg-sep {
+        width: 1px;
+        height: 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        margin: 0 0.25rem;
+      }
+      .dbg-btn {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: #e5e2e1;
+        font-family: "Manrope", sans-serif;
+        font-size: 0.62rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        padding: 0.2rem 0.6rem;
+        cursor: pointer;
+        border-radius: 2px;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+        white-space: nowrap;
+      }
+      .dbg-btn:hover {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(245, 166, 35, 0.4);
+      }
+      .dbg-btn.active {
+        background: rgba(245, 166, 35, 0.15);
+        border-color: var(--amber-400);
+        color: var(--amber-400);
+      }
+      .dbg-phase-btn.active {
+        background: rgba(124, 140, 255, 0.15);
+        border-color: var(--quartz);
+        color: var(--quartz);
+      }
+      .dbg-close {
+        margin-left: auto;
+        background: none;
+        border: none;
+        color: #a3a3a3;
+        font-size: 0.9rem;
+        cursor: pointer;
+        padding: 0.1rem 0.3rem;
+        transition: color 0.15s;
+      }
+      .dbg-close:hover {
+        color: #e5e2e1;
+      }
+
       /* ─── GAME VIEW ─────────────────────────────────────────── */
       #view-game {
         flex-direction: column;
@@ -835,6 +1511,107 @@
         flex-direction: column;
         gap: 0.5rem;
       }
+      .proposal-entry-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+      }
+      .proposal-entry-slots {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: nowrap;
+      }
+      .proposal-slot {
+        width: 44px;
+        height: 44px;
+        border: 1.5px solid rgba(255, 255, 255, 0.08);
+        background: rgba(36, 30, 19, 0.62);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        transition:
+          border-color 0.15s,
+          box-shadow 0.15s,
+          background 0.15s,
+          transform 0.12s;
+        cursor: pointer;
+      }
+      .proposal-slot.active {
+        border-color: var(--amber-400);
+        box-shadow: 0 0 0 2px rgba(245, 166, 35, 0.18);
+      }
+      .proposal-slot.filled {
+        background: rgba(32, 28, 22, 0.82);
+      }
+      .proposal-slot svg {
+        width: 62%;
+        height: 62%;
+        display: block;
+      }
+      .proposal-slot-dash {
+        width: 16px;
+        height: 1px;
+        background: rgba(229, 226, 225, 0.22);
+        pointer-events: none;
+      }
+      .proposal-entry-hint {
+        text-align: center;
+        font-family: Manrope, sans-serif;
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--text3);
+      }
+      .proposal-keyboard {
+        display: none;
+        flex-direction: column;
+        gap: 6px;
+        width: 100%;
+      }
+      .proposal-krow {
+        display: flex;
+        gap: 5px;
+        justify-content: center;
+      }
+      .proposal-kbtn {
+        height: 48px;
+        min-width: 30px;
+        flex: 1;
+        max-width: 42px;
+        border: none;
+        border-radius: 10px;
+        background: rgba(54, 45, 34, 0.9);
+        color: var(--text);
+        font-family: Manrope, sans-serif;
+        font-size: 0.82rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        transition:
+          transform 0.08s,
+          opacity 0.1s,
+          background 0.12s;
+      }
+      .proposal-kbtn:active {
+        transform: scale(0.94);
+        opacity: 0.82;
+      }
+      .proposal-kbtn.wide {
+        max-width: 64px;
+        flex: 1.45;
+        font-size: 0.76rem;
+      }
+      #btn-submit-proposal:disabled {
+        opacity: 0.45 !important;
+        filter: saturate(0.6);
+        cursor: not-allowed;
+      }
       .proposal-input-area input[type="text"] {
         text-transform: uppercase;
         letter-spacing: 0.15em;
@@ -863,29 +1640,39 @@
       /* vote cards */
       .vote-cards {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0.55rem;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 1rem;
+        width: 100%;
       }
       .vote-card {
-        padding: 0.7rem 0.85rem;
-        border-radius: 0.75rem;
-        border: 2px solid var(--border2);
-        background: var(--surface);
+        padding: 0.9rem;
+        border-radius: 2px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: rgba(20, 20, 20, 0.46);
+        backdrop-filter: blur(20px);
         cursor: pointer;
         transition:
           border-color 0.15s,
-          background 0.15s;
-        text-align: center;
+          background 0.15s,
+          transform 0.15s,
+          box-shadow 0.15s;
         user-select: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.8rem;
       }
       .vote-card:hover:not(.my-vote) {
-        border-color: var(--amber-400);
-        background: var(--surface2);
+        border-color: rgba(245, 166, 35, 0.22);
+        transform: translateY(-1px);
       }
       .vote-card.my-vote {
-        border-color: var(--amber-400);
-        background: var(--surface2);
+        border-color: rgba(245, 166, 35, 0.28);
+        background: rgba(30, 24, 17, 0.62);
         animation: cardPulse 1.4s ease-in-out infinite;
+      }
+      .vote-card.vote-card-locked {
+        cursor: default;
       }
       @keyframes cardPulse {
         0%,
@@ -896,20 +1683,183 @@
           box-shadow: 0 0 0 4px rgba(245, 166, 35, 0.35);
         }
       }
+      .vote-instruction {
+        font-family: "Noto Serif", serif;
+        font-style: italic;
+        font-size: 1.2rem;
+        color: var(--text);
+        opacity: 0.92;
+        text-align: center;
+        margin-bottom: 1.4rem;
+        letter-spacing: -0.01em;
+      }
+      .vote-reference {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.65rem;
+        width: 100%;
+        margin-bottom: 1.5rem;
+      }
+      .vote-reference-box {
+        width: 170px;
+        height: 170px;
+      }
+      .vote-reference-sub {
+        font-family: Manrope, sans-serif;
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--text3);
+        text-align: center;
+      }
+      .vote-card-label {
+        align-self: stretch;
+        font-family: Manrope, sans-serif;
+        font-size: 8px;
+        font-weight: 800;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--text3);
+        text-align: left;
+      }
+      .vote-glyph-shell {
+        width: 100%;
+        aspect-ratio: 1;
+        min-height: 140px;
+        position: relative;
+        background: rgba(17, 17, 17, 0.52);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        overflow: hidden;
+      }
+      .vote-glyph-shell::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(245, 166, 35, 0.06), transparent 48%);
+        pointer-events: none;
+      }
+      .vote-glyph-front {
+        position: absolute;
+        inset: 0;
+      }
+      .vote-glyph-front svg {
+        position: absolute;
+      }
+      .vote-card-foot {
+        display: flex;
+        width: 100%;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 0.75rem;
+      }
+      .vote-card-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 0.14rem;
+        min-width: 0;
+      }
+      .vote-card-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+        align-items: stretch;
+      }
       .vote-card .word {
-        font-size: 1.05rem;
+        font-family: "Noto Serif", serif;
+        font-style: italic;
+        font-size: 1rem;
         font-weight: 700;
-        letter-spacing: 0.1em;
+        letter-spacing: 0.03em;
+        text-align: left;
       }
       .vote-card .proposer {
-        font-size: 0.72rem;
+        font-size: 0.68rem;
         color: var(--text3);
-        margin-top: 2px;
+        text-align: left;
       }
       .vote-card .vcount {
-        font-size: 0.72rem;
+        font-size: 0.68rem;
         color: var(--text2);
-        margin-top: 3px;
+        text-align: left;
+      }
+      .vote-select-btn {
+        min-width: 92px;
+        padding: 0.55rem 0.75rem;
+        border: none;
+        border-radius: 2px;
+        background: linear-gradient(45deg, var(--amber-400), var(--amber-500));
+        color: #452b00;
+        font-family: Manrope, sans-serif;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+      .vote-select-btn:disabled {
+        opacity: 0.45;
+        filter: saturate(0.6);
+      }
+      .vote-turn-btn {
+        min-width: 92px;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 2px;
+        background: rgba(255,255,255,0.04);
+        color: var(--text);
+        font-family: Manrope, sans-serif;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+      .vote-turn-btn:disabled {
+        opacity: 0.4;
+      }
+      .vote-mode-note {
+        width: 100%;
+        text-align: center;
+        color: var(--text3);
+        font-family: Manrope, sans-serif;
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        margin-top: 0.1rem;
+      }
+      @media (max-width: 899px) {
+        .vote-reference-box {
+          width: 144px;
+          height: 144px;
+        }
+      }
+      .vote-status-log {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        width: 100%;
+        margin-top: 0.3rem;
+      }
+      .vote-status-item {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        color: rgba(229, 226, 225, 0.7);
+        font-family: Manrope, sans-serif;
+        font-size: 11px;
+      }
+      .vote-status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: rgba(245, 166, 35, 0.45);
+        flex-shrink: 0;
+      }
+      .vote-status-item.pending .vote-status-dot {
+        background: rgba(229, 226, 225, 0.2);
+      }
+      .vote-status-item strong {
+        font-weight: 800;
+        letter-spacing: 0.04em;
+      }
       }
 
       /* feedback */
@@ -982,17 +1932,238 @@
         color: var(--text3);
         opacity: 0.55;
       }
-      .outcome-msg {
-        font-family: "DM Serif Display", serif;
-        font-size: 1.6rem;
+      .feedback-stage {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+        width: 100%;
+        align-items: center;
+      }
+      .feedback-lead {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.45rem;
         text-align: center;
-        letter-spacing: -0.01em;
+      }
+      .feedback-kicker {
+        font-size: 0.66rem;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: var(--text3);
+        font-weight: 800;
+      }
+      .feedback-title {
+        margin: 0;
+        font-family: "Noto Serif", serif;
+        font-style: italic;
+        font-size: clamp(2rem, 5vw, 3.1rem);
+        line-height: 0.95;
+        letter-spacing: -0.04em;
+        text-align: center;
+      }
+      .feedback-title.win {
+        color: var(--amber-400);
+      }
+      .feedback-title.fail {
+        color: var(--text);
+      }
+      .feedback-subtitle {
+        max-width: 560px;
+        margin: 0;
+        color: var(--text2);
+        font-size: 0.92rem;
+        line-height: 1.55;
+        text-align: center;
+      }
+      .feedback-compare {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        width: 100%;
+        max-width: 860px;
+      }
+      .feedback-ref,
+      .feedback-word-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem;
+        min-width: 0;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.02));
+        backdrop-filter: blur(18px);
+      }
+      .feedback-ref-box {
+        width: 170px;
+        height: 170px;
+      }
+      .feedback-chosen-box {
+        width: 170px;
+        height: 170px;
+      }
+      .feedback-arrow {
+        font-size: 2rem;
+        opacity: 0.4;
+        color: var(--text3);
+        line-height: 1;
+      }
+      .feedback-word-value {
+        font-family: "Noto Serif", serif;
+        font-style: italic;
+        font-size: 1.4rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        color: var(--text);
+        text-transform: uppercase;
+        text-align: center;
+      }
+      .feedback-word-sub {
+        text-align: center;
+        color: var(--text3);
+        font-size: 0.72rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+      .feedback-slots {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        flex-wrap: wrap;
+        width: 100%;
+      }
+      .outcome-msg {
+        font-family: "Noto Serif", serif;
+        font-style: italic;
+        font-size: 2.1rem;
+        text-align: center;
+        letter-spacing: -0.02em;
       }
       .outcome-msg.win {
-        color: var(--correct);
+        color: var(--amber-400);
       }
       .outcome-msg.fail {
         color: var(--text2);
+      }
+      .feedback-outcome-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        min-height: 160px;
+        width: min(100%, 620px);
+        position: relative;
+        padding: 1rem 1rem 0.85rem;
+      }
+      .feedback-outcome-block::before {
+        content: "";
+        position: absolute;
+        width: 260px;
+        height: 260px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(245,166,35,0.12), transparent 68%);
+        filter: blur(10px);
+        pointer-events: none;
+      }
+      .feedback-outcome-block.fail::before {
+        background: radial-gradient(circle, rgba(255,255,255,0.05), transparent 68%);
+      }
+      .feedback-outcome-icon {
+        position: relative;
+        z-index: 1;
+        font-size: 1.8rem;
+        color: var(--amber-400);
+      }
+      .feedback-outcome-block.fail .feedback-outcome-icon {
+        color: var(--text2);
+      }
+      .feedback-outcome-sub {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        color: var(--text2);
+        font-size: 0.88rem;
+      }
+      .feedback-meta-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.8rem;
+        width: min(100%, 860px);
+      }
+      .feedback-meta-card {
+        padding: 0.95rem 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: rgba(255, 255, 255, 0.035);
+        min-height: 112px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 0.35rem;
+      }
+      .feedback-meta-label {
+        color: var(--text3);
+        font-size: 0.62rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        font-weight: 800;
+      }
+      .feedback-meta-value {
+        color: var(--text);
+        font-family: "Noto Serif", serif;
+        font-style: italic;
+        font-size: 1.1rem;
+        line-height: 1.15;
+      }
+      .feedback-meta {
+        text-align: center;
+        color: var(--text2);
+        font-size: 0.84rem;
+        max-width: 760px;
+        line-height: 1.55;
+      }
+      .feedback-meta strong {
+        color: var(--text);
+        font-size: 1rem;
+        letter-spacing: 0.08em;
+      }
+      .feedback-reactions {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+      }
+      .feedback-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+        width: min(100%, 360px);
+      }
+      @media (max-width: 899px) {
+        .feedback-compare {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+        .feedback-arrow {
+          transform: rotate(90deg);
+          margin: -0.15rem 0;
+        }
+        .feedback-ref-box {
+          width: 144px;
+          height: 144px;
+        }
+        .feedback-chosen-box {
+          width: 144px;
+          height: 144px;
+        }
+        .feedback-word-value {
+          font-size: 1.3rem;
+        }
+        .feedback-meta-grid {
+          grid-template-columns: 1fr;
+        }
       }
 
       /* finished */
@@ -1061,6 +2232,173 @@
         }
       }
 
+      .between-stage {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: min(72vh, 680px);
+        gap: 1rem;
+        text-align: center;
+        padding: 1.5rem 0 0.75rem;
+      }
+      .between-kicker {
+        font-size: 0.68rem;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: var(--text3);
+        font-weight: 800;
+      }
+      .between-team-heading {
+        margin: 0;
+        font-family: "Noto Serif", serif;
+        font-style: italic;
+        font-size: clamp(2.35rem, 6vw, 4.5rem);
+        line-height: 0.9;
+        letter-spacing: -0.045em;
+        text-transform: uppercase;
+      }
+      .between-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.4rem 1rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: transparent;
+        font-size: 0.72rem;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--text2);
+      }
+      .between-status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: currentColor;
+        box-shadow: 0 0 14px currentColor;
+      }
+      .between-lead {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.55rem;
+      }
+      .between-clock-wrap {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        width: min(100%, 420px);
+        padding: 0.4rem 0 0.2rem;
+      }
+      .between-count {
+        display: block;
+        font-family: "Noto Serif", serif;
+        font-size: clamp(4.5rem, 16vw, 8.5rem);
+        line-height: 0.82;
+        font-weight: 800;
+        letter-spacing: -0.08em;
+        text-shadow: 0 0 24px rgba(246, 190, 90, 0.2), 0 0 48px rgba(246, 190, 90, 0.12);
+      }
+      .between-caption {
+        font-size: 0.66rem;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: var(--text3);
+      }
+      .between-sparks {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+      }
+      .between-sparks span {
+        width: 5px;
+        height: 5px;
+        border-radius: 999px;
+        background: currentColor;
+        opacity: 0.34;
+      }
+      .between-sparks span:nth-child(2) {
+        opacity: 0.62;
+      }
+      .between-sparks span:nth-child(3) {
+        opacity: 0.9;
+      }
+      .between-support {
+        width: min(100%, 540px);
+        margin: 0;
+        color: var(--text2);
+        font-size: 0.98rem;
+        line-height: 1.55;
+      }
+      .between-word-chip {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 0;
+        max-width: 100%;
+        padding: 0.55rem 1rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text);
+        font-size: 0.76rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+      .between-meta-card {
+        width: min(100%, 360px);
+        margin-top: 1rem;
+        padding: 1rem 1.15rem;
+        border-radius: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: rgba(255, 255, 255, 0.04);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      }
+      .between-meta-label {
+        display: block;
+        margin-bottom: 0.45rem;
+        font-size: 0.58rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--text3);
+        font-weight: 800;
+      }
+      .between-meta-value {
+        color: var(--text2);
+        font-size: 0.82rem;
+        line-height: 1.45;
+      }
+      .between-word-chip strong {
+        display: inline-block;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .between-host-actions {
+        display: flex;
+        justify-content: center;
+        margin-top: 0.45rem;
+      }
+      @media (max-width: 640px) {
+        .between-stage {
+          min-height: min(70vh, 560px);
+          padding-top: 0.75rem;
+        }
+        .between-clock-wrap {
+          width: 100%;
+        }
+        .between-support {
+          font-size: 0.88rem;
+        }
+        .between-meta-card {
+          width: 100%;
+        }
+      }
+
       /* ─── SPINNER ────────────────────────────────────────────── */
       .spinner {
         display: inline-block;
@@ -1074,7 +2412,7 @@
       }
       .spinner-dark {
         border-color: rgba(0, 0, 0, 0.15);
-        border-top-color: #1c1008;
+            between: ["TRANSIÇÃO", "between", ""],
       }
       @keyframes spin {
         to {
@@ -1398,6 +2736,1401 @@
       .phase-card.shaking {
         animation: phase-shake 0.4s ease;
       }
+
+      /* ─── BREATHING GLYPH ────────────────────────────────────── */
+      @keyframes breathe1 {
+        0%,
+        100% {
+          opacity: 0.72;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1.016);
+        }
+      }
+      @keyframes breathe2 {
+        0%,
+        100% {
+          opacity: 0.62;
+          transform: scale(1) rotate(0.3deg);
+        }
+        50% {
+          opacity: 0.95;
+          transform: scale(1.01) rotate(-0.3deg);
+        }
+      }
+      @keyframes breathe3 {
+        0%,
+        100% {
+          opacity: 0.68;
+          transform: scale(1.01);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(0.994);
+        }
+      }
+      .glyph-wrap.breathing svg:nth-child(1) {
+        animation: breathe1 3.8s ease-in-out infinite;
+      }
+      .glyph-wrap.breathing svg:nth-child(2) {
+        animation: breathe2 4.4s ease-in-out infinite 0.6s;
+      }
+      .glyph-wrap.breathing svg:nth-child(3) {
+        animation: breathe3 3.2s ease-in-out infinite 1.1s;
+      }
+      .glyph-wrap.breathing svg:nth-child(4) {
+        animation: breathe1 5s ease-in-out infinite 0.3s;
+      }
+      .glyph-wrap.breathing svg:nth-child(5) {
+        animation: breathe2 4.1s ease-in-out infinite 1.5s;
+      }
+
+      /* ─── TIMER DRAMA ────────────────────────────────────────── */
+      @keyframes timerShake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        20% {
+          transform: translateX(-3px) rotate(-0.5deg);
+        }
+        40% {
+          transform: translateX(3px) rotate(0.5deg);
+        }
+        60% {
+          transform: translateX(-2px);
+        }
+        80% {
+          transform: translateX(2px);
+        }
+      }
+      @keyframes timerFlash {
+        0%,
+        100% {
+          background: var(--gc2);
+        }
+        50% {
+          background: #ff3b2f;
+        }
+      }
+      @keyframes timerNumPop {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.28);
+        }
+      }
+      .game-timer.urgent-shake {
+        animation: timerShake 0.35s ease infinite;
+      }
+      .timer-bar-fill.flashing {
+        animation: timerFlash 0.38s infinite;
+      }
+      .timer-num.popping {
+        color: var(--gc2);
+        animation: timerNumPop 0.38s ease infinite;
+      }
+
+      /* ─── PHASE TRANSITIONS ──────────────────────────────────── */
+      @keyframes phaseIn {
+        from {
+          opacity: 0;
+          transform: translateY(18px) scale(0.97);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      .phase-card.phase-enter {
+        animation: phaseIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+
+      /* ─── SLOT SNAP / UNSNAP ─────────────────────────────────── */
+      @keyframes slotSnap {
+        0% {
+          transform: scale(0.45) translateY(-7px);
+          opacity: 0;
+        }
+        65% {
+          transform: scale(1.18) translateY(1px);
+          opacity: 1;
+        }
+        82% {
+          transform: scale(0.94);
+        }
+        100% {
+          transform: scale(1) translateY(0);
+          opacity: 1;
+        }
+      }
+      @keyframes slotUnsnap {
+        0% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(0.35) translateY(5px);
+          opacity: 0;
+        }
+      }
+      .slot-snap {
+        animation: slotSnap 0.18s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      }
+      .slot-unsnap {
+        animation: slotUnsnap 0.12s ease-in both;
+      }
+
+      /* ─── PLAYER ENTER / EXIT ────────────────────────────────── */
+      @keyframes playerIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px) scale(0.95);
+          max-height: 0;
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+          max-height: 60px;
+        }
+      }
+      @keyframes playerOut {
+        from {
+          opacity: 1;
+          transform: translateX(0);
+          max-height: 60px;
+        }
+        to {
+          opacity: 0;
+          transform: translateX(-18px);
+          max-height: 0;
+          margin-bottom: -6px;
+        }
+      }
+      .player-item.entering {
+        animation: playerIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+      .player-item.exiting {
+        animation: playerOut 0.25s ease-in both;
+      }
+
+      /* ─── VOTE WINNER GLOW ───────────────────────────────────── */
+      @keyframes winnerGlow {
+        0%,
+        100% {
+          box-shadow:
+            0 0 0 2px var(--amber-400),
+            0 0 24px rgba(245, 166, 35, 0.4);
+        }
+        50% {
+          box-shadow:
+            0 0 0 2px var(--amber-400),
+            0 0 50px rgba(245, 166, 35, 0.75);
+        }
+      }
+      .vote-card.winner-reveal {
+        border-color: var(--amber-400);
+        animation: winnerGlow 1.2s ease infinite;
+      }
+
+      /* ─── ONLINE DOT PULSE ───────────────────────────────────── */
+      @keyframes pulseGreen {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+          box-shadow: 0 0 0 0 rgba(74, 157, 111, 0.4);
+        }
+        50% {
+          opacity: 0.8;
+          transform: scale(0.9);
+          box-shadow: 0 0 0 4px rgba(74, 157, 111, 0);
+        }
+      }
+      .online-dot:not(.offline) {
+        animation: pulseGreen 2s ease-in-out infinite;
+      }
+
+      /* ─── INPUT SNAP ─────────────────────────────────────────── */
+      @keyframes inputSnap {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.025);
+        }
+      }
+      .input-snap {
+        animation: inputSnap 0.14s ease;
+      }
+
+      /* ─── VOTE CARD ENTER (stagger) ──────────────────────────── */
+      @keyframes vSlideUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      .vote-cards .vote-card {
+        animation: vSlideUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+      .vote-cards .vote-card:nth-child(2) {
+        animation-delay: 65ms;
+      }
+      .vote-cards .vote-card:nth-child(3) {
+        animation-delay: 130ms;
+      }
+      .vote-cards .vote-card:nth-child(4) {
+        animation-delay: 195ms;
+      }
+
+      /* ─── VOTE COUNT POP ─────────────────────────────────────── */
+      @keyframes popAnim {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.5);
+          color: var(--amber-400);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      .vcount-pop {
+        animation: popAnim 0.22s ease;
+      }
+
+      /* ─── FEEDBACK SLOT REVEAL (stagger) ────────────────────── */
+      @keyframes slotReveal {
+        0% {
+          transform: scaleY(0) rotateX(90deg);
+          opacity: 0;
+        }
+        60% {
+          transform: scaleY(1.12) rotateX(-5deg);
+          opacity: 1;
+        }
+        100% {
+          transform: scaleY(1) rotateX(0);
+        }
+      }
+      .feedback-slot.reveal {
+        animation: slotReveal 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      }
+      .feedback-slot.reveal:nth-child(1) {
+        animation-delay: 0ms;
+      }
+      .feedback-slot.reveal:nth-child(2) {
+        animation-delay: 90ms;
+      }
+      .feedback-slot.reveal:nth-child(3) {
+        animation-delay: 180ms;
+      }
+      .feedback-slot.reveal:nth-child(4) {
+        animation-delay: 270ms;
+      }
+      .feedback-slot.reveal:nth-child(5) {
+        animation-delay: 360ms;
+      }
+      .feedback-slot.reveal:nth-child(6) {
+        animation-delay: 450ms;
+      }
+      .feedback-slot.reveal:nth-child(7) {
+        animation-delay: 540ms;
+      }
+
+      /* ─── PHASE INDICATOR BAR ────────────────────────────────── */
+      #phase-indicator {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 14px;
+        background: var(--surface2);
+        border-bottom: 1px solid var(--border2);
+        border-radius: 10px 10px 0 0;
+        min-height: 36px;
+        flex-shrink: 0;
+      }
+      .phase-pill-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .phase-pill-badge {
+        padding: 3px 10px;
+        border-radius: 20px;
+        background: rgba(245, 166, 35, 0.15);
+        color: var(--amber-400);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        transition:
+          background 0.3s,
+          color 0.3s;
+      }
+      .phase-pill-badge.vote {
+        background: rgba(124, 140, 255, 0.15);
+        color: var(--quartz);
+      }
+      .phase-pill-badge.feedback {
+        background: rgba(74, 157, 111, 0.15);
+        color: var(--correct);
+      }
+      .phase-pill-badge.between {
+        background: var(--surface3);
+        color: var(--text2);
+      }
+      .phase-turn-label {
+        font-size: 11px;
+        color: var(--text3);
+      }
+
+      /* ─── BETWEEN COUNTDOWN ──────────────────────────────────── */
+      @keyframes betweenPulse {
+        0% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        40% {
+          transform: scale(1.12);
+        }
+        100% {
+          transform: scale(0.88);
+          opacity: 0.45;
+        }
+      }
+      .between-count {
+        animation: betweenPulse 1s ease infinite;
+      }
+
+      /* ─── VOTE CARD 3D FLIP ──────────────────────────────────── */
+      .vote-glyph-area {
+        width: 80px;
+        height: 80px;
+        perspective: 700px;
+        border-radius: 10px;
+        flex-shrink: 0;
+        margin: 0 auto;
+      }
+      .vote-glyph-inner {
+        width: 100%;
+        height: 100%;
+        transform-style: preserve-3d;
+        transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 10px;
+        position: relative;
+      }
+      .vote-glyph-inner.flipped {
+        transform: rotateY(180deg);
+      }
+      .vote-glyph-front,
+      .vote-glyph-back {
+        position: absolute;
+        inset: 0;
+        border-radius: 10px;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        overflow: hidden;
+        background: var(--surface2);
+      }
+      .vote-glyph-back {
+        transform: rotateY(180deg);
+        background: var(--surface3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+      }
+      .vote-glyph-front {
+        position: relative;
+      }
+      .vote-glyph-front svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      /* ─── PROPOSE SIDE-BY-SIDE ───────────────────────────────── */
+      .propose-glyphs {
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+      .propose-glyph-col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+      }
+      .propose-mini-label {
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text3);
+      }
+      .propose-vs {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        color: var(--text3);
+        align-self: center;
+        margin-top: 18px;
+      }
+      .propose-preview-slots {
+        display: flex;
+        gap: 4px;
+        justify-content: center;
+        flex-wrap: wrap;
+        min-height: 26px;
+      }
+
+      /* ─── DESKTOP 3-COL LAYOUT ───────────────────────────────── */
+      .arena-layout {
+        display: flex;
+        flex: 1;
+        min-height: 0;
+        overflow: hidden;
+      }
+      .arena-central {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+      }
+      .arena-side-panel {
+        display: none;
+      }
+
+      @media (min-width: 900px) {
+        #view-game {
+          max-width: none;
+          padding: 0;
+          gap: 0;
+          flex-direction: column;
+          min-height: 100dvh;
+        }
+        .arena-layout {
+          display: grid;
+          grid-template-columns: 220px 1fr 220px;
+        }
+        .arena-side-panel {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          padding: 14px 12px;
+          overflow-y: auto;
+          background: var(--bg2);
+          border-right: 1px solid var(--border);
+        }
+        .arena-side-panel.right {
+          border-right: none;
+          border-left: 1px solid var(--border);
+        }
+        .arena-side-panel.panel-active {
+          box-shadow:
+            inset 2px 0 0 var(--amber-400),
+            inset 0 0 40px rgba(245, 166, 35, 0.04);
+        }
+        .arena-side-panel.right.panel-active {
+          box-shadow:
+            inset -2px 0 0 var(--amber-400),
+            inset 0 0 40px rgba(245, 166, 35, 0.04);
+        }
+        .arena-side-panel.panel-inactive {
+          opacity: 0.55;
+        }
+        .game-top {
+          display: none;
+        }
+        .phase-card {
+          flex: 1;
+          overflow-y: auto;
+          padding: 0.8rem 1.2rem;
+        }
+        #glyphs-row {
+          display: flex !important;
+        }
+        #footer-strip {
+          display: flex !important;
+        }
+      }
+
+      /* ─── DESKTOP SIDE PANEL COMPONENTS ─────────────────────── */
+      .dp-team-name {
+        font-weight: 700;
+        font-size: 13px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--border);
+      }
+      .dp-team-name.amber {
+        color: var(--amber-400);
+      }
+      .dp-team-name.quartz {
+        color: var(--quartz);
+      }
+      .dp-section-label {
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text3);
+        margin-bottom: 5px;
+      }
+      .dp-player {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 5px 6px;
+        border-radius: 8px;
+        background: var(--surface);
+      }
+      .dp-avatar {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      .dp-avatar.amber {
+        background: rgba(245, 166, 35, 0.2);
+        color: var(--amber-400);
+      }
+      .dp-avatar.quartz {
+        background: rgba(124, 140, 255, 0.2);
+        color: var(--quartz);
+      }
+      .dp-nick {
+        font-size: 11px;
+        font-weight: 600;
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .dp-level-badge {
+        font-weight: 700;
+        font-size: 12px;
+        padding: 2px 7px;
+        border-radius: 20px;
+      }
+      .dp-level-badge.amber {
+        background: rgba(245, 166, 35, 0.15);
+        color: var(--amber-400);
+      }
+      .dp-level-badge.quartz {
+        background: rgba(124, 140, 255, 0.15);
+        color: var(--quartz);
+      }
+      .dp-progress {
+        height: 3px;
+        border-radius: 2px;
+        background: var(--surface3);
+        overflow: hidden;
+      }
+      .dp-progress-fill {
+        height: 100%;
+        border-radius: 2px;
+        transition: width 0.8s ease;
+      }
+      .dp-progress-fill.amber {
+        background: var(--amber-400);
+      }
+      .dp-progress-fill.quartz {
+        background: var(--quartz);
+      }
+      .dp-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .dp-dot.filled.amber {
+        background: var(--amber-400);
+        box-shadow: 0 0 6px rgba(245, 166, 35, 0.5);
+      }
+      .dp-dot.filled.quartz {
+        background: var(--quartz);
+        box-shadow: 0 0 6px rgba(124, 140, 255, 0.5);
+      }
+      .dp-dot.empty {
+        background: var(--surface3);
+        border: 1px solid var(--border2);
+      }
+      .dp-pu-btn {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 8px;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text2);
+        font-size: 11px;
+        cursor: pointer;
+        transition: all 0.15s;
+        font-family: "DM Sans", sans-serif;
+        width: 100%;
+      }
+      .dp-pu-btn:hover:not(:disabled) {
+        background: var(--surface2);
+        border-color: var(--border2);
+        color: var(--text);
+        transform: translateX(2px);
+      }
+      .dp-pu-btn:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
+
+      /* ─── ALWAYS-VISIBLE GLYPHS ROW (desktop) ───────────────── */
+      #glyphs-row {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        padding: 10px 20px;
+        border-top: 1px solid var(--border);
+        background: var(--bg2);
+        flex-shrink: 0;
+      }
+      .glyph-card-row {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        transition:
+          transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+          opacity 0.4s;
+      }
+      .glyph-card-row.active {
+        transform: scale(1.06);
+      }
+      .glyph-card-row.inactive {
+        opacity: 0.45;
+        transform: scale(0.92);
+      }
+      .glyph-row-label {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .glyph-row-label.amber {
+        color: var(--amber-400);
+      }
+      .glyph-row-label.quartz {
+        color: var(--quartz);
+      }
+      .glyph-row-sublabel {
+        font-size: 10px;
+        color: var(--text3);
+      }
+      .vs-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        color: var(--text3);
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      /* ─── FOOTER STRIP (desktop) ─────────────────────────────── */
+      #footer-strip {
+        display: none;
+        height: 46px;
+        background: var(--bg2);
+        border-top: 1px solid var(--border);
+        align-items: center;
+        justify-content: center;
+        gap: 28px;
+        padding: 0 24px;
+        flex-shrink: 0;
+      }
+      .footer-score-team {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .footer-dot-row {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+      }
+      .footer-divider {
+        color: var(--border2);
+        font-size: 16px;
+      }
+
+      /* ─── GAME PHASE REDESIGN (Stitch) ─────────────────────── */
+
+      /* Game view background layering */
+      #view-game {
+        background: #0d0d0d;
+        position: relative;
+      }
+      #view-game > .vw-bg {
+        position: fixed;
+        z-index: 0;
+      }
+      #view-game > :not(.vw-bg) {
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Game-view scoped button overrides — match welcome/lobby design system */
+      #view-game .btn-primary,
+      #view-game #btn-submit-proposal {
+        background: linear-gradient(45deg, #ffc880, #f5a623) !important;
+        color: #452b00 !important;
+        border: none !important;
+        border-radius: 2px !important;
+        font-family: "Manrope", sans-serif !important;
+        font-size: 0.75rem !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.12em !important;
+        text-transform: uppercase !important;
+        padding: 0.85rem !important;
+      }
+      #view-game .btn-secondary {
+        background: rgba(255, 255, 255, 0.05) !important;
+        color: #e5e2e1 !important;
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        border-radius: 2px !important;
+        font-family: "Manrope", sans-serif !important;
+        font-size: 0.75rem !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.12em !important;
+      }
+      #view-game .btn-ghost {
+        border-radius: 2px !important;
+        font-family: "Manrope", sans-serif !important;
+      }
+      /* side panels use flex-column so spacer pushes pu to bottom */
+      .arena-side-panel {
+        display: flex !important;
+        flex-direction: column !important;
+      }
+
+      /* phase-indicator becomes full-width header strip */
+      #phase-indicator {
+        min-height: 44px;
+        padding: 0 1.5rem;
+        background: var(--bg);
+        border-bottom: 1px solid rgba(82, 69, 52, 0.18);
+        border-radius: 0;
+        position: relative;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .gpi-left,
+      .gpi-right {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+        flex: 1;
+      }
+      .gpi-right {
+        justify-content: flex-end;
+      }
+      .gpi-right-bloc {
+        align-items: flex-end !important;
+      }
+      .gpi-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        flex-shrink: 0;
+      }
+      .gpi-team-bloc {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .gpi-team-name {
+        font-family: Manrope, sans-serif;
+        font-size: 7.5px;
+        font-weight: 800;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+      }
+      .gpi-amber {
+        color: var(--amber-400);
+      }
+      .gpi-quartz {
+        color: var(--quartz);
+      }
+      .gpi-dots-row {
+        display: flex;
+        gap: 3px;
+      }
+      .gpi-dots-right {
+        justify-content: flex-end;
+      }
+      .gpi-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        transition: all 0.4s;
+      }
+      .gpi-dot.filled.amber {
+        background: var(--amber-400);
+        box-shadow: 0 0 4px rgba(245, 166, 35, 0.45);
+      }
+      .gpi-dot.filled.quartz {
+        background: var(--quartz);
+        box-shadow: 0 0 4px rgba(124, 140, 255, 0.45);
+      }
+      .gpi-dot.empty {
+        background: var(--surface3);
+        border: 1px solid var(--border2);
+      }
+      .gpi-timer-wrap {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .gpi-timer-bar-bg {
+        height: 4px;
+        width: 52px;
+        background: var(--surface3);
+        overflow: hidden;
+        border-radius: 2px;
+      }
+      .gpi-timer-bar-fill {
+        height: 100%;
+        width: 100%;
+        background: var(--amber-400);
+        box-shadow: 0 0 6px rgba(245, 166, 35, 0.5);
+        transition:
+          width 1s linear,
+          background 0.5s;
+        border-radius: 2px;
+      }
+      .gpi-quartz-fill {
+        background: var(--quartz) !important;
+        box-shadow: 0 0 6px rgba(124, 140, 255, 0.4) !important;
+      }
+      .gpi-timer-num {
+        font-size: 9px;
+        font-weight: 700;
+        color: var(--amber-400);
+        font-family: Manrope, sans-serif;
+        min-width: 22px;
+        text-align: right;
+      }
+      .gpi-quartz-num {
+        color: var(--quartz) !important;
+      }
+      .gpi-phase-pill {
+        padding: 4px 14px;
+        border-radius: 2px;
+        background: var(--amber-400);
+        color: #452b00;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        font-family: Manrope, sans-serif;
+      }
+      .gpi-phase-pill.vote {
+        background: var(--quartz);
+        color: #000c60;
+      }
+      .gpi-phase-pill.feedback {
+        background: var(--correct);
+        color: #fff;
+      }
+      .gpi-phase-pill.between {
+        background: var(--surface3);
+        color: var(--text2);
+      }
+      .gpi-turn-label {
+        font-size: 8px;
+        color: var(--text3);
+        font-family: Manrope, sans-serif;
+        opacity: 0.65;
+        margin-top: 1px;
+      }
+      .gpi-progress {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: var(--surface3);
+      }
+      .gpi-progress-fill {
+        height: 100%;
+        width: 100%;
+        background: var(--amber-400);
+        box-shadow: 0 0 6px rgba(245, 166, 35, 0.35);
+        transition: width 1s linear;
+      }
+
+      /* hide game-timer on desktop (replaced by gpi strip) */
+      @media (min-width: 900px) {
+        #game-timer {
+          display: none !important;
+        }
+        #glyphs-row {
+          display: none !important;
+        }
+        #phase-indicator {
+          display: flex;
+        }
+        .arena-layout {
+          flex: 1;
+          min-height: 0;
+        }
+        #footer-strip {
+          height: 76px !important;
+          padding: 0 2.5rem !important;
+          justify-content: space-between !important;
+          gap: 0 !important;
+          background: rgba(12, 12, 12, 0.92) !important;
+          backdrop-filter: blur(24px) !important;
+          border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+        }
+        .arena-side-panel {
+          width: 180px !important;
+          background: rgba(20, 20, 20, 0.4) !important;
+          backdrop-filter: blur(20px) !important;
+          border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+          padding: 1.5rem 1rem !important;
+          gap: 0 !important;
+        }
+        .arena-side-panel.right {
+          border-right: none !important;
+          border-left: 1px solid rgba(255, 255, 255, 0.05) !important;
+        }
+        .arena-side-panel.panel-active {
+          box-shadow: none !important;
+        }
+        .arena-side-panel.right.panel-active {
+          box-shadow: none !important;
+        }
+        .arena-side-panel.panel-inactive {
+          opacity: 1 !important;
+        }
+        .arena-layout {
+          grid-template-columns: 180px 1fr 180px !important;
+        }
+        .phase-card {
+          padding: 1rem 1.5rem !important;
+        }
+      }
+
+      /* ── ASP: arena side-panel new component classes */
+      .asp-level-label {
+        font-family: Manrope, sans-serif;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 5px;
+      }
+      .asp-level-label.amber {
+        color: var(--amber-400);
+      }
+      .asp-level-label.quartz {
+        color: var(--quartz);
+      }
+      .asp-dots-row {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 20px;
+      }
+      .asp-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        transition: all 0.4s;
+      }
+      .asp-dot.filled.amber {
+        background: var(--amber-400);
+        box-shadow: 0 0 5px rgba(245, 166, 35, 0.4);
+      }
+      .asp-dot.filled.quartz {
+        background: var(--quartz);
+        box-shadow: 0 0 5px rgba(124, 140, 255, 0.4);
+      }
+      .asp-dot.empty {
+        background: var(--surface3);
+        border: 1px solid var(--border2);
+      }
+      .asp-section-label {
+        font-family: Manrope, sans-serif;
+        font-size: 8px;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--text3);
+        margin-bottom: 10px;
+        display: block;
+      }
+      .asp-player {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+      .asp-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      .asp-avatar.amber {
+        background: rgba(245, 166, 35, 0.18);
+      }
+      .asp-avatar.quartz {
+        background: rgba(124, 140, 255, 0.18);
+        border: 1px solid rgba(124, 140, 255, 0.2);
+      }
+      .asp-nick {
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1.3;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 110px;
+      }
+      .asp-you {
+        font-size: 7.5px;
+        opacity: 0.4;
+        font-weight: 400;
+        margin-left: 3px;
+      }
+      .asp-pu-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+      .asp-pu-left {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .asp-pu-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+      }
+      .asp-pu-dot.amber {
+        background: var(--amber-400);
+        box-shadow: 0 0 4px rgba(245, 166, 35, 0.4);
+      }
+      .asp-pu-dot.quartz {
+        background: var(--quartz);
+        box-shadow: 0 0 4px rgba(124, 140, 255, 0.4);
+      }
+      .asp-pu-name {
+        font-size: 10.5px;
+        font-family: Manrope, sans-serif;
+        opacity: 0.8;
+      }
+      .asp-pu-btn {
+        font-size: 7.5px;
+        padding: 3px 7px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 20px;
+        background: transparent;
+        color: var(--text2);
+        cursor: pointer;
+        font-family: Manrope, sans-serif;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        transition: all 0.15s;
+        white-space: nowrap;
+      }
+      .asp-pu-btn:hover:not(:disabled) {
+        background: var(--amber-400);
+        color: #452b00;
+        border-color: var(--amber-400);
+      }
+      .asp-pu-btn:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+
+      /* Footer VS bar (Stitch) */
+      .fs-side {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex: 1;
+      }
+      .fs-right-side {
+        justify-content: flex-end;
+      }
+      .fs-team-info {
+        display: flex;
+        flex-direction: column;
+      }
+      .fs-team-name {
+        font-family: Manrope, sans-serif;
+        font-size: 8.5px;
+        font-weight: 800;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 5px;
+      }
+      .fs-team-name.amber {
+        color: var(--amber-400);
+      }
+      .fs-team-name.quartz {
+        color: var(--quartz);
+      }
+      .fs-glyph-card {
+        width: 54px;
+        height: 54px;
+        background: var(--surface2);
+        border-radius: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        overflow: hidden;
+        position: relative;
+      }
+      .fs-glyph-card.active-a {
+        border: 1px solid rgba(245, 166, 35, 0.5);
+        box-shadow: 0 0 18px rgba(245, 166, 35, 0.2);
+      }
+      .fs-glyph-card.active-b {
+        border: 1px solid rgba(124, 140, 255, 0.4);
+        box-shadow: 0 0 18px rgba(124, 140, 255, 0.15);
+      }
+      .fs-glyph-card.inactive {
+        border: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      .fs-glyph-fog {
+        position: absolute;
+        inset: 0;
+        background: rgba(13, 13, 13, 0.55);
+        backdrop-filter: blur(3px);
+        z-index: 1;
+      }
+      .fs-glyph-label {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .fs-glyph-sub {
+        font-size: 8.5px;
+        color: var(--text3);
+        opacity: 0.55;
+        margin-top: 2px;
+      }
+      .fs-vs {
+        font-family: "Noto Serif", serif;
+        font-style: italic;
+        font-size: 18px;
+        opacity: 0.25;
+        letter-spacing: 0.15em;
+        padding: 0 2.5rem;
+        border-left: 1px solid rgba(255, 255, 255, 0.05);
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+        align-self: stretch;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      /* Propose center polish */
+      @media (min-width: 900px) {
+        .arena-central {
+          background: transparent !important;
+        }
+        .arena-side-panel {
+          overflow-y: auto !important;
+        }
+        .glyph-wrap {
+          border-radius: 2px !important;
+        }
+        .glyph-wrap.active-glyph {
+          box-shadow:
+            0 0 32px rgba(245, 166, 35, 0.18),
+            0 0 80px rgba(245, 166, 35, 0.05) !important;
+          border-color: rgba(245, 166, 35, 0.22) !important;
+        }
+        .word-slot {
+          border-radius: 0 !important;
+        }
+        .proposal-input-area input[type="text"] {
+          border: none !important;
+          border-bottom: 1.5px solid rgba(245, 166, 35, 0.55) !important;
+          border-radius: 0 !important;
+          background: transparent !important;
+          padding: 0.5rem 0 !important;
+          font-family: "Noto Serif", serif !important;
+          font-style: italic !important;
+          font-size: 1.8rem !important;
+          text-align: center !important;
+          letter-spacing: 0.25em !important;
+          color: var(--text) !important;
+          outline: none !important;
+          box-shadow: none !important;
+        }
+        .proposal-input-area input[type="text"]::placeholder {
+          color: rgba(229, 226, 225, 0.2) !important;
+          font-style: italic !important;
+        }
+        .proposal-input-area input[type="text"]:focus {
+          box-shadow: 0 2px 0 var(--amber-400) !important;
+          border-bottom-color: var(--amber-400) !important;
+        }
+        .proposal-entry-slots {
+          gap: 12px !important;
+        }
+        .proposal-slot {
+          width: 54px;
+          height: 54px;
+          background: rgba(36, 30, 19, 0.62) !important;
+        }
+        #btn-submit-proposal {
+          background: linear-gradient(
+            45deg,
+            var(--amber-400),
+            var(--amber-500)
+          ) !important;
+          border: none !important;
+          border-radius: 2px !important;
+          padding: 0.9rem 1rem !important;
+          font-family: Manrope, sans-serif !important;
+          font-weight: 800 !important;
+          letter-spacing: 0.2em !important;
+          text-transform: uppercase !important;
+          font-size: 12px !important;
+          color: #452b00 !important;
+        }
+        .propose-glyphs {
+          gap: 32px;
+          align-items: center !important;
+          justify-content: center;
+        }
+        .glyph-wrap {
+          background: rgba(20, 20, 20, 0.5) !important;
+          border: 1.5px solid rgba(255, 255, 255, 0.07) !important;
+        }
+        .propose-mini-label {
+          font-family: Manrope, sans-serif;
+          font-size: 7px;
+          font-weight: 700;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: var(--text3);
+          margin-bottom: 6px;
+        }
+        #glyph-box {
+          width: 180px !important;
+          height: 180px !important;
+        }
+        #propose-preview-box {
+          width: 150px !important;
+          height: 150px !important;
+          opacity: 0.6;
+        }
+        .propose-arrow {
+          font-size: 2rem;
+          opacity: 0.28;
+          color: var(--text3);
+          line-height: 1;
+        }
+        .glyph-wrap {
+          position: relative !important;
+        }
+        #propose-preview-box:empty::after {
+          content: "";
+          position: absolute;
+          width: 22px;
+          height: 22px;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          border: 1.5px solid rgba(229, 226, 225, 0.1);
+          border-radius: 50%;
+        }
+        .propose-instruction {
+          font-family: "Noto Serif", serif;
+          font-style: italic;
+          font-size: 1.15rem;
+          color: var(--text);
+          opacity: 0.88;
+          text-align: center;
+          margin-bottom: 2.5rem !important;
+          letter-spacing: -0.01em;
+        }
+        .phase-card {
+          align-items: center !important;
+        }
+        .phase-card > div,
+        .phase-card > .proposal-input-area,
+        .phase-card > .submitted-list,
+        .phase-card > .propose-glyphs,
+        .phase-card > button {
+          max-width: 600px;
+          width: 100%;
+        }
+      }
+      @media (max-width: 899px) {
+        .proposal-entry-wrap {
+          gap: 0.85rem;
+        }
+        .proposal-entry-slots {
+          gap: 8px;
+        }
+        .proposal-slot {
+          width: 40px;
+          height: 40px;
+        }
+        .proposal-keyboard {
+          display: flex;
+        }
+      }
     </style>
   </head>
 
@@ -1410,6 +4143,47 @@
     >
       🌙
     </button>
+
+    <!-- ─── DEBUG BAR ──────────────────────────────────────────── -->
+    <div id="debug-bar" aria-label="Debug">
+      <span class="dbg-label">⚙ debug</span>
+      <div class="dbg-sep"></div>
+      <span class="dbg-label" style="color: #a3a3a3; font-weight: 400"
+        >tela:</span
+      >
+      <button class="dbg-btn" data-dbg-view="view-welcome">Welcome</button>
+      <button class="dbg-btn" data-dbg-view="view-lobby">Lobby (host)</button>
+      <button class="dbg-btn" data-dbg-view="view-lobby-guest">
+        Lobby (guest)
+      </button>
+      <div class="dbg-sep"></div>
+      <span class="dbg-label" style="color: #a3a3a3; font-weight: 400"
+        >fase:</span
+      >
+      <button class="dbg-btn dbg-phase-btn" data-dbg-phase="between">
+        Between
+      </button>
+      <button class="dbg-btn dbg-phase-btn" data-dbg-phase="between-new">
+        Between New
+      </button>
+      <button class="dbg-btn dbg-phase-btn" data-dbg-phase="propose">
+        Propose
+      </button>
+      <button class="dbg-btn dbg-phase-btn" data-dbg-phase="vote">Vote</button>
+      <button class="dbg-btn dbg-phase-btn" data-dbg-phase="feedback">
+        Feedback Fail
+      </button>
+      <button class="dbg-btn dbg-phase-btn" data-dbg-phase="feedback-win">
+        Feedback Win
+      </button>
+      <button
+        class="dbg-close"
+        id="dbg-close-btn"
+        title="Fechar debug (Ctrl+Shift+D)"
+      >
+        ✕
+      </button>
+    </div>
 
     <!-- ─── LOADING OVERLAY ─────────────────────────────────── -->
     <div class="loading-overlay" id="loading-overlay" aria-live="polite">
@@ -1428,217 +4202,307 @@
     <!-- ═══════════════════════════════════════════════════════
          VIEW: WELCOME
     ════════════════════════════════════════════════════════ -->
-    <div id="view-welcome" class="view active" role="main">
-      <div class="welcome-logo" aria-label="Gliffo Arena">
-        <span class="welcome-logo-text">glif</span
-        ><span class="welcome-logo-dot">.</span
-        ><span class="welcome-logo-text">foo</span
-        ><span class="welcome-logo-tag">arena</span>
-      </div>
-      <p class="welcome-sub">
-        Modo multiplayer em tempo real.<br />
-        Dois times, um glifo — quem decodifica primeiro?
-      </p>
-
-      <div>
-        <label class="field-label" for="nick-input">Seu apelido</label>
-        <input
-          type="text"
-          id="nick-input"
-          placeholder="Como te chamam?"
-          maxlength="20"
-          autocomplete="off"
-          autocorrect="off"
-          autocapitalize="words"
-          spellcheck="false"
-        />
-      </div>
-
-      <div style="display: flex; flex-direction: column; gap: 0.75rem">
-        <button class="btn btn-primary" id="btn-criar">✦ Criar Sala</button>
-        <button class="btn btn-secondary" id="btn-entrar-toggle">
-          Entrar numa Sala →
-        </button>
-      </div>
-
-      <!-- join form (revealed on click or by URL param) -->
-      <div class="join-form" id="join-form">
-        <div>
-          <label class="field-label" for="code-input">Código da sala</label>
-          <input
-            type="text"
-            class="code-input"
-            id="code-input"
-            placeholder="GLIF47"
-            maxlength="6"
-            autocomplete="off"
-            autocorrect="off"
-            autocapitalize="characters"
-            spellcheck="false"
-          />
-        </div>
-        <button class="btn btn-primary" id="btn-entrar">Entrar →</button>
-        <button
-          class="btn btn-ghost btn-sm"
-          id="btn-entrar-cancel"
-          style="margin-top: -0.25rem"
+    <main id="view-welcome" class="view active" aria-label="Tela inicial">
+      <!-- Background illustration layer -->
+      <div class="vw-bg" aria-hidden="true">
+        <div class="vw-radial"></div>
+        <!-- Minimal geometric watermark (Stitch design reference) -->
+        <svg
+          class="vw-glyph-mark"
+          viewBox="0 0 200 200"
+          fill="none"
+          stroke="currentColor"
+          aria-hidden="true"
         >
-          Cancelar
-        </button>
+          <path d="M40,40 L160,40 L160,160 L40,160 Z" stroke-width="0.5" />
+          <path d="M40,40 L160,160 M40,160 L160,40" stroke-width="0.5" />
+          <circle cx="100" cy="100" r="80" stroke-width="0.5" />
+          <path d="M100,20 L100,180 M20,100 L180,100" stroke-width="0.5" />
+        </svg>
       </div>
-    </div>
+
+      <!-- Main content -->
+      <div class="vw-content">
+        <div class="vw-logo" aria-label="Gliffo Arena">
+          <span class="vw-logo-text">glif<span class="dot">.</span>foo</span>
+          <span class="vw-arena-badge">Arena</span>
+        </div>
+
+        <p class="vw-sub">Dois times. Um glifo. Quem decodifica primeiro?</p>
+
+        <!-- Form card -->
+        <div class="vw-card">
+          <div class="vw-field">
+            <label class="vw-label" for="nick-input">Seu Apelido</label>
+            <input
+              type="text"
+              id="nick-input"
+              class="vw-input"
+              placeholder="INSIRA O CÓDIGO DO AGENTE"
+              maxlength="20"
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="words"
+              spellcheck="false"
+            />
+          </div>
+          <button class="btn vw-btn-primary" id="btn-criar">
+            ✦ Criar Sala
+          </button>
+          <button class="btn vw-btn-secondary" id="btn-entrar-toggle">
+            Entrar numa Sala →
+          </button>
+
+          <!-- Team ambient labels -->
+          <div class="vw-teams">
+            <span class="vw-team amber">Time Âmbar</span>
+            <span class="vw-team quartz">Time Quartzo</span>
+          </div>
+        </div>
+
+        <!-- Join form (revealed on toggle or URL param) -->
+        <div class="join-form" id="join-form">
+          <div>
+            <label class="field-label" for="code-input">Código da sala</label>
+            <input
+              type="text"
+              class="code-input"
+              id="code-input"
+              placeholder="GLIF47"
+              maxlength="6"
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="characters"
+              spellcheck="false"
+            />
+          </div>
+          <button class="btn btn-primary" id="btn-entrar">Entrar →</button>
+          <button
+            class="btn btn-ghost btn-sm"
+            id="btn-entrar-cancel"
+            style="margin-top: -0.25rem"
+          >
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </main>
 
     <!-- ═══════════════════════════════════════════════════════
          VIEW: LOBBY
     ════════════════════════════════════════════════════════ -->
-    <div id="view-lobby" class="view" role="main" aria-live="polite">
-      <!-- Header -->
-      <div class="lobby-header">
-        <button
-          class="back-btn"
-          id="btn-back"
-          title="Sair da sala"
-          aria-label="Sair da sala"
+    <main id="view-lobby" class="view" aria-label="Lobby da sala" aria-live="polite">
+      <!-- Background (reuses welcome screen layers) -->
+      <div class="vw-bg" aria-hidden="true">
+        <div class="vw-radial"></div>
+        <svg
+          class="vw-glyph-mark"
+          viewBox="0 0 200 200"
+          fill="none"
+          stroke="currentColor"
+          aria-hidden="true"
         >
-          ←
-        </button>
-        <div class="room-code-badge">
-          <span class="room-code-text" id="lbl-code">GLIF00</span>
-          <button
-            class="icon-btn"
-            id="btn-copy-code"
-            title="Copiar código"
-            aria-label="Copiar código"
+          <path d="M40,40 L160,40 L160,160 L40,160 Z" stroke-width="0.5" />
+          <path d="M40,40 L160,160 M40,160 L160,40" stroke-width="0.5" />
+          <circle cx="100" cy="100" r="80" stroke-width="0.5" />
+          <path d="M100,20 L100,180 M20,100 L180,100" stroke-width="0.5" />
+        </svg>
+      </div>
+
+      <!-- Back button -->
+      <button class="lob-back" id="btn-back">
+        ← Sair
+      </button>
+
+      <!-- Two-column layout -->
+      <div class="lob-layout">
+        <!-- ── LEFT COLUMN ── -->
+        <section class="lob-left">
+          <!-- Logo -->
+          <div class="lob-logo">
+            <span class="lob-logo-text">glif<span class="dot">.</span>foo</span>
+            <span class="lob-arena-badge">Arena</span>
+            <span class="lob-status-badge" id="lbl-status">lobby</span>
+          </div>
+
+          <!-- Teams glass card -->
+          <div class="lob-teams-card">
+            <!-- TIME ÂMBAR -->
+            <div class="lob-team team-amber" id="panel-a">
+              <div class="lob-team-header amber">
+                <span>Time Âmbar</span>
+                <span class="team-count" id="count-a"></span>
+              </div>
+              <div class="player-list" id="list-a"></div>
+              <button class="btn lob-join-btn lob-join-amber" id="btn-join-a">
+                Entrar →
+              </button>
+            </div>
+            <!-- TIME QUARTZO -->
+            <div class="lob-team team-quartz" id="panel-b">
+              <div class="lob-team-header quartz">
+                <span>Time Quartzo</span>
+                <span class="team-count" id="count-b"></span>
+              </div>
+              <div class="player-list" id="list-b"></div>
+              <button class="btn lob-join-btn lob-join-quartz" id="btn-join-b">
+                Entrar →
+              </button>
+            </div>
+          </div>
+
+          <!-- Spectator link -->
+          <div class="spec-row">
+            <button class="spec-link" id="btn-spec">
+              👁 Assistir como espectador
+            </button>
+          </div>
+        </section>
+
+        <!-- ── RIGHT COLUMN ── -->
+        <section class="lob-right">
+          <!-- Room code -->
+          <div class="lob-code-section">
+            <div class="lob-code-label">Código da sala</div>
+            <button
+              class="lob-code-display"
+              id="btn-copy-code"
+              title="Copiar código"
+              aria-label="Copiar código da sala"
+            >
+              <span id="lbl-code">GLIF00</span>
+            </button>
+            <div class="lob-code-hint">clique para copiar</div>
+          </div>
+
+          <!-- Share link (subtle) -->
+          <div
+            class="share-link-row"
+            style="opacity: 0.45; justify-content: center; gap: 4px"
           >
-            📋
-          </button>
-          <span class="status-badge lobby" id="lbl-status">lobby</span>
-        </div>
-      </div>
-
-      <!-- Share link -->
-      <div class="share-row">
-        <span class="share-url" id="share-url">…</span>
-        <button class="btn btn-secondary btn-sm" id="btn-share">
-          🔗 Copiar
-        </button>
-      </div>
-
-      <!-- Teams -->
-      <div class="teams-grid">
-        <!-- Team A: Âmbar -->
-        <div class="team-panel team-amber" id="panel-a">
-          <div class="team-header">
-            <span class="team-dot"></span>
-            <span>Âmbar</span>
-            <span class="team-count" id="count-a">0</span>
+            <span
+              class="share-url"
+              id="share-url"
+              style="
+                font-size: 0.62rem;
+                color: var(--text3);
+                max-width: 180px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+              "
+            ></span>
+            <button
+              class="btn btn-ghost btn-sm"
+              id="btn-share"
+              style="font-size: 0.7rem; padding: 0.15rem 0.4rem"
+            >
+              🔗
+            </button>
           </div>
-          <div class="player-list" id="list-a"></div>
-          <button class="btn btn-primary btn-sm" id="btn-join-a">
-            🟠 Entrar
-          </button>
-        </div>
 
-        <!-- Team B: Quartzo -->
-        <div class="team-panel team-quartz" id="panel-b">
-          <div class="team-header">
-            <span class="team-dot"></span>
-            <span>Quartzo</span>
-            <span class="team-count" id="count-b">0</span>
+          <!-- Config (host only) -->
+          <div
+            class="config-section lob-config-card"
+            id="config-section"
+            style="display: none"
+          >
+            <p class="lob-config-title">Configurações</p>
+
+            <div class="config-row">
+              <span class="config-label">⏱ Fase proposta</span>
+              <div class="pill-group" id="pills-propose">
+                <button class="pill" data-v="30">30s</button>
+                <button class="pill active" data-v="45">45s</button>
+                <button class="pill" data-v="60">60s</button>
+              </div>
+            </div>
+
+            <div class="config-row">
+              <span class="config-label">🗳 Fase votação</span>
+              <div class="pill-group" id="pills-vote">
+                <button class="pill" data-v="15">15s</button>
+                <button class="pill active" data-v="20">20s</button>
+                <button class="pill" data-v="30">30s</button>
+              </div>
+            </div>
+
+            <div class="config-divider"></div>
+
+            <div class="toggle-row">
+              <label class="toggle" aria-label="Power-ups">
+                <input type="checkbox" id="toggle-powerups" checked />
+                <span class="toggle-track"></span>
+              </label>
+              <span class="toggle-label">Power-ups habilitados ⚡</span>
+            </div>
+
+            <div class="toggle-row">
+              <label class="toggle" aria-label="Falha regride nível">
+                <input type="checkbox" id="toggle-regress" />
+                <span class="toggle-track"></span>
+              </label>
+              <span class="toggle-label">Falha regride nível</span>
+            </div>
+
+            <div class="config-row">
+              <span class="config-label">🔵 Compensação Time B</span>
+              <div class="pill-group" id="pills-comp">
+                <button class="pill active" data-v="none">Nenhuma</button>
+                <button class="pill" data-v="attempt">+Tent.</button>
+                <button class="pill" data-v="time">+15s</button>
+              </div>
+            </div>
+
+            <div class="config-divider"></div>
+
+            <button
+              class="btn btn-ghost btn-sm"
+              id="btn-randomize"
+              style="align-self: flex-start"
+            >
+              🎲 Randomizar times
+            </button>
           </div>
-          <div class="player-list" id="list-b"></div>
-          <button class="btn btn-quartz btn-sm" id="btn-join-b">
-            🔵 Entrar
-          </button>
-        </div>
-      </div>
 
-      <div class="spec-row">
-        <button class="spec-link" id="btn-spec">
-          👁 Assistir como espectador
-        </button>
-      </div>
-
-      <!-- Config (host only) -->
-      <div class="config-section" id="config-section" style="display: none">
-        <p class="section-title">⚙️ Configurações</p>
-
-        <div class="config-row">
-          <span class="config-label">⏱ Fase proposta</span>
-          <div class="pill-group" id="pills-propose">
-            <button class="pill" data-v="30">30s</button>
-            <button class="pill active" data-v="45">45s</button>
-            <button class="pill" data-v="60">60s</button>
+          <!-- Info para não-host -->
+          <div class="info-msg" id="info-msg" style="display: none">
+            Aguardando o host iniciar a partida…
           </div>
-        </div>
 
-        <div class="config-row">
-          <span class="config-label">🗳 Fase votação</span>
-          <div class="pill-group" id="pills-vote">
-            <button class="pill" data-v="15">15s</button>
-            <button class="pill active" data-v="20">20s</button>
-            <button class="pill" data-v="30">30s</button>
+          <!-- Iniciar (host only) -->
+          <div class="start-section" id="start-section" style="display: none">
+            <button class="btn lob-start-btn" id="btn-start" disabled>
+              Iniciar Partida
+            </button>
+            <p class="lob-start-hint" id="start-hint">
+              Aguardando jogadores em cada time…
+            </p>
           </div>
-        </div>
-
-        <div class="config-divider"></div>
-
-        <div class="toggle-row">
-          <label class="toggle" aria-label="Power-ups">
-            <input type="checkbox" id="toggle-powerups" checked />
-            <span class="toggle-track"></span>
-          </label>
-          <span class="toggle-label">Power-ups habilitados ⚡</span>
-        </div>
-
-        <div class="toggle-row">
-          <label class="toggle" aria-label="Falha regride nível">
-            <input type="checkbox" id="toggle-regress" />
-            <span class="toggle-track"></span>
-          </label>
-          <span class="toggle-label">Falha regride nível</span>
-        </div>
-
-        <div class="config-row">
-          <span class="config-label">🔵 Compensação Time B</span>
-          <div class="pill-group" id="pills-comp">
-            <button class="pill active" data-v="none">Nenhuma</button>
-            <button class="pill" data-v="attempt">+Tent.</button>
-            <button class="pill" data-v="time">+15s</button>
-          </div>
-        </div>
-
-        <div class="config-divider"></div>
-
-        <button
-          class="btn btn-ghost btn-sm"
-          id="btn-randomize"
-          style="align-self: flex-start"
-        >
-          🎲 Randomizar times
-        </button>
+        </section>
       </div>
-
-      <!-- Info para não-host -->
-      <div class="info-msg" id="info-msg" style="display: none">
-        Aguardando o host iniciar a partida…
-      </div>
-
-      <!-- Iniciar (host only) -->
-      <div class="start-section" id="start-section" style="display: none">
-        <button class="btn start-btn" id="btn-start" disabled>
-          🎮 Iniciar Partida
-        </button>
-        <p class="start-hint" id="start-hint">
-          Aguardando jogadores em cada time…
-        </p>
-      </div>
-    </div>
+    </main>
 
     <!-- ═══════════════════════════════════════════════════════
          VIEW: GAME
     ════════════════════════════════════════════════════════ -->
-    <div id="view-game" class="view" role="main">
+    <main id="view-game" class="view" aria-label="Partida em andamento">
+      <!-- Background layers (same as welcome + lobby) -->
+      <div class="vw-bg" aria-hidden="true">
+        <div class="vw-radial"></div>
+        <svg
+          class="vw-glyph-mark"
+          viewBox="0 0 200 200"
+          fill="none"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path d="M40,40 L160,40 L160,160 L40,160 Z" stroke-width="0.5" />
+          <path d="M40,40 L160,160 M40,160 L160,40" stroke-width="0.5" />
+          <circle cx="100" cy="100" r="80" stroke-width="0.5" />
+          <path d="M100,20 L100,180 M20,100 L180,100" stroke-width="0.5" />
+        </svg>
+      </div>
       <!-- ── Topo: scoreboard ───────────────────────────────── -->
       <div class="game-top">
         <button
@@ -1696,34 +4560,62 @@
         </div>
       </div>
 
-      <!-- ── Power-up strip ────────────────────────────────── -->
-      <div
-        class="powerup-strip"
-        id="powerup-strip"
-        aria-label="Power-ups do seu time"
-      ></div>
+      <!-- ── Phase indicator strip (full width) ────────────── -->
+      <div id="phase-indicator"></div>
 
-      <!-- ── Timer ──────────────────────────────────────────── -->
-      <div
-        class="game-timer"
-        id="game-timer"
-        style="display: none"
-        aria-live="polite"
-      >
-        <div class="timer-bar-bg">
-          <div class="timer-bar-fill" id="timer-fill"></div>
+      <!-- desktop 3-col wrapper -->
+      <div class="arena-layout">
+        <!-- left: Team Amber panel (desktop only) -->
+        <div
+          class="arena-side-panel"
+          id="arena-panel-a"
+          aria-hidden="true"
+        ></div>
+
+        <!-- central column -->
+        <div class="arena-central">
+          <!-- ── Power-up strip ──────────────────────────── -->
+          <div
+            class="powerup-strip"
+            id="powerup-strip"
+            aria-label="Power-ups do seu time"
+          ></div>
+
+          <!-- ── Timer ───────────────────────────────────── -->
+          <div
+            class="game-timer"
+            id="game-timer"
+            style="display: none"
+            aria-live="polite"
+          >
+            <div class="timer-bar-bg">
+              <div class="timer-bar-fill" id="timer-fill"></div>
+            </div>
+            <span class="timer-num" id="timer-num">--</span>
+          </div>
+
+          <!-- ── Phase card (renderizado por JS) ──────────── -->
+          <section
+            class="phase-card"
+            id="phase-card"
+            aria-live="polite"
+          ></section>
+
+          <!-- ── Always-visible glyphs row (desktop) ──────── -->
+          <output id="glyphs-row" aria-label="Glifos atuais"></output>
         </div>
-        <span class="timer-num" id="timer-num">--</span>
+
+        <!-- right: Team Quartz panel (desktop only) -->
+        <div
+          class="arena-side-panel right"
+          id="arena-panel-b"
+          aria-hidden="true"
+        ></div>
       </div>
 
-      <!-- ── Conteúdo da fase (renderizado por JS) ─────────── -->
-      <div
-        class="phase-card"
-        id="phase-card"
-        role="region"
-        aria-live="polite"
-      ></div>
-    </div>
+      <!-- ── Footer score strip (desktop) ───────────────────── -->
+      <output id="footer-strip" aria-label="Placar"></output>
+    </main>
 
     <!-- ═══════════════════════════════════════════════════════
          SCRIPT
@@ -1796,14 +4688,14 @@
       // ─────────────────────────────────────────────────────────
       const themeBtn = document.getElementById("theme-btn");
       function applyTheme(t) {
-        document.documentElement.setAttribute("data-theme", t);
+        document.documentElement.dataset.theme = t;
         themeBtn.textContent = t === "dark" ? "☀️" : "🌙";
         localStorage.setItem("gliffo_theme", t);
       }
       applyTheme(localStorage.getItem("gliffo_theme") || "dark");
       themeBtn.addEventListener("click", () => {
         applyTheme(
-          document.documentElement.getAttribute("data-theme") === "dark"
+          document.documentElement.dataset.theme === "dark"
             ? "light"
             : "dark",
         );
@@ -1851,10 +4743,10 @@
 
       function escHtml(s) {
         return String(s)
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;");
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;");
       }
 
       function shareUrl(code) {
@@ -1877,7 +4769,7 @@
         joinForm.classList.add("open");
         codeInput.value = urlSala
           .toUpperCase()
-          .replace(/[^A-Z0-9]/g, "")
+          .replaceAll(/[^A-Z0-9]/g, "")
           .slice(0, 6);
         // Auto-join se apelido já conhecido
         if (S.nick) {
@@ -1902,7 +4794,7 @@
       codeInput.addEventListener("input", () => {
         codeInput.value = codeInput.value
           .toUpperCase()
-          .replace(/[^A-Z0-9]/g, "")
+          .replaceAll(/[^A-Z0-9]/g, "")
           .slice(0, 6);
       });
       codeInput.addEventListener("keydown", (e) => {
@@ -2153,10 +5045,10 @@
               .getElementById("view-game")
               ?.classList.contains("active");
             if (newRoom.status === "playing" || newRoom.status === "finished") {
-              if (!inGame) {
-                handleGameStart();
-              } else {
+              if (inGame) {
                 renderGamePhase();
+              } else {
+                handleGameStart();
               }
               return;
             }
@@ -2274,14 +5166,30 @@
           .map((p) => {
             const isMe = p.id === PLAYER_ID;
             const isOnline = S.onlineIds.has(p.id) || isMe;
+            const captain = getCaptain(p.team === "A" ? "A" : "B");
+            const isCaptain = captain?.id === p.id;
+            let statusLbl = "";
+            if (p.is_host) statusLbl = "host";
+            else if (isCaptain) statusLbl = "capitão";
+            const avatarBg =
+              color === "var(--amber-400)"
+                ? "rgba(245,166,35,.2)"
+                : "rgba(124,140,255,.2)";
+            const avatarColor =
+              color === "var(--amber-400)"
+                ? "var(--amber-400)"
+                : "var(--quartz)";
             return `
             <div class="player-item">
-              <div class="player-avatar" style="background:${color}" aria-hidden="true">${initials(p.nickname)}</div>
-              <span class="player-name">
-                ${escHtml(p.nickname)}
-                ${isMe ? "<em>(você)</em>" : ""}
-                ${p.is_host ? '<span class="crown" title="Host da sala">👑</span>' : ""}
-              </span>
+              <div class="player-avatar" style="background:${avatarBg};color:${avatarColor}" aria-hidden="true">${initials(p.nickname)}</div>
+              <div class="player-info-col">
+                <div class="player-name">
+                  ${escHtml(p.nickname)}
+                  ${isMe ? "<em>(você)</em>" : ""}
+                  ${p.is_host || isCaptain ? '<span class="crown">👑</span>' : ""}
+                </div>
+                ${statusLbl ? `<div class="player-status-lbl">${statusLbl}</div>` : ""}
+              </div>
               <span class="online-dot ${isOnline ? "" : "offline"}" title="${isOnline ? "online" : "offline"}" aria-label="${isOnline ? "online" : "offline"}"></span>
             </div>`;
           })
@@ -2332,7 +5240,8 @@
       // ─────────────────────────────────────────────────────────
       async function updateConfig(patch) {
         if (!S.isHost || !S.room) return;
-        const newCfg = { ...(S.room.config || {}), ...patch };
+        const currentCfg = S.room.config || undefined;
+        const newCfg = { ...currentCfg, ...patch };
         const { error } = await sb
           .from("arena_rooms")
           .update({ config: newCfg })
@@ -2792,10 +5701,17 @@
       let G_myVote = null; // proposalId que votei
       let G_proposalSubmitted = false;
       let G_timerInterval = null;
-      let G_feedbackData = null; // { feedback, correct, chosenWord }
+      let G_feedbackData = null;
       let G_roundStartMs = 0; // timestamp quando fase propose começou (para tiebreaker)
       let G_wordAttempts = 0; // tentativas na palavra atual (reseta quando nova palavra é sorteada)
       const MAX_WORD_ATTEMPTS = 4; // máximo de tentativas por palavra (como no index.html)
+
+      // Phase transition tracking
+      let G_lastPhase = null;
+
+      // Between-phase auto-countdown
+      let G_betweenInterval = null;
+      let G_betweenVal = 3;
 
       // Power-up state
       let G_shieldActive = false; // escudo ativado pelo meu time
@@ -2803,6 +5719,30 @@
       let G_mirrorActive = false; // espelho aplicado sobre meu time
       let G_hiddenVotes = false; // votos ocultos ativos (para mim)
       let G_revealSlot = null; // índice do slot revelado por ✨ Revelar
+      let G_proposalDraft = [];
+      let G_proposalCursor = 0;
+      let G_proposalDraftKey = "";
+      let G_proposalKeyHandler = null;
+
+      function getArenaFx(room = S.room) {
+        return room?.active_fx && typeof room.active_fx === "object"
+          ? room.active_fx
+          : {};
+      }
+
+      function getTeamWordAttempts(team, room = S.room) {
+        const fx = getArenaFx(room);
+        const key = team === "A" ? "wordAttemptsA" : "wordAttemptsB";
+        const count = Number(fx[key] || 0);
+        return Number.isFinite(count) ? count : 0;
+      }
+
+      function buildArenaFxWithAttempts(team, attempts, room = S.room) {
+        const fx = { ...getArenaFx(room) };
+        const key = team === "A" ? "wordAttemptsA" : "wordAttemptsB";
+        fx[key] = attempts;
+        return fx;
+      }
 
       // Chat
       let G_chatOpen = false;
@@ -2925,7 +5865,10 @@
           if (!el) return;
           let html = "";
           for (let i = 1; i <= 7; i++) {
-            const lbl = i <= 2 ? "4L" : i <= 4 ? "5L" : i <= 6 ? "6L" : "7L★";
+            let lbl = "7L★";
+            if (i <= 2) lbl = "4L";
+            else if (i <= 4) lbl = "5L";
+            else if (i <= 6) lbl = "6L";
             if (i < level)
               html += `<div class="level-pip done${suffix}" title="Nível ${i} (${lbl}) — completo"></div>`;
             else if (i === level)
@@ -2954,7 +5897,7 @@
         const fillEl = document.getElementById("timer-fill");
         const numEl = document.getElementById("timer-num");
         if (!timerEl) return;
-        timerEl.style.display = "";
+        if (window.innerWidth < 900) timerEl.style.display = "";
         let shook = false;
         function tick() {
           const remaining = Math.max(
@@ -2962,10 +5905,37 @@
             Math.floor((new Date(deadlineISO) - Date.now()) / 1000),
           );
           const pct = totalSec > 0 ? (remaining / totalSec) * 100 : 0;
-          numEl.textContent = remaining + "s";
-          fillEl.style.width = pct + "%";
-          fillEl.classList.toggle("urgent", remaining <= 10);
-          // Shake de urgência na primeira vez que chega a ≤10s
+          if (numEl) numEl.textContent = remaining + "s";
+          if (fillEl) fillEl.style.width = pct + "%";
+
+          // Also update phase-indicator timer elements
+          const gpiFill = document.getElementById("gpi-timer-fill");
+          const gpiNum = document.getElementById("gpi-timer-num");
+          const gpiProg = document.getElementById("gpi-progress-fill");
+          if (gpiFill) gpiFill.style.width = pct + "%";
+          if (gpiNum) gpiNum.textContent = remaining + "s";
+          if (gpiProg) gpiProg.style.width = pct + "%";
+
+          // Urgency colours on timer bar + number
+          if (fillEl)
+            fillEl.classList.toggle("urgent", remaining <= 10 && remaining > 0);
+          if (fillEl)
+            fillEl.classList.toggle(
+              "flashing",
+              remaining <= 5 && remaining > 0,
+            );
+          if (numEl)
+            numEl.classList.toggle("popping", remaining <= 10 && remaining > 0);
+
+          // Continuous shake on the timer widget at ≤5s
+          const timerEl2 = document.getElementById("game-timer");
+          if (timerEl2)
+            timerEl2.classList.toggle(
+              "urgent-shake",
+              remaining <= 5 && remaining > 0,
+            );
+
+          // One-time phase-card shake at ≤10s (keeps existing behaviour)
           if (remaining <= 10 && remaining > 0 && !shook) {
             shook = true;
             const card = document.getElementById("phase-card");
@@ -2988,60 +5958,384 @@
           clearInterval(G_timerInterval);
           G_timerInterval = null;
         }
-        const el = document.getElementById("game-timer");
-        if (el) el.style.display = "none";
+        const timerEl = document.getElementById("game-timer");
+        const fillEl = document.getElementById("timer-fill");
+        const numEl = document.getElementById("timer-num");
+        if (timerEl) {
+          if (window.innerWidth < 900) timerEl.style.display = "none";
+          timerEl.classList.remove("urgent-shake");
+        }
+        if (fillEl) fillEl.classList.remove("urgent", "flashing");
+        if (numEl) numEl.classList.remove("popping");
+        // Reset gpi timer elements
+        const gpiFill = document.getElementById("gpi-timer-fill");
+        const gpiNum = document.getElementById("gpi-timer-num");
+        const gpiProg = document.getElementById("gpi-progress-fill");
+        if (gpiFill) gpiFill.style.width = "100%";
+        if (gpiNum) gpiNum.textContent = "--";
+        if (gpiProg) gpiProg.style.width = "100%";
       }
 
       // ─────────────────────────────────────────────────────────
       // DISPATCHER DE FASES
       // ─────────────────────────────────────────────────────────
+      function detachProposalKeyHandler() {
+        if (!G_proposalKeyHandler) return;
+        document.removeEventListener("keydown", G_proposalKeyHandler);
+        G_proposalKeyHandler = null;
+      }
+
+      function resetProposalDraft(targetLen, draftKey) {
+        G_proposalDraft = Array.from({ length: targetLen }, () => "");
+        G_proposalCursor = 0;
+        G_proposalDraftKey = draftKey;
+      }
+
+      function getProposalDraftWord() {
+        return G_proposalDraft.join("");
+      }
+
+      function nextProposalCursor(from, targetLen) {
+        for (let i = from; i < targetLen; i++) {
+          if (!G_proposalDraft[i]) return i;
+        }
+        for (let i = 0; i < from; i++) {
+          if (!G_proposalDraft[i]) return i;
+        }
+        return Math.max(0, targetLen - 1);
+      }
+
+      function prevProposalCursor(from) {
+        return Math.max(0, from - 1);
+      }
+
+      function renderProposalComposer(targetLen) {
+        const slots = document.getElementById("proposal-entry-slots");
+        if (!slots) return;
+        slots.innerHTML = "";
+        const neutralColor =
+          getComputedStyle(document.documentElement)
+            .getPropertyValue("--glyph")
+            .trim() || "#f0ebe4";
+
+        for (let i = 0; i < targetLen; i++) {
+          const slot = document.createElement("button");
+          slot.type = "button";
+          slot.className = `proposal-slot${G_proposalCursor === i ? " active" : ""}${G_proposalDraft[i] ? " filled" : ""}`;
+          slot.setAttribute(
+            "aria-label",
+            G_proposalDraft[i]
+              ? `Posição ${i + 1} — letra ${G_proposalDraft[i]}`
+              : `Posição ${i + 1} — vazia`,
+          );
+          slot.addEventListener("click", () => {
+            G_proposalCursor = i;
+            syncProposalComposer(targetLen);
+          });
+          if (G_proposalDraft[i]) {
+            const svg = makeSVG(
+              G_proposalDraft[i],
+              neutralColor,
+              "width:62%;height:62%;",
+            );
+            if (svg) slot.appendChild(svg);
+            else slot.textContent = G_proposalDraft[i];
+          } else {
+            const dash = document.createElement("div");
+            dash.className = "proposal-slot-dash";
+            slot.appendChild(dash);
+          }
+          slots.appendChild(slot);
+        }
+      }
+
+      function syncProposalComposer(targetLen) {
+        renderProposalComposer(targetLen);
+
+        const previewBox = document.getElementById("propose-preview-box");
+        const draftWord = getProposalDraftWord();
+        if (previewBox) {
+          if (draftWord) renderGlyph(draftWord, previewBox, {});
+          else previewBox.innerHTML = "";
+        }
+
+        const submitBtn = document.getElementById("btn-submit-proposal");
+        const isComplete =
+          G_proposalDraft.length === targetLen &&
+          G_proposalDraft.every(Boolean);
+        if (submitBtn) submitBtn.disabled = !isComplete;
+      }
+
+      function buildProposalKeyboard() {
+        const keyboard = document.getElementById("proposal-keyboard");
+        if (!keyboard) return;
+        const rows = [
+          ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
+          ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
+          ["⌫", "Z", "X", "C", "V", "B", "N", "M", "↵"],
+        ];
+        keyboard.innerHTML = "";
+        rows.forEach((keys) => {
+          const row = document.createElement("div");
+          row.className = "proposal-krow";
+          keys.forEach((key) => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = `proposal-kbtn${key.length > 1 ? " wide" : ""}`;
+            btn.textContent = key;
+            btn.setAttribute(
+              "aria-label",
+              key === "⌫"
+                ? "Apagar"
+                : key === "↵"
+                  ? "Confirmar proposta"
+                  : `Letra ${key}`,
+            );
+            btn.addEventListener("click", () => handleProposalKey(key));
+            row.appendChild(btn);
+          });
+          keyboard.appendChild(row);
+        });
+      }
+
+      function handleProposalKey(rawKey) {
+        const room = S.room;
+        if (!room || room.phase !== "propose" || G_proposalSubmitted) return;
+        const targetWord =
+          room.current_turn === "A" ? room.team_a_word : room.team_b_word;
+        const targetLen = targetWord?.length || 0;
+        if (!targetLen) return;
+
+        if (rawKey === "⌫" || rawKey === "Backspace" || rawKey === "Delete") {
+          let cursor = G_proposalCursor;
+          if (cursor >= 0 && cursor < targetLen && G_proposalDraft[cursor]) {
+            G_proposalDraft[cursor] = "";
+          } else {
+            const prev = prevProposalCursor(cursor);
+            G_proposalCursor = prev;
+            if (G_proposalDraft[prev]) G_proposalDraft[prev] = "";
+          }
+          syncProposalComposer(targetLen);
+          return;
+        }
+
+        if (rawKey === "↵" || rawKey === "Enter") {
+          document.getElementById("btn-submit-proposal")?.click();
+          return;
+        }
+
+        const letter = String(rawKey || "").toUpperCase();
+        if (!/^[A-ZÁÉÍÓÚÂÊÔÃÕÇ]$/.test(letter)) return;
+
+        let cursor = G_proposalCursor;
+        if (cursor < 0 || cursor >= targetLen)
+          cursor = nextProposalCursor(0, targetLen);
+        G_proposalDraft[cursor] = letter;
+        G_proposalCursor = nextProposalCursor(cursor + 1, targetLen);
+        syncProposalComposer(targetLen);
+      }
+
       function renderGamePhase() {
         const room = S.room;
         if (!room) return;
         renderScoreboard();
         renderPowerUpStrip();
-        if (room.status === "finished" || room.phase === "finished") {
-          renderFinished();
-          return;
+        renderDesktopPanels();
+        renderGlyphsRow();
+        renderFooterStrip();
+
+        const effectivePhase =
+          room.status === "finished" || room.phase === "finished"
+            ? "finished"
+            : room.phase || "between";
+        const phaseChanged = effectivePhase !== G_lastPhase;
+        G_lastPhase = effectivePhase;
+
+        // Phase indicator bar
+        const pi = document.getElementById("phase-indicator");
+        if (pi) {
+          const PHASE_META = {
+            propose: [
+              "PROPOSTA",
+              "",
+              room.current_turn === "A"
+                ? "Vez do Time Âmbar"
+                : "Vez do Time Quartzo",
+            ],
+            vote: [
+              "VOTAÇÃO",
+              "vote",
+              "Aguardando Votos",
+            ],
+            feedback: ["FEEDBACK", "feedback", "Resultado da rodada"],
+            between: ["ENTRE TURNOS", "between", ""],
+            finished: ["FIM DE JOGO", "feedback", ""],
+          };
+          const [pillText, pillClass, turnLabel] = PHASE_META[
+            effectivePhase
+          ] || ["", "", ""];
+
+          const levelA = room.team_a_level || 1;
+          const levelB = room.team_b_level || 1;
+          const MAX_LEVEL = 7;
+          const mkDots = (level, cls) =>
+            Array.from(
+              { length: MAX_LEVEL },
+              (_, i) =>
+                `<span class="gpi-dot ${i < level ? `filled ${cls}` : "empty"}"></span>`,
+            ).join("");
+          const isAmberTurn = room.current_turn === "A";
+
+          pi.innerHTML = `
+            <div class="gpi-left">
+              <div class="gpi-team-bloc">
+                <span class="gpi-team-name gpi-amber">TIME ÂMBAR</span>
+                <div class="gpi-dots-row">${mkDots(levelA, "amber")}</div>
+              </div>
+              ${
+                isAmberTurn
+                  ? `<div class="gpi-timer-wrap">
+                <div class="gpi-timer-bar-bg"><div class="gpi-timer-bar-fill" id="gpi-timer-fill"></div></div>
+                <span class="gpi-timer-num" id="gpi-timer-num">--</span>
+              </div>`
+                  : ""
+              }
+            </div>
+            <div class="gpi-center">
+              <div class="gpi-phase-pill ${pillClass}">${pillText}</div>
+              ${turnLabel ? `<span class="gpi-turn-label">${turnLabel}</span>` : ""}
+            </div>
+            <div class="gpi-right">
+              ${
+                !isAmberTurn
+                  ? `<div class="gpi-timer-wrap">
+                <div class="gpi-timer-bar-bg"><div class="gpi-timer-bar-fill gpi-quartz-fill" id="gpi-timer-fill"></div></div>
+                <span class="gpi-timer-num gpi-quartz-num" id="gpi-timer-num">--</span>
+              </div>`
+                  : ""
+              }
+              <div class="gpi-team-bloc gpi-right-bloc">
+                <span class="gpi-team-name gpi-quartz">TIME QUARTZO</span>
+                <div class="gpi-dots-row gpi-dots-right">${mkDots(levelB, "quartz")}</div>
+              </div>
+            </div>
+            <div class="gpi-progress"><div class="gpi-progress-fill" id="gpi-progress-fill"></div></div>
+          `;
         }
-        const phase = room.phase || "between";
-        if (phase === "between") renderBetween();
-        else if (phase === "propose") renderPropose();
-        else if (phase === "vote") renderVote();
-        else if (phase === "feedback") renderFeedback();
+
+        // Clear between countdown when leaving between phase
+        if (phaseChanged && effectivePhase !== "between" && G_betweenInterval) {
+          clearInterval(G_betweenInterval);
+          G_betweenInterval = null;
+        }
+        if (effectivePhase !== "propose") detachProposalKeyHandler();
+
+        const pc = document.getElementById("phase-card");
+        if (pc && phaseChanged) pc.classList.remove("phase-enter");
+
+        if (effectivePhase === "finished") renderFinished();
+        else if (effectivePhase === "between") renderBetween();
+        else if (effectivePhase === "propose") renderPropose();
+        else if (effectivePhase === "vote") renderVote();
+        else if (effectivePhase === "feedback") renderFeedback();
+
+        if (pc && phaseChanged) {
+          void pc.offsetWidth; // force reflow to replay animation
+          pc.classList.add("phase-enter");
+        }
       }
 
       // ─── FASE: BETWEEN ────────────────────────────────────────
       function renderBetween() {
         stopCountdown();
+        const alreadyCounting = !!G_betweenInterval;
+        if (!alreadyCounting) G_betweenVal = 3;
+
         const room = S.room;
         const turn = room.current_turn;
         const isMyTurn = turn === S.myTeam;
+        const teamName = turn === "A" ? "Time Âmbar" : "Time Quartzo";
+        const teamColor = turn === "A" ? "var(--amber-400)" : "var(--quartz)";
+        const teamWord = turn === "A" ? room.team_a_word : room.team_b_word;
+        const attemptsUsed = getTeamWordAttempts(turn, room);
+        const isContinuingWord =
+          !!teamWord &&
+          attemptsUsed > 0 &&
+          attemptsUsed < MAX_WORD_ATTEMPTS;
+        const nextAttempt = Math.min(attemptsUsed + 1, MAX_WORD_ATTEMPTS);
         const pc = document.getElementById("phase-card");
-        pc.innerHTML = `
-          <div class="between-msg">
-            ${turn === "A" ? "🟡 Vez do Time Âmbar" : "🔵 Vez do Time Quartzo"}
-          </div>
-          <div class="between-sub">
-            ${isMyTurn ? "É a vez do seu time decodificar um glifo!" : "Aguardando o time adversário…"}
-          </div>
-          <div style="display:flex;flex-direction:column;gap:0.75rem;margin-top:0.5rem">
-            ${
-              S.isHost
-                ? `
-              <button id="btn-start-round" class="btn btn-primary">🎯 Iniciar Rodada</button>
-            `
-                : `
-              <div class="info-msg" style="margin:0;text-align:center">
-                ${isMyTurn ? "Aguardando o host iniciar a rodada…" : "Adversário está se preparando…"}
+
+        function formatCountdown(value) {
+          return `0:0${Math.max(0, value)}`;
+        }
+
+        function renderBetweenUI() {
+          let statusLabel = "Preparando novo glifo";
+          let supportText = isMyTurn
+            ? "Uma nova palavra será aberta para o seu time. Preparem a leitura do próximo glifo antes da rodada começar."
+            : "O próximo glifo será aberto para o adversário. Sua equipe joga quando o turno voltar.";
+          let metaLabel = "Status da partida";
+          let metaValue = `Rodada ${Number(room.round || 0) + 1} de 10 | corrida em andamento`;
+          let kickerText = "Próxima rodada em breve";
+
+          if (isContinuingWord) {
+            statusLabel = `Retomando tentativa ${nextAttempt}/${MAX_WORD_ATTEMPTS}`;
+            metaLabel = "Status da palavra";
+            metaValue = `Palavra em curso. Tentativa ${nextAttempt} de ${MAX_WORD_ATTEMPTS}.`;
+            kickerText = "Mesma palavra, nova leitura";
+            supportText = isMyTurn
+              ? `Seu time volta para a mesma palavra. Releiam o glifo anterior e tentem fechar na tentativa ${nextAttempt} de ${MAX_WORD_ATTEMPTS}.`
+              : `O adversário volta para a mesma palavra. A próxima abertura será a tentativa ${nextAttempt} de ${MAX_WORD_ATTEMPTS} deles.`;
+          }
+
+          pc.innerHTML = `
+            <div class="between-stage">
+              <div class="between-lead">
+                <h2 class="between-team-heading" style="color:${teamColor}">Vez do ${teamName}</h2>
+                <div class="between-status" style="color:${teamColor}">
+                  <span class="between-status-dot"></span>
+                  <span>${statusLabel}</span>
+                </div>
               </div>
-            `
+              ${isContinuingWord ? `<div class="between-word-chip">Palavra em curso: <strong>${escHtml(teamWord)}</strong></div>` : ""}
+              <div class="between-clock-wrap">
+                <span id="between-count" class="between-count" style="color:${teamColor}">${formatCountdown(G_betweenVal)}</span>
+                <div class="between-sparks" style="color:${teamColor}">
+                  <span></span><span></span><span></span>
+                </div>
+              </div>
+              <div class="between-kicker">${kickerText}</div>
+              <p class="between-support">${supportText}</p>
+              <div class="between-meta-card">
+                <span class="between-meta-label">${metaLabel}</span>
+                <div class="between-meta-value">${metaValue}</div>
+              </div>
+            </div>
+            ${S.isHost ? `<div class="between-host-actions"><button id="btn-skip-between" class="btn btn-ghost btn-sm">Iniciar agora</button></div>` : ""}
+          `;
+          document
+            .getElementById("btn-skip-between")
+            ?.addEventListener("click", () => {
+              clearInterval(G_betweenInterval);
+              G_betweenInterval = null;
+              doStartRound();
+            });
+        }
+
+        renderBetweenUI();
+
+        if (!alreadyCounting) {
+          G_betweenInterval = setInterval(() => {
+            G_betweenVal--;
+            const el = document.getElementById("between-count");
+            if (el) el.textContent = formatCountdown(G_betweenVal);
+            if (G_betweenVal <= 0) {
+              clearInterval(G_betweenInterval);
+              G_betweenInterval = null;
+              if (S.isHost) doStartRound();
             }
-          </div>
-        `;
-        document
-          .getElementById("btn-start-round")
-          ?.addEventListener("click", doStartRound);
+          }, 1000);
+        }
       }
 
       // ─── FASE: PROPOSE ────────────────────────────────────────
@@ -3086,26 +6380,35 @@
         const pc = document.getElementById("phase-card");
         pc.innerHTML = isActiveTeam
           ? `
-          <div style="text-align:center;font-size:0.82rem;color:var(--text2)">
+          <div class="propose-instruction">
             Observe o glifo — escreva sua proposta${captainBadge}
           </div>
-          <div id="glyph-box" class="glyph-wrap" style="margin:0.25rem auto 0"></div>
-          <div class="word-slots">
-            ${
-              myWord
-                ? myWord
-                    .split("")
-                    .map(() => `<div class="word-slot"></div>`)
-                    .join("")
-                : ""
-            }
+          ${
+            myWord
+              ? `
+          <div class="propose-glyphs">
+            <div class="propose-glyph-col">
+              <div class="propose-mini-label">GLIFO DA RODADA</div>
+              <div id="glyph-box" class="glyph-wrap active-glyph" style="width:180px;height:180px"></div>
+            </div>
+            <div class="propose-arrow">→</div>
+            <div class="propose-glyph-col">
+              <div class="propose-mini-label">SUA PROPOSTA (LIVE)</div>
+              <div id="propose-preview-box" class="glyph-wrap" style="width:150px;height:150px"></div>
+            </div>
           </div>
+          `
+              : ""
+          }
           <div class="proposal-input-area">
             ${
               !G_proposalSubmitted
                 ? `
-              <input id="proposal-input" type="text" maxlength="9"
-                placeholder="Sua proposta…" autocomplete="off" autocorrect="off" spellcheck="false" />
+              <div class="proposal-entry-wrap">
+                <div id="proposal-entry-slots" class="proposal-entry-slots" aria-label="Slots da proposta"></div>
+                <div class="proposal-entry-hint">Preencha os slots para montar sua proposta</div>
+                <div id="proposal-keyboard" class="proposal-keyboard" aria-label="Teclado da proposta"></div>
+              </div>
               <button id="btn-submit-proposal" class="btn btn-primary">✔ Enviar Proposta</button>
             `
                 : `
@@ -3132,33 +6435,61 @@
 
         if (isActiveTeam && myWord) {
           const box = document.getElementById("glyph-box");
-          if (box)
+          if (box) {
             renderGlyph(myWord, box, {
               fog: G_fogActive,
               mirror: G_mirrorActive,
               revealSlot: G_revealSlot,
             });
+            box.classList.add("breathing");
+          }
         }
 
-        const propInput = document.getElementById("proposal-input");
-        if (propInput) {
-          propInput.addEventListener("input", () => {
-            propInput.value = propInput.value
-              .toUpperCase()
-              .replace(/[^A-ZÁÉÍÓÚÂÊÔÃÕÇ]/g, "");
-          });
-          propInput.addEventListener("keydown", (e) => {
-            if (e.key === "Enter")
-              document.getElementById("btn-submit-proposal")?.click();
-          });
-          setTimeout(() => propInput.focus(), 50);
+        detachProposalKeyHandler();
+        if (isActiveTeam && myWord && !G_proposalSubmitted) {
+          const draftKey = `${room.id || "room"}:${turn}:${myWord}`;
+          if (
+            G_proposalDraftKey !== draftKey ||
+            G_proposalDraft.length !== myWord.length
+          ) {
+            resetProposalDraft(myWord.length, draftKey);
+          }
+          buildProposalKeyboard();
+          syncProposalComposer(myWord.length);
+          G_proposalKeyHandler = (event) => {
+            const target = event.target;
+            if (
+              event.ctrlKey ||
+              event.metaKey ||
+              event.altKey ||
+              (target &&
+                (target.tagName === "INPUT" ||
+                  target.tagName === "TEXTAREA" ||
+                  target.tagName === "SELECT" ||
+                  target.isContentEditable))
+            ) {
+              return;
+            }
+            if (
+              event.key === "Backspace" ||
+              event.key === "Delete" ||
+              event.key === "Enter" ||
+              /^[A-Za-zÁÉÍÓÚÂÊÔÃÕÇáéíóúâêôãõç]$/.test(event.key)
+            ) {
+              event.preventDefault();
+              handleProposalKey(event.key);
+            }
+          };
+          document.addEventListener("keydown", G_proposalKeyHandler);
         }
         document
           .getElementById("btn-submit-proposal")
           ?.addEventListener("click", () => {
-            const w = (document.getElementById("proposal-input")?.value || "")
-              .trim()
-              .toUpperCase();
+            const w = getProposalDraftWord().trim().toUpperCase();
+            if (w.length !== (myWord?.length || 0)) {
+              toast("Preencha todos os slots", "error");
+              return;
+            }
             if (w.length < 2) {
               toast("Palavra muito curta", "error");
               return;
@@ -3176,6 +6507,40 @@
         }
       }
 
+      function normalizeProposalWord(word) {
+        return String(word || "").trim().toUpperCase();
+      }
+
+      function buildVoteGroups() {
+        const groups = [];
+        const byWord = new Map();
+
+        G_proposals.forEach((proposal) => {
+          const key = normalizeProposalWord(proposal.word);
+          if (!key) return;
+          let group = byWord.get(key);
+          if (!group) {
+            group = {
+              key,
+              repId: proposal.id,
+              word: proposal.word,
+              proposalIds: [],
+              nicknames: [],
+              totalVotes: 0,
+              myVote: false,
+            };
+            byWord.set(key, group);
+            groups.push(group);
+          }
+          group.proposalIds.push(proposal.id);
+          group.nicknames.push(proposal.nickname);
+          group.totalVotes += (G_votes[proposal.id] || []).length;
+          if (G_myVote === proposal.id) group.myVote = true;
+        });
+
+        return groups;
+      }
+
       // ─── FASE: VOTE ───────────────────────────────────────────
       function renderVote() {
         const room = S.room;
@@ -3184,6 +6549,8 @@
         const cfg = room.config || {};
         const timerSec = cfg.timer_vote || 20;
         const pc = document.getElementById("phase-card");
+        const targetWord = turn === "A" ? room.team_a_word : room.team_b_word;
+        const canTurn = isActiveTeam;
 
         if (!G_proposals.length) {
           pc.innerHTML = `
@@ -3196,16 +6563,50 @@
           return;
         }
 
-        const cardsHtml = G_proposals.map((p) => {
-          const vc = (G_votes[p.id] || []).length;
-          const isMyV = G_myVote === p.id;
+        const votePlayerIds = new Set(Object.values(G_votes).flat());
+        const voteGroups = buildVoteGroups();
+        const voteStatusHtml = S.players
+          .filter((player) => player.team === turn)
+          .map((player) => {
+            const hasVoted = votePlayerIds.has(player.id);
+            const playerLabel = `${escHtml(player.nickname)}${player.id === PLAYER_ID ? " <em style='color:var(--text3)'>(você)</em>" : ""}`;
+            return `<div class="vote-status-item ${hasVoted ? "done" : "pending"}">
+              <span class="vote-status-dot"></span>
+              <span><strong>${playerLabel}</strong> ${hasVoted ? "votou" : "aguardando voto"}</span>
+            </div>`;
+          })
+          .join("");
+
+        const cardsHtml = voteGroups.map((group, index) => {
+          const vc = group.totalVotes;
+          const isMyV = group.myVote;
           const vcDisplay = G_hiddenVotes
             ? "? votos"
             : `${vc} voto${vc !== 1 ? "s" : ""}`;
-          return `<div class="vote-card ${isMyV ? "my-vote" : ""}" data-pid="${p.id}">
-            <div class="word">${escHtml(p.word)}</div>
-            <div class="proposer">${escHtml(p.nickname)}</div>
-            <div class="vcount">${vcDisplay}</div>
+          const proposalLabel = `Proposta ${String.fromCodePoint(65 + index)}`;
+          const canVote = isActiveTeam;
+          const voteLabel = isMyV ? "VOTADO" : canVote ? "VOTAR" : "AGUARDE";
+          const turnLabel = canTurn ? "VIRAR" : isActiveTeam ? "CAPITÃO" : "AGUARDE";
+          const authorsLabel =
+            group.nicknames.length === 1
+              ? group.nicknames[0]
+              : `${group.nicknames[0]} +${group.nicknames.length - 1}`;
+          return `<div class="vote-card ${isMyV ? "my-vote" : ""} ${canVote ? "" : "vote-card-locked"}" data-pid="${group.repId}">
+            <div class="vote-card-label">${proposalLabel}</div>
+            <div class="vote-glyph-shell">
+              <div class="vote-glyph-front" id="vgfront_${group.repId}"></div>
+            </div>
+            <div class="vote-card-foot">
+              <div class="vote-card-meta">
+                <div class="word">${escHtml(group.word)}</div>
+                <div class="proposer">${escHtml(authorsLabel)}</div>
+                <div class="vcount" id="vcnt_${group.repId}">${vcDisplay}</div>
+              </div>
+              <div class="vote-card-actions">
+                <button class="vote-select-btn" data-pid="${group.repId}" ${canVote ? "" : "disabled"}>${voteLabel}</button>
+                <button class="vote-turn-btn" data-turn-pid="${group.repId}" ${canTurn ? "" : "disabled"}>${turnLabel}</button>
+              </div>
+            </div>
           </div>`;
         }).join("");
 
@@ -3219,12 +6620,18 @@
             : "";
 
         pc.innerHTML = `
-          <div class="between-sub" style="text-align:center">
-            ${isActiveTeam ? "Vote na melhor proposta! Pode votar na própria." : "Time ativo está votando…"}
+          <div class="vote-instruction">
+            Observe o glifo — vote na melhor proposta!
+          </div>
+          <div class="vote-reference">
+            <div class="propose-mini-label">GLIFO DA RODADA</div>
+            <div id="vote-reference-box" class="glyph-wrap active-glyph vote-reference-box"></div>
+            <div class="vote-reference-sub">compare cada proposta com este glifo</div>
           </div>
           <div class="vote-cards" id="vote-cards">${cardsHtml}</div>
+          <div class="vote-mode-note">Votos indicam preferência. A palavra só vira quando alguém escolher um card.</div>
+          <div class="vote-status-log">${voteStatusHtml}</div>
           ${reactionsHtml}
-          ${S.isHost ? `<button id="btn-resolve" class="btn btn-secondary">→ Resolver Votação</button>` : ""}
         `;
 
         // Reações de espectador
@@ -3232,16 +6639,43 @@
           btn.addEventListener("click", () => sendReact(btn.dataset.emoji));
         });
 
-        if (isActiveTeam || S.myTeam === "spec") {
+        // Render mini-glyphs in vote cards
+        voteGroups.forEach((group) => {
+          const front = document.getElementById(`vgfront_${group.repId}`);
+          if (front) renderGlyph(group.word, front, {});
+        });
+        if (targetWord) {
+          const refBox = document.getElementById("vote-reference-box");
+          if (refBox) {
+            renderGlyph(targetWord, refBox, {
+              fog: G_fogActive,
+              mirror: G_mirrorActive,
+              revealSlot: G_revealSlot,
+            });
+          }
+        }
+
+        if (isActiveTeam) {
           document.querySelectorAll(".vote-card").forEach((card) => {
             card.addEventListener("click", () =>
               doSubmitVote(card.dataset.pid),
             );
           });
+          document.querySelectorAll(".vote-select-btn").forEach((button) => {
+            button.addEventListener("click", (event) => {
+              event.stopPropagation();
+              doSubmitVote(button.dataset.pid);
+            });
+          });
         }
-        document
-          .getElementById("btn-resolve")
-          ?.addEventListener("click", () => doResolveVote());
+        if (canTurn) {
+          document.querySelectorAll(".vote-turn-btn").forEach((button) => {
+            button.addEventListener("click", (event) => {
+              event.stopPropagation();
+              doResolveVote(button.dataset.turnPid);
+            });
+          });
+        }
 
         if (room.phase_deadline) {
           startCountdown(room.phase_deadline, timerSec, () => {
@@ -3264,6 +6698,35 @@
 
         const { feedback, correct, chosenWord } = G_feedbackData;
         const targetWord = turn === "A" ? room.team_a_word : room.team_b_word;
+        const decodedWord = chosenWord || "";
+        const currentLevel = turn === "A" ? room.team_a_level || 1 : room.team_b_level || 1;
+        const wordAttemptCount = G_wordAttempts || getTeamWordAttempts(turn);
+        const wordRetired = correct || wordAttemptCount >= MAX_WORD_ATTEMPTS;
+        let levelMsg = "Mantém no mesmo nível";
+        if (correct) {
+          levelMsg = currentLevel >= 7
+            ? "Nível máximo alcançado"
+            : "Próximo nível liberado";
+        }
+        const outcomeTitle = correct ? "SUCESSO!" : "NÃO FOI DESSA VEZ";
+        const outcomeSub = correct
+          ? "Decodificação validada pelo sistema"
+          : "A proposta virada não correspondeu ao glifo";
+        const outcomeIcon = correct ? "✓" : "✕";
+        let cycleMsg = `Tentativa ${wordAttemptCount}/${MAX_WORD_ATTEMPTS}. Esta palavra volta quando o turno retornar para este time.`;
+        if (correct) {
+          cycleMsg = "Palavra concluída. Na próxima vez deste time, uma nova palavra será sorteada.";
+        } else if (wordRetired) {
+          cycleMsg = `Tentativa ${wordAttemptCount}/${MAX_WORD_ATTEMPTS}. Palavra encerrada; a próxima vez deste time começa com uma nova palavra.`;
+        }
+        const phaseTitle = correct ? "Leitura confirmada" : "Leitura rejeitada";
+        const attemptSummary = `Tentativa ${wordAttemptCount}/${MAX_WORD_ATTEMPTS}`;
+        let wordStatus = "Palavra continua";
+        if (correct) {
+          wordStatus = "Palavra concluída";
+        } else if (wordRetired) {
+          wordStatus = "Palavra encerrada";
+        }
 
         // Slots estilo lbox: SVG da letra com cor de status (igual ao index.html)
         const slotsHtml = (feedback || [])
@@ -3286,7 +6749,7 @@
                   return `<svg viewBox="0 0 200 200" aria-hidden="true" style="width:65%;height:65%" fill="none" stroke="${svgColor}" stroke-width="10" stroke-linecap="${lc}" stroke-linejoin="${lj}" stroke-miterlimit="${ml}"${letterDef.transform ? ` transform="${letterDef.transform}"` : ""}><g>${paths}</g></svg>`;
                 })()
               : escHtml(f.letter || "");
-            return `<div class="feedback-slot ${f.status}" title="${f.letter}">${svgInner}</div>`;
+            return `<div class="feedback-slot ${f.status} reveal" title="${f.letter}">${svgInner}</div>`;
           })
           .join("");
 
@@ -3301,32 +6764,70 @@
           <button class="reaction-btn" data-emoji="👀" title="Atenção!">👀</button>
         </div>`;
 
+        const actionsHtml = S.isHost
+          ? `<button id="btn-next-turn" class="btn btn-primary">Próximo Turno →</button>`
+          : `<div class="info-msg" style="margin:0;text-align:center">Aguardando o host avançar…</div>`;
+
         pc.innerHTML = `
-          <div class="outcome-msg ${correct ? "win" : "fail"}">
-            ${correct ? "✅ Acertou!" : "❌ Não foi dessa vez"}
+          <div class="feedback-stage">
+            <div class="feedback-lead">
+              <div class="feedback-kicker">Resultado da rodada</div>
+              <h2 class="feedback-title ${correct ? "win" : "fail"}">${phaseTitle}</h2>
+              <p class="feedback-subtitle">${cycleMsg}</p>
+            </div>
+            <div class="feedback-compare">
+              <div class="feedback-ref">
+                <div class="propose-mini-label">GLIFO DA VEZ</div>
+                <div id="feedback-glyph-box" class="glyph-wrap active-glyph feedback-ref-box"></div>
+              </div>
+              <div class="feedback-arrow">⇉</div>
+              <div class="feedback-word-card">
+                <div class="propose-mini-label">GLIFO ESCOLHIDO</div>
+                <div id="feedback-chosen-glyph-box" class="glyph-wrap feedback-chosen-box"></div>
+                <div class="feedback-word-value">${escHtml(decodedWord || "—")}</div>
+                <div class="feedback-word-sub">proposta virada</div>
+              </div>
+            </div>
+            <div class="feedback-slots">${slotsHtml}</div>
+            <div class="feedback-outcome-block ${correct ? "win" : "fail"}">
+              <div class="feedback-outcome-icon">${outcomeIcon}</div>
+              <div class="outcome-msg ${correct ? "win" : "fail"}">${outcomeTitle}</div>
+              <div class="feedback-outcome-sub">${outcomeSub}</div>
+            </div>
+            <div class="feedback-meta-grid">
+              <div class="feedback-meta-card">
+                <div class="feedback-meta-label">Palavra alvo</div>
+                <div class="feedback-meta-value">${escHtml(targetWord || "?")}</div>
+              </div>
+              <div class="feedback-meta-card">
+                <div class="feedback-meta-label">Tentativa</div>
+                <div class="feedback-meta-value">${attemptSummary}</div>
+                <div class="feedback-meta">${wordStatus}</div>
+              </div>
+              <div class="feedback-meta-card">
+                <div class="feedback-meta-label">Progressão</div>
+                <div class="feedback-meta-value">${levelMsg}</div>
+                <div class="feedback-meta">Primeiro time a fechar 7 letras vence.</div>
+              </div>
+            </div>
+            <div class="feedback-meta">${cycleMsg}</div>
+            <div class="feedback-reactions">${reactionsHtml}</div>
+            <div class="feedback-actions">${actionsHtml}</div>
           </div>
-          <div id="feedback-glyph-box" class="glyph-wrap" style="margin:0.25rem auto"></div>
-          <div class="feedback-slots">${slotsHtml}</div>
-          <div class="feedback-chosen" style="margin-top:0.25rem;font-size:0.78rem">
-            ${correct ? `A palavra era: <strong>${escHtml(targetWord || "?")}</strong>` : `A palavra era: <strong style="color:var(--amber-400)">${escHtml(targetWord || "?")}</strong>`}
-          </div>
-          <div style="font-size:0.82rem;text-align:center;color:${correct ? "var(--correct)" : "var(--text2)"}">
-            ${correct ? ((turn === "A" && (room.team_a_level || 1) >= 7) || (turn === "B" && (room.team_b_level || 1) >= 7) ? "🏆 Nível máximo!" : "⬆️ Próximo nível!") : "Mantém no mesmo nível."}
-          </div>
-          ${reactionsHtml}
-          ${
-            S.isHost
-              ? correct || G_wordAttempts >= MAX_WORD_ATTEMPTS
-                ? `<button id="btn-next-turn" class="btn btn-primary" style="margin-top:0.5rem">Próximo Turno →</button>`
-                : `<button id="btn-retry-word" class="btn btn-primary" style="margin-top:0.5rem">↩ Tentar Novamente (${G_wordAttempts}/${MAX_WORD_ATTEMPTS})</button>
-                   <button id="btn-next-turn" class="btn btn-secondary" style="margin-top:0.25rem;font-size:0.82rem;opacity:0.7">Desistir → Próximo Turno</button>`
-              : `<div class="info-msg" style="margin:0;text-align:center">Aguardando o host avançar…</div>`
-          }
         `;
         // Renderiza o glifo da palavra alvo (para todos verem)
         if (targetWord) {
           const glBox = document.getElementById("feedback-glyph-box");
-          if (glBox) renderGlyph(targetWord, glBox, { revealed: true });
+          if (glBox) {
+            renderGlyph(targetWord, glBox, { revealed: true });
+            glBox.classList.add("breathing");
+          }
+        }
+        if (decodedWord) {
+          const chosenBox = document.getElementById("feedback-chosen-glyph-box");
+          if (chosenBox) {
+            renderGlyph(decodedWord, chosenBox, { revealed: true });
+          }
         }
         pc.querySelectorAll(".reaction-btn").forEach((btn) => {
           btn.addEventListener("click", () => sendReact(btn.dataset.emoji));
@@ -3334,9 +6835,6 @@
         document
           .getElementById("btn-next-turn")
           ?.addEventListener("click", doNextTurn);
-        document
-          .getElementById("btn-retry-word")
-          ?.addEventListener("click", doRetryWord);
       }
 
       // ─── FASE: FINISHED ───────────────────────────────────────
@@ -3456,35 +6954,45 @@
         }
 
         const turn = S.room.current_turn;
+        const wordField = turn === "A" ? "team_a_word" : "team_b_word";
+        const existingWord = S.room[wordField];
+        const currentWordAttempts = getTeamWordAttempts(turn);
+        const reuseCurrentWord = Boolean(
+          existingWord &&
+            currentWordAttempts > 0 &&
+            currentWordAttempts < MAX_WORD_ATTEMPTS,
+        );
         G_proposals = [];
         G_votes = {};
         G_myVote = null;
         G_proposalSubmitted = false;
         G_feedbackData = null;
-        G_wordAttempts = 0; // nova palavra, zera contador
+        G_wordAttempts = reuseCurrentWord ? currentWordAttempts : 0;
 
         // Sorteia a palavra — tenta edge function, fallback local
         const level =
           turn === "A" ? S.room.team_a_level || 1 : S.room.team_b_level || 1;
-        let chosenWord = null;
-        try {
-          const ctrl = new AbortController();
-          const tId = setTimeout(() => ctrl.abort(), 5000);
-          const resp = await fetch(`${SUPA_URL}/functions/v1/arena-word`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${SUPA_KEY}`,
-            },
-            body: JSON.stringify({ roomId: S.roomId, team: turn }),
-            signal: ctrl.signal,
-          });
-          clearTimeout(tId);
-          if (!resp.ok) throw new Error("arena-word " + resp.status);
-          const data = await resp.json();
-          chosenWord = data.word;
-        } catch (e) {
-          console.warn("arena-word falhou, usando fallback local:", e);
+        let chosenWord = reuseCurrentWord ? existingWord : null;
+        if (!chosenWord) {
+          try {
+            const ctrl = new AbortController();
+            const tId = setTimeout(() => ctrl.abort(), 5000);
+            const resp = await fetch(`${SUPA_URL}/functions/v1/arena-word`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${SUPA_KEY}`,
+              },
+              body: JSON.stringify({ roomId: S.roomId, team: turn }),
+              signal: ctrl.signal,
+            });
+            clearTimeout(tId);
+            if (!resp.ok) throw new Error("arena-word " + resp.status);
+            const data = await resp.json();
+            chosenWord = data.word;
+          } catch (e) {
+            console.warn("arena-word falhou, usando fallback local:", e);
+          }
         }
 
         // Fallback: sorteia localmente se edge function falhou
@@ -3567,22 +7075,23 @@
         const cfg = S.room.config || {};
         const timerSec = cfg.timer_propose || 45;
         const deadline = new Date(Date.now() + timerSec * 1000).toISOString();
-        const wordField = turn === "A" ? "team_a_word" : "team_b_word";
+        const roomPatch = {
+          [wordField]: chosenWord,
+          phase: "propose",
+          phase_deadline: deadline,
+        };
+        if (!reuseCurrentWord) {
+          roomPatch.active_fx = buildArenaFxWithAttempts(turn, 0);
+        }
         G_roundStartMs = Date.now();
         await sb
           .from("arena_rooms")
-          .update({
-            [wordField]: chosenWord,
-            phase: "propose",
-            phase_deadline: deadline,
-          })
+          .update(roomPatch)
           .eq("id", S.roomId);
         // Patch local imediato para o host (não espera Realtime)
         S.room = {
           ...S.room,
-          [wordField]: chosenWord,
-          phase: "propose",
-          phase_deadline: deadline,
+          ...roomPatch,
         };
         S.busy = false;
         renderGamePhase(); // host vê o glifo imediatamente
@@ -3637,24 +7146,25 @@
       }
 
       async function doResolveVote(forcedId) {
-        if (!S.isHost || S.busy) return;
+        const isActiveTeamPlayer = S.myTeam && S.myTeam === S.room?.current_turn;
+        if (!isActiveTeamPlayer || S.busy) return;
         S.busy = true;
         stopCountdown();
 
         // Escolhe proposta com mais votos (tie → aleatório; sem votos → aleatório)
-        let chosen = forcedId !== undefined ? forcedId : null;
+        let chosen = forcedId ?? null;
         if (chosen === null && G_proposals.length > 0) {
-          let best = null,
-            bestCt = -1;
-          G_proposals.forEach((pr) => {
-            const n = (G_votes[pr.id] || []).length;
+          let best = null;
+          let bestCt = -1;
+          buildVoteGroups().forEach((group) => {
+            const n = group.totalVotes;
             if (n > bestCt || (n === bestCt && Math.random() < 0.5)) {
               bestCt = n;
-              best = pr;
+              best = group;
             }
           });
           chosen =
-            best?.id ??
+            best?.repId ??
             G_proposals[Math.floor(Math.random() * G_proposals.length)]?.id ??
             null;
         }
@@ -3677,7 +7187,7 @@
               turnNumber: S.room.turn_number || 1,
             }),
           });
-          if (!resp.ok) throw new Error();
+          if (!resp.ok) throw new Error("arena-result request failed");
           ({ feedback, correct, word } = await resp.json());
         } catch {
           // Fallback client-side
@@ -3711,8 +7221,13 @@
           await sb.from("arena_rooms").update(updates).eq("id", S.roomId);
         }
 
-        G_wordAttempts++;
+        const nextWordAttempts = getTeamWordAttempts(S.room.current_turn) + 1;
+        G_wordAttempts = nextWordAttempts;
         G_feedbackData = { feedback, correct, chosenWord: guessWord };
+        const nextArenaFx = buildArenaFxWithAttempts(
+          S.room.current_turn,
+          nextWordAttempts,
+        );
 
         // Rastreia tempo gasto neste turno para tiebreaker
         if (G_roundStartMs > 0) {
@@ -3744,8 +7259,9 @@
         // Garante fase feedback no DB (arena-result já fez, mas re-confirma)
         await sb
           .from("arena_rooms")
-          .update({ phase: "feedback" })
+          .update({ phase: "feedback", active_fx: nextArenaFx })
           .eq("id", S.roomId);
+        S.room = { ...S.room, active_fx: nextArenaFx };
         S.busy = false;
         renderGamePhase();
       }
@@ -3787,16 +7303,29 @@
         G_mirrorActive = false;
         G_hiddenVotes = false;
         G_revealSlot = null;
+        const finishedTeam = S.room.current_turn;
+        const finishedAttempts = G_wordAttempts || getTeamWordAttempts(finishedTeam);
+        const retireWord = Boolean(
+          G_feedbackData?.correct || finishedAttempts >= MAX_WORD_ATTEMPTS,
+        );
+        const wordField = finishedTeam === "A" ? "team_a_word" : "team_b_word";
+        const nextArenaFx = buildArenaFxWithAttempts(
+          finishedTeam,
+          retireWord ? 0 : finishedAttempts,
+        );
         const nextTurn = S.room.current_turn === "A" ? "B" : "A";
         const nextTurnNum = (S.room.turn_number || 1) + 1;
+        const roomPatch = {
+          phase: "between",
+          phase_deadline: null,
+          current_turn: nextTurn,
+          turn_number: nextTurnNum,
+          active_fx: nextArenaFx,
+        };
+        if (retireWord) roomPatch[wordField] = null;
         await sb
           .from("arena_rooms")
-          .update({
-            phase: "between",
-            phase_deadline: null,
-            current_turn: nextTurn,
-            turn_number: nextTurnNum,
-          })
+          .update(roomPatch)
           .eq("id", S.roomId);
         S.busy = false;
       }
@@ -4322,8 +7851,552 @@
       }
 
       // ─────────────────────────────────────────────────────────
+      // DESKTOP LAYOUT RENDERERS
+      // ─────────────────────────────────────────────────────────
+
+      function renderDesktopPanels() {
+        if (window.innerWidth < 900) return;
+        const panelA = document.getElementById("arena-panel-a");
+        const panelB = document.getElementById("arena-panel-b");
+        if (!panelA || !panelB) return;
+
+        const room = S.room;
+        const turn = room?.current_turn;
+
+        panelA.innerHTML = buildDesktopPanel("A");
+        panelB.innerHTML = buildDesktopPanel("B");
+
+        panelA.classList.toggle("panel-active", turn === "A");
+        panelA.classList.toggle("panel-inactive", turn === "B");
+        panelB.classList.toggle("panel-active", turn === "B");
+        panelB.classList.toggle("panel-inactive", turn === "A");
+        panelA.setAttribute("aria-hidden", "false");
+        panelB.setAttribute("aria-hidden", "false");
+
+        // Wire power-up buttons in side panels
+        panelA.querySelectorAll(".dp-pu-btn[data-pu]").forEach((btn) => {
+          btn.addEventListener("click", () => doUsePowerUp(btn.dataset.pu));
+        });
+        panelB.querySelectorAll(".dp-pu-btn[data-pu]").forEach((btn) => {
+          btn.addEventListener("click", () => doUsePowerUp(btn.dataset.pu));
+        });
+      }
+
+      function buildDesktopPanel(team) {
+        const room = S.room;
+        if (!room) return "";
+        const isAmber = team === "A";
+        const cls = isAmber ? "amber" : "quartz";
+        const level = isAmber ? room.team_a_level || 1 : room.team_b_level || 1;
+        const MAX_LEVEL = 7;
+
+        const dotsHtml = Array.from(
+          { length: MAX_LEVEL },
+          (_, i) =>
+            `<span class="asp-dot ${i < level ? `filled ${cls}` : "empty"}"></span>`,
+        ).join("");
+
+        const players = S.players.filter((p) => p.team === team);
+        const captain = getCaptain(team);
+
+        const playersHtml = players
+          .map((p) => {
+            const isMe = p.id === PLAYER_ID;
+            const isCap = p.id === captain?.id;
+            const initials = (p.nickname || "?").slice(0, 2).toUpperCase();
+            return `<div class="asp-player">
+            <div class="asp-avatar ${cls}">${initials}</div>
+            <div>
+              <span class="asp-nick">${escHtml(p.nickname)}${isMe ? `<span class="asp-you">você</span>` : ""}${isCap ? " 👑" : ""}</span>
+            </div>
+          </div>`;
+          })
+          .join("");
+
+        // Power-up buttons for my team only
+        const isMyTeam = team === S.myTeam;
+        const phase = room.phase;
+        const isMyTurn = room.current_turn === team;
+        const canUse = phase === "propose" || phase === "vote";
+        let puHtml = "";
+
+        if (isMyTeam) {
+          const myPus =
+            (team === "A" ? room.team_a_powerups : room.team_b_powerups) || [];
+          const countMy = {};
+          myPus.forEach((t) => {
+            countMy[t] = (countMy[t] || 0) + 1;
+          });
+          const myTypes = [...new Set(myPus)];
+
+          if (myTypes.length > 0) {
+            const puRows = myTypes
+              .map((t) => {
+                const cat = POWERUP_CATALOG[t];
+                if (!cat) return "";
+                const cnt = countMy[t];
+                const usable =
+                  canUse && (isMyTurn || t === "turbo" || t === "escudo");
+                return `<div class="asp-pu-row">
+                <div class="asp-pu-left">
+                  <span class="asp-pu-dot ${cls}"></span>
+                  <span class="asp-pu-name">${escHtml(cat.label)}</span>
+                </div>
+                <button class="asp-pu-btn" data-pu="${t}" ${usable ? "" : "disabled"}>${cnt > 1 ? cnt + "× " : ""}USAR</button>
+              </div>`;
+              })
+              .join("");
+            puHtml = `<span class="asp-section-label" style="margin-top:16px">Power-Ups</span>${puRows}`;
+          } else {
+            puHtml = `<span class="asp-section-label" style="margin-top:16px;opacity:.35">Power-Ups</span>
+              <div style="font-size:10px;opacity:.25;font-family:Manrope,sans-serif">Nenhum ainda</div>`;
+          }
+        }
+
+        return `
+          <span class="asp-level-label ${cls}">NÍVEL ${level}</span>
+          <div class="asp-dots-row">${dotsHtml}</div>
+          <span class="asp-section-label">Jogadores</span>
+          ${playersHtml || '<div style="font-size:11px;opacity:.3;font-family:Manrope,sans-serif">Nenhum</div>'}
+          <div style="flex:1"></div>
+          ${puHtml}
+        `;
+      }
+
+      function renderGlyphsRow() {
+        const el = document.getElementById("glyphs-row");
+        if (!el || window.innerWidth < 900) return;
+        const room = S.room;
+        if (!room) {
+          el.innerHTML = "";
+          return;
+        }
+
+        const wordA = room.team_a_word;
+        const wordB = room.team_b_word;
+        const turn = room.current_turn;
+        const phase = room.phase;
+        const showGlyphs = ["propose", "vote", "feedback"].includes(phase);
+
+        if (!showGlyphs) {
+          el.innerHTML = "";
+          return;
+        }
+
+        el.innerHTML = `
+          <div class="glyph-card-row ${turn === "A" ? "active" : "inactive"}">
+            <div class="glyph-row-label amber">Time Âmbar</div>
+            <div id="grow-a" style="width:52px;height:52px" class="glyph-wrap"></div>
+            <div class="glyph-row-sublabel">${wordA ? wordA.length + " letras" : "—"}</div>
+          </div>
+          <div class="vs-center"><span style="font-size:16px;opacity:.3">⚔️</span><span>VS</span></div>
+          <div class="glyph-card-row ${turn === "B" ? "active" : "inactive"}">
+            <div class="glyph-row-label quartz">Time Quartzo</div>
+            <div id="grow-b" style="width:52px;height:52px" class="glyph-wrap"></div>
+            <div class="glyph-row-sublabel">${wordB ? wordB.length + " letras" : "—"}</div>
+          </div>
+        `;
+
+        if (wordA) {
+          const boxA = document.getElementById("grow-a");
+          if (boxA)
+            renderGlyph(wordA, boxA, {
+              fog: turn !== "A",
+              mirror: false,
+              revealSlot: null,
+            });
+        }
+        if (wordB) {
+          const boxB = document.getElementById("grow-b");
+          if (boxB)
+            renderGlyph(wordB, boxB, {
+              fog: turn !== "B",
+              mirror: false,
+              revealSlot: null,
+            });
+        }
+      }
+
+      function renderFooterStrip() {
+        const el = document.getElementById("footer-strip");
+        if (!el || window.innerWidth < 900) return;
+        const room = S.room;
+        if (!room) {
+          el.innerHTML = "";
+          return;
+        }
+
+        const wordA = room.team_a_word;
+        const wordB = room.team_b_word;
+        const turn = room.current_turn;
+        const phase = room.phase;
+        const showGlyphs = ["propose", "vote", "feedback"].includes(phase);
+        const isAmberActive = turn === "A";
+
+        el.innerHTML = `
+          <div class="fs-side">
+            <div class="fs-team-info">
+              <span class="fs-team-name amber">TIME ÂMBAR</span>
+              <div style="display:flex;align-items:center;gap:14px">
+                <div class="fs-glyph-card ${isAmberActive ? "active-a" : "inactive"}" id="fglyph-a">
+                  ${!isAmberActive ? '<div class="fs-glyph-fog"></div>' : ""}
+                </div>
+                <div>
+                  <div class="fs-glyph-label" style="${isAmberActive ? "" : "opacity:.38"}">
+                    ${isAmberActive ? "GLIFO ATIVO" : "GLIFO OPONENTE"}
+                  </div>
+                  <div class="fs-glyph-sub">${wordA ? wordA.length + " letras" : "—"}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="fs-vs">VS</div>
+          <div class="fs-side fs-right-side">
+            <div class="fs-team-info" style="align-items:flex-end">
+              <span class="fs-team-name quartz">TIME QUARTZO</span>
+              <div style="display:flex;align-items:center;flex-direction:row-reverse;gap:14px">
+                <div class="fs-glyph-card ${!isAmberActive ? "active-b" : "inactive"}" id="fglyph-b">
+                  ${isAmberActive ? '<div class="fs-glyph-fog"></div>' : ""}
+                </div>
+                <div style="text-align:right">
+                  <div class="fs-glyph-label" style="${!isAmberActive ? "" : "opacity:.38"}">
+                    ${!isAmberActive ? "GLIFO ATIVO" : "GLIFO OPONENTE"}
+                  </div>
+                  <div class="fs-glyph-sub">${wordB ? wordB.length + " letras" : "—"}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        if (wordA && showGlyphs) {
+          const boxA = document.getElementById("fglyph-a");
+          if (boxA)
+            renderGlyph(wordA, boxA, {
+              fog: !isAmberActive,
+              mirror: false,
+              revealSlot: null,
+            });
+        }
+        if (wordB && showGlyphs) {
+          const boxB = document.getElementById("fglyph-b");
+          if (boxB)
+            renderGlyph(wordB, boxB, {
+              fog: isAmberActive,
+              mirror: false,
+              revealSlot: null,
+            });
+        }
+      }
+
+      // ─────────────────────────────────────────────────────────
       // INIT CHAT (hook em handleGameStart acima)
       // initChat() é chamada dentro de handleGameStart()
+
+      // ─────────────────────────────────────────────────────────
+      // DEBUG BAR
+      // Ativa via: ?debug na URL ou Ctrl+Shift+D
+      // ─────────────────────────────────────────────────────────
+      (function initDebugBar() {
+        const bar = document.getElementById("debug-bar");
+        if (!bar) return;
+
+        function toggle() {
+          bar.classList.toggle("open");
+        }
+        function open() {
+          bar.classList.add("open");
+        }
+
+        // Ativa se ?debug (ou &debug) estiver na URL
+        if (new URLSearchParams(location.search).has("debug")) open();
+
+        // Ctrl+Shift+D
+        document.addEventListener("keydown", (e) => {
+          if (e.ctrlKey && e.shiftKey && e.key === "D") {
+            e.preventDefault();
+            toggle();
+          }
+        });
+
+        document
+          .getElementById("dbg-close-btn")
+          ?.addEventListener("click", () => {
+            bar.classList.remove("open");
+          });
+
+        // Mock mínimo do state para as views que precisam dele
+        function mockLobbyState(asHost) {
+          S.roomCode = "DBG00";
+          S.isHost = asHost;
+          S.myTeam = "A";
+          S.nick = "Arthur";
+          S.players = [
+            {
+              id: PLAYER_ID,
+              nickname: "Arthur",
+              team: "A",
+              is_host: asHost,
+              joined_at: "2024-01-01T00:00:00Z",
+            },
+            {
+              id: "p2",
+              nickname: "Elena",
+              team: "A",
+              is_host: false,
+              joined_at: "2024-01-01T00:00:01Z",
+            },
+            {
+              id: "p3",
+              nickname: "Marcus",
+              team: "B",
+              is_host: false,
+              joined_at: "2024-01-01T00:00:02Z",
+            },
+          ];
+          S.onlineIds = new Set([PLAYER_ID, "p2", "p3"]);
+          S.room = { status: "lobby", phase: "lobby", id: "debug-room" };
+          S.roomId = "debug-room";
+        }
+
+        function applyDebugPhaseFixtures(phase) {
+          G_proposals = [];
+          G_votes = {};
+          G_myVote = null;
+          G_proposalSubmitted = false;
+          G_feedbackData = null;
+          G_wordAttempts = 1;
+          G_hiddenVotes = false;
+          G_fogActive = false;
+          G_mirrorActive = false;
+          G_revealSlot = null;
+
+          if (S.room?.id === "debug-room") {
+            S.room.active_fx = buildArenaFxWithAttempts("A", 1, S.room);
+          }
+
+          if (phase === "propose") {
+            G_proposals = [
+              {
+                id: "dbg-prop-a1",
+                player_id: "p2",
+                nickname: "Elena",
+                word: "ORBITA",
+              },
+            ];
+            return;
+          }
+
+          if (phase === "vote") {
+            G_proposals = [
+              {
+                id: "dbg-prop-v1",
+                player_id: PLAYER_ID,
+                nickname: "Arthur",
+                word: "ORBITA",
+              },
+              {
+                id: "dbg-prop-v2",
+                player_id: "p2",
+                nickname: "Elena",
+                word: "ORBITA",
+              },
+              {
+                id: "dbg-prop-v3",
+                player_id: "p3",
+                nickname: "Marcus",
+                word: "LANTER",
+              },
+            ];
+            G_votes = {
+              "dbg-prop-v1": [PLAYER_ID],
+              "dbg-prop-v3": ["p2"],
+            };
+            G_myVote = "dbg-prop-v1";
+            return;
+          }
+
+          if (phase === "between") {
+            G_wordAttempts = 2;
+            if (S.room?.id === "debug-room") {
+              S.room.active_fx = buildArenaFxWithAttempts("A", 2, S.room);
+              S.room.team_a_word = "GLIFOO";
+              S.room.round = 3;
+            }
+            return;
+          }
+
+          if (phase === "between-new") {
+            G_wordAttempts = 0;
+            if (S.room?.id === "debug-room") {
+              S.room.active_fx = buildArenaFxWithAttempts("A", 0, S.room);
+              S.room.team_a_word = "AURORA";
+              S.room.round = 4;
+            }
+            return;
+          }
+
+          if (phase === "feedback") {
+            G_proposals = [
+              {
+                id: "dbg-prop-f1",
+                player_id: PLAYER_ID,
+                nickname: "Arthur",
+                word: "ORBITA",
+              },
+              {
+                id: "dbg-prop-f2",
+                player_id: "p2",
+                nickname: "Elena",
+                word: "ORBITA",
+              },
+              {
+                id: "dbg-prop-f3",
+                player_id: "p3",
+                nickname: "Marcus",
+                word: "LANTER",
+              },
+            ];
+            G_votes = {
+              "dbg-prop-f1": [PLAYER_ID, "p2"],
+              "dbg-prop-f3": ["p3"],
+            };
+            G_myVote = "dbg-prop-f1";
+            G_wordAttempts = 3;
+            if (S.room?.id === "debug-room") {
+              S.room.active_fx = buildArenaFxWithAttempts("A", 3, S.room);
+              S.room.round = 3;
+            }
+            G_feedbackData = {
+              chosenWord: "ORBITA",
+              correct: false,
+              feedback: [
+                { letter: "O", status: "correct" },
+                { letter: "R", status: "present" },
+                { letter: "B", status: "absent" },
+                { letter: "I", status: "absent" },
+                { letter: "T", status: "present" },
+                { letter: "A", status: "absent" },
+              ],
+            };
+            return;
+          }
+
+          if (phase === "feedback-win") {
+            G_proposals = [
+              {
+                id: "dbg-prop-fw1",
+                player_id: PLAYER_ID,
+                nickname: "Arthur",
+                word: "GLIFOO",
+              },
+              {
+                id: "dbg-prop-fw2",
+                player_id: "p2",
+                nickname: "Elena",
+                word: "CLARAO",
+              },
+            ];
+            G_votes = {
+              "dbg-prop-fw1": [PLAYER_ID, "p2"],
+            };
+            G_myVote = "dbg-prop-fw1";
+            G_wordAttempts = 2;
+            if (S.room?.id === "debug-room") {
+              S.room.active_fx = buildArenaFxWithAttempts("A", 2, S.room);
+              S.room.team_a_word = "GLIFOO";
+              S.room.team_a_level = 3;
+              S.room.round = 4;
+            }
+            G_feedbackData = {
+              chosenWord: "GLIFOO",
+              correct: true,
+              feedback: [
+                { letter: "G", status: "correct" },
+                { letter: "L", status: "correct" },
+                { letter: "I", status: "correct" },
+                { letter: "F", status: "correct" },
+                { letter: "O", status: "correct" },
+                { letter: "O", status: "correct" },
+              ],
+            };
+          }
+        }
+
+        function mockGameState(phase) {
+          if (!S.room || S.room.id !== "debug-room") mockLobbyState(true);
+          let actualPhase = phase;
+          if (phase === "between-new") actualPhase = "between";
+          if (phase === "feedback-win") actualPhase = "feedback";
+          S.room = {
+            ...S.room,
+            id: "debug-room",
+            status: "playing",
+            phase: actualPhase,
+            turn_number: 3,
+            current_turn: "A",
+            round: 3,
+            team_a_word: "GLIFOO",
+            team_b_word: "ENIGMA",
+            team_a_level: 2,
+            team_b_level: 1,
+            team_a_score: 2,
+            team_b_score: 1,
+            team_a_powerups: ["nevoa"],
+            team_b_powerups: [],
+            phase_deadline: new Date(Date.now() + 45000).toISOString(),
+            proposals: [],
+            votes: {},
+            last_proposal: null,
+            last_word: null,
+            active_fx: { wordAttemptsA: 1, wordAttemptsB: 0 },
+          };
+          S.isHost = true;
+          S.myTeam = "A";
+          S.roomId = "debug-room";
+          applyDebugPhaseFixtures(phase);
+        }
+
+        // Botões de VIEW
+        bar.querySelectorAll("[data-dbg-view]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            bar
+              .querySelectorAll("[data-dbg-view]")
+              .forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            bar
+              .querySelectorAll("[data-dbg-phase]")
+              .forEach((b) => b.classList.remove("active"));
+
+            const view = btn.dataset.dbgView;
+            if (view === "view-welcome") {
+              showView("view-welcome");
+            } else if (view === "view-lobby" || view === "view-lobby-guest") {
+              mockLobbyState(view === "view-lobby");
+              showView("view-lobby");
+              renderLobby();
+            }
+          });
+        });
+
+        // Botões de PHASE
+        bar.querySelectorAll("[data-dbg-phase]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            bar
+              .querySelectorAll("[data-dbg-phase]")
+              .forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            bar
+              .querySelectorAll("[data-dbg-view]")
+              .forEach((b) => b.classList.remove("active"));
+
+            const phase = btn.dataset.dbgPhase;
+            mockGameState(phase);
+            showView("view-game");
+            renderGamePhase();
+          });
+        });
+      })();
     </script>
   </body>
 </html>
