@@ -2303,6 +2303,9 @@ function handleKey(k) {
   refresh(c);
   calcWarns();
   haptic(30);
+  // Bounce animation com anime.js
+  const slotEl = document.getElementById("lboxes").children[c];
+  if (slotEl) animateBounceLetter(slotEl);
 }
 
 function calcWarns() {
@@ -2351,6 +2354,36 @@ function haptic(pattern) {
 
 // ═══════════════════════════════════════════════
 // DECODE
+
+// ═══════════════════════════════════════════════
+// ANIME.JS MICRO-INTERACTIONS (Chat O)
+// ═══════════════════════════════════════════════
+
+// Flip reveal com rotateY — visual mais impactante que scaleY
+// Shake da linha com anime.js — para palavra inválida
+function animateShakeRow() {
+  if (typeof anime === "undefined") return;
+  const lboxes = document.getElementById("lboxes");
+  if (!lboxes) return;
+  anime({
+    targets: lboxes,
+    translateX: [-8, 8, -8, 8, 0],
+    duration: 280,
+    easing: "easeInOutQuad",
+  });
+}
+
+// Bounce ao digitar letra
+function animateBounceLetter(slotEl) {
+  if (typeof anime === "undefined") return;
+  anime({
+    targets: slotEl,
+    scale: [1, 1.12, 0.98, 1.05, 1],
+    duration: 240,
+    easing: "easeOutElastic(1, 0.6)",
+  });
+}
+
 // ═══════════════════════════════════════════════
 function decode() {
   if (!PUZZLE_READY) {
@@ -2365,16 +2398,7 @@ function decode() {
   if (full.some((x) => !x)) {
     setFb("Complete todas as letras antes de decodificar.", "err");
     haptic(80);
-    const slots = document.getElementById("lboxes").children;
-    for (let i = 0; i < WN; i++) {
-      const s = slots[i];
-      if (!s) continue;
-      setTimeout(() => {
-        s.classList.remove("shake-slot");
-        void s.offsetWidth;
-        s.classList.add("shake-slot");
-      }, i * 35);
-    }
+    animateShakeRow();
     return;
   }
   const guess = full.join("");
@@ -2463,18 +2487,8 @@ function decode() {
   if (!dicionarioValido(guess)) {
     setFb("Palavra não encontrada no dicionário.", "err");
     haptic(80);
-    const lb = document.getElementById("lboxes");
-    lb.classList.add("invalid");
-    const slotsDic = lb.children;
-    for (let i = 0; i < WN; i++) {
-      const s = slotsDic[i];
-      if (!s || s.classList.contains("decoded")) continue;
-      setTimeout(() => {
-        s.classList.remove("shake-slot");
-        void s.offsetWidth;
-        s.classList.add("shake-slot");
-      }, i * 35);
-    }
+    document.getElementById("lboxes").classList.add("invalid");
+    animateShakeRow();
     return;
   }
   document.getElementById("lboxes").classList.remove("invalid");
