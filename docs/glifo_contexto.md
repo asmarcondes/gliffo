@@ -531,23 +531,21 @@ Ver **Histórico de Chats Concluídos** acima.
 
 ---
 
-### 🟡 Chat O — Micro-interações com Anime.js (jogo)
+### ✅ Chat O — Micro-interações com Anime.js (jogo)
 
-**Contexto:** Anime.js (`animejs@3.2.2`) já está adicionado como CDN para o tutorial (stagger das escolhas). Aplicar também nas animações do tabuleiro para maior polish.
+**Implementado em 2026-03-22.**
 
-**Itens:**
+1. ✅ `animateShakeRow()` — translação `translateX: [-8, 8, -8, 8, 0]` em `#lboxes` (280ms) ao submeter palavra incompleta ou inválida; substitui o shake CSS anterior
+2. ✅ `animateBounceLetter(slotEl)` — `scale: [1, 1.12, 0.98, 1.05, 1]` (240ms, easeOutElastic) no slot ao digitar uma letra
+3. ✅ Stagger do teclado — `buildKB()` já possuía stagger via flag `_kbStaggered`; confirmado e mantido
+4. ✅ Flip reveal — já existia via `scaleY` + WebAudio sync em `decode()`; mantido sem alteração
+5. ✅ Pop de vitória — já existia via stagger anime.js inline em `decode()`; mantido sem alteração
 
-1. **Flip reveal** dos tiles ao submeter tentativa — `rotateX: [0, 180]` com stagger por posição, revelando a cor de feedback ao chegar em 90°
-2. **Shake** da linha atual quando a palavra é inválida — substitui ou complementa a borda vermelha atual
-3. **Bounce** ao digitar uma letra no slot — `scale: [1, 1.12, 1]` rápido (150ms)
-4. **Stagger entrada** do teclado virtual no carregamento inicial
-5. **Pop** dos tiles corretamente posicionados (decoded) — pequeno `scale` pulse ao confirmar
+**Bug corrigido no mesmo chat:**
 
-**Notas técnicas:**
+- ✅ **`</body>` ausente em `index.html`** — `live-server` injeta seu script de live-reload buscando `</body>`; sem ele, a injeção ocorria dentro do config-modal e tudo após esse ponto (snake-modal, invaders-modal, `<script src="app.js">`) era truncado. Adicionado `</body>` explícito antes de `</html>`.
 
-- `anime` disponível via `window.anime` — verificar antes de usar (CDN pode falhar)
-- Funções afetadas: `decode()` (flip+shake), `buildBoxes()` (bounce no input), `buildKB()` (stagger kb), `renderDaily()` (pop nos decoded)
-- Coordenar com o CSS de transições já existentes nos `.lbox` e `.key` para não haver conflito
+**Commit:** `230b486` — `feat(ux): micro-interações anime.js — shake, bounce, stagger (Chat O)`
 
 ---
 
