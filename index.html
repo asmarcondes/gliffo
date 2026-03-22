@@ -60,18 +60,75 @@
     />
     <meta name="apple-mobile-web-app-title" content="glif.foo" />
 
+    <!-- Security -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+        default-src 'self';
+        script-src 'self' https://cdn.jsdelivr.net;
+        style-src 'self' https://fonts.googleapis.com 'unsafe-inline';
+        font-src https://fonts.gstatic.com;
+        img-src 'self' data: https://glif.foo;
+        connect-src 'self'
+          https://ppssfweuotjgcfejdznn.supabase.co
+          https://ice1.somafm.com
+          https://ice2.somafm.com
+          https://ice4.somafm.com
+          https://ice5.somafm.com;
+        media-src
+          https://ice1.somafm.com
+          https://ice2.somafm.com
+          https://ice4.somafm.com
+          https://ice5.somafm.com;
+        worker-src 'self';
+        object-src 'none';
+        base-uri 'self';
+      "
+    />
+
     <!-- Performance -->
-    <!-- lottie-web player (tutorial sad walking) -->
-    <script src="https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js"></script>
-    <!-- Anime.js — micro-interações do tutorial -->
-    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+    <!-- Preconnect para Supabase (puzzle diário) -->
+    <link rel="preconnect" href="https://ppssfweuotjgcfejdznn.supabase.co" />
+    <link rel="dns-prefetch" href="https://ppssfweuotjgcfejdznn.supabase.co" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- lottie-web player (tutorial sad walking) -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js"
+      integrity="sha384-J8C0MvgX4WP58J4N2W99vCKd2J6z99ynOJ5bEfE6jeP7kVTW1drYtv/jzrxM5jbm"
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <!-- Anime.js — micro-interações -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"
+      integrity="sha384-oLmuahJgYYR1aWgZwdMQQ2AClE6A2eEwV2x1Z7cbIHehfkkmommQLH3wX1NDEszb"
+      crossorigin="anonymous"
+      defer
+    ></script>
+
     <link
       href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap"
       rel="stylesheet"
     />
-      <link rel="stylesheet" href="app.css" />
+    <link rel="stylesheet" href="app.css" />
+
+    <!-- Schema.org —  jogo de palavras -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Game",
+      "name": "glif.foo",
+      "description": "Jogo diário de palavras em português. As letras se empilham formando um glifo geométrico — estude as formas sobrepostas e decodifique a palavra escondida.",
+      "url": "https://glif.foo/",
+      "inLanguage": "pt-BR",
+      "genre": ["word game", "puzzle"],
+      "image": "https://glif.foo/og.png",
+      "applicationCategory": "Game",
+      "operatingSystem": "Web"
+    }
+    </script>
   </head>
   <body>
     <header>
