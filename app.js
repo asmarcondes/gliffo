@@ -1581,7 +1581,7 @@ const PALAVRAS = {
       dicReady = true;
       return;
     }
-  } catch (_) {}
+  } catch (_) { if (window._dbg) console.warn("[glif] localStorage dic cache read", _); }
   fetch("data/dicionario.json")
     .then((r) => r.json())
     .then((words) => {
@@ -1589,7 +1589,7 @@ const PALAVRAS = {
       dicReady = true;
       try {
         localStorage.setItem("gliffoo_dic", JSON.stringify(words));
-      } catch (_) {}
+      } catch (_) { if (window._dbg) console.warn("[glif] localStorage dic cache write", _); }
     })
     .catch(() => {
       dicReady = true; // fallback a PALAVRAS (já no Set)
@@ -1924,6 +1924,7 @@ let PRATICA_MODO = false;
 
 // ─── Animações UI ────────────────────────────────
 let _kbStaggered = false; // stagger do teclado só na primeira build
+let _kbDelegate = false;  // event delegation configurada uma vez
 
 function glyphStroke() {
   return (
@@ -2131,16 +2132,23 @@ function buildKB() {
       const kLabel =
         k === "⌫" ? "Apagar" : k === "↵" ? "Confirmar" : `Letra ${k}`;
       b.setAttribute("aria-label", kLabel);
-      b.onclick = () => {
-        b.classList.remove("tap");
-        b.getBoundingClientRect();
-        b.classList.add("tap");
-        handleKey(k);
-      };
+      b.dataset.key = k;
       row.appendChild(b);
     });
     kb.appendChild(row);
   });
+  // Event delegation — configura uma vez; sobrevive ao kb.innerHTML rebuild
+  if (!_kbDelegate) {
+    _kbDelegate = true;
+    kb.addEventListener("click", (ev) => {
+      const btn = ev.target.closest("[data-key]");
+      if (!btn || btn.disabled) return;
+      btn.classList.remove("tap");
+      btn.getBoundingClientRect();
+      btn.classList.add("tap");
+      handleKey(btn.dataset.key);
+    });
+  }
   // Stagger de entrada — só na primeira renderização (carregamento inicial)
   if (!_kbStaggered && typeof anime !== "undefined") {
     _kbStaggered = true;
@@ -2346,10 +2354,18 @@ function calcWarns() {
   }
 }
 
+// Escapa caracteres HTML especiais para uso seguro em innerHTML
+function _htmlEsc(s) {
+  return String(s).replace(
+    /[&<>"']/g,
+    (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]),
+  );
+}
+
 function haptic(pattern) {
   try {
     navigator.vibrate && navigator.vibrate(pattern);
-  } catch (e) {}
+  } catch (e) { if (window._dbg) console.warn("[glif] haptic", e); }
 }
 
 // ═══════════════════════════════════════════════
@@ -3479,7 +3495,7 @@ function winMod() {
   document.getElementById("win-stats").innerHTML = `
     <div class="stat-card"><div class="stat-val">${G.attempts.length}<span style="font-size:1rem;color:var(--text3)">/4</span></div><div class="stat-lbl">Tentativas</div></div>
     ${midCard}
-    <div class="stat-card"><div class="stat-val" style="font-size:1.2rem;letter-spacing:0.1em">${WORD}</div><div class="stat-lbl">Palavra</div></div>`;
+    <div class="stat-card"><div class="stat-val" style="font-size:1.2rem;letter-spacing:0.1em">${_htmlEsc(WORD)}</div><div class="stat-lbl">Palavra</div></div>`;
   buildShareGrid("win-share");
   const wCB = document.getElementById("win-countdown-block");
   const noCountdown = ARQUIVO_MODO || PRATICA_MODO;
@@ -5144,10 +5160,13 @@ function buildHeaderMeta(refDate) {
     dificil: "Difícil",
     muito_dificil: "Muito Difícil",
   };
-  const difficulty = CURRENT_PUZZLE?.difficulty || CICLO_DIF[diaSemana];
+  const _VALID_DIFFS = new Set(["facil", "medio", "dificil", "muito_dificil"]);
+  const difficulty =
+    (_VALID_DIFFS.has(CURRENT_PUZZLE?.difficulty) && CURRENT_PUZZLE.difficulty) ||
+    CICLO_DIF[diaSemana];
   const difficultyLabel =
     CURRENT_PUZZLE?.difficultyLabel || CICLO_NAMES[difficulty] || "Puzzle";
-  const label = `${difficultyLabel} · ${WN} letras`;
+  const label = `${_htmlEsc(difficultyLabel)} · ${WN} letras`;
   const meta = document.getElementById("header-meta");
   if (ARQUIVO_MODO) {
     meta.innerHTML = `
@@ -8602,7 +8621,7 @@ function buildArquivoList() {
             } else if (ds.attempts && ds.attempts.length > 0) {
               status = "progress";
             }
-          } catch (_) {}
+          } catch (_) { if (window._dbg) console.warn("[glif] arquivo parse daily state", _); }
         }
       } else {
         const raw = localStorage.getItem("gliffoo_archive_" + info.dia);
@@ -8620,7 +8639,7 @@ function buildArquivoList() {
             } else {
               status = "progress";
             }
-          } catch (_) {}
+          } catch (_) { if (window._dbg) console.warn("[glif] arquivo parse archive state", _); }
         }
       }
 
@@ -9277,7 +9296,7 @@ document.body.addEventListener(
     if (!AUDIO_MUTED)
       try {
         _getAC();
-      } catch (e) {}
+      } catch (e) { if (window._dbg) console.warn("[glif] AudioContext warmup", e); }
   },
   { once: true, passive: true },
 );
@@ -9359,7 +9378,7 @@ function eePlayFanfare() {
         o.stop(A.currentTime + 0.38);
       }, noteIdx * 80);
     });
-  } catch (e2) {}
+  } catch (e2) { if (window._dbg) console.warn("[glif] ee fanfare", e2); }
 }
 function eePlayTrombone() {
   if (AUDIO_MUTED) return;
@@ -9376,7 +9395,7 @@ function eePlayTrombone() {
     g.gain.exponentialRampToValueAtTime(0.001, A.currentTime + 0.7);
     o.start();
     o.stop(A.currentTime + 0.7);
-  } catch (e2) {}
+  } catch (e2) { if (window._dbg) console.warn("[glif] ee trombone", e2); }
 }
 function eePlayFlipTick(result, at) {
   if (AUDIO_MUTED) return;
@@ -9407,7 +9426,7 @@ function eePlayFlipTick(result, at) {
       o.start(t);
       o.stop(t + 0.05);
     }
-  } catch (e2) {}
+  } catch (e2) { if (window._dbg) console.warn("[glif] ee flipTick", e2); }
 }
 // Fallback offline: confetti CSS puro (posição fixa, cobre a tela)
 function _eeLocalConfetti() {
