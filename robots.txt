@@ -1,6 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /data/
-Disallow: /supabase/
 
 Sitemap: https://glif.foo/sitemap.xml
