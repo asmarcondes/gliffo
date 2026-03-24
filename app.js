@@ -1826,6 +1826,20 @@ async function fetchPuzzleByDate(dateStr) {
   };
 }
 
+// Busca puzzle por offset SEM fallback local — para o jogo do dia.
+// Lança erro se a Edge Function falhar (sem rede = sem jogo).
+async function fetchPuzzleForToday() {
+  const info = puzzleInfoPorOffset(0);
+  const puzzle = await fetchPuzzleByDate(info.dateStr); // pode lançar
+  return {
+    ...info,
+    ...puzzle,
+    dia: Number.isFinite(puzzle.dia) ? puzzle.dia : info.dia,
+  };
+}
+
+// Busca puzzle por offset COM fallback local — para o Modo Arquivo.
+// Se a Edge Function falhar, usa hash determinístico local (sem afetar stats).
 async function fetchPuzzleByOffset(offset) {
   const info = puzzleInfoPorOffset(offset);
   try {
@@ -1836,7 +1850,7 @@ async function fetchPuzzleByOffset(offset) {
       dia: Number.isFinite(puzzle.dia) ? puzzle.dia : info.dia,
     };
   } catch (error) {
-    console.warn("[glif] usando fallback local do puzzle:", error);
+    console.warn("[glif] arquivo: usando fallback local do puzzle:", error);
     return buildLocalPuzzle(info);
   }
 }
@@ -1868,13 +1882,21 @@ function showPuzzleLoadError(message) {
   const daily = document.getElementById("daily-stack");
   const yours = document.getElementById("your-stack");
   const meta = document.getElementById("header-meta");
-  if (meta) meta.textContent = "Falha ao carregar o puzzle";
+  if (meta) meta.textContent = "Sem conexão";
   if (daily) {
-    daily.innerHTML =
-      '<div style="padding:1.25rem;text-align:center;color:var(--text3)">Não foi possível carregar o glifo de hoje.</div>';
+    daily.innerHTML = `
+      <div style="padding:1.5rem 1rem;text-align:center;color:var(--text2);display:flex;flex-direction:column;gap:1rem;align-items:center">
+        <div style="font-size:2rem">📡</div>
+        <div style="font-size:0.95rem;color:var(--text3);max-width:240px;line-height:1.5">${message}</div>
+        <button
+          onclick="startPraticaMode();closeM('config-modal');"
+          style="margin-top:.25rem;padding:.55rem 1.25rem;border-radius:999px;border:none;background:var(--amber);color:#000;font-weight:700;cursor:pointer;font-size:.9rem">
+          🎯 Jogar no Modo Prática
+        </button>
+      </div>`;
   }
   if (yours) yours.innerHTML = "";
-  setFb(message, "err");
+  setFb("", "");
 }
 
 // Validação multi-tamanho: aceita palavras do banco atual + dicionário 5L
@@ -5179,12 +5201,15 @@ async function bootstrapGame() {
 
   try {
     setFb("Carregando glifo de hoje...", "");
-    const info = await fetchPuzzleByOffset(0);
+    const info = await fetchPuzzleForToday();
     applyPuzzleInfo(info);
   } catch (e) {
     console.warn("[glif] bootstrapGame erro:", e);
+    const isOffline = !navigator.onLine || e?.name === "AbortError";
     showPuzzleLoadError(
-      "Não foi possível carregar o glifo de hoje. Tente novamente em instantes.",
+      isOffline
+        ? "Você está sem conexão. O glifo do dia requer internet."
+        : "Não foi possível carregar o glifo de hoje. Tente novamente em instantes."
     );
     return;
   }
