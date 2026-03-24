@@ -199,6 +199,11 @@ function makeSVG(letter, color, extraStyle) {
   const ns = "http://www.w3.org/2000/svg";
   const svg = document.createElementNS(ns, "svg");
   svg.setAttribute("viewBox", "0 0 200 200");
+  svg.setAttribute("role", "img");
+  svg.setAttribute("aria-label", `Letra ${letter.toUpperCase()}`);
+  const title = document.createElementNS(ns, "title");
+  title.textContent = `Letra ${letter.toUpperCase()}`;
+  svg.appendChild(title);
   if (extraStyle) svg.style.cssText = extraStyle;
   const g = document.createElementNS(ns, "g");
   g.setAttribute("fill", "none");
@@ -1581,7 +1586,9 @@ const PALAVRAS = {
       dicReady = true;
       return;
     }
-  } catch (_) { if (window._dbg) console.warn("[glif] localStorage dic cache read", _); }
+  } catch (_) {
+    if (window._dbg) console.warn("[glif] localStorage dic cache read", _);
+  }
   fetch("data/dicionario.json")
     .then((r) => r.json())
     .then((words) => {
@@ -1589,7 +1596,9 @@ const PALAVRAS = {
       dicReady = true;
       try {
         localStorage.setItem("gliffoo_dic", JSON.stringify(words));
-      } catch (_) { if (window._dbg) console.warn("[glif] localStorage dic cache write", _); }
+      } catch (_) {
+        if (window._dbg) console.warn("[glif] localStorage dic cache write", _);
+      }
     })
     .catch(() => {
       dicReady = true; // fallback a PALAVRAS (já no Set)
@@ -1924,7 +1933,7 @@ let PRATICA_MODO = false;
 
 // ─── Animações UI ────────────────────────────────
 let _kbStaggered = false; // stagger do teclado só na primeira build
-let _kbDelegate = false;  // event delegation configurada uma vez
+let _kbDelegate = false; // event delegation configurada uma vez
 
 function glyphStroke() {
   return (
@@ -2358,14 +2367,19 @@ function calcWarns() {
 function _htmlEsc(s) {
   return String(s).replace(
     /[&<>"']/g,
-    (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]),
+    (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
+        c
+      ],
   );
 }
 
 function haptic(pattern) {
   try {
     navigator.vibrate && navigator.vibrate(pattern);
-  } catch (e) { if (window._dbg) console.warn("[glif] haptic", e); }
+  } catch (e) {
+    if (window._dbg) console.warn("[glif] haptic", e);
+  }
 }
 
 // ═══════════════════════════════════════════════
@@ -2823,7 +2837,10 @@ function openKeyModal() {
       }
     } else {
       b.textContent = "?";
-      b.onclick = () => {
+      b.setAttribute("tabindex", "0");
+      b.setAttribute("role", "button");
+      b.setAttribute("aria-label", `Revelar posição ${i + 1}`);
+      const activate = () => {
         document
           .querySelectorAll(".kbox")
           .forEach((x) => x.classList.remove("sel"));
@@ -2831,10 +2848,16 @@ function openKeyModal() {
         G.selKey = i;
         document.getElementById("kuse-btn").disabled = false;
       };
+      b.onclick = activate;
+      b.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activate(); } };
     }
     boxes.appendChild(b);
   }
   openM("key-modal");
+  requestAnimationFrame(() => {
+    const firstFree = boxes.querySelector(".kbox:not(.used)");
+    if (firstFree) firstFree.focus();
+  });
 }
 
 function useKey() {
@@ -5162,7 +5185,8 @@ function buildHeaderMeta(refDate) {
   };
   const _VALID_DIFFS = new Set(["facil", "medio", "dificil", "muito_dificil"]);
   const difficulty =
-    (_VALID_DIFFS.has(CURRENT_PUZZLE?.difficulty) && CURRENT_PUZZLE.difficulty) ||
+    (_VALID_DIFFS.has(CURRENT_PUZZLE?.difficulty) &&
+      CURRENT_PUZZLE.difficulty) ||
     CICLO_DIF[diaSemana];
   const difficultyLabel =
     CURRENT_PUZZLE?.difficultyLabel || CICLO_NAMES[difficulty] || "Puzzle";
@@ -8458,36 +8482,40 @@ window.addEventListener("load", () => {
   if (!localStorage.getItem("gliffoo_tutdone"))
     setTimeout(() => openTutorial(), 500);
   // Registra Service Worker (PWA)
-    if ("serviceWorker" in navigator) {
-      const isLocalServiceWorkerRuntime =
-        location.protocol === "file:" ||
-        location.hostname === "localhost" ||
-        location.hostname === "127.0.0.1";
+  if ("serviceWorker" in navigator) {
+    const isLocalServiceWorkerRuntime =
+      location.protocol === "file:" ||
+      location.hostname === "localhost" ||
+      location.hostname === "127.0.0.1";
 
-      if (isLocalServiceWorkerRuntime) {
-        navigator.serviceWorker
-          .getRegistrations()
-          .then((registrations) =>
-            Promise.all(registrations.map((registration) => registration.unregister())),
+    if (isLocalServiceWorkerRuntime) {
+      navigator.serviceWorker
+        .getRegistrations()
+        .then((registrations) =>
+          Promise.all(
+            registrations.map((registration) => registration.unregister()),
+          ),
+        )
+        .catch(() => {});
+
+      if ("caches" in window) {
+        caches
+          .keys()
+          .then((keys) =>
+            Promise.all(
+              keys
+                .filter((key) => key.startsWith("glifo-static-"))
+                .map((key) => caches.delete(key)),
+            ),
           )
           .catch(() => {});
-
-        if ("caches" in window) {
-          caches
-            .keys()
-            .then((keys) =>
-              Promise.all(
-                keys
-                  .filter((key) => key.startsWith("glifo-static-"))
-                  .map((key) => caches.delete(key)),
-              ),
-            )
-            .catch(() => {});
-        }
-      } else {
-        navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(() => {});
       }
+    } else {
+      navigator.serviceWorker
+        .register("/sw.js", { scope: "/" })
+        .catch(() => {});
     }
+  }
 });
 document.querySelector('.hbtn[title="Ajuda"]').onclick = () => openTutorial();
 
@@ -8621,7 +8649,10 @@ function buildArquivoList() {
             } else if (ds.attempts && ds.attempts.length > 0) {
               status = "progress";
             }
-          } catch (_) { if (window._dbg) console.warn("[glif] arquivo parse daily state", _); }
+          } catch (_) {
+            if (window._dbg)
+              console.warn("[glif] arquivo parse daily state", _);
+          }
         }
       } else {
         const raw = localStorage.getItem("gliffoo_archive_" + info.dia);
@@ -8639,7 +8670,10 @@ function buildArquivoList() {
             } else {
               status = "progress";
             }
-          } catch (_) { if (window._dbg) console.warn("[glif] arquivo parse archive state", _); }
+          } catch (_) {
+            if (window._dbg)
+              console.warn("[glif] arquivo parse archive state", _);
+          }
         }
       }
 
@@ -9296,7 +9330,9 @@ document.body.addEventListener(
     if (!AUDIO_MUTED)
       try {
         _getAC();
-      } catch (e) { if (window._dbg) console.warn("[glif] AudioContext warmup", e); }
+      } catch (e) {
+        if (window._dbg) console.warn("[glif] AudioContext warmup", e);
+      }
   },
   { once: true, passive: true },
 );
@@ -9378,7 +9414,9 @@ function eePlayFanfare() {
         o.stop(A.currentTime + 0.38);
       }, noteIdx * 80);
     });
-  } catch (e2) { if (window._dbg) console.warn("[glif] ee fanfare", e2); }
+  } catch (e2) {
+    if (window._dbg) console.warn("[glif] ee fanfare", e2);
+  }
 }
 function eePlayTrombone() {
   if (AUDIO_MUTED) return;
@@ -9395,7 +9433,9 @@ function eePlayTrombone() {
     g.gain.exponentialRampToValueAtTime(0.001, A.currentTime + 0.7);
     o.start();
     o.stop(A.currentTime + 0.7);
-  } catch (e2) { if (window._dbg) console.warn("[glif] ee trombone", e2); }
+  } catch (e2) {
+    if (window._dbg) console.warn("[glif] ee trombone", e2);
+  }
 }
 function eePlayFlipTick(result, at) {
   if (AUDIO_MUTED) return;
@@ -9426,7 +9466,9 @@ function eePlayFlipTick(result, at) {
       o.start(t);
       o.stop(t + 0.05);
     }
-  } catch (e2) { if (window._dbg) console.warn("[glif] ee flipTick", e2); }
+  } catch (e2) {
+    if (window._dbg) console.warn("[glif] ee flipTick", e2);
+  }
 }
 // Fallback offline: confetti CSS puro (posição fixa, cobre a tela)
 function _eeLocalConfetti() {

@@ -954,6 +954,10 @@
         background: rgba(74, 157, 111, 0.25);
         color: var(--correct);
       }
+      /* Garante alvo táctil mínimo WCAG 2.5.5 (44×44px) em touch */
+      @media (pointer: coarse) {
+        .kbtn { min-height: 44px; min-width: 36px; }
+      }
 
       /* ══════════════════════════════════════════
    MODALS
@@ -3589,6 +3593,20 @@
         position: static;
         margin-left: auto;
       }
+      .tut-skip-btn {
+        margin-left: auto;
+        background: none;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text3);
+        font-size: 0.75rem;
+        font-family: "DM Sans", sans-serif;
+        padding: 4px 10px;
+        cursor: pointer;
+        min-height: 32px;
+      }
+      .tut-skip-btn:hover { background: var(--surface2); color: var(--text2); }
+      .tut-chat-header .mclose { margin-left: 0; }
       .tut-agent-avatar {
         width: 30px;
         height: 30px;

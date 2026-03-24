@@ -116,18 +116,18 @@
 
     <!-- Schema.org —  jogo de palavras -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Game",
-      "name": "glif.foo",
-      "description": "Jogo diário de palavras em português. As letras se empilham formando um glifo geométrico — estude as formas sobrepostas e decodifique a palavra escondida.",
-      "url": "https://glif.foo/",
-      "inLanguage": "pt-BR",
-      "genre": ["word game", "puzzle"],
-      "image": "https://glif.foo/og.png",
-      "applicationCategory": "Game",
-      "operatingSystem": "Web"
-    }
+      {
+        "@context": "https://schema.org",
+        "@type": "Game",
+        "name": "glif.foo",
+        "description": "Jogo diário de palavras em português. As letras se empilham formando um glifo geométrico — estude as formas sobrepostas e decodifique a palavra escondida.",
+        "url": "https://glif.foo/",
+        "inLanguage": "pt-BR",
+        "genre": ["word game", "puzzle"],
+        "image": "https://glif.foo/og.png",
+        "applicationCategory": "Game",
+        "operatingSystem": "Web"
+      }
     </script>
   </head>
   <body>
@@ -231,7 +231,11 @@
         <div class="atts-row" id="atts-row">
           <span class="att-label">Tentativas</span>
         </div>
-        <div class="lboxes" id="lboxes" aria-label="Letras da tentativa atual"></div>
+        <div
+          class="lboxes"
+          id="lboxes"
+          aria-label="Letras da tentativa atual"
+        ></div>
         <div
           class="fbmsg"
           id="fbmsg"
@@ -381,7 +385,7 @@
       aria-hidden="true"
       tabindex="-1"
     >
-        <dialog class="modal" open aria-labelledby="key-modal-title">
+      <dialog class="modal" open aria-labelledby="key-modal-title">
         <button
           class="mclose"
           onclick="closeM('key-modal')"
@@ -597,7 +601,12 @@
             </div>
           </button>
           <div class="cfg-divider"></div>
-          <button class="cfg-row" id="cfg-hard-row" type="button" onclick="toggleHardMode()">
+          <button
+            class="cfg-row"
+            id="cfg-hard-row"
+            type="button"
+            onclick="toggleHardMode()"
+          >
             <div class="cfg-row-left">
               <span class="cfg-row-icon">🔥</span>
               <div>
@@ -610,7 +619,12 @@
             </div>
           </button>
           <div class="cfg-divider"></div>
-          <button class="cfg-row" id="cfg-sound-row" type="button" onclick="toggleMuteAudio()">
+          <button
+            class="cfg-row"
+            id="cfg-sound-row"
+            type="button"
+            onclick="toggleMuteAudio()"
+          >
             <div class="cfg-row-left">
               <span class="cfg-row-icon" id="cfg-sound-icon">🔊</span>
               <div>
@@ -755,6 +769,13 @@
         <div class="tut-chat-header">
           <div class="tut-agent-avatar">✦</div>
           <span class="tut-agent-name">Gliffo</span>
+          <button
+            class="tut-skip-btn"
+            onclick="tutSkipOrRestart()"
+            aria-label="Pular tutorial"
+          >
+            Pular
+          </button>
           <button
             class="mclose"
             onclick="closeTutorial()"
