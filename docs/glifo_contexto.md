@@ -258,7 +258,26 @@ let PRATICA_MODO = false;
 - **Parâmetro opcional:** `?date=YYYY-MM-DD` (debug/modo arquivo)
 - **Resposta:** `{ word, difficulty, difficultyLabel, puzzle, date }`
 
-### Lógica atual
+> **Importante:** A palavra do dia **sempre** vem desta Edge Function — não há fallback local no cliente. O Service Worker não tenta servir o jogo offline; sua função é apenas cachear assets estáticos (CSS, JS, ícones, animações, dicionário) para acelerar carregamentos.
+
+### Estrutura atual (refatorada)
+
+A Edge Function foi refatorada em múltiplos arquivos (a partir de Chat S):
+
+```
+supabase/functions/daily-word/
+├── index.ts       — entry point (Deno.serve)
+├── handler.ts     — lógica HTTP (CORS, routing, resposta)
+├── repository.ts  — acesso ao Supabase Storage (words_ptbr_year.json)
+├── schema.ts      — validação Zod do payload
+├── types.ts       — tipos compartilhados
+├── env.ts         — variáveis de ambiente
+├── handler.test.ts
+├── repository.test.ts
+└── env.test.ts
+```
+
+### Lógica de seleção (fallback on-the-fly, caso o schedule falhe)
 
 ```ts
 // Época: 2026-03-08T00:00:00Z (puzzle #1 = dia de lançamento)
@@ -276,7 +295,7 @@ CICLO_DIF = ["facil","facil","medio","medio","dificil","dificil","muito_dificil"
 
 ### Banco de palavras (Chat A — ✅ concluído)
 
-O banco `PALAVRAS` está **duplicado** entre `index.html` e `supabase/functions/daily-word/index.ts` — ao atualizar o banco, ambos precisam ser atualizados em sincronia.
+O banco `PALAVRAS` está **duplicado** entre `app.js` (cliente) e `supabase/functions/daily-word/` (Edge Function via `repository.ts`) — ao atualizar o banco, ambos precisam ser atualizados em sincronia. Fonte de verdade: `data/word_bank_final.json`.
 
 ```
 PALAVRAS = {

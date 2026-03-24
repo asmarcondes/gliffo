@@ -14,6 +14,7 @@ const filesToCopy = [
   "manifest.json",
   "sw.js",
   "og.png",
+  "robots.txt",
 ];
 const directoriesToCopy = ["animations", "icons"];
 

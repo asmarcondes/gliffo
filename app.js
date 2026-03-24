@@ -1693,6 +1693,11 @@ function scoreVisual(word) {
   return 45 + avgOverlap * 35 + n * 2 - repeticoes * 5;
 }
 
+// ── SUPABASE PROJECT ID ──────────────────────────────────────────────────────
+// O Project ID ("ppssfweuotjgcfejdznn") está embutido na URL abaixo.
+// Para trocar de projeto: substitua o ID em DAILY_WORD_URL_REMOTE.
+// Painel: https://supabase.com/dashboard/project/ppssfweuotjgcfejdznn
+// ─────────────────────────────────────────────────────────────────────────────
 const DAILY_WORD_URL_REMOTE =
   "https://ppssfweuotjgcfejdznn.supabase.co/functions/v1/daily-word";
 const DAILY_WORD_URL_LOCAL = "http://127.0.0.1:54321/functions/v1/daily-word";
@@ -3442,8 +3447,12 @@ function atualizarStats(won, tentativas) {
     s.streakAtual = 0;
   }
 
-  localStorage.setItem("gliffoo_stats", JSON.stringify(s));
-  localStorage.setItem("gliffoo_stats_date", hoje);
+  try {
+    localStorage.setItem("gliffoo_stats", JSON.stringify(s));
+    localStorage.setItem("gliffoo_stats_date", hoje);
+  } catch (e) {
+    console.warn("[glif] falha ao salvar stats", e);
+  }
 
   // Verifica conquistas após salvar stats atualizadas
   const firstAtt = G.attempts[0];
@@ -3481,7 +3490,11 @@ function salvarEstado() {
     won: G.won,
     keyUsed: G.keyUsed,
   };
-  localStorage.setItem("gliffoo_state", JSON.stringify(data));
+  try {
+    localStorage.setItem("gliffoo_state", JSON.stringify(data));
+  } catch (e) {
+    console.warn("[glif] falha ao salvar estado", e);
+  }
 }
 
 function carregarEstado() {
@@ -4754,7 +4767,11 @@ function loadAch() {
   }
 }
 function saveAch(earned) {
-  localStorage.setItem(ACH_KEY, JSON.stringify(earned));
+  try {
+    localStorage.setItem(ACH_KEY, JSON.stringify(earned));
+  } catch (e) {
+    console.warn("[glif] falha ao salvar conquistas", e);
+  }
 }
 
 function countSecrets(earned) {
@@ -4952,7 +4969,11 @@ function loadGoldenStats() {
   }
 }
 function saveGoldenStats(g) {
-  localStorage.setItem(GOLDEN_KEY, JSON.stringify(g));
+  try {
+    localStorage.setItem(GOLDEN_KEY, JSON.stringify(g));
+  } catch (e) {
+    console.warn("[glif] falha ao salvar stats dourados", e);
+  }
 }
 
 function bumpTimedAch(id, threshold) {
@@ -5113,8 +5134,46 @@ function renderConquistas() {
 // switchStatsTab: removido — view única
 
 // ═══════════════════════════════════════════════
+// STORAGE MIGRATION
+// Ao adicionar uma nova migração: incremente SCHEMA_VERSION e adicione
+// o bloco correspondente em migrateStorage().
+const SCHEMA_VERSION = 1;
+const SCHEMA_KEY = "gliffoo_schema_v";
+
+function migrateStorage() {
+  try {
+    const stored = Number.parseInt(localStorage.getItem(SCHEMA_KEY) || "0", 10);
+    if (stored >= SCHEMA_VERSION) return;
+
+    // ── v0 → v1 ─────────────────────────────────────────────────────────────
+    // Remove entradas gliffoo_archive_* em excesso (mantém os últimos 365)
+    // para evitar acúmulo indefinido no localStorage.
+    if (stored < 1) {
+      const MAX_ARCHIVE = 365;
+      const archiveKeys = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith("gliffoo_archive_")) archiveKeys.push(k);
+      }
+      if (archiveKeys.length > MAX_ARCHIVE) {
+        archiveKeys
+          .map((k) => ({ k, n: Number.parseInt(k.replace("gliffoo_archive_", ""), 10) }))
+          .sort((a, b) => a.n - b.n)
+          .slice(0, archiveKeys.length - MAX_ARCHIVE)
+          .forEach(({ k }) => localStorage.removeItem(k));
+      }
+    }
+
+    localStorage.setItem(SCHEMA_KEY, String(SCHEMA_VERSION));
+  } catch (e) {
+    console.warn("[glif] migrateStorage erro:", e);
+  }
+}
+
+// ═══════════════════════════════════════════════
 // INIT
 async function bootstrapGame() {
+  migrateStorage();
   initConfig();
   checkBetaReset();
 
@@ -8455,6 +8514,8 @@ function _prepareSadLottie(data) {
   _sadLottie = { div, inst };
 }
 function openTutorial(startStep) {
+  tClear();
+  newToken();
   tutStep = startStep || 0;
   document.getElementById("tutorial-overlay").classList.remove("hidden");
   renderStep(tutStep);

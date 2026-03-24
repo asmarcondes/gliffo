@@ -1,10 +1,13 @@
 // glif.foo — Service Worker
 // Estratégia: cache-first para assets estáticos, network-first para o HTML
+// O jogo requer conexão para buscar a palavra do dia (Edge Function Supabase).
+// O SW não tenta servir o jogo offline — apenas armazena assets estáticos
+// para acelerar carregamentos subsequentes.
 // Versão do cache: incrementar ao fazer deploy com mudanças
 
-const CACHE_STATIC = "glifo-static-v4";
+const CACHE_STATIC = "glifo-static-v5";
 
-// Assets que sempre ficam em cache (fontes, ícones, dicionário)
+// Assets pré-cacheados no install (fontes, ícones, dicionário, animações)
 const PRECACHE = [
   "/",
   "/index.html",
@@ -14,6 +17,8 @@ const PRECACHE = [
   "/data/dicionario.json",
   "/icons/icon-192.png",
   "/icons/icon-512.png",
+  "/animations/sad_walking.json",
+  "/animations/banana_boy.json",
 ];
 
 const NETWORK_FIRST_PATHS = new Set([
@@ -93,15 +98,11 @@ async function networkFirst(request) {
     }
     return response;
   } catch {
-    // Offline: serve do cache
+    // Sem rede: serve do cache se disponível (acelera recargas em conexão instável)
     const cached = await caches.match(request);
-    return (
-      cached ||
-      new Response(
-        "<h1>glif.foo</h1><p>Sem conexão. Abra novamente quando estiver online.</p>",
-        { headers: { "Content-Type": "text/html; charset=utf-8" } },
-      )
-    );
+    if (cached) return cached;
+    // Sem cache: deixa o erro propagar — o jogo requer conexão para funcionar
+    throw new Error("glif.foo: sem conexão e sem cache disponível");
   }
 }
 
