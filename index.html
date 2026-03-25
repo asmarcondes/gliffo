@@ -426,6 +426,18 @@
         <div class="modal-title" id="win-modal-title">🎉 Decodificado!</div>
         <div class="stats-grid" id="win-stats"></div>
         <div class="mdivider"></div>
+        
+        <!-- CALL TO ACTION: CRIAR CONTA -->
+        <div id="win-auth-cta" class="auth-cta hidden">
+          <div class="auth-cta-icon">👤</div>
+          <div class="auth-cta-text">
+            <strong>Salvar seu progresso na nuvem?</strong><br>
+            <span style="font-size: 0.85em; opacity: 0.8">Ao jogar em outro aparelho, seus resultados não serão perdidos.</span>
+          </div>
+          <button class="auth-btn" onclick="iniciarLogin(this)">Criar Conta Gratuita</button>
+          <a class="auth-dismiss" onclick="rejeitarLogin(this)">Agora não</a>
+        </div>
+        
         <div class="countdown-block" id="win-countdown-block">
           <div class="countdown-label">Próximo glifo em</div>
           <div class="countdown-timer" id="win-countdown">--:--:--</div>
@@ -486,6 +498,18 @@
           <div class="countdown-timer" id="lose-countdown">--:--:--</div>
         </div>
         <div class="mdivider"></div>
+
+        <!-- CALL TO ACTION: CRIAR CONTA -->
+        <div id="lose-auth-cta" class="auth-cta hidden">
+          <div class="auth-cta-icon">👤</div>
+          <div class="auth-cta-text">
+            <strong>Salvar seu progresso na nuvem?</strong><br>
+            <span style="font-size: 0.85em; opacity: 0.8">Ao jogar em outro aparelho, seus resultados não serão perdidos.</span>
+          </div>
+          <button class="auth-btn" onclick="iniciarLogin(this)">Criar Conta Gratuita</button>
+          <a class="auth-dismiss" onclick="rejeitarLogin(this)">Agora não</a>
+        </div>
+        
         <div class="sharepreview" id="lose-share"></div>
         <button class="sbtn" onclick="share()">Compartilhar resultado</button>
         <div class="copied">✓ Copiado!</div>

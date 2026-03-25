@@ -3564,6 +3564,14 @@ function winMod() {
   if (!noCountdown) iniciarCountdown("win-countdown");
   const winDef = document.getElementById("win-def");
   if (winDef) winDef.href = `https://www.dicio.com.br/${WORD.toLowerCase()}/`;
+
+  // Checar se mostra CTA de login
+  if (!ARQUIVO_MODO && !PRATICA_MODO && _shouldShowAuthCta(s.jogados)) {
+    document.getElementById("win-auth-cta").classList.remove("hidden");
+  } else {
+    document.getElementById("win-auth-cta").classList.add("hidden");
+  }
+
   openM("win-modal");
 }
 
@@ -3578,7 +3586,62 @@ function loseMod() {
   const noCountdownL = ARQUIVO_MODO || PRATICA_MODO;
   if (lCB) lCB.style.display = noCountdownL ? "none" : "";
   if (!noCountdownL) iniciarCountdown("lose-countdown");
+
+  // Checar se mostra CTA de login
+  const s = carregarStats();
+  if (!ARQUIVO_MODO && !PRATICA_MODO && _shouldShowAuthCta(s.jogados)) {
+    document.getElementById("lose-auth-cta").classList.remove("hidden");
+  } else {
+    document.getElementById("lose-auth-cta").classList.add("hidden");
+  }
+
   openM("lose-modal");
+}
+
+// ═══════════════════════════════════════════════
+// AUTH CTA HELPERS
+// ═══════════════════════════════════════════════
+function _shouldShowAuthCta(jogados) {
+    if (jogados < 1) return false;
+    
+    // Se o user já possui email ou provider vinculado, não mostra
+    const user = getSupabaseClient()?.auth?.user?.();
+    if (user && !user.is_anonymous) return false;
+    
+    // Checa se rejeitou recentemente (últimos 7 dias)
+    try {
+        const rejectedStr = localStorage.getItem("gliffoo_auth_rejected");
+        if (rejectedStr) {
+            const rejectedDate = new Date(parseInt(rejectedStr, 10));
+            const diffDays = (Date.now() - rejectedDate) / (1000 * 60 * 60 * 24);
+            if (diffDays < 7) return false;
+        }
+    } catch(e) {}
+    
+    return true;
+}
+
+async function iniciarLogin(btn) {
+    btn.disabled = true;
+    btn.textContent = "Conectando...";
+    const { data, error } = await getSupabaseClient().auth.linkIdentity({
+        provider: 'google',
+        options: { redirectTo: window.location.origin }
+    });
+    if (error) {
+        console.warn("[auth] erro linkIdentity:", error);
+        btn.textContent = "Erro. Tente de novo";
+        btn.disabled = false;
+    }
+    // redirect acontece logo após isso...
+}
+
+function rejeitarLogin(btn) {
+    try {
+        localStorage.setItem("gliffoo_auth_rejected", Date.now().toString());
+    } catch(e) {}
+    document.getElementById("win-auth-cta").classList.add("hidden");
+    document.getElementById("lose-auth-cta").classList.add("hidden");
 }
 
 // Countdown para o próximo glifo

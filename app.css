@@ -2252,6 +2252,78 @@
       }
 
       /* ══════════════════════════════════════════
+   AUTH CTA (LINK IDENTITY)
+══════════════════════════════════════════ */
+      .auth-cta {
+        background: linear-gradient(135deg, var(--surface2) 0%, var(--surface3) 100%);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px 16px;
+        margin-top: 2px;
+        margin-bottom: 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 10px;
+        box-shadow: 0 4px 12px var(--shadow);
+      }
+      .auth-cta.hidden {
+        display: none;
+      }
+      .auth-cta-icon {
+        font-size: 1.8rem;
+        color: var(--amber-400);
+        background: var(--surface);
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--border2);
+      }
+      .auth-cta-text {
+        font-size: 0.9rem;
+        color: var(--text);
+        line-height: 1.4;
+      }
+      .auth-btn {
+        background: var(--amber-400);
+        color: #1a1410;
+        border: none;
+        border-radius: 8px;
+        font-family: inherit;
+        font-weight: 600;
+        font-size: 0.9rem;
+        padding: 10px 20px;
+        cursor: pointer;
+        width: 100%;
+        transition: transform 0.1s, background 0.15s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+      .auth-btn:hover {
+        background: var(--amber-500);
+      }
+      .auth-btn:active {
+        transform: scale(0.97);
+      }
+      .auth-dismiss {
+        font-size: 0.75rem;
+        color: var(--text3);
+        text-decoration: underline;
+        cursor: pointer;
+        background: none;
+        border: none;
+      }
+      .auth-dismiss:hover {
+        color: var(--text2);
+      }
+
+      /* ══════════════════════════════════════════
    ISOMETRIC LAYER ANIMATION
 ══════════════════════════════════════════ */
       .iso-stage {
