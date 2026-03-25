@@ -193,9 +193,9 @@ npx playwright screenshot --viewport-size="1200,630" gen-og.html og.png
 - [x] Tutorial interativo (7 passos, palavra BOLA)
 - [x] PWA — instalável, offline-capable
 - [x] OG image para previews de link
-- [ ] Modo arquivo — jogar puzzles de dias anteriores
-- [ ] Configurações centralizadas (dark/light, reset stats)
-- [ ] Modo difícil de gameplay (letras confirmadas obrigatórias)
+- [x] Modo arquivo — jogar puzzles de dias anteriores
+- [x] Configurações centralizadas (dark/light, reset stats, modo prática)
+- [x] Modo difícil de gameplay (sem chave, glifo sempre completo, dots cinza)
 - [ ] Streak cross-device via Supabase Auth
 
 ## Licença
