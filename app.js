@@ -1806,9 +1806,19 @@ async function fetchPuzzleByDate(dateStr) {
   const url = new URL(baseUrl);
   if (dateStr) url.searchParams.set("date", dateStr);
   const timeoutMs = baseUrl === DAILY_WORD_URL_LOCAL ? 1500 : 4000;
+  
+  const headers = {};
+  // Adiciona token para passar pelo API Gateway nas Edge Functions na nuvem
+  if (typeof SUPABASE_ANON_KEY !== "undefined") {
+    headers["Authorization"] = `Bearer ${typeof getAuthToken === "function" && getAuthToken() ? getAuthToken() : SUPABASE_ANON_KEY}`;
+  }
+
   const resp = await fetchWithTimeout(
     url.toString(),
-    { cache: "no-store" },
+    { 
+      headers,
+      cache: "no-store" 
+    },
     timeoutMs,
   );
   if (!resp.ok) throw new Error(`daily-word ${resp.status}`);
@@ -5362,7 +5372,7 @@ function migrateStorage() {
 // ═══════════════════════════════════════════════
 const SUPABASE_URL = "https://ppssfweuotjgcfejdznn.supabase.co";
 const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwc3Nmd2V1b3RqZ2NmZWpkem5uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyNjI2NTksImV4cCI6MjA1NjgzODY1OX0.4czVi4TmuRiTx00A0Z6IPTF1u2JECYV5pJ8X7qDWYBQ";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwc3Nmd2V1b3RqZ2NmZWpkem5uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3OTgyNTksImV4cCI6MjA4ODM3NDI1OX0.JyqGjz_UKytW6lbhxSgAb3t0d7jV3Gwl5TepEWTa5wk";
 
 let _supabaseClient = null;
 
