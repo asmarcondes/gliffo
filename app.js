@@ -5193,11 +5193,79 @@ function migrateStorage() {
 }
 
 // ═══════════════════════════════════════════════
+// SUPABASE AUTH CLIENT
+// Usado EXCLUSIVAMENTE para autenticação:
+//   signInAnonymously(), linkIdentity(), getSession()
+// Nenhuma query direta ao banco (zero .from().select())
+// Todos os dados passam pela Edge Function player-stats.
+// ═══════════════════════════════════════════════
+const SUPABASE_URL = "https://ppssfweuotjgcfejdznn.supabase.co";
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwc3Nmd2V1b3RqZ2NmZWpkem5uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyNjI2NTksImV4cCI6MjA1NjgzODY1OX0.4czVi4TmuRiTx00A0Z6IPTF1u2JECYV5pJ8X7qDWYBQ";
+
+let _supabaseClient = null;
+
+function getSupabaseClient() {
+  if (!_supabaseClient) {
+    // supabase global exposto pelo vendor/supabase.min.js
+    _supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: false, // app sem OAuth redirect
+      },
+    });
+  }
+  return _supabaseClient;
+}
+
+// Sessão do usuário atual (preenchida por initAuth)
+let _authSession = null;
+
+// Retorna o JWT da sessão atual (para uso nos fetch() às Edge Functions)
+function getAuthToken() {
+  return _authSession?.access_token ?? null;
+}
+
+// Inicializa auth anônimo silenciosamente.
+// Se já há sessão salva no localStorage → reutiliza.
+// Se não há → cria novo usuário anônimo no Supabase.
+// Fire-and-forget: erros não bloqueiam o jogo.
+async function initAuth() {
+  try {
+    const client = getSupabaseClient();
+
+    // Tenta recuperar sessão existente
+    const { data: { session } } = await client.auth.getSession();
+
+    if (session) {
+      _authSession = session;
+      if (window._dbg) console.log("[auth] sessão existente:", session.user.id, session.user.is_anonymous ? "(anônimo)" : "(vinculado)");
+      return;
+    }
+
+    // Sem sessão → cria usuário anônimo
+    const { data, error } = await client.auth.signInAnonymously();
+    if (error) {
+      console.warn("[auth] signInAnonymously erro:", error.message);
+      return;
+    }
+    _authSession = data.session;
+    if (window._dbg) console.log("[auth] novo usuário anônimo criado:", data.user.id);
+  } catch (e) {
+    console.warn("[auth] initAuth falhou (não bloqueante):", e);
+  }
+}
+
+// ═══════════════════════════════════════════════
 // INIT
 async function bootstrapGame() {
   migrateStorage();
   initConfig();
   checkBetaReset();
+
+  // Auth anônimo silencioso — fire-and-forget (não bloqueia o jogo)
+  initAuth().catch(() => {});
 
   try {
     setFb("Carregando glifo de hoje...", "");
