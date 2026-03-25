@@ -1714,11 +1714,16 @@ function resolveDailyWordUrl() {
   try {
     const override = localStorage.getItem("gliffoo_daily_word_url");
     if (override) return override;
+
+    // Se estiver usando o Docker local, ativa via flag: localStorage.setItem("gliffoo_local_backend", "true")
+    if (localStorage.getItem("gliffoo_local_backend") === "true") {
+      return isLocalRuntime() ? DAILY_WORD_URL_LOCAL : DAILY_WORD_URL_REMOTE;
+    }
   } catch (error) {
     console.warn("[glif] não foi possível ler override da URL diária", error);
   }
 
-  return isLocalRuntime() ? DAILY_WORD_URL_LOCAL : DAILY_WORD_URL_REMOTE;
+  return DAILY_WORD_URL_REMOTE;
 }
 
 async function fetchWithTimeout(url, options, timeoutMs) {
