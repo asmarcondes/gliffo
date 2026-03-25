@@ -3476,6 +3476,9 @@ function atualizarStats(won, tentativas) {
     console.warn("[glif] falha ao salvar stats", e);
   }
 
+  // Faz disparo (fire-and-forget) para registrar na nuvem o resultado
+  syncStats(won, tentativas).catch(() => {});
+
   // Verifica conquistas após salvar stats atualizadas
   const firstAtt = G.attempts[0];
   checkAchievements({
@@ -4837,6 +4840,12 @@ function queueAch(id) {
   if (earned[id]) return;
   earned[id] = Date.now();
   saveAch(earned);
+  
+  // Sincroniza conquista recém-ganha na nuvem (fire-and-forget)
+  if (!ARQUIVO_MODO && !PRATICA_MODO) {
+      apiEdgeFunction("save-achievements", "POST", { achievements: [id] }).catch(() => {});
+  }
+  
   if (SECRET_DISCOVERY_IDS.includes(id)) checkSecretMilestones(earned);
   // Emoji para popup
   const emojiMap = {
@@ -5002,8 +5011,92 @@ function bumpTimedAch(id, threshold) {
   const k = "gliffoo_timed_" + id;
   const n = Number.parseInt(localStorage.getItem(k) || "0") + 1;
   localStorage.setItem(k, n);
+  
+  // Sincroniza contador na nuvem
+  if (!ARQUIVO_MODO && !PRATICA_MODO) {
+      apiEdgeFunction("save-achievements", "POST", { counters: [{ id, value: n }] }).catch(() => {});
+  }
+  
   if (n >= threshold) queueAch(id);
 }
+
+// CARREGA E FAZ MERGE DE DADOS DA NUVEM NO BOOT
+async function loadStatsFromCloud() {
+  const token = getAuthToken();
+  if (!token) return;
+
+  const { data, error } = await apiEdgeFunction("my-stats", "GET");
+  if (error || !data) return;
+
+  const { stats: cloudStats, achievements: cloudAchs, counters: cloudCounters } = data;
+  
+  // 1. Merge das conquistas (União absoluta)
+  if (cloudAchs?.length > 0) {
+      const localAchs = loadAch();
+      let hasChanges = false;
+      cloudAchs.forEach(ach => {
+          if (!localAchs[ach.ach_id]) {
+              localAchs[ach.ach_id] = new Date(ach.earned_at).getTime();
+              hasChanges = true;
+          }
+      });
+      if (hasChanges) saveAch(localAchs);
+  }
+
+  // 2. Merge dos counters (Maior valor prevalece)
+  if (cloudCounters?.length > 0) {
+      cloudCounters.forEach(c => {
+          const k = "gliffoo_timed_" + c.counter_id;
+          const localVal = Number.parseInt(localStorage.getItem(k) || "0");
+          if (c.value > localVal) {
+              localStorage.setItem(k, c.value);
+          }
+      });
+  }
+
+  // 3. Merge do user_stats
+  if (cloudStats) {
+      const localStats = carregarStats();
+      let hasStatsChanges = false;
+
+      // Se a cloud tem MAIS jogos jogados, copia tudo da cloud para local
+      if (cloudStats.games_played > localStats.jogados) {
+          localStats.jogados = cloudStats.games_played;
+          localStats.vitorias = cloudStats.games_won;
+          localStats.streakAtual = cloudStats.streak;
+          localStats.streakMax = cloudStats.max_streak;
+          localStats.ultimaVitoria = cloudStats.last_played;
+          if (cloudStats.distribution) localStats.distribuicao = cloudStats.distribution;
+          hasStatsChanges = true;
+          
+          if (cloudStats.golden_total || cloudStats.golden_consec) {
+              saveGoldenStats({ total: cloudStats.golden_total || 0, consec: cloudStats.golden_consec || 0 });
+          }
+      } 
+      // Se cloud e local divergem, mas nenhum é nitidamente "o mais atualizado", confia no maior streak
+      else if (cloudStats.games_played === localStats.jogados) {
+          if (cloudStats.streak > localStats.streakAtual) {
+              localStats.streakAtual = cloudStats.streak;
+              hasStatsChanges = true;
+          }
+          if (cloudStats.max_streak > localStats.streakMax) {
+              localStats.streakMax = cloudStats.max_streak;
+              hasStatsChanges = true;
+          }
+      }
+
+      if (hasStatsChanges) {
+          try {
+              localStorage.setItem("gliffoo_stats", JSON.stringify(localStats));
+              if (localStats.ultimaVitoria) localStorage.setItem("gliffoo_stats_date", localStats.ultimaVitoria);
+          } catch(e) {}
+      } else if (localStats.jogados > (cloudStats?.games_played || 0)) {
+          // Local é mais rico! Força um UPSERT silencioso (sync atrasado)
+          syncStats(false, 0).catch(() => {}); 
+      }
+  }
+}
+
 
 function checkBetaReset() {
   if (Date.now() < BETA_END_DATE) return;
@@ -5258,6 +5351,84 @@ async function initAuth() {
 }
 
 // ═══════════════════════════════════════════════
+// COMUNICAÇÃO COM EDGE FUNCTION (PLAYER-STATS)
+// ═══════════════════════════════════════════════
+
+async function apiEdgeFunction(endpoint, method = "POST", body = null) {
+  const token = getAuthToken();
+  if (!token) return { error: "No auth token" };
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/player-stats/${endpoint}`, {
+      method,
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    
+    // Tratamento para 204 No Content
+    if (res.status === 204) return { data: null };
+    
+    const text = await res.text();
+    let data = null;
+    if (text) {
+        try {
+           data = JSON.parse(text);
+        } catch(e) { /* ignore JSON parse error for bare strings */ }
+    }
+
+    if (!res.ok) throw new Error(data?.error || `HTTP ${res.status}`);
+    return { data, error: null };
+  } catch (error) {
+    console.warn(`[api] fail on /${endpoint}`, error);
+    return { data: null, error };
+  }
+}
+// SINCRONIZA STATUS DE FIM DE JOGO
+async function syncStats(won, attempts) {
+  if (ARQUIVO_MODO || PRATICA_MODO) return; // a cloud só conta puzzle diário pro user_stats?
+  // Espera, no implementation_plan: o game_history salva arquivo também, mas o user_stats só contabiliza pro jogo do dia.
+  
+  const token = getAuthToken();
+  if (!token) return;
+
+  // Monta payload das stats para atualizar user_stats, apenas se não for arquivo
+  const localStats = carregarStats();
+  const histPayload = {
+    puzzle_num: numeroPuzzle(),
+    puzzle_date: dataHoje(),
+    word: WORD,
+    difficulty: CURRENT_PUZZLE?.difficulty || CICLO_DIF[new Date().getDay()],
+    word_length: WORD.length,
+    attempts: won ? attempts : null,
+    won: won,
+    used_key: G.keyUsed,
+    hard_mode: HARD_MODE,
+    is_archive: ARQUIVO_MODO
+  };
+
+  const payload = {
+    ...histPayload,
+    stats_payload: !ARQUIVO_MODO && !PRATICA_MODO ? {
+      streak: localStats.streakAtual,
+      max_streak: localStats.streakMax,
+      games_played: localStats.jogados,
+      games_won: localStats.vitorias,
+      last_played: localStats.ultimaVitoria,
+      distribution: localStats.distribuicao,
+      golden_total: (JSON.parse(localStorage.getItem("gliffoo_gold_v1")) || {}).total || 0,
+      golden_consec: (JSON.parse(localStorage.getItem("gliffoo_gold_v1")) || {}).consec || 0,
+    } : null
+  };
+
+  if (PRATICA_MODO) return; // Prática não enviamos para o server
+
+  await apiEdgeFunction("save-result", "POST", payload);
+}
+
+// ═══════════════════════════════════════════════
 // INIT
 async function bootstrapGame() {
   migrateStorage();
@@ -5266,6 +5437,9 @@ async function bootstrapGame() {
 
   // Auth anônimo silencioso — fire-and-forget (não bloqueia o jogo)
   initAuth().catch(() => {});
+
+  // Sincroniza dados da nuvem (merge local)
+  loadStatsFromCloud().catch(() => {});
 
   try {
     setFb("Carregando glifo de hoje...", "");
