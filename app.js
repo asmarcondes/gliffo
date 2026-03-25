@@ -5531,6 +5531,10 @@ async function bootstrapGame() {
         ? "Você está sem conexão. O glifo do dia requer internet."
         : "Não foi possível carregar o glifo de hoje. Tente novamente em instantes."
     );
+    
+    const loader = document.getElementById("global-loader");
+    if (loader) loader.classList.add("hidden");
+    
     return;
   }
 
@@ -5542,6 +5546,11 @@ async function bootstrapGame() {
   renderYours();
   buildHeaderMeta(CURRENT_PUZZLE ? CURRENT_PUZZLE.data : undefined);
   setFb("", "");
+
+  // Remove overlay de loading divertido
+  const loader = document.getElementById("global-loader");
+  if (loader) loader.classList.add("hidden");
+  
 
   const pParam = new URLSearchParams(location.search).get("p");
   if (pParam) {
