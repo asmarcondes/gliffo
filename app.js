@@ -5508,7 +5508,61 @@ async function syncStats(won, attempts) {
 
 // ═══════════════════════════════════════════════
 // INIT
+// ═══════════════════════════════════════════════
+// INIT
+function startLoaderAnimation() {
+  const loaderGlif = document.getElementById("loader-glif");
+  if (!loaderGlif) return;
+
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const colors = ["var(--gc0)", "var(--gc1)", "var(--gc2)", "var(--gc3)"];
+  
+  loaderGlif.innerHTML = "";
+  const svgs = [];
+  const theme = document.documentElement.getAttribute("data-theme");
+  const blendMode = theme === "light" ? "multiply" : "screen";
+
+  for (let i = 0; i < 4; i++) {
+    const l = alphabet[Math.floor(Math.random() * alphabet.length)];
+    const c = colors[i % colors.length];
+    const s = makeSVG(l, c, `position:absolute;top:0;left:0;width:100%;height:100%;mix-blend-mode:${blendMode};`);
+    if(s) {
+      loaderGlif.appendChild(s);
+      svgs.push({ el: s, g: s.querySelector("g") });
+    }
+  }
+
+  // AnimeJS Line Drawing & Floating
+  if (typeof anime !== "undefined" && svgs.length > 0) {
+    // 1) Desenha as linhas magicamente como um laser (strokeDashoffset do SVG)
+    anime({
+      targets: '#loader-glif path',
+      strokeDashoffset: [anime.setDashoffset, 0],
+      easing: 'easeInOutSine',
+      duration: 1500,
+      delay: function(el, i) { return i * 200; },
+      direction: 'alternate',
+      loop: true
+    });
+
+    // 2) Rotaciona sutilmente todas as letras de forma independente criando profundidade
+    anime({
+      targets: svgs.map(s => s.el),
+      scale: [0.9, 1.1],
+      rotate: () => anime.random(-15, 15),
+      translateX: () => anime.random(-5, 5) + "%",
+      translateY: () => anime.random(-5, 5) + "%",
+      direction: 'alternate',
+      loop: true,
+      easing: 'easeInOutSine',
+      duration: 2000,
+      delay: anime.stagger(200)
+    });
+  }
+}
+
 async function bootstrapGame() {
+  startLoaderAnimation();
   migrateStorage();
   initConfig();
   checkBetaReset();

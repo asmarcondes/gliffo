@@ -105,7 +105,6 @@
       src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"
       integrity="sha384-oLmuahJgYYR1aWgZwdMQQ2AClE6A2eEwV2x1Z7cbIHehfkkmommQLH3wX1NDEszb"
       crossorigin="anonymous"
-      defer
     ></script>
 
     <link
@@ -134,10 +133,8 @@
     <!-- Full-screen fun loading overlay -->
     <div id="global-loader" class="global-loader">
       <div class="loader-content">
-        <div class="loader-glif">
-          <div class="loader-shape loader-square"></div>
-          <div class="loader-shape loader-circle"></div>
-          <div class="loader-shape loader-triangle"></div>
+        <div class="loader-glif glyph-stack" id="loader-glif">
+          <!-- Letras SVG serao injetadas via JS p/ Anime.js animation -->
         </div>
         <div class="loader-text">Decodificando o glifo...</div>
       </div>
