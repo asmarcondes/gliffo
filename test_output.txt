@@ -1,0 +1,26 @@
+
+-> config.js... OK
+
+-> graphics.js... OK
+
+-> cloud.js... OK
+
+-> app.js... ERRO
+   Mensagem: Audio is not defined
+   Stack:   const _audio = new Audio();
+                   ^
+  
+[auth] initAuth falhou (n├úo bloqueante): TypeError: Cannot read properties of null (reading 'session')
+    at initAuth (evalmachine.<anonymous>:96:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[glif] bootstrapGame erro: ReferenceError: AbortController is not defined
+    at fetchWithTimeout (evalmachine.<anonymous>:379:22)
+    at fetchPuzzleByDate (evalmachine.<anonymous>:466:22)
+    at fetchPuzzleForToday (evalmachine.<anonymous>:498:24)
+    at bootstrapGame (evalmachine.<anonymous>:2139:7)
+    at evalmachine.<anonymous>:2250:6
+    at Script.runInContext (node:vm:149:12)
+    at Object.runInContext (node:vm:301:6)
+    at Object.<anonymous> (C:\Users\ander\Dropbox\04_Profissional_e_Projetos\Dev_TI\Claude\gliffo\test_vm.js:59:8)
+    at Module._compile (node:internal/modules/cjs/loader:1812:14)
+    at Object..js (node:internal/modules/cjs/loader:1943:10)
