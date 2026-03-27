@@ -1,122 +1,78 @@
-// glif.foo — Service Worker
-// Estratégia: cache-first para assets estáticos, network-first para o HTML
-// O jogo requer conexão para buscar a palavra do dia (Edge Function Supabase).
-// O SW não tenta servir o jogo offline — apenas armazena assets estáticos
-// para acelerar carregamentos subsequentes.
-// Versão do cache: incrementar ao fazer deploy com mudanças
-
-const CACHE_STATIC = "glifo-static-v5";
-
-// Assets pré-cacheados no install (fontes, ícones, dicionário, animações)
-const PRECACHE = [
-  "/",
-  "/index.html",
-  "/app.css",
-  "/app.js",
-  "/manifest.json",
-  "/data/dicionario.json",
-  "/icons/icon-192.png",
-  "/icons/icon-512.png",
-  "/animations/sad_walking.json",
-  "/animations/banana_boy.json",
+const CACHE_NAME = 'gliffo-cache-v1';
+const STATIC_ASSETS = [
+  '/',
+  '/index.html',
+  '/index.css',
+  '/config.js',
+  '/graphics.js',
+  '/cloud.js',
+  '/app.js',
+  '/data/dicionario.json',
+  '/icons/icon-192.png',
+  '/icons/icon-512.png',
+  '/icons/icon-maskable-512.png',
+  '/icons/apple-touch-icon.png',
+  '/manifest.json'
 ];
 
-const NETWORK_FIRST_PATHS = new Set([
-  "/",
-  "/index.html",
-  "/app.css",
-  "/app.js",
-  "/manifest.json",
-]);
-
-function isNetworkFirstAsset(request, url) {
-  return (
-    request.destination === "document" || NETWORK_FIRST_PATHS.has(url.pathname)
-  );
-}
-
-// ── INSTALL: pré-cacheia assets essenciais ──
-self.addEventListener("install", (event) => {
+self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches
-      .open(CACHE_STATIC)
-      .then((cache) => cache.addAll(PRECACHE))
-      .then(() => globalThis.skipWaiting()),
+    caches.open(CACHE_NAME).then((cache) => {
+      console.log('[Service Worker] Caching pre-requisites', STATIC_ASSETS);
+      // Usar cache.addAll mas lidar com fetch errors suavemente (pode falhar no dev)
+      return Promise.allSettled(
+        STATIC_ASSETS.map(url => cache.add(url).catch(err => console.warn(`Falha ao cachear ${url}:`, err)))
+      );
+    })
   );
+  self.skipWaiting();
 });
 
-// ── ACTIVATE: limpa caches antigos ──
-self.addEventListener("activate", (event) => {
+self.addEventListener('activate', (event) => {
+  // Limpa caches antigos
   event.waitUntil(
-    caches
-      .keys()
-      .then((keys) =>
-        Promise.all(
-          keys.filter((k) => k !== CACHE_STATIC).map((k) => caches.delete(k)),
-        ),
-      )
-      .then(() => globalThis.clients.claim()),
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME) {
+            console.log('[Service Worker] Limpando cache antigo:', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+  self.clients.claim();
+});
+
+self.addEventListener('fetch', (event) => {
+  // Ignora requisições de API (Edge Functions Supabase)
+  if (event.request.url.includes('supabase.co')) {
+    return;
+  }
+
+  // Estratégia Stale-While-Revalidate para o dicionário e scripts (mantem rápido mas atualiza background)
+  event.respondWith(
+    caches.match(event.request).then((cachedResponse) => {
+      const fetchPromise = fetch(event.request).then((networkResponse) => {
+        // Guarda a resposta nova no cache para a próxima vez se for válida (status 200 e mesma origem)
+        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+        }
+        return networkResponse;
+      }).catch(() => null);
+
+      // Retorna o cache IMEDIATAMENTE. Se não houver cache, aguarda a rede cair.
+      return cachedResponse || fetchPromise.then(res => {
+         // Se a rede falhar também, retorna fallback genérico offline se for navigation
+         if (!res && event.request.mode === 'navigate') {
+            return caches.match('/index.html');
+         }
+         return res;
+      });
+    })
   );
 });
-
-// ── FETCH: estratégia por tipo de recurso ──
-self.addEventListener("fetch", (event) => {
-  const { request } = event;
-  const url = new URL(request.url);
-
-  if (request.method !== "GET") {
-    return;
-  }
-
-  // Só intercepta requisições do próprio domínio
-  if (url.origin !== location.origin) {
-    // Fontes Google: cache-first com fallback de rede
-    if (url.hostname.includes("fonts.g")) {
-      event.respondWith(cacheFirst(request));
-    }
-    return;
-  }
-
-  // Shell do app: network-first para reduzir risco de JS/CSS stale em deploys
-  if (isNetworkFirstAsset(request, url)) {
-    event.respondWith(networkFirst(request));
-    return;
-  }
-
-  // Demais assets (ícones, manifest): cache-first
-  event.respondWith(cacheFirst(request));
-});
-
-// ── Estratégias ──
-
-async function networkFirst(request) {
-  try {
-    const response = await fetch(request);
-    if (response.ok) {
-      const cache = await caches.open(CACHE_STATIC);
-      cache.put(request, response.clone());
-    }
-    return response;
-  } catch {
-    // Sem rede: serve do cache se disponível (acelera recargas em conexão instável)
-    const cached = await caches.match(request);
-    if (cached) return cached;
-    // Sem cache: deixa o erro propagar — o jogo requer conexão para funcionar
-    throw new Error("glif.foo: sem conexão e sem cache disponível");
-  }
-}
-
-async function cacheFirst(request) {
-  const cached = await caches.match(request);
-  if (cached) return cached;
-  try {
-    const response = await fetch(request);
-    if (response.ok) {
-      const cache = await caches.open(CACHE_STATIC);
-      cache.put(request, response.clone());
-    }
-    return response;
-  } catch {
-    return new Response("", { status: 408 });
-  }
-}

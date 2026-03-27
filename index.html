@@ -14,7 +14,11 @@
       content="Um jogo diário de palavras em português. As letras se empilham formando um glifo geométrico — estude as formas sobrepostas e decodifique a palavra escondida."
     />
     <meta name="application-name" content="glif.foo" />
+    <!-- PWA / Mobile Web App -->
+    <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#f5a623" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
 
     <!-- Canonical -->
     <link rel="canonical" href="https://glif.foo/" />
@@ -989,5 +993,17 @@
     <script src="graphics.js" defer></script>
     <script src="cloud.js" defer></script>
     <script src="app.js" defer></script>
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').then(reg => {
+            console.log('[Service Worker] Registrado com sucesso:', reg.scope);
+          }).catch(err => {
+            console.warn('[Service Worker] Falha no registro:', err);
+          });
+        });
+      }
+    </script>
   </body>
 </html>
