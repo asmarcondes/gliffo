@@ -231,8 +231,12 @@ function atualizarStats(won, tentativas) {
     console.warn("[glif] falha ao salvar stats", e);
   }
 
-  // Faz disparo (fire-and-forget) para registrar na nuvem o resultado
-  syncStats(won, tentativas).catch(() => {});
+  // Optimistic UI: exibe streak local imediatamente, reconcilia com a nuvem em background.
+  // Após o backend confirmar o resultado, loadStatsFromCloud() busca o streak autoritativo
+  // (calculado via compute_streak no Supabase) e atualiza o localStorage silenciosamente.
+  syncStats(won, tentativas)
+    .then(() => loadStatsFromCloud())
+    .catch(() => {});
 
   // Verifica conquistas após salvar stats atualizadas
   const firstAtt = G.attempts[0];
