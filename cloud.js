@@ -163,8 +163,38 @@ window.loadLeaderboard = async function() {
     return null;
   }
 }
+
+// ═══════════════════════════════════════════════
+// FETCH DAILY STATS
+// ═══════════════════════════════════════════════
+window.loadDailyStats = async function(puzzleNum) {
+  // Chamada pública, mas podemos usar o JWT do usuário se disponível
+  const client = getSupabaseClient();
+  let headers = { "Content-Type": "application/json" };
+  
+  if (client) {
+    const { data: { session } } = await client.auth.getSession();
+    if (session) {
+      headers["Authorization"] = `Bearer ${session.access_token}`;
+    }
+  }
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/player-stats/daily-stats?puzzle_num=${puzzleNum}`, {
+      method: "GET",
+      headers,
+    });
+    if (!res.ok) throw new Error("Daily stats fetch failed");
+    return await res.json();
+  } catch (err) {
+    console.error("[CLOUD] Exceção em loadDailyStats:", err);
+    return null;
+  }
+}
+
+// ═══════════════════════════════════════════════
 // SINCRONIZA STATUS DE FIM DE JOGO (Event Sourcing)
-// O servidor calcula streak autoritativo via compute_streak() a partir do game_history.
+// ═══════════════════════════════════════════════
 // O frontend só envia: resultado do jogo + dados que o histórico não cobre (max_streak, golden).
 async function syncStats(won, attempts) {
   if (PRATICA_MODO) return; // Prática não enviamos para o server

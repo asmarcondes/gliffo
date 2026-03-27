@@ -169,6 +169,58 @@ serve(async (req) => {
       });
     }
 
+    // GET /daily-stats
+    if (req.method === "GET" && pathname === "daily-stats") {
+      const puzzle_num = new URL(req.url).searchParams.get("puzzle_num");
+      if (!puzzle_num) {
+        return new Response(JSON.stringify({ error: "puzzle_num missing" }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 400,
+          });
+      }
+
+      // Query raw metrics based on puzzle number
+      const { data: stats, error: sErr } = await supabaseAdmin
+        .from("game_history")
+        .select("attempts, won, used_key, hard_mode, word_length")
+        .eq("puzzle_num", parseInt(puzzle_num))
+        .eq("is_archive", false)
+        .eq("suspicious", false);
+
+      if (sErr) throw sErr;
+
+      // Calculate aggregations
+      const total = stats ? stats.length : 0;
+      let wonCount = 0;
+      let usedKeyCount = 0;
+      let hardModeCount = 0;
+      let distribution = { "1": 0, "2": 0, "3": 0, "4": 0, "lost": 0 };
+
+      if (total > 0) {
+        stats.forEach((row) => {
+          if (row.won) {
+            wonCount++;
+            distribution[row.attempts?.toString() as keyof typeof distribution]++;
+          } else {
+            distribution["lost"]++;
+          }
+          if (row.used_key) usedKeyCount++;
+          if (row.hard_mode) hardModeCount++;
+        });
+      }
+
+      return new Response(JSON.stringify({
+        total_players: total,
+        won_percentage: total > 0 ? Math.round((wonCount / total) * 100) : 0,
+        used_key_percentage: total > 0 ? Math.round((usedKeyCount / total) * 100) : 0,
+        hard_mode_percentage: total > 0 ? Math.round((hardModeCount / total) * 100) : 0,
+        distribution
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
+    }
+
     // GET /leaderboard
     if (req.method === "GET" && pathname === "leaderboard") {
       // Retorna os top 50, ordenados primariamente pelo streak e desempate por jogos finalizados.

@@ -331,6 +331,7 @@ function winMod() {
     document.getElementById("win-auth-cta").classList.add("hidden");
   }
 
+  injectDailyStats("win-community-stats");
   openM("win-modal");
 }
 
@@ -354,6 +355,7 @@ function loseMod() {
     document.getElementById("lose-auth-cta").classList.add("hidden");
   }
 
+  injectDailyStats("lose-community-stats");
   openM("lose-modal");
 }
 
@@ -562,6 +564,71 @@ async function openLeaderboard() {
     `;
   });
   content.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════
+// COMMUNITY STATS WIDGET
+// ═══════════════════════════════════════════════
+async function injectDailyStats(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  
+  if (ARQUIVO_MODO || PRATICA_MODO) {
+    container.style.display = "none";
+    return;
+  }
+  
+  container.style.display = "block";
+  container.innerHTML = '<div class="loader-spinner" style="margin: auto; width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border); border-top-color: var(--c-prime); animation: spin 1s linear infinite;"></div>';
+  
+  if (typeof window.loadDailyStats !== "function") {
+    container.innerHTML = "<p style='text-align:center;color:var(--text3); font-size:0.85rem;'>Conexão indisponível</p>";
+    return;
+  }
+
+  const pNum = numeroPuzzle();
+  const ds = await window.loadDailyStats(pNum);
+  if (!ds || !ds.total_players) {
+    container.style.display = "none";
+    return;
+  }
+
+  const maxVal = Math.max(...Object.values(ds.distribution), 1);
+  let distHtml = "";
+  ["1", "2", "3", "4", "lost"].forEach(k => {
+    const val = ds.distribution[k] || 0;
+    const pct = ds.total_players > 0 ? (val / ds.total_players) * 100 : 0;
+    const w = Math.max(7, (val / maxVal) * 100);
+    const label = k === "lost" ? "❌" : k;
+    const myAttemptsStr = G.won ? G.attempts.length.toString() : "lost";
+    const highlight = myAttemptsStr === k;
+    
+    distHtml += `
+      <div style="display: flex; align-items: center; margin: 4px 0; font-size: 0.8rem; color: ${highlight ? "var(--c-prime)" : "var(--text2)"}; font-weight: ${highlight ? "bold" : "normal"};">
+        <div style="width: 20px; text-align: right; padding-right: 6px;">${label}</div>
+        <div style="flex-grow: 1; height: 16px; background: var(--bg1); border-radius: 4px; overflow: hidden;">
+          <div style="width: ${w}%; height: 100%; background: ${k === "lost" ? "var(--amber-500)" : "var(--c-prime)"}; opacity: ${highlight ? "1.0" : "0.6"};"></div>
+        </div>
+        <div style="width: 36px; text-align: right; padding-left: 6px;">${Math.round(pct)}%</div>
+      </div>
+    `;
+  });
+
+  const difTag = ds.won_percentage < 50 ? "Achamos Muito Difícil! 🥵" : (ds.won_percentage > 90 ? "Achamos Fácil! 😌" : "");
+
+  container.innerHTML = `
+    <div style="text-align: center; font-weight: 600; color: var(--text1); margin-bottom: 8px; font-size: 0.9rem;">
+      Comunidade (Hoje)
+    </div>
+    <div style="font-size: 0.8rem; color: var(--text3); text-align: center; margin-bottom: 12px;">
+      ${ds.total_players} jogadores ${ds.hard_mode_percentage > 0 ? `• ${ds.hard_mode_percentage}% no 🔥` : ''}
+    </div>
+    ${distHtml}
+    <div style="text-align: center; font-size: 0.8rem; color: var(--text2); margin-top: 12px; line-height: 1.4;">
+      ${difTag ? `<div style="color:var(--amber-500); font-weight:600; margin-bottom:4px;">${difTag}</div>` : ""}
+      ${ds.used_key_percentage}% pediram a chave 🔑
+    </div>
+  `;
 }
 
 // ═══════════════════════════════════════════════
