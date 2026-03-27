@@ -169,6 +169,33 @@ serve(async (req) => {
       });
     }
 
+    // GET /leaderboard
+    if (req.method === "GET" && pathname === "leaderboard") {
+      // Retorna os top 50, ordenados primariamente pelo streak e desempate por jogos finalizados.
+      const { data: topPlayers, error: lbError } = await supabaseAdmin
+        .from("user_stats")
+        .select("user_id, streak, games_played")
+        .gt("streak", 0)
+        .order("streak", { ascending: false })
+        // tie-breaker
+        .order("games_played", { ascending: false })
+        .limit(100);
+
+      if (lbError) throw lbError;
+
+      const leaderboard = (topPlayers || []).map((p, index) => ({
+        rank: index + 1,
+        streak: p.streak ?? 0,
+        games_played: p.games_played ?? 0,
+        is_me: p.user_id === userId
+      }));
+
+      return new Response(JSON.stringify({ leaderboard }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
+    }
+
     // BODY necessário para os POSTs
     const body = await req.json();
 
@@ -226,18 +253,31 @@ serve(async (req) => {
 
       if (histError) throw histError;
 
-      // Atualiza user_stats (apenas se não suspeito e não arquivo)
-      if (stats_payload && !is_archive && !suspicious) {
+      // Recalcula métricas limpas server-side para materializar na tabela e usar em leaderboards
+      const { data: authoritativeStreak } = await supabaseAdmin.rpc("compute_streak", { p_user_id: userId });
+      const { count: gamesPlayed } = await supabaseAdmin.from("game_history").select("*", { count: "exact", head: true }).eq("user_id", userId).eq("is_archive", false).eq("suspicious", false);
+      const { count: gamesWon } = await supabaseAdmin.from("game_history").select("*", { count: "exact", head: true }).eq("user_id", userId).eq("won", true).eq("is_archive", false).eq("suspicious", false);
+
+      // Atualiza user_stats com métricas do payload + métricas validadas
+      if (!is_archive && !suspicious) {
+        let upsertPayload: any = {
+          user_id: userId,
+          streak: authoritativeStreak ?? 0,
+          games_played: gamesPlayed ?? 0,
+          games_won: gamesWon ?? 0,
+          updated_at: new Date().toISOString()
+        };
+        // Se houver um payload extra (ex: max_streak), faz o merge
+        if (stats_payload) {
+          upsertPayload.max_streak = stats_payload.max_streak;
+          upsertPayload.distribution = stats_payload.distribution;
+          upsertPayload.golden_total = stats_payload.golden_total;
+          upsertPayload.golden_consec = stats_payload.golden_consec;
+        }
+
         const { error: statsError } = await supabaseAdmin
           .from("user_stats")
-          .upsert({
-            user_id: userId,
-            max_streak: stats_payload.max_streak,
-            distribution: stats_payload.distribution,
-            golden_total: stats_payload.golden_total,
-            golden_consec: stats_payload.golden_consec,
-            updated_at: new Date().toISOString(),
-          }, { onConflict: "user_id" });
+          .upsert(upsertPayload, { onConflict: "user_id" });
 
         if (statsError) throw statsError;
       }

@@ -184,6 +184,13 @@
             <rect x="17" y="3" width="4" height="18" rx="1" />
           </svg>
         </button>
+        <button class="hbtn" title="Ranking Global" onclick="openLeaderboard()">
+          <svg viewBox="0 0 24 24">
+            <path d="M5 4h14M8 4v8c0 3 2 5 4 5s4-2 4-5V4" />
+            <path d="M12 17v4M8 21h8" />
+            <path d="M5 8c-2 0-3 1-3 3 0 2.5 2 4.5 5 5M19 8c2 0 3 1 3 3 0 2.5-2 4.5-5 5" />
+          </svg>
+        </button>
         <button
           class="hbtn"
           id="hbtn-ajuda"
@@ -602,6 +609,24 @@
         </div>
         <div id="arquivo-body"></div>
       </dialog>
+    </div>
+
+    <!-- LEADERBOARD MODAL -->
+    <div class="moverlay" id="leaderboard-modal">
+      <div class="mcontent cfg-modal">
+        <button class="mclose" onclick="closeM('leaderboard-modal')">
+          <svg viewBox="0 0 24 24" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+        <h2>Ranking Global</h2>
+        <div style="font-size:0.85rem; color:var(--text3); margin-bottom: 24px;">
+          Embarcado via Satélite. Posições anônimas.
+        </div>
+        <div id="leaderboard-content" style="min-height: 200px; display: flex; flex-direction: column; gap: 8px;">
+           <div class="loader-spinner" style="margin: auto; width: 30px; height: 30px; border-radius: 50%; border: 3px solid var(--border); border-top-color: var(--c-prime); animation: spin 1s linear infinite;"></div>
+        </div>
+      </div>
     </div>
 
     <!-- ══ CONFIG MODAL ══ -->

@@ -487,7 +487,9 @@ function share() {
   });
   lines.push("");
   lines.push("https://glif.foo");
-  navigator.clipboard?.writeText(lines.join("\n")).then(() => {
+  
+  const textStr = lines.join("\n");
+  const showCopiedState = () => {
     const el = document.querySelector(".moverlay.show .copied");
     if (el) {
       el.style.display = "block";
@@ -495,7 +497,71 @@ function share() {
     }
     // Conquista: compartilhou resultado
     queueAch("spread_the_word");
+  };
+
+  if (navigator.share) {
+    navigator.share({
+      title: 'glif.foo',
+      text: textStr
+    }).then(() => {
+      queueAch("spread_the_word");
+    }).catch((err) => {
+      // Se user fechar o painel nativo do share ou se der erro, cai pro clipboard de fallback
+      navigator.clipboard?.writeText(textStr).then(showCopiedState);
+    });
+  } else {
+    navigator.clipboard?.writeText(textStr).then(showCopiedState);
+  }
+}
+
+// ═══════════════════════════════════════════════
+// LEADERBOARD MODAL
+// ═══════════════════════════════════════════════
+async function openLeaderboard() {
+  const modal = document.getElementById("leaderboard-modal");
+  const content = document.getElementById("leaderboard-content");
+  modal.classList.add("show");
+  modal.setAttribute("aria-hidden", "false");
+  
+  content.innerHTML = '<div class="loader-spinner" style="margin: auto; width: 30px; height: 30px; border-radius: 50%; border: 3px solid var(--border); border-top-color: var(--c-prime); animation: spin 1s linear infinite;"></div>';
+  
+  if (typeof window.loadLeaderboard !== "function") {
+    content.innerHTML = "<p style='text-align:center;color:var(--text3);'>Conexão com a rede Glif indisponível.</p>";
+    return;
+  }
+
+  const lbData = await window.loadLeaderboard();
+  if (!lbData) {
+    content.innerHTML = "<p style='text-align:center;color:var(--text3);'>Nenhum dado retornado ou erro de conexão.</p>";
+    return;
+  }
+
+  if (lbData.length === 0) {
+    content.innerHTML = "<p style='text-align:center;color:var(--text3);'>O Ranking ainda está vazio. Seja o primeiro!</p>";
+    return;
+  }
+
+  let html = "";
+  lbData.forEach((row) => {
+    const isMeStr = row.is_me ? " (Você)" : "";
+    const color = row.is_me ? "var(--c-prime)" : "var(--text1)";
+    const bg = row.is_me ? "var(--bg3)" : "transparent";
+    const border = row.is_me ? "1px solid var(--border)" : "1px solid transparent";
+    
+    html += `
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border-radius: 8px; background: ${bg}; border: ${border};">
+        <div style="font-weight: 600; color: ${color}; display:flex; align-items:center; gap: 8px">
+          <span style="opacity: 0.6; min-width: 24px;">#${row.rank}</span> 
+          <span>Jogador Anônimo${isMeStr}</span>
+        </div>
+        <div style="text-align: right; color: var(--text2); font-size: 0.9em;">
+          <b style="color:var(--c-prime); font-size: 1.1em;">${row.streak}</b> 🔥
+          <br><span style="font-size: 0.8em; opacity: 0.7">${row.games_played} vitórias</span>
+        </div>
+      </div>
+    `;
   });
+  content.innerHTML = html;
 }
 
 // ═══════════════════════════════════════════════

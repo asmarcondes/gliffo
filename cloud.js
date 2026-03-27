@@ -136,6 +136,33 @@ async function apiEdgeFunction(endpoint, method = "POST", body = null) {
     return { data: null, error };
   }
 }
+
+// ═══════════════════════════════════════════════
+// FETCH LEADERBOARD (ANONYMOUS)
+// ═══════════════════════════════════════════════
+window.loadLeaderboard = async function() {
+  const client = getSupabaseClient();
+  if (!client) return null;
+
+  const { data: { session } } = await client.auth.getSession();
+  if (!session) return null;
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/player-stats/leaderboard`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    });
+    if (!res.ok) throw new Error("Leaderboard fetch failed");
+    const data = await res.json();
+    return data.leaderboard || [];
+  } catch (err) {
+    console.error("[CLOUD] Exceção em loadLeaderboard:", err);
+    return null;
+  }
+}
 // SINCRONIZA STATUS DE FIM DE JOGO (Event Sourcing)
 // O servidor calcula streak autoritativo via compute_streak() a partir do game_history.
 // O frontend só envia: resultado do jogo + dados que o histórico não cobre (max_streak, golden).
