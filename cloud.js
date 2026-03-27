@@ -136,44 +136,39 @@ async function apiEdgeFunction(endpoint, method = "POST", body = null) {
     return { data: null, error };
   }
 }
-// SINCRONIZA STATUS DE FIM DE JOGO
+// SINCRONIZA STATUS DE FIM DE JOGO (Event Sourcing)
+// O servidor calcula streak autoritativo via compute_streak() a partir do game_history.
+// O frontend só envia: resultado do jogo + dados que o histórico não cobre (max_streak, golden).
 async function syncStats(won, attempts) {
-  if (ARQUIVO_MODO || PRATICA_MODO) return; // a cloud só conta puzzle diário pro user_stats?
-  // Espera, no implementation_plan: o game_history salva arquivo também, mas o user_stats só contabiliza pro jogo do dia.
-  
+  if (PRATICA_MODO) return; // Prática não enviamos para o server
+
   const token = getAuthToken();
   if (!token) return;
 
-  // Monta payload das stats para atualizar user_stats, apenas se não for arquivo
   const localStats = carregarStats();
-  const histPayload = {
+  const golden = JSON.parse(localStorage.getItem("gliffoo_gold_v1") || "{}");
+
+  const payload = {
     puzzle_num: numeroPuzzle(),
     puzzle_date: dataHoje(),
     word: WORD,
     difficulty: CURRENT_PUZZLE?.difficulty || CICLO_DIF[new Date().getDay()],
     word_length: WORD.length,
     attempts: won ? attempts : null,
-    won: won,
+    won,
     used_key: G.keyUsed,
     hard_mode: HARD_MODE,
-    is_archive: ARQUIVO_MODO
-  };
-
-  const payload = {
-    ...histPayload,
-    stats_payload: !ARQUIVO_MODO && !PRATICA_MODO ? {
-      streak: localStats.streakAtual,
+    is_archive: ARQUIVO_MODO,
+    // Payload auxiliar — campos que o game_history não cobre:
+    // max_streak é mantido localmente (o server só sabe o atual via compute_streak)
+    // distribuicao e golden são extras que o frontend acumula
+    stats_payload: !ARQUIVO_MODO ? {
       max_streak: localStats.streakMax,
-      games_played: localStats.jogados,
-      games_won: localStats.vitorias,
-      last_played: localStats.ultimaVitoria,
       distribution: localStats.distribuicao,
-      golden_total: (JSON.parse(localStorage.getItem("gliffoo_gold_v1")) || {}).total || 0,
-      golden_consec: (JSON.parse(localStorage.getItem("gliffoo_gold_v1")) || {}).consec || 0,
-    } : null
+      golden_total: golden.total || 0,
+      golden_consec: golden.consec || 0,
+    } : null,
   };
-
-  if (PRATICA_MODO) return; // Prática não enviamos para o server
 
   await apiEdgeFunction("save-result", "POST", payload);
 }
