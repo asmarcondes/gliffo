@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+import { Database } from "../database.types.ts";
 
 const ALLOWED_ORIGINS = [
   "https://glif.foo",
@@ -21,6 +22,26 @@ function getCorsHeaders(req: Request) {
 // Um humano leva pelo menos 10s para ler, decodificar e digitar uma palavra.
 const MIN_WIN_TIME_MS = 10_000;
 
+// Rate limit simples in-memory (por Isolate)
+const rateLimitCache = new Map<string, { count: number; timestamp: number }>();
+const RATE_LIMIT_MAX = 20; // max 20 requests
+const RATE_LIMIT_WINDOW_MS = 60_000; // por minuto
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const record = rateLimitCache.get(ip);
+  if (!record) {
+    rateLimitCache.set(ip, { count: 1, timestamp: now });
+    return false;
+  }
+  if (now - record.timestamp > RATE_LIMIT_WINDOW_MS) {
+    rateLimitCache.set(ip, { count: 1, timestamp: now });
+    return false;
+  }
+  record.count++;
+  return record.count > RATE_LIMIT_MAX;
+}
+
 serve(async (req) => {
   const corsHeaders = getCorsHeaders(req);
 
@@ -28,10 +49,19 @@ serve(async (req) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
+  // Identificação do IP para rate limit
+  const clientIp = req.headers.get("x-forwarded-for") || "unknown";
+  if (clientIp !== "unknown" && checkRateLimit(clientIp)) {
+    return new Response(JSON.stringify({ error: "Too Many Requests" }), {
+      status: 429,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
-    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+    const supabaseAdmin = createClient<Database>(supabaseUrl, supabaseServiceKey);
 
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
