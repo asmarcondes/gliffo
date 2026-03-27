@@ -159,6 +159,7 @@ async function syncStats(won, attempts) {
     used_key: G.keyUsed,
     hard_mode: HARD_MODE,
     is_archive: ARQUIVO_MODO,
+    elapsed_ms: GAME_START_TIME > 0 ? Date.now() - GAME_START_TIME : null,
     // Payload auxiliar — campos que o game_history não cobre:
     // max_streak é mantido localmente (o server só sabe o atual via compute_streak)
     // distribuicao e golden são extras que o frontend acumula

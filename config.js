@@ -540,6 +540,7 @@ function applyPuzzleInfo(info) {
   CURRENT_PUZZLE = info;
   applyPuzzleWord(info.word);
   setPuzzleReady(true);
+  GAME_START_TIME = Date.now(); // anti-cheat: momento que o puzzle ficou disponível
 }
 
 function showPuzzleLoadError(message) {
@@ -586,6 +587,7 @@ function guessEspecialValido(word) {
 
 let CURRENT_PUZZLE = null;
 let PUZZLE_READY = false;
+let GAME_START_TIME = 0; // ms epoch em que o puzzle ficou pronto para o jogador
 let WORD = "";
 let WL = [],
   WN = 0;
