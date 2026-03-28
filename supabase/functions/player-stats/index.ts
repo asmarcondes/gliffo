@@ -64,32 +64,31 @@ serve(async (req) => {
     const supabaseAdmin = createClient<Database>(supabaseUrl, supabaseServiceKey);
 
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const { data: { user }, error: userError } = await createClient(
-      supabaseUrl,
-      Deno.env.get("SUPABASE_ANON_KEY") || "",
-      { global: { headers: { Authorization: authHeader } } }
-    ).auth.getUser();
-
-    if (userError || !user) {
-      return new Response(JSON.stringify({ error: "Invalid token" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const userId = user.id;
     const url = new URL(req.url);
     const pathname = url.pathname.split("/").pop();
 
+    // Helper: Tenta buscar usuário ativo. Usado em rotas estritas.
+    const requireUser = async () => {
+      if (!authHeader) return null;
+      const { data: { user } } = await createClient(
+        supabaseUrl,
+        Deno.env.get("SUPABASE_ANON_KEY") || "",
+        { global: { headers: { Authorization: authHeader } } }
+      ).auth.getUser();
+      return user;
+    };
+
     // GET /my-stats
     if (req.method === "GET" && pathname === "my-stats") {
+      const user = await requireUser();
+      if (!user) {
+        return new Response(JSON.stringify({ error: "Invalid token" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const userId = user.id;
+
       const { data: stats } = await supabaseAdmin
         .from("user_stats")
         .select("*")
@@ -239,7 +238,7 @@ serve(async (req) => {
         rank: index + 1,
         streak: p.streak ?? 0,
         games_played: p.games_played ?? 0,
-        is_me: p.user_id === userId
+        is_me: false // Rota pública não identifica o usuário logado
       }));
 
       return new Response(JSON.stringify({ leaderboard }), {
@@ -253,6 +252,15 @@ serve(async (req) => {
 
     // POST /save-result
     if (req.method === "POST" && pathname === "save-result") {
+      const user = await requireUser();
+      if (!user) {
+        return new Response(JSON.stringify({ error: "Invalid token" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const userId = user.id;
+
       const {
         puzzle_num, puzzle_date, word, difficulty, word_length,
         attempts, won, used_key, hard_mode, is_archive,
@@ -343,6 +351,15 @@ serve(async (req) => {
 
     // POST /save-achievements
     if (req.method === "POST" && pathname === "save-achievements") {
+      const user = await requireUser();
+      if (!user) {
+        return new Response(JSON.stringify({ error: "Invalid token" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const userId = user.id;
+
       const { achievements, counters } = body;
 
       if (achievements && achievements.length > 0) {

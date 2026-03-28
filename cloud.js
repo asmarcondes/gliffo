@@ -105,31 +105,17 @@ async function initAuth() {
 // ═══════════════════════════════════════════════
 
 async function apiEdgeFunction(endpoint, method = "POST", body = null) {
-  const token = getAuthToken();
-  if (!token) return { error: "No auth token" };
-
+  const client = getSupabaseClient();
   try {
-    const res = await fetch(`${SUPABASE_URL}/functions/v1/player-stats/${endpoint}`, {
+    const { data, error } = await client.functions.invoke(`player-stats/${endpoint}`, {
       method,
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: body ? JSON.stringify(body) : undefined,
+      body: body ? body : undefined,
     });
     
-    // Tratamento para 204 No Content
-    if (res.status === 204) return { data: null };
-    
-    const text = await res.text();
-    let data = null;
-    if (text) {
-        try {
-           data = JSON.parse(text);
-        } catch(e) { /* ignore JSON parse error for bare strings */ }
+    if (error) {
+      if (error instanceof Error) throw error;
+      throw new Error(error.message || "Invoke Error");
     }
-
-    if (!res.ok) throw new Error(data?.error || `HTTP ${res.status}`);
     return { data, error: null };
   } catch (error) {
     console.warn(`[api] fail on /${endpoint}`, error);
@@ -141,23 +127,10 @@ async function apiEdgeFunction(endpoint, method = "POST", body = null) {
 // FETCH LEADERBOARD (ANONYMOUS)
 // ═══════════════════════════════════════════════
 window.loadLeaderboard = async function() {
-  const client = getSupabaseClient();
-  if (!client) return null;
-
-  const { data: { session } } = await client.auth.getSession();
-  if (!session) return null;
-
   try {
-    const res = await fetch(`${SUPABASE_URL}/functions/v1/player-stats/leaderboard`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session.access_token}`,
-      },
-    });
-    if (!res.ok) throw new Error("Leaderboard fetch failed");
-    const data = await res.json();
-    return data.leaderboard || [];
+    const { data, error } = await apiEdgeFunction("leaderboard", "GET");
+    if (error) throw error;
+    return data?.leaderboard || [];
   } catch (err) {
     console.error("[CLOUD] Exceção em loadLeaderboard:", err);
     return null;
@@ -168,24 +141,10 @@ window.loadLeaderboard = async function() {
 // FETCH DAILY STATS
 // ═══════════════════════════════════════════════
 window.loadDailyStats = async function(puzzleNum) {
-  // Chamada pública, mas podemos usar o JWT do usuário se disponível
-  const client = getSupabaseClient();
-  let headers = { "Content-Type": "application/json" };
-  
-  if (client) {
-    const { data: { session } } = await client.auth.getSession();
-    if (session) {
-      headers["Authorization"] = `Bearer ${session.access_token}`;
-    }
-  }
-
   try {
-    const res = await fetch(`${SUPABASE_URL}/functions/v1/player-stats/daily-stats?puzzle_num=${puzzleNum}`, {
-      method: "GET",
-      headers,
-    });
-    if (!res.ok) throw new Error("Daily stats fetch failed");
-    return await res.json();
+    const { data, error } = await apiEdgeFunction(`daily-stats?puzzle_num=${puzzleNum}`, "GET");
+    if (error) throw error;
+    return data;
   } catch (err) {
     console.error("[CLOUD] Exceção em loadDailyStats:", err);
     return null;

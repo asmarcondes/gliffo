@@ -565,17 +565,17 @@ function showPuzzleLoadError(message) {
   setFb("", "");
 }
 
-// Validação multi-tamanho: aceita palavras do banco atual + dicionário 5L
 function dicionarioValido(word) {
-  // DICIONARIO cobre 4L–7L (~38.6k entradas — léxico fserb/pt-br + Chat A)
+  // Brecha de segurança fechada: não aceitaremos palavras quaisquer caso o dicionário não esteja pronto.
+  // Se a rede estiver lenta, barramos a jogada (fail-secure).
+  if (!dicReady || DICIONARIO.size === 0) {
+    return false;
+  }
+  
   if (DICIONARIO.has(word)) return true;
-  // Fallback: qualquer palavra do banco de jogo também é válida
-  return (
-    PALAVRAS.facil.includes(word) ||
-    PALAVRAS.medio.includes(word) ||
-    PALAVRAS.dificil.includes(word) ||
-    PALAVRAS.muito_dificil.includes(word)
-  );
+  if (CURRENT_PUZZLE && CURRENT_PUZZLE.word === word) return true;
+
+  return false;
 }
 
 function guessEspecialValido(word) {

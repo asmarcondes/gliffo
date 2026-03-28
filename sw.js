@@ -2,7 +2,7 @@ const CACHE_NAME = 'gliffo-cache-v1';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
-  '/index.css',
+  '/app.css',
   '/config.js',
   '/graphics.js',
   '/cloud.js',
@@ -29,7 +29,7 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
-  // Limpa caches antigos
+  // Limpa caches antigos e clama os clients na mesma cadeia de Promise
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
@@ -40,9 +40,11 @@ self.addEventListener('activate', (event) => {
           }
         })
       );
+    }).then(() => {
+      // Pega o controle das páginas abertas imediatamente só se estiver pronto
+      return self.clients.claim().catch(() => {});
     })
   );
-  self.clients.claim();
 });
 
 self.addEventListener('fetch', (event) => {
@@ -55,11 +57,19 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       const fetchPromise = fetch(event.request).then((networkResponse) => {
-        // Guarda a resposta nova no cache para a próxima vez se for válida (status 200 e mesma origem)
-        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+        // Guarda a resposta nova no cache para a próxima vez se:
+        // - Foi com sucesso (200)
+        // - É do tipo basic
+        // - O esquema é http/https (bloqueia chrome-extension://)
+        if (
+          networkResponse &&
+          networkResponse.status === 200 &&
+          networkResponse.type === 'basic' &&
+          event.request.url.startsWith('http')
+        ) {
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
+            cache.put(event.request, responseToCache).catch(() => {});
           });
         }
         return networkResponse;

@@ -3257,12 +3257,6 @@ function chatSetChoices(choices) {
       row.querySelectorAll("button").forEach((x) => (x.disabled = true));
       row.remove();
       TUT.data.currentRow = null;
-      const _fs = document.getElementById("tut-bye-send");
-      if (_fs) {
-        _fs.classList.add("thinking");
-        _fs.disabled = true;
-        _fs.classList.remove("ready");
-      }
       chatUserNow(b.textContent, onClick);
     };
     row.appendChild(b);
@@ -3273,12 +3267,6 @@ function chatSetChoices(choices) {
     // Store for re-ask on free-input
     TUT.data.currentChoices = choices;
     TUT.data.currentRow = row;
-    const _fs = document.getElementById("tut-bye-send");
-    if (_fs) {
-      _fs.classList.remove("thinking");
-    }
-    // Install hijack: delegate to state machine
-    _installHijack((typed) => TUT.freeInput(typed));
   }
 
   if (window.anime) {
@@ -5308,15 +5296,11 @@ function sadGoodbye() {
           {
             label: "Tchau mesmo \uD83D\uDC4B",
             secondary: true,
-            onClick: () => showRatingAndClose(),
+            onClick: () => tutSkipOrRestart(),
           },
         ],
         1800,
       );
-      tDelay(() => {
-        if (currentActionToken && currentActionToken.cancelled) return;
-        showByeInput();
-      }, 2600);
     }
 
     if (t >= T_WALK) {
@@ -5335,104 +5319,10 @@ function sadGoodbye() {
   rafId = requestAnimationFrame(doFrame);
 }
 
-const BYE_PHRASES = [
-  "Nossa, que jogo incrível... em minha grande ignorância quase abandonei essa obra-prima. Me perdoa e me deixa jogar, por favor!",
-  "Reconheço meu tremendo erro. O Gliffo é claramente o pináculo da civilização e eu, humilde mortal, preciso dessa segunda chance.",
-  "Palavra de honra que nunca mais duvido. Esse jogo mudou minha vida antes mesmo de eu jogar. É arte, é filosofia, é o sentido da existência.",
-  "Ó grande e sábio Gliffo, em sua infinita misericórdia, conceda-me o privilégio de decifrar seus sagrados glifos diariamente. 🙏",
-  "Tô arrependidíssimo. Como eu, de todas as pessoas, quase saí do melhor jogo de palavras já criado? Me dá mais uma chance, juro que jogo todo dia!",
-];
 
-function _installHijack(onSend) {
-  const origInput = document.getElementById("tut-bye-input");
-  const origSend = document.getElementById("tut-bye-send");
-  if (!origInput || !origSend) return;
-  // Clone to wipe previous listeners
-  const input = origInput.cloneNode(true);
-  const sendBtn = origSend.cloneNode(true);
-  origInput.replaceWith(input);
-  origSend.replaceWith(sendBtn);
-  input.removeAttribute("readonly");
-  input.readOnly = false;
-  const phrase = BYE_PHRASES[Math.floor(Math.random() * BYE_PHRASES.length)];
-  let phraseIdx = 0;
-  input.value = "";
-  sendBtn.disabled = true;
-  sendBtn.classList.remove("ready");
-  sendBtn.addEventListener("click", () => {
-    const typed = input.value;
-    input.value = "";
-    input.style.height = "auto";
-    phraseIdx = 0;
-    sendBtn.disabled = true;
-    sendBtn.classList.remove("ready");
-    sendBtn.classList.add("thinking");
-    onSend(typed);
-  });
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "Backspace") {
-      e.preventDefault();
-      if (phraseIdx > 0) phraseIdx--;
-      input.value = phrase.substring(0, phraseIdx);
-      if (phraseIdx < phrase.length) {
-        sendBtn.disabled = true;
-        sendBtn.classList.remove("ready");
-      }
-    } else if (e.key === "Enter") {
-      e.preventDefault();
-      if (phraseIdx === phrase.length) sendBtn.click();
-    } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
-      e.preventDefault();
-      if (phraseIdx < phrase.length) {
-        phraseIdx++;
-        input.value = phrase.substring(0, phraseIdx);
-      }
-      if (phraseIdx === phrase.length) {
-        sendBtn.disabled = false;
-        sendBtn.classList.add("ready");
-      }
-    }
-    // auto-resize
-    input.style.height = "auto";
-    input.style.height = Math.min(input.scrollHeight, 120) + "px";
-  });
-}
-
-function showByeInput() {
-  const bajuladoCallback = (typed) => {
-    chatUser(typed, 0);
-    tDelay(() => {
-      chatMsg(
-        "\uD83E\uDD73 Sabia que voc\u00EA ia entender! Vamos l\u00E1?",
-        0,
-      );
-      chatChoices(
-        [
-          {
-            label: "Vamos! \uD83C\uDFA8",
-            onClick: () => {
-              tutStep = 1;
-              renderStep(1, true);
-            },
-          },
-        ],
-        800,
-      );
-    }, 300);
-  };
-  // Override TUT.freeInput for comeback state: bajulador instead of dismiss+reask
-  TUT._freeInputOverride = bajuladoCallback;
-  _installHijack((typed) => TUT.freeInput(typed));
-  // Only focus the input on non-touch devices (focus on mobile opens the native keyboard)
-  if (!("ontouchstart" in window)) {
-    setTimeout(() => {
-      const inp = document.getElementById("tut-bye-input");
-      if (inp) inp.focus();
-    }, 50);
-  }
-}
 
 function tutSkipOrRestart() {
+  localStorage.setItem("gliffoo_tutdone", "1");
   closeTutorial();
 }
 function showRatingAndClose() {
@@ -5537,20 +5427,6 @@ function closeTutorial() {
   }
   const _byeCat = document.getElementById("tut-bye-cat");
   if (_byeCat) _byeCat.remove();
-  const _byeInput = document.getElementById("tut-bye-input-wrap");
-  if (_byeInput) {
-    const _i = _byeInput.querySelector(".tut-fake-input");
-    const _s = _byeInput.querySelector(".tut-fake-send");
-    if (_i) {
-      _i.value = "";
-      _i.style.height = "auto";
-    }
-    if (_s) {
-      _s.disabled = true;
-      _s.classList.remove("ready");
-      _s.classList.add("thinking");
-    }
-  }
   // dotLottie cleanup handled via token.cancelled check in doFrame
   const _byeScene = document.getElementById("tut-bye-scene");
   if (_byeScene) _byeScene.remove();
@@ -7212,20 +7088,14 @@ function openInvadersGame() {
   });
 })();
 
-// ── DevTools detector ──
+// ── DevTools easter egg (console.log estilizado) ──
 (function () {
-  let open = false;
-  setInterval(() => {
-    const is =
-      window.outerWidth - window.innerWidth > 160 ||
-      window.outerHeight - window.innerHeight > 160;
-    if (is && !open) {
-      open = true;
-      showEEToast(
-        "Oi? Tô vendo você ali no console... pensou que eu não ia notar? 🕵️",
-      );
-    } else if (!is) open = false;
-  }, 2500);
+  setTimeout(() => {
+    console.log(
+      "%cOi? Tô vendo você aqui no console... pensou que eu não ia notar? 🕵️",
+      "color: #f5a623; font-size: 14px; font-weight: bold; background: #1a1a1a; padding: 8px 16px; border-radius: 6px; border: 1px solid #f5a623; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);"
+    );
+  }, 1000);
 })();
 
 // ── Idle tab title rotator ──
