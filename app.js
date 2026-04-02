@@ -270,6 +270,7 @@ function salvarEstado() {
     decoded: [...G.decoded],
     found: [...G.found],
     keyPos: [...G.keyPos],
+    dimmedKeys: [...G.dimmedKeys],
     done: G.done,
     won: G.won,
     keyUsed: G.keyUsed,
@@ -293,6 +294,7 @@ function carregarEstado() {
     G.decoded = new Set(data.decoded || []);
     G.found = new Set(data.found || []);
     G.keyPos = new Set(data.keyPos || []);
+    G.dimmedKeys = new Set(data.dimmedKeys || []);
     G.done = data.done || false;
     G.won = data.won || false;
     G.keyUsed = data.keyUsed || false;
@@ -2843,7 +2845,6 @@ function buildInteract() {
 
   const hint = document.getElementById("ts5-hint");
   const btn = document.getElementById("tut-next-btn");
-  const skipBtn = document.getElementById("tut-skip-btn");
   const solved = iTyped.join("") === iWord;
   if (solved) {
     if (hint) {
@@ -3190,55 +3191,7 @@ const TUT = {
   setState(id, extraData) {
     this.state = id;
     if (extraData) Object.assign(this.data, extraData);
-  },
-
-  // Called by the hijack whenever the user "sends" something.
-  // Override behaviour per-state; default: dismiss + re-ask same choices.
-  // Set _freeInputOverride to replace for a specific state (e.g. comeback/bajulador).
-  _freeInputOverride: null,
-
-  freeInput(typed) {
-    if (this._freeInputOverride) {
-      this._freeInputOverride(typed);
-      return;
-    }
-    // 'comeback' has its own bajulador hijack installed by showByeInput()
-    // so this path is only reached for all other waiting states.
-    const { currentChoices, currentRow } = this.data;
-    if (!currentChoices) return;
-    if (currentRow && currentRow.parentNode) currentRow.remove();
-    tClear();
-    newToken();
-    chatUser(typed, 0);
-    const DISMISS = [
-      "Ok, qualquer coisa vou avisando... \uD83D\uDC4D",
-      "T\u00E1 bom, sem press\u00E3o! \uD83D\uDE05",
-      "Entendido, pode deixar \uD83D\uDC40",
-      "Ah tudo bem, sem compromisso \uD83D\uDE0C",
-      "Certo, certo... \uD83E\uDD14",
-      "Hmm, ok \uD83D\uDE10",
-      "Anotado \uD83D\uDCDD",
-      "Tudo bem, relaxa \uD83D\uDE4F",
-      "Ok ok, sem prob \uD83D\uDE0E",
-      "Combinado \uD83E\uDD1D",
-    ];
-    const REASK = [
-      "...mas voc\u00EA j\u00E1 jogou o Termo ou n\u00E3o? \uD83D\uDE05",
-      "Ah espera \u2014 voc\u00EA jogou o Termo ou n\u00E3o?",
-      "Ok mas me responde isso: j\u00E1 jogou ou n\u00E3o jogou?",
-      "...s\u00F3 preciso saber: Termo sim ou Termo n\u00E3o? \uD83E\uDD13",
-      "Mas espera, voc\u00EA conhece o Termo?",
-      "Ei, ainda n\u00E3o me respondeu: j\u00E1 jogou Termo? \uD83D\uDC40",
-      "Uma coisa s\u00F3: j\u00E1 jogou o Termo alguma vez?",
-      "Antes de continuar \u2014 Termo: sim ou n\u00E3o? \uD83D\uDE05",
-    ];
-    chatMsg(DISMISS[Math.floor(Math.random() * DISMISS.length)], 800);
-    tDelay(() => {
-      if (currentActionToken && currentActionToken.cancelled) return;
-      chatMsg(REASK[Math.floor(Math.random() * REASK.length)], 0);
-      chatChoices(currentChoices, 600);
-    }, 2000);
-  },
+  }
 };
 // ─────────────────────────────────────────────────────────────────────
 
@@ -3313,22 +3266,6 @@ function renderStep(step, noClear) {
   const feed = document.getElementById("tut-chat-feed");
   const choicesEl = document.getElementById("tut-chat-choices");
   if (!feed || !choicesEl) return;
-
-  const _byeWrap = document.getElementById("tut-bye-input-wrap");
-  if (_byeWrap) {
-    TUT._freeInputOverride = null;
-    const _i = _byeWrap.querySelector(".tut-fake-input");
-    const _s = _byeWrap.querySelector(".tut-fake-send");
-    if (_i) {
-      _i.value = "";
-      _i.style.height = "auto";
-    }
-    if (_s) {
-      _s.disabled = true;
-      _s.classList.remove("ready");
-      _s.classList.add("thinking");
-    }
-  }
 
   if (!noClear) {
     const old = document.getElementById("ts0-arrow-overlay");
@@ -5942,6 +5879,7 @@ function _resetGState() {
   G.found = new Set();
   G.keyUsed = false;
   G.keyPos = new Set();
+  G.dimmedKeys = new Set();
   G.done = false;
   G.won = false;
   G.selKey = null;

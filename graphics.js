@@ -178,6 +178,22 @@ function moveCursor(idx) {
   refresh();
 }
 
+function toggleDimKey(key) {
+  if (!/^[A-Z]$/.test(key)) return;
+  if (!G.dimmedKeys) G.dimmedKeys = new Set();
+  
+  if (G.dimmedKeys.has(key)) {
+    G.dimmedKeys.delete(key);
+  } else {
+    // Só permite dim se não for uma letra já descoberta/confirmada
+    if (!G.found.has(key)) {
+      G.dimmedKeys.add(key);
+    }
+  }
+  salvarEstado();
+  buildKB();
+}
+
 function buildKB() {
   const rows = [
     ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
@@ -191,7 +207,8 @@ function buildKB() {
     row.className = "krow";
     r.forEach((k) => {
       const b = document.createElement("button");
-      b.className = "kbtn" + (k.length > 1 ? " wide" : "");
+      const isDimmed = G.dimmedKeys && G.dimmedKeys.has(k);
+      b.className = "kbtn" + (k.length > 1 ? " wide" : "") + (isDimmed ? " dimmed" : "");
       b.textContent = k;
       const kLabel =
         k === "⌫" ? "Apagar" : k === "↵" ? "Confirmar" : `Letra ${k}`;
@@ -204,9 +221,48 @@ function buildKB() {
   // Event delegation — configura uma vez; sobrevive ao kb.innerHTML rebuild
   if (!_kbDelegate) {
     _kbDelegate = true;
+    let longPressTimer = null;
+    let isLongPress = false;
+
+    const startPress = (k) => {
+      if (!/^[A-Z]$/.test(k)) return;
+      isLongPress = false;
+      if (longPressTimer) clearTimeout(longPressTimer);
+      longPressTimer = setTimeout(() => {
+        isLongPress = true;
+        toggleDimKey(k);
+        haptic(60);
+      }, 400);
+    };
+
+    const cancelPress = () => {
+      if (longPressTimer) {
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
+      }
+    };
+
+    kb.addEventListener("touchstart", (ev) => {
+      const btn = ev.target.closest("[data-key]");
+      if (btn) startPress(btn.dataset.key);
+    }, { passive: true });
+
+    kb.addEventListener("mousedown", (ev) => {
+      const btn = ev.target.closest("[data-key]");
+      if (btn) startPress(btn.dataset.key);
+    });
+
+    kb.addEventListener("touchend", cancelPress);
+    kb.addEventListener("mouseup", cancelPress);
+    kb.addEventListener("mouseleave", cancelPress);
+
     kb.addEventListener("click", (ev) => {
       const btn = ev.target.closest("[data-key]");
       if (!btn || btn.disabled) return;
+      if (isLongPress) {
+        isLongPress = false;
+        return;
+      }
       btn.classList.remove("tap");
       btn.getBoundingClientRect();
       btn.classList.add("tap");
@@ -587,8 +643,15 @@ function decode() {
   setTimeout(() => {
     if (G._flipGen !== flipGen) return; // jogo foi resetado durante animação
     G._flipping = false;
+    dec.forEach((p) => G.found.add(WL[p])); // Garante que letras decodificadas também estão em found
     dec.forEach((p) => G.decoded.add(p));
-    fnd.forEach((l) => G.found.add(l));
+    fnd.forEach((l) => {
+      G.found.add(l);
+      if (G.dimmedKeys) G.dimmedKeys.delete(l);
+    });
+    dec.forEach((p) => {
+      if (G.dimmedKeys) G.dimmedKeys.delete(WL[p]);
+    });
     G.attempts.push({
       word: guess,
       decoded: dec,

@@ -1008,6 +1008,10 @@
       .kbtn.elim {
         opacity: 0.28;
       }
+      .kbtn.dimmed {
+        opacity: 0.35;
+        filter: grayscale(0.8);
+      }
       .kbtn.found-key {
         background: rgba(232, 148, 10, 0.2);
         color: var(--amber-500);

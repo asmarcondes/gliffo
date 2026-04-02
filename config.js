@@ -610,6 +610,7 @@ let G = {
   found: new Set(),
   keyUsed: false,
   keyPos: new Set(),
+  dimmedKeys: new Set(),
   done: false,
   won: false,
   selKey: null,
