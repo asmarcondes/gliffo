@@ -1,0 +1,70 @@
+/* ══════════════════════════════════════════════════════════════
+   Gliffo Design Tokens
+   Ported verbatim from app.css :root / [data-theme] blocks.
+   Single source of truth — every component consumes these vars.
+
+   Dark : warm near-black, cream glyphs
+   Light: warm off-white, ink glyphs
+   ══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Amber accent scale */
+  --amber-50: #fff8ed;
+  --amber-100: #ffefd4;
+  --amber-400: #f5a623;
+  --amber-500: #e8940a;
+  --amber-600: #c97d08;
+
+  /* Feedback */
+  --found: #e8940a;
+  --correct: #4a9d6f;
+  --wrong: #c0392b;
+
+  /* Glyph colors (per-letter, identical in both themes) */
+  --gc0: #f5a623; /* amber */
+  --gc1: #9b8fe8; /* lavender */
+  --gc2: #e87a6b; /* coral */
+  --gc3: #5bbfa0; /* mint */
+  --gc4: #6baee8; /* sky */
+  --gc5: #e8b45b; /* gold */
+
+  /* Typography */
+  --font-serif: "DM Serif Display", serif;
+  --font-sans: "DM Sans", system-ui, sans-serif;
+}
+
+[data-theme="dark"] {
+  --bg: #141210;
+  --bg2: #1a1714;
+  --surface: #1e1b18;
+  --surface2: #252118;
+  --surface3: #2c271f;
+  --border: #302b22;
+  --border2: #3a342a;
+  --text: #f0ebe4;
+  --text2: #9a9080;
+  --text3: #5a5248;
+  --glyph: #f0ebe4;
+  --key-bg: #2a2520;
+  --key-text: #e8e0d4;
+  --shadow: rgba(0, 0, 0, 0.5);
+  --logo-dot: var(--amber-400);
+}
+
+[data-theme="light"] {
+  --bg: #faf8f4;
+  --bg2: #f5f1eb;
+  --surface: #ffffff;
+  --surface2: #f5f1ea;
+  --surface3: #edeae2;
+  --border: #e0d8cc;
+  --border2: #ebe4d8;
+  --text: #1c1814;
+  --text2: #7a7060;
+  --text3: #aaa090;
+  --glyph: #1c1814;
+  --key-bg: #e8e2d8;
+  --key-text: #1c1814;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --logo-dot: var(--amber-500);
+}
